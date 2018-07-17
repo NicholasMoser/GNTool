@@ -6,8 +6,9 @@ import java.util.Arrays;
  * A compressor for Eighting PRS compressed files. Takes in the full byte array
  * of the file and returns the uncompressed byte stream.
  *
- * Ported from QuickBMS, so thanks to Luigi Auriemma. Thanks to tpu for
- * originally writing it: http://forum.xentax.com/viewtopic.php?p=30387#p30387
+ * Thanks to Luigi Auriemma for porting to QuickBMS. Thanks to RupertAvery for
+ * originally writing it: https://gbatemp.net/threads/tvc-fpk-tool.207232/
+ * http://www.mediafire.com/?vty5jymlmm2
  */
 public class PRSCompressor
 {

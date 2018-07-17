@@ -1,0 +1,3 @@
+# Contributing
+
+Whether it is an enhancement or defect, simply open an Issue on the Github page under Issues. If it is a defect, please include logs and as descriptive of an explanation of what you were trying to do as possible. Logs can be found in your home directory and will start with fpk (Example: fpkjava0.log.0). Five logs for separate instances can exist at one time, but just include them all with any defect request.
