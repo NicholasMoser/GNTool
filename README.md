@@ -25,18 +25,18 @@ After satisfying the prerequisites listed above, make sure that gcr.exe (GameCub
 
 #### Example Workflow
 
-1. **Export Files from ISO**
+1. **Export Files from ISO**  
 Choose a clean copy of the ISO for the input file, and then a directory of your choice for the second. I suggest choosing a new directory named something like "packed", since it will represent the folder of packed files.
 
-2. **Unpack FPKs in Directory**
+2. **Unpack FPKs in Directory**  
 Choose the root folder inside of the directory we previously chose, "packed" in this case. Then pick a new folder outside of the first folder to unpack to. I suggest choosing a new sibling directory named something like "unpacked" since it will represent the folder of unpacked files.
 
 At this point, you will actually modify files themselves in folder named "unpacked". More information about the various files you will come across can be found here: [File Formats](https://github.com/NicholasMoser/Naruto-GNT-Hacking/blob/master/gnt4/docs/file_formats/formats.md).
 
-3. **Repack FPKs in Directory**
+3. **Repack FPKs in Directory**  
 First choose the root folder inside of the directory that you modified the files in, "unpacked" in this case. Then select the root folder inside of the directory we wish to repack into, "packed" in this case. Please be aware that the repacking process compresses files that you modified, and in some cases can take minutes to do a single FPK file. You will be alerted if the program encounters an error, so just let it continue to process.
 
-4. **Import Files into ISO (Not yet working)**
+4. **Import Files into ISO (Not yet working)**  
 Choose the root folder of the newly repacked directory, "packed" in this case. Name your ISO image file. Please be aware that this does not correctly modify the game.toc file yet, so you may want to perform this option within GameCube Rebuilder manually.
 
 #### How it Works
@@ -70,4 +70,4 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the process for su
 
 ## License
 
-This project is licensed under the GPL-3.0 - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GPL-3.0 - see the [LICENSE](LICENSE) file for details
