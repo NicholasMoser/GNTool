@@ -6,7 +6,8 @@ This Windows program allows you to modify files contained inside FPK files for N
 
 ## Getting Started
 
-To use this tool, first satisfy the prerequisites listed below and then run the latest executable jar from the release section of this repository. 
+To use this tool, first satisfy the prerequisites listed below and then run the latest executable jar from the release section of this repository.  
+Currently that is [1.0-SNAPSHOT](https://github.com/NicholasMoser/FPKTool/releases/download/1.0-SNAPSHOT/fpk-tool-1.0-SNAPSHOT.jar)
 
 ### Prerequisites
 
