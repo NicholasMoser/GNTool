@@ -1,6 +1,7 @@
 package com.github.nicholasmoser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -31,25 +32,6 @@ public class FPKTool extends Application
 		LOGGER.info("Application has started.");
 		setLoggingProperties();
 		createGUI(primaryStage);
-	}
-
-	/**
-	 * 
-	 */
-	private void setLoggingProperties()
-	{
-		try
-		{
-			LogManager.getLogManager().readConfiguration(getClass().getResourceAsStream("logging.properties"));
-		} catch (SecurityException | IOException e)
-		{
-			String errorMessage = String.format("Unable to load logging.properties, fatal error: %s", e.toString());
-			LOGGER.log(Level.SEVERE, e.toString(), e);
-			Alert alert = new Alert(AlertType.ERROR, errorMessage);
-			alert.setHeaderText("Logging Error");
-			alert.setTitle("Logging Error");
-			alert.showAndWait();
-		}
 	}
 
 	/**
@@ -163,6 +145,25 @@ public class FPKTool extends Application
 		buttonPane.add(isoImportButton, 0, 3);
 
 		return buttonPane;
+	}
+
+	/**
+	 * Sets the custom logging properties from the logging.properties included resource file.
+	 */
+	private void setLoggingProperties()
+	{
+		try (InputStream properties = getClass().getResourceAsStream("logging.properties"))
+		{
+			LogManager.getLogManager().readConfiguration(properties);
+		} catch (SecurityException | IOException e)
+		{
+			String errorMessage = String.format("Unable to load logging.properties, fatal error: %s", e.toString());
+			LOGGER.log(Level.SEVERE, e.toString(), e);
+			Alert alert = new Alert(AlertType.ERROR, errorMessage);
+			alert.setHeaderText("Logging Error");
+			alert.setTitle("Logging Error");
+			alert.showAndWait();
+		}
 	}
 
 	public static void main(String[] args)

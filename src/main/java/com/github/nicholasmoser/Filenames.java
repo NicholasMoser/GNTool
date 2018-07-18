@@ -2,9 +2,8 @@ package com.github.nicholasmoser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +28,8 @@ public class Filenames
 	public Filenames()
 	{
 		fileNames = new HashMap<String, String>();
-		try (BufferedReader reader = Files
-				.newBufferedReader(Paths.get(getClass().getResource("filenames.csv").toURI())))
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(getClass().getResourceAsStream("filenames.csv"), StandardCharsets.UTF_8)))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)
@@ -38,7 +37,7 @@ public class Filenames
 				String[] keyValuePair = line.split(",");
 				fileNames.put(keyValuePair[0], keyValuePair[1]);
 			}
-		} catch (IOException | URISyntaxException e)
+		} catch (IOException e)
 		{
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with reading the filenames CSV.");

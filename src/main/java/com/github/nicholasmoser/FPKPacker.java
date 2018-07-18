@@ -45,6 +45,7 @@ public class FPKPacker
 	 */
 	public static void pack()
 	{
+		LOGGER.info("what?");
 		File inputDirectory = Choosers.getInputRootDirectory(currentPath.toFile());
 		if (inputDirectory == null || !inputDirectory.isDirectory())
 			return;
@@ -69,7 +70,8 @@ public class FPKPacker
 			alert.showAndWait();
 			return;
 		}
-		LOGGER.info(String.format("The following files have changed: %s", changedFiles.isEmpty() ? "None" : changedFiles));
+		LOGGER.info(
+				String.format("The following files have changed: %s", changedFiles.isEmpty() ? "None" : changedFiles));
 
 		Set<String> changedFPKs = new HashSet<String>();
 		Set<String> changedNonFPKs = new HashSet<String>();
@@ -85,7 +87,8 @@ public class FPKPacker
 				changedFPKs.add(parent);
 			}
 		}
-		LOGGER.info(String.format("The follow files FPKs need to be packed: %s", changedFPKs.isEmpty() ? "None" : changedFPKs));
+		LOGGER.info(String.format("The follow files FPKs need to be packed: %s",
+				changedFPKs.isEmpty() ? "None" : changedFPKs));
 
 		for (String changedNonFPK : changedNonFPKs)
 		{
@@ -103,7 +106,8 @@ public class FPKPacker
 				return;
 			}
 		}
-		LOGGER.info(String.format("The following files were copied: %s", changedNonFPKs.isEmpty() ? "None" : changedNonFPKs));
+		LOGGER.info(String.format("The following files were copied: %s",
+				changedNonFPKs.isEmpty() ? "None" : changedNonFPKs));
 
 		for (String changedFPK : changedFPKs)
 		{
@@ -132,8 +136,8 @@ public class FPKPacker
 	}
 
 	/**
-	 * Simply copies and overwrites a single file from one directory to another. This
-	 * should be used for files not associated with an FPK in any way.
+	 * Simply copies and overwrites a single file from one directory to another.
+	 * This should be used for files not associated with an FPK in any way.
 	 * 
 	 * @param changedNonFPK
 	 *            The changed non-FPK asssociated file.
@@ -256,7 +260,6 @@ public class FPKPacker
 				getCRC32Values(fileEntry, fileCRC32Values);
 			} else
 			{
-				String fileName = fileEntry.getName();
 				try
 				{
 					String[] fileParts = fileEntry.getAbsolutePath().split("root\\\\");

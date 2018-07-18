@@ -2,9 +2,8 @@ package com.github.nicholasmoser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +11,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.common.base.Charsets;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -30,8 +31,8 @@ public class GNT4FPKFiles
 	public GNT4FPKFiles()
 	{
 		fpkFiles = new HashMap<String, String[]>();
-		try (BufferedReader reader = Files
-				.newBufferedReader(Paths.get(getClass().getResource("gnt4files.csv").toURI())))
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(getClass().getResourceAsStream("gnt4files.csv"), StandardCharsets.UTF_8)))
 		{
 			String line;
 			while ((line = reader.readLine()) != null)
@@ -40,7 +41,7 @@ public class GNT4FPKFiles
 				String[] files = keyValuePair[1].split(",");
 				fpkFiles.put(keyValuePair[0], files);
 			}
-		} catch (IOException | URISyntaxException e)
+		} catch (IOException e)
 		{
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with reading the GNT4 FPK description.");

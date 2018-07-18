@@ -2,9 +2,8 @@ package com.github.nicholasmoser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,17 +29,23 @@ public class CRC32BaseValues
 
 	public CRC32BaseValues()
 	{
+		LOGGER.info("what?1");
 		baseCRC32Values = new HashMap<String, String>();
-		try (BufferedReader reader = Files.newBufferedReader(Paths.get(getClass().getResource("crc32.csv").toURI())))
+		LOGGER.info(getClass().getResource("crc32.csv").getPath());
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(getClass().getResourceAsStream("crc32.csv"), StandardCharsets.UTF_8)))
 		{
+			LOGGER.info("what?3");
 			String line;
 			while ((line = reader.readLine()) != null)
 			{
 				String[] keyValuePair = line.split(",");
 				baseCRC32Values.put(keyValuePair[0], keyValuePair[1]);
 			}
-		} catch (IOException | URISyntaxException e)
+			LOGGER.info("what?4");
+		} catch (IOException e)
 		{
+			LOGGER.info("what?5");
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with reading the CRC32 values file.");
 			alert.setHeaderText("Issue with CRC32 File");
@@ -57,7 +62,9 @@ public class CRC32BaseValues
 	 * @param comparisonCRC32Values
 	 *            The new CRC32 hash value to compare.
 	 * @return The files that have changed.
-	 * @throws IOException If a particular entry does not exist, implying an invalid file structure.
+	 * @throws IOException
+	 *             If a particular entry does not exist, implying an invalid file
+	 *             structure.
 	 */
 	public List<String> getFilesChanges(Map<String, String> comparisonCRC32Values) throws IOException
 	{
@@ -70,7 +77,8 @@ public class CRC32BaseValues
 			String value = baseCRC32Values.get(key);
 			if (value == null)
 			{
-				throw new IOException(String.format("%s is not a valid file. Is that file in the correct location?", key));
+				throw new IOException(
+						String.format("%s is not a valid file. Is that file in the correct location?", key));
 			}
 			if (!value.equals(entry.getValue()))
 			{
