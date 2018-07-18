@@ -45,7 +45,6 @@ public class FPKPacker
 	 */
 	public static void pack()
 	{
-		LOGGER.info("what?");
 		File inputDirectory = Choosers.getInputRootDirectory(currentPath.toFile());
 		if (inputDirectory == null || !inputDirectory.isDirectory())
 			return;
@@ -87,9 +86,19 @@ public class FPKPacker
 				changedFPKs.add(parent);
 			}
 		}
+		if (changedNonFPKs.isEmpty() && changedFPKs.isEmpty())
+		{
+			Alert alert = new Alert(AlertType.INFORMATION,
+					String.format("No files have been changed so there is nothing to repack."));
+			alert.setHeaderText("No Changes Found");
+			alert.setTitle("Info");
+			alert.showAndWait();
+			LOGGER.info("No changes found.");
+			return;
+		}
+		
 		LOGGER.info(String.format("The follow files FPKs need to be packed: %s",
 				changedFPKs.isEmpty() ? "None" : changedFPKs));
-
 		for (String changedNonFPK : changedNonFPKs)
 		{
 			try

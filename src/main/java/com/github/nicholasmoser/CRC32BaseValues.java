@@ -29,23 +29,18 @@ public class CRC32BaseValues
 
 	public CRC32BaseValues()
 	{
-		LOGGER.info("what?1");
 		baseCRC32Values = new HashMap<String, String>();
-		LOGGER.info(getClass().getResource("crc32.csv").getPath());
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(getClass().getResourceAsStream("crc32.csv"), StandardCharsets.UTF_8)))
 		{
-			LOGGER.info("what?3");
 			String line;
 			while ((line = reader.readLine()) != null)
 			{
 				String[] keyValuePair = line.split(",");
 				baseCRC32Values.put(keyValuePair[0], keyValuePair[1]);
 			}
-			LOGGER.info("what?4");
 		} catch (IOException e)
 		{
-			LOGGER.info("what?5");
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with reading the CRC32 values file.");
 			alert.setHeaderText("Issue with CRC32 File");
