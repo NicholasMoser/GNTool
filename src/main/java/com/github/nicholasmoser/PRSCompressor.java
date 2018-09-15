@@ -64,8 +64,20 @@ public class PRSCompressor
 				}
 			}
 		}
+		terminateFile(output);
 
 		return Arrays.copyOfRange(output, 0, (data_ptr) + 3); // Extra 3 zeroes
+	}
+	
+	/**
+	 * Terminates the file by adding a 0 and 1 bit to the flag.
+	 * This is equivalent to a long search, but yields no result.
+	 * @param output The output bytes.
+	 */
+	private void terminateFile(byte[] output)
+	{
+		write_bit(output, 0);
+		write_bit(output, 1);
 	}
 
 	/**
@@ -88,14 +100,14 @@ public class PRSCompressor
 		{
 			return false;
 		}
-		while (p != input.length && (input[p] == input[sptr - pos]) && (length < 256))
+		while (p < input.length && input[sptr - pos] == input[p] && length < 256)
 		{
 			length++;
 			p++;
 		}
 		// System.out.println(String.format("<%d>", p));
 
-		return length > 4;
+		return length > 1;
 	}
 
 	// Scans backwards from the current buffer position
@@ -103,13 +115,21 @@ public class PRSCompressor
 	{
 		// System.out.println(String.format("check_window <xxxxxxxx %d %d %d>", newsptr,
 		// length, pos));
-		int tlength = 2;
+		int tlength = 1;
 		int tpos = -1;
 
 		if (newsptr < tlength)
 		{
 			return false;
 		}
+
+		int tlengthMax = 256;
+		int bytesLeft = input.length - sptr;
+		if (bytesLeft < tlengthMax)
+		{
+			tlengthMax = bytesLeft + 1;
+		}
+		
 		int p = newsptr - tlength;
 		int curr = newsptr;
 		int savep = p;
@@ -118,9 +138,9 @@ public class PRSCompressor
 		// scan area = 8192 bytes
 		// no scanning beyond start of buffer
 		// limit to 256 bytes match length
-		while (((curr - p) < 8192) && (p >= 0) && (tlength < 256))
+		while (((curr - p) < 8192) && (p >= 0) && (tlength < tlengthMax))
 		{
-			while (memcmp(curr, p, tlength) && (tlength < 256))
+			while (memcmp(curr, p, tlength) && (tlength < tlengthMax))
 			{
 				// System.out.println(String.format("match: <%08x> %d %08x %08x", p, tlength,
 				// input[curr], input[p]));
@@ -211,7 +231,7 @@ public class PRSCompressor
 
 	private void write_comp(byte[] output, int len, int posy)
 	{
-		if ((posy > 255) || (length > 5))
+		if (posy > 255 || length > 5)
 		{
 			write_comp_b(output, len, posy);
 		} else
