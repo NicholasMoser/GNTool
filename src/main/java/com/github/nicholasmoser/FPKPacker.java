@@ -35,6 +35,8 @@ public class FPKPacker
 	private static final Filenames filenames = new Filenames();
 
 	private static final GNT4FPKFiles fpkFiles = new GNT4FPKFiles();
+	
+	private static final UncompressedFiles uncompressedFiles = new UncompressedFiles();
 
 	/**
 	 * Packs and compresses FPK files. First will prompt the user for an input and
@@ -186,15 +188,26 @@ public class FPKPacker
 		List<FPKFile> newFPKs = new ArrayList<FPKFile>(fpkChildren.length);
 		for (String child : fpkChildren)
 		{
+			String childName = filenames.getFilename(child);
 			byte[] input = Files.readAllBytes(inputDirectory.toPath().resolve(child));
-			PRSCompressor compressor = new PRSCompressor(input);
-			byte[] compressed_input = compressor.prs_8ing_compress();
+			byte[] output;
+			
+			if(uncompressedFiles.getFiles().contains(childName))
+			{
+				output = input;
+			}
+			else
+			{
+				PRSCompressor compressor = new PRSCompressor(input);
+				output = compressor.prs_8ing_compress();
+			}
+			
 			// Set the offset to -1 for now, we cannot figure it out until we have all of
 			// the files
-			FPKFileHeader header = new FPKFileHeader(filenames.getFilename(child), -1, compressed_input.length,
+			FPKFileHeader header = new FPKFileHeader(childName, -1, output.length,
 					input.length);
-			newFPKs.add(new FPKFile(header, compressed_input));
-			LOGGER.info(String.format("%s has been compressed to %d bytes.", child, compressed_input.length));
+			newFPKs.add(new FPKFile(header, output));
+			LOGGER.info(String.format("%s has been compressed to %d bytes.", child, output.length));
 		}
 
 		int outputSize = 16; // FPK header is 16 bytes so start with that.
