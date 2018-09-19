@@ -63,12 +63,12 @@ public class FPKUnpacker
 
 		LOGGER.info("Unpacking FPKs...");
 		extractDirectory(outputDirectory);
+		LOGGER.info("Finished unpacking FPKs.");
 		Alert alert = new Alert(AlertType.INFORMATION,
 				String.format("FPK files have been unpacked at %s.", outputDirectory));
 		alert.setHeaderText("FPK Files Unpacked");
 		alert.setTitle("Info");
 		alert.showAndWait();
-		LOGGER.info("Finished unpacking FPKs.");
 	}
 
 	/**

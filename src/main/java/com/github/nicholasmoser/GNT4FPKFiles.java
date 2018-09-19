@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.base.Charsets;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 

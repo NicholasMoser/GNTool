@@ -54,6 +54,31 @@ public class FPKPacker
 		if (outputDirectory == null || !outputDirectory.isDirectory())
 			return;
 
+		LOGGER.info("Modding the Start.dol with the audio fix...");
+		try
+		{
+			Path startDol = inputDirectory.toPath().resolve("&&systemdata\\Start.dol");
+			DolPatcher patcher = new DolPatcher(startDol);
+			if(patcher.patchAudioOffset())
+			{
+				LOGGER.info("Successfully modded the Start.dol with the audio fix.");
+			}
+			else
+			{
+				LOGGER.info("Start.dol already contains audio fix.");
+			}
+		}
+		catch(IOException e)
+		{
+			String message = String.format("There was an error modding the Start.dol with the audio fix: %s", e.getMessage());
+			LOGGER.log(Level.SEVERE, e.toString(), e);
+			Alert alert = new Alert(AlertType.ERROR, message);
+			alert.setHeaderText("Dol Error");
+			alert.setTitle("Dol Error");
+			alert.showAndWait();
+			return;
+		}
+		
 		LOGGER.info("Checking files that have changed...");
 		Map<String, String> fileCRC32Values = new HashMap<String, String>();
 		fileCRC32Values = getCRC32Values(inputDirectory, fileCRC32Values);
@@ -138,12 +163,12 @@ public class FPKPacker
 			}
 			LOGGER.info(String.format("Packed %s", changedFPK));
 		}
+		LOGGER.info("Finished packing FPKs.");
 		Alert alert = new Alert(AlertType.INFORMATION,
 				String.format("FPK files have been packed at %s.", outputDirectory));
 		alert.setHeaderText("FPK Files Packed");
 		alert.setTitle("Info");
 		alert.showAndWait();
-		LOGGER.info("Finished packing FPKs.");
 	}
 
 	/**
