@@ -1,8 +1,6 @@
-# GNTool
+![GNTool Logo](/example/logo.png?raw=true "GNTool Logo")
 
 This program allows you to modify files contained inside .FPK files for Naruto GNT4. [FPK files](https://github.com/NicholasMoser/Naruto-GNT-Hacking/blob/master/gnt4/docs/file_formats/fpk.md) are archives that contain various game related files. Each entry is compressed with an Eighting specific PRS compression algorithm. This tool can both unpack and repack FPK files with any changes that you've made.
-
-![FPK Tool](/example/fpktool.png?raw=true "FPK Tool")
 
 ## Table of Contents
 1. **[Getting Started](#getting-started)**
@@ -20,7 +18,9 @@ This program allows you to modify files contained inside .FPK files for Naruto G
 ## Getting Started
 
 To use this tool, first satisfy the prerequisites listed below and then run the latest executable jar from the release section of this repository.  
-Currently that is [1.0-SNAPSHOT](https://github.com/NicholasMoser/FPKTool/releases/download/1.0-SNAPSHOT/fpk-tool-1.0-SNAPSHOT.jar)
+Currently that is [1.0](https://github.com/NicholasMoser/GNTool/releases/download/1.0/gntool-1.0.jar)
+
+![GNTool](/example/gntool.png?raw=true "GNTool")
 
 ### Prerequisites
 
