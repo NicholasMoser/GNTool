@@ -43,8 +43,12 @@ After satisfying the prerequisites listed above, verify that gcr.exe (GameCube R
 1. **Export Files from ISO**  
 Select a clean copy of the GNT ISO for the input file, and then a directory of your choice for the second. I suggest creating a new directory named "packed", since this folder will represent the folder of packed FPK files.
 
+![Step 1](/example/step1.png?raw=true "Step 1")
+
 2. **Unpack FPKs in Directory**  
 Select the root folder inside of the directory we previously chose, named "packed" in this example. Then select a new folder outside of the first folder to unpack to. I suggest creating a new sibling directory named "unpacked" since it will represent the folder of unpacked FPK files.
+
+![Step 2](/example/step2.png?raw=true "Step 2")
 
 3. **Modify Files**  
 At this point, you will actually modify files themselves in the unpacked folder, the folder named "unpacked" in this example. More information about the various files you will come across can be found here: [File Formats](https://github.com/NicholasMoser/Naruto-GNT-Hacking/blob/master/gnt4/docs/file_formats/formats.md).
@@ -52,7 +56,7 @@ At this point, you will actually modify files themselves in the unpacked folder,
 4. **Repack FPKs in Directory**  
 First choose the root folder inside of the directory that you modified the files in, named "unpacked" in this example. Then select the root folder inside of the directory we wish to repack into, named "packed" in this example. Please be aware that the repacking process compresses files that you modified, and in some cases can take minutes to do a single FPK file. You will be alerted if the program encounters an error, so let it run until it finishes or displays an error dialog.
 
-5. **Import Files into ISO (Not yet working)**  
+5. **Import Files into ISO**  
 Choose the root folder of the newly repacked directory, named "packed" in this example. Name your ISO image file. You should now have your newly modified and compressed ISO.
 
 ## How it Works
