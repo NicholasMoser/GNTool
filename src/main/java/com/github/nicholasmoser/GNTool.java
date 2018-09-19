@@ -22,9 +22,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class FPKTool extends Application
+/**
+ * A tool that allows you to modify files in a Naruto GNT ISO file. 
+ * @author Nicholas Moser
+ */
+public class GNTool extends Application
 {
-	private static final Logger LOGGER = Logger.getLogger(FPKTool.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(GNTool.class.getName());
 
 	@Override
 	public void start(Stage primaryStage)
@@ -45,7 +49,7 @@ public class FPKTool extends Application
 		GridPane buttonPane = createButtonGrid();
 		Scene scene = new Scene(buttonPane);
 
-		primaryStage.setTitle("FPK Tool");
+		primaryStage.setTitle("GNTool");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
