@@ -12,6 +12,11 @@ public class FPKFile
 
 	private byte[] data;
 
+	/**
+	 * Creates a new FPK file.
+	 * @param header The FPK file header.
+	 * @param data The date of the file.
+	 */
 	public FPKFile(FPKFileHeader header, byte[] data)
 	{
 		int modDifference = data.length % 16;
@@ -26,11 +31,17 @@ public class FPKFile
 		this.header = header;
 	}
 
+	/**
+	 * @return The FPK file header.
+	 */
 	public FPKFileHeader getHeader()
 	{
 		return header;
 	}
 
+	/**
+	 * @return The file data.
+	 */
 	public byte[] getData()
 	{
 		return data;

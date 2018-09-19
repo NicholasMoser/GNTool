@@ -26,6 +26,9 @@ public class GNT4FPKFiles
 
 	Map<String, String[]> fpkFiles;
 
+	/**
+	 * Creates a new Object containing the base FPK parent-child relationships.
+	 */
 	public GNT4FPKFiles()
 	{
 		fpkFiles = new HashMap<String, String[]>();

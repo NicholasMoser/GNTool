@@ -9,20 +9,20 @@ package com.github.nicholasmoser;
  */
 public class PRSUncompressor
 {
-	/* The Eighting PRS compressed byte array. */
+	// Input bytes to uncompress.
 	private byte[] input;
 
-	/* The expected output length (uncompressed size). */
+	// The expected output length (uncompressed size).
 	private int outputLength;
 
-	/* The current byte location in the input byte array we are at. */
-	private int inputPtr;
+	// The current index of the input bytes.
+	private int inputIndex;
 
-	/* Number of bits still remaining to look at in each byte. */
+	// Number of bits still remaining in the flag byte.
 	private int bitsLeft;
 
-	/* Buffer that holds an input byte to be uncompressed. */
-	private byte buffer;
+	// Buffer that holds an input byte to be uncompressed.
+	private byte flagByte;
 
 	/**
 	 * PRSUncompressor constructor using an input byte array and output length.
@@ -34,9 +34,9 @@ public class PRSUncompressor
 	{
 		this.input = input;
 		this.outputLength = outputLength;
-		inputPtr = 0;
+		inputIndex = 0;
 		bitsLeft = 0;
-		buffer = 0;
+		flagByte = 0;
 	}
 
 	/**
@@ -44,53 +44,44 @@ public class PRSUncompressor
 	 * 
 	 * @return The associated uncompressed byte array.
 	 */
-	public byte[] prs_8ing_uncomp()
+	public byte[] uncompress()
 	{
 		byte[] output = new byte[outputLength];
 		int outputPtr = 0;
 		int flag = 0;
 		int len = 0;
 		int pos = 0;
-		while (inputPtr < input.length)
+		while (inputIndex < input.length)
 		{
-			flag = prs_8ing_get_bits(1);
+			flag = getFlagBits(1);
 			if (flag == 1) // Uncompressed value
 			{
-				/*
-				 * if (inputPtr < 256) { System.out.println(String.format("uncomp %02x %d",
-				 * input[inputPtr], bitsLeft)); }
-				 */
 				if (outputPtr < output.length)
-					output[outputPtr++] = input[inputPtr++];
+					output[outputPtr++] = input[inputIndex++];
 			}
 			else // Compressed value
 			{
-				flag = prs_8ing_get_bits(1);
+				flag = getFlagBits(1);
 				if (flag == 0) // Short search (length between 2 and 5)
 				{
-					len = prs_8ing_get_bits(2) + 2;
-					pos = input[inputPtr++] | 0xffffff00;
+					len = getFlagBits(2) + 2;
+					pos = input[inputIndex++] | 0xffffff00;
 				}
 				else // Long search
 				{
-					pos = (input[inputPtr++] << 8) | 0xffff0000;
-					pos |= input[inputPtr++] & 0xff;
+					pos = (input[inputIndex++] << 8) | 0xffff0000;
+					pos |= input[inputIndex++] & 0xff;
 					len = pos & 0x07;
 					pos >>= 3;
 					if (len == 0)
 					{
-						len = (input[inputPtr++] & 0xff) + 1;
+						len = (input[inputIndex++] & 0xff) + 1;
 					}
 					else
 					{
 						len += 2;
 					}
 				}
-				/*
-				 * if (inputPtr < 256) {
-				 * System.out.println(String.format("uncomp <%08x(%08x): %08x %d %d>",
-				 * outputPtr, output.length, pos, len, bitsLeft)); }
-				 */
 				pos += outputPtr;
 				for (int i = 0; i < len; i++)
 				{
@@ -104,39 +95,39 @@ public class PRSUncompressor
 	}
 
 	/**
-	 * PRS get bit form lsb to msb, FPK get it form msb to lsb.
+	 * Retrieves a number of bits from the flag byte. A single 1 means the next byte
+	 * is uncompressed. A 0 followed by a 0 means that the next bytes are compressed
+	 * via short search. A 0 followed by a 1 means that the next bytes are compressed
+	 * via long search. Short searches will be followed by two bits used to calculate the length
+	 * of the compressed bytes.
 	 * 
 	 * @param n The number of bits to get.
-	 * @return The bits requested.
+	 * @return The flag bit(s).
 	 */
-	private int prs_8ing_get_bits(int n)
+	private int getFlagBits(int n)
 	{
-		int retv = 0;
+		int bits = 0;
 
-		retv = 0;
+		bits = 0;
 		while (n > 0)
 		{
-			retv <<= 1;
+			bits <<= 1;
 			if (bitsLeft == 0)
 			{
-				buffer = input[inputPtr];
-				/*
-				 * if (inputPtr < 256) { System.out.println(String.format("getbit [%02x] %d",
-				 * buffer & 0xff, bitsLeft)); }
-				 */
-				inputPtr++;
+				flagByte = input[inputIndex];
+				inputIndex++;
 				bitsLeft = 8;
 			}
 
-			if ((buffer & 0x80) > 0)
+			if ((flagByte & 0x80) > 0)
 			{
-				retv |= 1;
+				bits |= 1;
 			}
 
-			buffer <<= 1;
+			flagByte <<= 1;
 			bitsLeft--;
 			n--;
 		}
-		return retv;
+		return bits;
 	}
 }

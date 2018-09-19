@@ -14,7 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 /**
- * A list of files in GNT4 that are not compressed.
+ * A list of files in GNT4 that are not compressed in the base GNT4 game.
  */
 public class UncompressedFiles
 {
@@ -22,6 +22,9 @@ public class UncompressedFiles
 
 	private List<String> uncompressedFiles;
 
+	/**
+	 * Creates a new Object containing the names of file not to be compressed.
+	 */
 	public UncompressedFiles()
 	{
 		uncompressedFiles = new ArrayList<String>();
@@ -45,6 +48,9 @@ public class UncompressedFiles
 		}
 	}
 
+	/**
+	 * @return The files from GNT4 that are not compressed.
+	 */
 	public List<String> getFiles()
 	{
 		return uncompressedFiles;

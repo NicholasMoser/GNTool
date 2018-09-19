@@ -11,6 +11,9 @@ import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * Utility to access GCRebuilder.exe through the command line.
+ */
 public class ISOUtils
 {
 	private static final Logger LOGGER = Logger.getLogger(ISOUtils.class.getName());

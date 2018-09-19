@@ -23,6 +23,10 @@ import java.util.Arrays;
  * modified, the only two solutions right now are to try and use padding or
  * modify the game code. Modifying the game code seems not to have any side
  * effects, so this is the current accepted solution.
+ * 
+ * More precisely, the instruction at 0x8016fc08 is a conditional branch.
+ * The fix is to change it to an unconditional branch so that it always branches.
+ * Therefore it will never encounter the OSPanic from this method under any circumstances.
  */
 public class DolPatcher
 {
@@ -40,18 +44,34 @@ public class DolPatcher
 	private static final byte[] INSTRUCTIONS_8016fc08_PATCHED = new byte[]
 	{ 0x54, 0x00, 0x04, 0x7f, 0x48, 0x00, 0x00, 0x21 };
 
+	/**
+	 * Creates a new DolPatcher.
+	 * @param dol The path to the dol you wish to patch.
+	 */
 	public DolPatcher(Path dol)
 	{
 		this.dol = dol;
 		this.dryRun = false;
 	}
 
+	/**
+	 * Creates a new DolPatcher.
+	 * @param dol The path to the dol you wish to patch.
+	 * @param dryRun Whether or not to actually write the patched bytes. Set to true for unit tests.
+	 */
 	public DolPatcher(Path dol, boolean dryRun)
 	{
 		this.dol = dol;
 		this.dryRun = dryRun;
 	}
 
+	/**
+	 * Patches the audio fix into the dol file. This will replace the instruction bytes at 0x8016fc08
+	 * from 0x41820020 to 0x48000021. Or in plain terms, changes the conditional branch to an unconditional
+	 * branch.
+	 * @return True if the dol was patched, false if not.
+	 * @throws IOException If the instruction could not be found or file could not be read.
+	 */
 	public boolean patchAudioOffset() throws IOException
 	{
 		boolean codeFound = false;
@@ -76,7 +96,7 @@ public class DolPatcher
 					}
 					else
 					{
-						throw new IOException("Unexpected instruction at 0x8016fc08 in Start.dol, actually:" + buffer);
+						throw new IOException("Unexpected instruction at 0x8016fc08 in Start.dol, actually:" + Arrays.toString(buffer));
 					}
 				}
 				else if (Arrays.equals(buffer, INSTRUCTIONS_8016fc00))
@@ -99,11 +119,17 @@ public class DolPatcher
 		}
 	}
 
-	private void writePatchedBytes(int index) throws FileNotFoundException, IOException
+	/**
+	 * Writes the audio fix to the dol file.
+	 * @param index The location of instruction 0x8016fc08.
+	 * @throws IOException If the bytes were unable to be written.
+	 */
+	private void writePatchedBytes(int index) throws IOException
 	{
-		RandomAccessFile file = new RandomAccessFile(dol.toFile(), "rw");
-		file.seek(index);
-		file.write(INSTRUCTIONS_8016fc08_PATCHED);
-		file.close();
+		try(RandomAccessFile file = new RandomAccessFile(dol.toFile(), "rw"))
+		{
+			file.seek(index);
+			file.write(INSTRUCTIONS_8016fc08_PATCHED);
+		}
 	}
 }

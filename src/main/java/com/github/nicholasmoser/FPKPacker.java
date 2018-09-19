@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.common.base.Verify;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
@@ -24,6 +25,10 @@ import com.google.common.primitives.Bytes;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * Packs FPK files. This includes compressing them with the Eighting PRS algorithm
+ * and modding the Start.dol with the audio fix.
+ */
 public class FPKPacker
 {
 	private static final Logger LOGGER = Logger.getLogger(FPKPacker.class.getName());
@@ -40,7 +45,7 @@ public class FPKPacker
 
 	/**
 	 * Packs and compresses FPK files. First will prompt the user for an input and
-	 * output directory. The input directory will be checked for any modifications
+	 * output directory. The dol will then be patched with the audio fix. The input directory will be checked for any modifications
 	 * using the CRC32 hash function. Any files that have been changed will be
 	 * packed and compressed into their original FPK file. This new FPK file will
 	 * override the FPK file in the output directory.
@@ -119,7 +124,7 @@ public class FPKPacker
 		if (changedNonFPKs.isEmpty() && changedFPKs.isEmpty())
 		{
 			Alert alert = new Alert(AlertType.INFORMATION,
-					String.format("No files have been changed so there is nothing to repack."));
+					"No files have been changed so there is nothing to repack.");
 			alert.setHeaderText("No Changes Found");
 			alert.setTitle("Info");
 			alert.showAndWait();
@@ -222,7 +227,7 @@ public class FPKPacker
 			else
 			{
 				PRSCompressor compressor = new PRSCompressor(input);
-				output = compressor.prs_8ing_compress();
+				output = compressor.compress();
 			}
 
 			// Set the offset to -1 for now, we cannot figure it out until we have all of
@@ -293,8 +298,12 @@ public class FPKPacker
 	 */
 	private static Map<String, String> getCRC32Values(File directory, Map<String, String> fileCRC32Values)
 	{
+		Verify.verifyNotNull(directory);
+		Verify.verifyNotNull(fileCRC32Values);
+		
+		File[] files = directory.listFiles();
 		HashFunction crc32 = Hashing.crc32();
-		for (final File fileEntry : directory.listFiles())
+		for (File fileEntry : files)
 		{
 			if (fileEntry.isDirectory())
 			{

@@ -27,6 +27,9 @@ public class CRC32BaseValues
 
 	Map<String, String> baseCRC32Values;
 
+	/**
+	 * Creates a new Object containing the base CRC32 values.
+	 */
 	public CRC32BaseValues()
 	{
 		baseCRC32Values = new HashMap<String, String>();

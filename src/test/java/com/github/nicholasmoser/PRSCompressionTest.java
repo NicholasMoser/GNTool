@@ -27,12 +27,12 @@ public class PRSCompressionTest
 		System.out.println(String.format("Original Size: %d", originalSize));
 
 		PRSCompressor compressor = new PRSCompressor(originalBytes);
-		byte[] compressedBytes = compressor.prs_8ing_compress();
+		byte[] compressedBytes = compressor.compress();
 		int compressedSize = compressedBytes.length;
 		System.out.println(String.format("Compressed Size: %d", compressedSize));
 
 		PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, originalSize);
-		byte[] outputBytes = uncompressor.prs_8ing_uncomp();
+		byte[] outputBytes = uncompressor.uncompress();
 		int uncompressedSize = outputBytes.length;
 		System.out.println(String.format("Uncompressed Size: %d", uncompressedSize));
 
@@ -55,12 +55,12 @@ public class PRSCompressionTest
 		System.out.println(String.format("Original Size: %d", originalSize));
 
 		PRSCompressor compressor = new PRSCompressor(originalBytes);
-		byte[] compressedBytes = compressor.prs_8ing_compress();
+		byte[] compressedBytes = compressor.compress();
 		int compressedSize = compressedBytes.length;
 		System.out.println(String.format("Compressed Size: %d", compressedSize));
 
 		PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, originalSize);
-		byte[] outputBytes = uncompressor.prs_8ing_uncomp();
+		byte[] outputBytes = uncompressor.uncompress();
 		int uncompressedSize = outputBytes.length;
 		System.out.println(String.format("Uncompressed Size: %d", uncompressedSize));
 

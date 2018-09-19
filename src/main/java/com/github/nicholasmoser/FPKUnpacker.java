@@ -18,6 +18,9 @@ import org.apache.commons.io.FileUtils;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * Unpacks FPK files. This includes uncompressing them with the Eighting PRS algorithm.
+ */
 public class FPKUnpacker
 {
 	private static final Logger LOGGER = Logger.getLogger(FPKUnpacker.class.getName());
@@ -153,7 +156,7 @@ public class FPKUnpacker
 				else
 				{
 					PRSUncompressor uncompressor = new PRSUncompressor(fileBytes, uncompressedSize);
-					byte[] output = uncompressor.prs_8ing_uncomp();
+					byte[] output = uncompressor.uncompress();
 					Files.write(outputFilePath, output);
 				}
 			}

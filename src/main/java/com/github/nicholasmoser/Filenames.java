@@ -25,6 +25,9 @@ public class Filenames
 
 	Map<String, String> fileNames;
 
+	/**
+	 * Creates a new Object containing the Filename mapping.
+	 */
 	public Filenames()
 	{
 		fileNames = new HashMap<String, String>();
