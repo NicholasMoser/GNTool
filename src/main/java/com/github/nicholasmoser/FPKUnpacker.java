@@ -50,7 +50,8 @@ public class FPKUnpacker
 				throw new IOException("Error creating root folder.");
 			}
 			FileUtils.copyDirectory(inputDirectory, outputDirectory);
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with copying the game file directory.");
@@ -76,8 +77,7 @@ public class FPKUnpacker
 	 * given directory. This method will call itself recursively for each directory
 	 * it encounters.
 	 * 
-	 * @param directory
-	 *            The directory to search and extract from.
+	 * @param directory The directory to search and extract from.
 	 */
 	private static void extractDirectory(File directory)
 	{
@@ -86,7 +86,8 @@ public class FPKUnpacker
 			if (fileEntry.isDirectory())
 			{
 				extractDirectory(fileEntry);
-			} else
+			}
+			else
 			{
 				String fileName = fileEntry.getName();
 				if (fileName.endsWith(".fpk"))
@@ -102,8 +103,7 @@ public class FPKUnpacker
 	 * Opens the given FPK file and extracts it contents. This includes
 	 * uncompressing them from Eighting PRS compression.
 	 * 
-	 * @param filePath
-	 *            The FPK file to extract.
+	 * @param filePath The FPK file to extract.
 	 */
 	public static void extractFPK(Path filePath)
 	{
@@ -149,16 +149,19 @@ public class FPKUnpacker
 				if (compressedSize == uncompressedSize)
 				{
 					Files.write(outputFilePath, fileBytes);
-				} else
+				}
+				else
 				{
 					PRSUncompressor uncompressor = new PRSUncompressor(fileBytes, uncompressedSize);
 					byte[] output = uncompressor.prs_8ing_uncomp();
 					Files.write(outputFilePath, output);
 				}
 			}
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
-			String errorMessage = String.format("The following exception occurred during FPK extraction of %s: %s", fileName, e.toString());
+			String errorMessage = String.format("The following exception occurred during FPK extraction of %s: %s",
+					fileName, e.toString());
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, errorMessage);
 			alert.setHeaderText("FPK Extraction Error");
@@ -173,11 +176,9 @@ public class FPKUnpacker
 	 * FPK file, since the header is first in the file. This method will always read
 	 * exactly 16 bytes.
 	 * 
-	 * @param is
-	 *            The input stream to read it from.
+	 * @param is The input stream to read it from.
 	 * @return The number of files in the FPK file.
-	 * @throws IOException
-	 *             If there is an exception relating to the FPK file input.
+	 * @throws IOException If there is an exception relating to the FPK file input.
 	 */
 	private static int readFPKHeader(InputStream is) throws IOException
 	{
@@ -195,11 +196,9 @@ public class FPKUnpacker
 	 * to call this equivalent to the number of files contained in the FPK file.
 	 * This method will always read exactly 32 bytes.
 	 * 
-	 * @param is
-	 *            The input stream to read it from.
+	 * @param is The input stream to read it from.
 	 * @return The number of files in the FPK file.
-	 * @throws IOException
-	 *             If there is an exception relating to the FPK file input.
+	 * @throws IOException If there is an exception relating to the FPK file input.
 	 */
 	private static FPKFileHeader readFPKFileHeader(InputStream is) throws IOException
 	{

@@ -39,7 +39,8 @@ public class GNT4FPKFiles
 				String[] files = keyValuePair[1].split(",");
 				fpkFiles.put(keyValuePair[0], files);
 			}
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with reading the GNT4 FPK description.");
@@ -54,8 +55,7 @@ public class GNT4FPKFiles
 	 * Returns the name of the FPK parent file that has packed the file parameter.
 	 * Returns empty string if no FPK parent file is found.
 	 * 
-	 * @param fileName
-	 *            The name of the file to find the parent FPK for.
+	 * @param fileName The name of the file to find the parent FPK for.
 	 * @return The parent FPK file.
 	 */
 	public String getParentFPK(String fileName)
@@ -76,8 +76,7 @@ public class GNT4FPKFiles
 	 * Returns the name of the child files of a given FPK file. Returns an empty
 	 * array if no children are found.
 	 * 
-	 * @param fpkName
-	 *            The name of the FPK file.
+	 * @param fpkName The name of the FPK file.
 	 * @return The children of the FPK file.
 	 */
 	public String[] getFPKChildren(String fpkName)

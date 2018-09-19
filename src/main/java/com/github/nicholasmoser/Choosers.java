@@ -16,8 +16,8 @@ public class Choosers
 	 * the root folder of the exported ISO files and be named root. This method will
 	 * return null if no directory is chosen.
 	 * 
-	 * @param initialDirectory
-	 *            The location to set the directory chooser to start at.
+	 * @param initialDirectory The location to set the directory chooser to start
+	 * at.
 	 * @return The input directory or null if none is chosen.
 	 */
 	public static File getInputRootDirectory(File initialDirectory)
@@ -34,7 +34,8 @@ public class Choosers
 			if (inputDirectory == null || !inputDirectory.isDirectory())
 			{
 				return null;
-			} else if (!inputDirectory.getAbsolutePath().endsWith("root"))
+			}
+			else if (!inputDirectory.getAbsolutePath().endsWith("root"))
 			{
 				Alert alert = new Alert(AlertType.INFORMATION,
 						"Please select the \"root\" folder of the GameCube files. It must be named root.");
@@ -42,7 +43,8 @@ public class Choosers
 				alert.setTitle("Please Select Root");
 				alert.showAndWait();
 				initialDirectory = inputDirectory;
-			} else
+			}
+			else
 			{
 				rootSelected = true;
 			}
@@ -54,8 +56,8 @@ public class Choosers
 	 * Asks the user to select an input ISO file. This method will return null if no
 	 * file is chosen.
 	 * 
-	 * @param initialDirectory
-	 *            The location to set the directory chooser to start at.
+	 * @param initialDirectory The location to set the directory chooser to start
+	 * at.
 	 * @return The input ISO or null if none is chosen.
 	 */
 	public static File getInputISO(File initialDirectory)
@@ -72,8 +74,8 @@ public class Choosers
 	 * Asks the user to select an output directory. This method will return null if
 	 * no directory is chosen.
 	 * 
-	 * @param initialDirectory
-	 *            The location to set the directory chooser to start at.
+	 * @param initialDirectory The location to set the directory chooser to start
+	 * at.
 	 * @return The output directory or null if none is chosen.
 	 */
 	public static File getOutputDirectory(File initialDirectory)
@@ -89,8 +91,8 @@ public class Choosers
 	 * the root folder of the exported ISO files and be named root. This method will
 	 * return null if no directory is chosen.
 	 * 
-	 * @param initialDirectory
-	 *            The location to set the directory chooser to start at.
+	 * @param initialDirectory The location to set the directory chooser to start
+	 * at.
 	 * @return The output directory or null if none is chosen.
 	 */
 	public static File getOutputRootDirectory(File initialDirectory)
@@ -107,7 +109,8 @@ public class Choosers
 			if (outputDirectory == null || !outputDirectory.isDirectory())
 			{
 				return null;
-			} else if (!outputDirectory.getAbsolutePath().endsWith("root"))
+			}
+			else if (!outputDirectory.getAbsolutePath().endsWith("root"))
 			{
 				Alert alert = new Alert(AlertType.INFORMATION,
 						"Please select the \"root\" folder of the GameCube files. It must be named root.");
@@ -115,7 +118,8 @@ public class Choosers
 				alert.setTitle("Please Select Root");
 				alert.showAndWait();
 				initialDirectory = outputDirectory;
-			} else
+			}
+			else
 			{
 				rootSelected = true;
 			}
@@ -128,8 +132,8 @@ public class Choosers
 	 * have a folder named root in the same directory. This method will return null
 	 * if no directory is chosen.
 	 * 
-	 * @param initialDirectory
-	 *            The location to set the directory chooser to start at.
+	 * @param initialDirectory The location to set the directory chooser to start
+	 * at.
 	 * @return The output directory or null if none is chosen.
 	 */
 	public static File getOutputNonRootDirectory(File initialDirectory)
@@ -146,7 +150,8 @@ public class Choosers
 			if (outputDirectory == null || !outputDirectory.isDirectory())
 			{
 				return null;
-			} else if (outputDirectory.toPath().resolve("root").toFile().isDirectory())
+			}
+			else if (outputDirectory.toPath().resolve("root").toFile().isDirectory())
 			{
 				Alert alert = new Alert(AlertType.INFORMATION,
 						"There cannot be a \"root\" folder in the directory you select.");
@@ -154,7 +159,8 @@ public class Choosers
 				alert.setTitle("Select a Different Directory");
 				alert.showAndWait();
 				initialDirectory = outputDirectory;
-			} else
+			}
+			else
 			{
 				rootNotSelected = false;
 			}
@@ -166,8 +172,8 @@ public class Choosers
 	 * Asks the user to select an output ISO file. This method will return null if
 	 * no file is chosen.
 	 * 
-	 * @param initialDirectory
-	 *            The location to set the directory chooser to start at.
+	 * @param initialDirectory The location to set the directory chooser to start
+	 * at.
 	 * @return The output ISO or null if none is chosen.
 	 */
 	public static File getOutputISO(File initialDirectory)

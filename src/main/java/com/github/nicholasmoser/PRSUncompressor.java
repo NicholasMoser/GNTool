@@ -27,10 +27,8 @@ public class PRSUncompressor
 	/**
 	 * PRSUncompressor constructor using an input byte array and output length.
 	 * 
-	 * @param input
-	 *            Eighting PRS compressed byte array.
-	 * @param outputLength
-	 *            Expected output length (uncompressed size).
+	 * @param input Eighting PRS compressed byte array.
+	 * @param outputLength Expected output length (uncompressed size).
 	 */
 	public PRSUncompressor(byte[] input, int outputLength)
 	{
@@ -64,14 +62,16 @@ public class PRSUncompressor
 				 */
 				if (outputPtr < output.length)
 					output[outputPtr++] = input[inputPtr++];
-			} else // Compressed value
+			}
+			else // Compressed value
 			{
 				flag = prs_8ing_get_bits(1);
 				if (flag == 0) // Short search (length between 2 and 5)
 				{
 					len = prs_8ing_get_bits(2) + 2;
 					pos = input[inputPtr++] | 0xffffff00;
-				} else // Long search
+				}
+				else // Long search
 				{
 					pos = (input[inputPtr++] << 8) | 0xffff0000;
 					pos |= input[inputPtr++] & 0xff;
@@ -80,7 +80,8 @@ public class PRSUncompressor
 					if (len == 0)
 					{
 						len = (input[inputPtr++] & 0xff) + 1;
-					} else
+					}
+					else
 					{
 						len += 2;
 					}
@@ -105,8 +106,7 @@ public class PRSUncompressor
 	/**
 	 * PRS get bit form lsb to msb, FPK get it form msb to lsb.
 	 * 
-	 * @param n
-	 *            The number of bits to get.
+	 * @param n The number of bits to get.
 	 * @return The bits requested.
 	 */
 	private int prs_8ing_get_bits(int n)

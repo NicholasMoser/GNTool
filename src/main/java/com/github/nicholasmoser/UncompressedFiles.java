@@ -33,7 +33,8 @@ public class UncompressedFiles
 			{
 				uncompressedFiles.add(line.trim());
 			}
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with reading the uncompressed files file.");

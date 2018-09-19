@@ -37,7 +37,8 @@ public class Filenames
 				String[] keyValuePair = line.split(",");
 				fileNames.put(keyValuePair[0], keyValuePair[1]);
 			}
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with reading the filenames CSV.");
@@ -51,8 +52,7 @@ public class Filenames
 	/**
 	 * Retrieves the file name for an FPK-packed file using the full path from root.
 	 * 
-	 * @param fullPath
-	 *            The full path from root.
+	 * @param fullPath The full path from root.
 	 * @return The associated file name.
 	 */
 	public String getFilename(String fullPath)

@@ -9,8 +9,7 @@ public class ByteUtils
 	/**
 	 * Converts a Java integer to a 4 byte big-endian byte array.
 	 * 
-	 * @param myInteger
-	 *            The integer to use.
+	 * @param myInteger The integer to use.
 	 * @return The 4 byte big-endian array.
 	 */
 	public static byte[] intToBytes(int myInteger)
@@ -21,8 +20,7 @@ public class ByteUtils
 	/**
 	 * Converts a Java String to a 4 byte big-endian byte array.
 	 * 
-	 * @param myString
-	 *            The String to use.
+	 * @param myString The String to use.
 	 * @return The 4 byte big-endian byte array.
 	 */
 	public static byte[] stringToBytes(String myString)

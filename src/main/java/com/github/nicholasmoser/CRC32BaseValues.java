@@ -39,7 +39,8 @@ public class CRC32BaseValues
 				String[] keyValuePair = line.split(",");
 				baseCRC32Values.put(keyValuePair[0], keyValuePair[1]);
 			}
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with reading the CRC32 values file.");
@@ -54,12 +55,10 @@ public class CRC32BaseValues
 	 * Compare a new set of CRC32 hash values to the base values. Returns the files
 	 * that have changed.
 	 * 
-	 * @param comparisonCRC32Values
-	 *            The new CRC32 hash value to compare.
+	 * @param comparisonCRC32Values The new CRC32 hash value to compare.
 	 * @return The files that have changed.
-	 * @throws IOException
-	 *             If a particular entry does not exist, implying an invalid file
-	 *             structure.
+	 * @throws IOException If a particular entry does not exist, implying an invalid
+	 * file structure.
 	 */
 	public List<String> getFilesChanges(Map<String, String> comparisonCRC32Values) throws IOException
 	{

@@ -41,8 +41,7 @@ public class FPKFileHeader
 	 * Sets an offset for the header. Will only apply if the offset is not already
 	 * set, which is represented by the integer -1.
 	 * 
-	 * @param offset
-	 *            The offset to set the header to.
+	 * @param offset The offset to set the header to.
 	 */
 	public void setOffset(int offset)
 	{
@@ -70,7 +69,7 @@ public class FPKFileHeader
 
 	/**
 	 * @return a byte array of the file header. This will always be 32 bytes
-	 *         exactly.
+	 * exactly.
 	 */
 	public byte[] getBytes()
 	{

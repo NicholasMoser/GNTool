@@ -35,7 +35,7 @@ public class FPKPacker
 	private static final Filenames filenames = new Filenames();
 
 	private static final GNT4FPKFiles fpkFiles = new GNT4FPKFiles();
-	
+
 	private static final UncompressedFiles uncompressedFiles = new UncompressedFiles();
 
 	/**
@@ -59,7 +59,7 @@ public class FPKPacker
 		{
 			Path startDol = inputDirectory.toPath().resolve("&&systemdata\\Start.dol");
 			DolPatcher patcher = new DolPatcher(startDol);
-			if(patcher.patchAudioOffset())
+			if (patcher.patchAudioOffset())
 			{
 				LOGGER.info("Successfully modded the Start.dol with the audio fix.");
 			}
@@ -68,9 +68,10 @@ public class FPKPacker
 				LOGGER.info("Start.dol already contains audio fix.");
 			}
 		}
-		catch(IOException e)
+		catch (IOException e)
 		{
-			String message = String.format("There was an error modding the Start.dol with the audio fix: %s", e.getMessage());
+			String message = String.format("There was an error modding the Start.dol with the audio fix: %s",
+					e.getMessage());
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, message);
 			alert.setHeaderText("Dol Error");
@@ -78,7 +79,7 @@ public class FPKPacker
 			alert.showAndWait();
 			return;
 		}
-		
+
 		LOGGER.info("Checking files that have changed...");
 		Map<String, String> fileCRC32Values = new HashMap<String, String>();
 		fileCRC32Values = getCRC32Values(inputDirectory, fileCRC32Values);
@@ -86,7 +87,8 @@ public class FPKPacker
 		try
 		{
 			changedFiles = crc32BaseValues.getFilesChanges(fileCRC32Values);
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			String message = String.format("Error encountered: %s", e.getMessage());
 			LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -108,7 +110,8 @@ public class FPKPacker
 			if (parent.isEmpty())
 			{
 				changedNonFPKs.add(fileName);
-			} else
+			}
+			else
 			{
 				changedFPKs.add(parent);
 			}
@@ -123,7 +126,7 @@ public class FPKPacker
 			LOGGER.info("No changes found.");
 			return;
 		}
-		
+
 		LOGGER.info(String.format("The follow files FPKs need to be packed: %s",
 				changedFPKs.isEmpty() ? "None" : changedFPKs));
 		for (String changedNonFPK : changedNonFPKs)
@@ -131,7 +134,8 @@ public class FPKPacker
 			try
 			{
 				copyFile(changedNonFPK, inputDirectory, outputDirectory);
-			} catch (IOException e)
+			}
+			catch (IOException e)
 			{
 				String message = String.format("Error encountered: %s.", e.getMessage());
 				LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -151,7 +155,8 @@ public class FPKPacker
 			try
 			{
 				repackFPK(changedFPK, inputDirectory, outputDirectory);
-			} catch (IOException e)
+			}
+			catch (IOException e)
 			{
 				String message = String.format("Error encountered: %s.", e.getMessage());
 				LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -175,14 +180,10 @@ public class FPKPacker
 	 * Simply copies and overwrites a single file from one directory to another.
 	 * This should be used for files not associated with an FPK in any way.
 	 * 
-	 * @param changedNonFPK
-	 *            The changed non-FPK asssociated file.
-	 * @param inputDirectory
-	 *            The input directory.
-	 * @param outputDirectory
-	 *            The output directory.
-	 * @throws IOException
-	 *             If there is an issue replacing the file.
+	 * @param changedNonFPK The changed non-FPK asssociated file.
+	 * @param inputDirectory The input directory.
+	 * @param outputDirectory The output directory.
+	 * @throws IOException If there is an issue replacing the file.
 	 */
 	private static void copyFile(String changedNonFPK, File inputDirectory, File outputDirectory) throws IOException
 	{
@@ -198,14 +199,11 @@ public class FPKPacker
 	 * will be overridden. The input directory must have the uncompressed child
 	 * files.
 	 * 
-	 * @param fpk
-	 *            The name of the FPK file.
-	 * @param inputDirectory
-	 *            The input directory with the uncompressed files.
-	 * @param outputDirectory
-	 *            The output directory to save the compressed files as an FPK.
-	 * @throws IOException
-	 *             If there is an issue reading/writing bytes to the file.
+	 * @param fpk The name of the FPK file.
+	 * @param inputDirectory The input directory with the uncompressed files.
+	 * @param outputDirectory The output directory to save the compressed files as
+	 * an FPK.
+	 * @throws IOException If there is an issue reading/writing bytes to the file.
 	 */
 	private static void repackFPK(String fpk, File inputDirectory, File outputDirectory) throws IOException
 	{
@@ -216,8 +214,8 @@ public class FPKPacker
 			String childName = filenames.getFilename(child);
 			byte[] input = Files.readAllBytes(inputDirectory.toPath().resolve(child));
 			byte[] output;
-			
-			if(uncompressedFiles.getFiles().contains(childName))
+
+			if (uncompressedFiles.getFiles().contains(childName))
 			{
 				output = input;
 			}
@@ -226,11 +224,10 @@ public class FPKPacker
 				PRSCompressor compressor = new PRSCompressor(input);
 				output = compressor.prs_8ing_compress();
 			}
-			
+
 			// Set the offset to -1 for now, we cannot figure it out until we have all of
 			// the files
-			FPKFileHeader header = new FPKFileHeader(childName, -1, output.length,
-					input.length);
+			FPKFileHeader header = new FPKFileHeader(childName, -1, output.length, input.length);
 			newFPKs.add(new FPKFile(header, output));
 			LOGGER.info(String.format("%s has been compressed to %d bytes.", child, output.length));
 		}
@@ -246,7 +243,8 @@ public class FPKPacker
 			if (modDifference == 0)
 			{
 				outputSize += compressedSize;
-			} else
+			}
+			else
 			{
 				// Make sure the offset is divisible by 16
 				outputSize += compressedSize + (16 - modDifference);
@@ -274,10 +272,8 @@ public class FPKPacker
 	 * is always 16. The last is the output size of the whole FPK file. The byte
 	 * array returned will always be 16 bytes exactly.
 	 * 
-	 * @param numberOfFiles
-	 *            The number of files being packed.
-	 * @param outputSize
-	 *            The total size of the FPK file, including this header.
+	 * @param numberOfFiles The number of files being packed.
+	 * @param outputSize The total size of the FPK file, including this header.
 	 * @return The FPK header.
 	 */
 	private static byte[] createFPKHeader(int numberOfFiles, int outputSize)
@@ -291,10 +287,8 @@ public class FPKPacker
 	 * works recursively. It will map the file name to the CRC32 value in the given
 	 * map parameter.
 	 * 
-	 * @param directory
-	 *            The directory to search for files.
-	 * @param fileCRC32Values
-	 *            The map between file names to CRC32 values.
+	 * @param directory The directory to search for files.
+	 * @param fileCRC32Values The map between file names to CRC32 values.
 	 * @return The map between file names to CRC32 values.
 	 */
 	private static Map<String, String> getCRC32Values(File directory, Map<String, String> fileCRC32Values)
@@ -305,7 +299,8 @@ public class FPKPacker
 			if (fileEntry.isDirectory())
 			{
 				getCRC32Values(fileEntry, fileCRC32Values);
-			} else
+			}
+			else
 			{
 				try
 				{
@@ -313,7 +308,8 @@ public class FPKPacker
 					String fileKey = fileParts[fileParts.length - 1];
 					HashCode hashValue = crc32.hashBytes(Files.readAllBytes(fileEntry.toPath()));
 					fileCRC32Values.put(fileKey, hashValue.toString());
-				} catch (IOException e)
+				}
+				catch (IOException e)
 				{
 					LOGGER.log(Level.SEVERE, e.toString(), e);
 				}

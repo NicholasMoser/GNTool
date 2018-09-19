@@ -64,7 +64,8 @@ public class ISOUtils
 			{
 				throw new IOException("Unable to create new ISO file.");
 			}
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			String message = String.format("Error encountered: %s.", e.getMessage());
 			LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -82,15 +83,12 @@ public class ISOUtils
 	/**
 	 * Main logic for ISO tools.
 	 * 
-	 * @param input
-	 *            For export mode this will be the path to an ISO file, for import
-	 *            mode it will be the path to a directory.
-	 * @param output
-	 *            For export mode this will be the path to a directory, for import
-	 *            mode it will be the path to an ISO file.
-	 * @param exportMode
-	 *            The output, be it ISO file or directory. If you are in ISO export
-	 *            mode (compared to import mode).
+	 * @param input For export mode this will be the path to an ISO file, for import
+	 * mode it will be the path to a directory.
+	 * @param output For export mode this will be the path to a directory, for
+	 * import mode it will be the path to an ISO file.
+	 * @param exportMode The output, be it ISO file or directory. If you are in ISO
+	 * export mode (compared to import mode).
 	 */
 	private static void runISOTools(String input, String output, boolean exportMode)
 	{
@@ -103,7 +101,8 @@ public class ISOUtils
 			{
 				process = new ProcessBuilder(gcrPath.toString(), input, "root", "e", output).start();
 				message = "You will find your exported files at: " + output;
-			} else
+			}
+			else
 			{
 				process = new ProcessBuilder(gcrPath.toString(), input, output).start();
 				message = "You will find your new ISO at: " + output;
@@ -114,7 +113,8 @@ public class ISOUtils
 			alert.setTitle("Process Complete");
 			alert.showAndWait();
 
-		} catch (IOException | InterruptedException e)
+		}
+		catch (IOException | InterruptedException e)
 		{
 			LOGGER.log(Level.SEVERE, e.toString(), e);
 			Alert alert = new Alert(AlertType.ERROR, "There was an issue with running gcr.exe");
@@ -126,7 +126,7 @@ public class ISOUtils
 
 	/**
 	 * @return If the running system is Windows and has access to GameCube Rebuilder
-	 *         (gcr.exe).
+	 * (gcr.exe).
 	 */
 	private static boolean canRunISOTools()
 	{

@@ -16,8 +16,7 @@ public class PRSCompressionTest
 	 * Tests compressing and uncompressing ten zeroes. The ten bytes of zeroes and
 	 * output of compressing and uncompressing should be the same.
 	 * 
-	 * @throws Exception
-	 *             If any exception occurs.
+	 * @throws Exception If any exception occurs.
 	 */
 	@Test
 	public void testTenZeroes() throws Exception
@@ -46,8 +45,7 @@ public class PRSCompressionTest
 	 * of the original file and output of compressing and uncompressing should be
 	 * the same.
 	 * 
-	 * @throws Exception
-	 *             If any exception occurs.
+	 * @throws Exception If any exception occurs.
 	 */
 	@Test
 	public void testRandomHex() throws Exception

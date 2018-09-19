@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class DolPatcher
 {
 	private Path dol;
-	
+
 	// Whether or not to actually modify the files (disable for unit tests).
 	private boolean dryRun;
 
@@ -87,7 +87,7 @@ public class DolPatcher
 		}
 		if (codeFound)
 		{
-			if(!dryRun)
+			if (!dryRun)
 			{
 				writePatchedBytes(totalBytesRead - 8);
 			}
@@ -98,7 +98,7 @@ public class DolPatcher
 			throw new IOException("Unable to find instruction at 0x8016fc00 in Start.dol.");
 		}
 	}
-	
+
 	private void writePatchedBytes(int index) throws FileNotFoundException, IOException
 	{
 		RandomAccessFile file = new RandomAccessFile(dol.toFile(), "rw");

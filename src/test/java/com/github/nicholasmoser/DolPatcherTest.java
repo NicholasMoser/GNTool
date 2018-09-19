@@ -16,6 +16,7 @@ public class DolPatcherTest
 {
 	/**
 	 * Test an already patched dol returns false.
+	 * 
 	 * @throws Exception If any exception occurs.
 	 */
 	@Test
@@ -27,6 +28,7 @@ public class DolPatcherTest
 
 	/**
 	 * Test an unpatched dol returns true.
+	 * 
 	 * @throws Exception If any exception occurs.
 	 */
 	@Test
@@ -37,9 +39,10 @@ public class DolPatcherTest
 	}
 
 	/**
-	 * Test a corrupted dol throws an IOException.
-	 * Corrupted in this case means that it finds the expected instructions at 0x8016fc00
-	 * but sees neither a patched nor an unpatched instruction at 0x8016fc08.
+	 * Test a corrupted dol throws an IOException. Corrupted in this case means that
+	 * it finds the expected instructions at 0x8016fc00 but sees neither a patched
+	 * nor an unpatched instruction at 0x8016fc08.
+	 * 
 	 * @throws Exception If any exception occurs.
 	 */
 	@Test
@@ -54,6 +57,7 @@ public class DolPatcherTest
 
 	/**
 	 * Tests that a non-dol file passed in throws an IOException.
+	 * 
 	 * @throws Exception If any exception occurs.
 	 */
 	@Test

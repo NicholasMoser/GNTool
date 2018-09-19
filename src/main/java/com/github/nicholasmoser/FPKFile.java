@@ -18,7 +18,8 @@ public class FPKFile
 		if (modDifference != 0)
 		{
 			this.data = Bytes.concat(data, new byte[16 - modDifference]);
-		} else
+		}
+		else
 		{
 			this.data = data;
 		}

@@ -37,8 +37,7 @@ public class FPKTool extends Application
 	/**
 	 * Creates the GUI for the application.
 	 * 
-	 * @param primaryStage
-	 *            The stage to use.
+	 * @param primaryStage The stage to use.
 	 */
 	private void createGUI(Stage primaryStage)
 	{
@@ -54,8 +53,7 @@ public class FPKTool extends Application
 	/**
 	 * Sets the application icons on the stage.
 	 * 
-	 * @param primaryStage
-	 *            The primary stage to set the icons for.
+	 * @param primaryStage The primary stage to set the icons for.
 	 */
 	private void setIcons(Stage primaryStage)
 	{
@@ -148,14 +146,16 @@ public class FPKTool extends Application
 	}
 
 	/**
-	 * Sets the custom logging properties from the logging.properties included resource file.
+	 * Sets the custom logging properties from the logging.properties included
+	 * resource file.
 	 */
 	private void setLoggingProperties()
 	{
 		try (InputStream properties = getClass().getResourceAsStream("logging.properties"))
 		{
 			LogManager.getLogManager().readConfiguration(properties);
-		} catch (SecurityException | IOException e)
+		}
+		catch (SecurityException | IOException e)
 		{
 			String errorMessage = String.format("Unable to load logging.properties, fatal error: %s", e.toString());
 			LOGGER.log(Level.SEVERE, e.toString(), e);

@@ -50,14 +50,16 @@ public class PRSCompressor
 				// System.out.println(String.format("wtf: %d %d", sptr, length));
 				sptr += length;
 
-			} else
+			}
+			else
 			{
 				if (check_window(sptr))
 				{
 					write_comp(output, length, pos);
 					// System.out.println(String.format("lol: %d %d", sptr, length));
 					sptr += length;
-				} else
+				}
+				else
 				{
 					write_nocomp(output);
 					sptr++;
@@ -68,10 +70,11 @@ public class PRSCompressor
 
 		return Arrays.copyOfRange(output, 0, (data_ptr) + 3); // Extra 3 zeroes
 	}
-	
+
 	/**
-	 * Terminates the file by adding a 0 and 1 bit to the flag.
-	 * This is equivalent to a long search, but yields no result.
+	 * Terminates the file by adding a 0 and 1 bit to the flag. This is equivalent
+	 * to a long search, but yields no result.
+	 * 
 	 * @param output The output bytes.
 	 */
 	private void terminateFile(byte[] output)
@@ -129,7 +132,7 @@ public class PRSCompressor
 		{
 			tlengthMax = bytesLeft + 1;
 		}
-		
+
 		int p = newsptr - tlength;
 		int curr = newsptr;
 		int savep = p;
@@ -234,7 +237,8 @@ public class PRSCompressor
 		if (posy > 255 || length > 5)
 		{
 			write_comp_b(output, len, posy);
-		} else
+		}
+		else
 		{
 			write_comp_a(output, len, posy);
 		}
