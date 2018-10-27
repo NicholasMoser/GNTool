@@ -96,7 +96,7 @@ public class GNTool extends Application
         Button unpackFPKButton = new Button();
         unpackFPKButton.setText("Unpack FPKs in Directory");
         unpackFPKButton.setFont(buttonTextFont);
-        isoExtractButton.setTooltip(new Tooltip("asd"));
+        isoExtractButton.setTooltip(new Tooltip("Decompress and extract files from FPK files."));
         unpackFPKButton.setOnAction(new EventHandler<ActionEvent>()
         {
 
@@ -111,7 +111,7 @@ public class GNTool extends Application
         Button repackFPKButton = new Button();
         repackFPKButton.setText("Repack FPKs in Directory");
         repackFPKButton.setFont(buttonTextFont);
-        isoExtractButton.setTooltip(new Tooltip("asd"));
+        isoExtractButton.setTooltip(new Tooltip("Re-compress and insert files back into respective FPK files."));
         repackFPKButton.setOnAction(new EventHandler<ActionEvent>()
         {
 

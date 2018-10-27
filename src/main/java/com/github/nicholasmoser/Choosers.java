@@ -2,6 +2,8 @@ package com.github.nicholasmoser;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.DirectoryChooser;
@@ -10,7 +12,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 public class Choosers
 {
-
     /**
      * Asks the user to select an input directory. The directory selected must be the root folder of the exported ISO files and be named root. This method will return null if no directory is chosen.
      * 
@@ -18,6 +19,19 @@ public class Choosers
      * @return The input directory or null if none is chosen.
      */
     public static File getInputRootDirectory(File initialDirectory)
+    {
+        return getInputRootDirectory(initialDirectory, false);
+    }
+    
+    /**
+     * Asks the user to select an input directory. The directory selected must be the root folder of the exported ISO files and be named root. This method will return null if no directory is chosen.
+     * Includes the ability to require that the directory contains no fpk files; this is used for repacking fpks.
+     * 
+     * @param initialDirectory The location to set the directory chooser to start at.
+     * @param checkForFpk Whether or not to require there are no fpks in the directory.
+     * @return The input directory or null if none is chosen.
+     */
+    public static File getInputRootDirectory(File initialDirectory, boolean checkForFpk)
     {
         boolean rootSelected = false;
         File inputDirectory = null;
@@ -39,6 +53,14 @@ public class Choosers
                 alert.setTitle("Please Select Root");
                 alert.showAndWait();
                 initialDirectory = inputDirectory;
+            }
+            else if (checkForFpk && containsFpk(inputDirectory))
+            {
+                Alert alert = new Alert(AlertType.INFORMATION, "This directory is not an \"unpacked\" root, as it contains an fpk file. Please choose the \"unpacked\" root.");
+                alert.setHeaderText("Wrong Root Selected");
+                alert.setTitle("Wrong Root Selected");
+                alert.showAndWait();
+                initialDirectory = inputDirectory.getParentFile().getParentFile();
             }
             else
             {
@@ -86,6 +108,19 @@ public class Choosers
      */
     public static File getOutputRootDirectory(File initialDirectory)
     {
+        return getOutputRootDirectory(initialDirectory, false);
+    }
+
+    /**
+     * Asks the user to select an output directory. The directory selected must be the root folder of the exported ISO files and be named root. This method will return null if no directory is chosen.
+     * Includes the ability to require that the directory contains fpk files; this is used for repacking fpks.
+     * 
+     * @param initialDirectory The location to set the directory chooser to start at.
+     * @param checkForFpk Whether or not to require there is at least one fpk in the directory.
+     * @return The output directory or null if none is chosen.
+     */
+    public static File getOutputRootDirectory(File initialDirectory, boolean checkForFpk)
+    {
         boolean rootSelected = false;
         File outputDirectory = null;
         DirectoryChooser directoryChooser = null;
@@ -106,6 +141,14 @@ public class Choosers
                 alert.setTitle("Please Select Root");
                 alert.showAndWait();
                 initialDirectory = outputDirectory;
+            }
+            else if (checkForFpk && !containsFpk(outputDirectory))
+            {
+                Alert alert = new Alert(AlertType.INFORMATION, "This directory is not a \"packed\" root, as it does not contain fpk files. Please choose the \"packed\" root.");
+                alert.setHeaderText("Wrong Root Selected");
+                alert.setTitle("Wrong Root Selected");
+                alert.showAndWait();
+                initialDirectory = outputDirectory.getParentFile().getParentFile();
             }
             else
             {
@@ -166,5 +209,16 @@ public class Choosers
         ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("ISO Image (*.iso)", "*.iso");
         fileChooser.getExtensionFilters().add(fileExtensions);
         return fileChooser.showSaveDialog(null);
+    }
+    
+    /**
+     * Checks if a given directory contains any fpk files. Will always be recursive.
+     * @param directory The directory to check.
+     * @return If there are any fpk files.
+     */
+    private static boolean containsFpk(File directory)
+    {
+        String[] fpkFilter = { "fpk" };
+        return FileUtils.iterateFiles(directory, fpkFilter, true).hasNext();
     }
 }

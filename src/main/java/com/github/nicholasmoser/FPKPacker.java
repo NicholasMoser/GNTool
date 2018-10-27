@@ -33,14 +33,8 @@ public class FPKPacker
     private static final Logger LOGGER = Logger.getLogger(FPKPacker.class.getName());
 
     private static final Path currentPath = Paths.get(System.getProperty("user.dir"));
-
-    private static final CRC32BaseValues crc32BaseValues = new CRC32BaseValues();
-
-    private static final Filenames filenames = new Filenames();
-
-    private static final GNT4FPKFiles fpkFiles = new GNT4FPKFiles();
-
-    private static final UncompressedFiles uncompressedFiles = new UncompressedFiles();
+    
+    private static final GNT4Files gnt4Files = new GNT4Files();
 
     /**
      * Packs and compresses FPK files. First will prompt the user for an input and output directory. The dol will then be patched with the audio fix. The input directory will be checked for any
@@ -49,10 +43,10 @@ public class FPKPacker
      */
     public static void pack()
     {
-        File inputDirectory = Choosers.getInputRootDirectory(currentPath.toFile());
+        File inputDirectory = Choosers.getInputRootDirectory(currentPath.toFile(), true);
         if (inputDirectory == null || !inputDirectory.isDirectory())
             return;
-        File outputDirectory = Choosers.getOutputRootDirectory(inputDirectory.getParentFile().getParentFile());
+        File outputDirectory = Choosers.getOutputRootDirectory(inputDirectory.getParentFile().getParentFile(), true);
         if (outputDirectory == null || !outputDirectory.isDirectory())
             return;
 
@@ -82,30 +76,18 @@ public class FPKPacker
         }
 
         LOGGER.info("Checking files that have changed...");
+        
         Map<String, String> fileCRC32Values = new HashMap<String, String>();
         fileCRC32Values = getCRC32Values(inputDirectory, fileCRC32Values);
         List<String> changedFiles = null;
-        try
-        {
-            changedFiles = crc32BaseValues.getFilesChanges(fileCRC32Values);
-        }
-        catch (IOException e)
-        {
-            String message = String.format("Error encountered: %s", e.getMessage());
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            Alert alert = new Alert(AlertType.ERROR, message);
-            alert.setHeaderText("File Error");
-            alert.setTitle("File Error");
-            alert.showAndWait();
-            return;
-        }
+        changedFiles = gnt4Files.getFilesChanges(fileCRC32Values);
         LOGGER.info(String.format("The following files have changed: %s", changedFiles.isEmpty() ? "None" : changedFiles));
 
         Set<String> changedFPKs = new HashSet<String>();
         Set<String> changedNonFPKs = new HashSet<String>();
         for (String fileName : changedFiles)
         {
-            String parent = fpkFiles.getParentFPK(fileName);
+            String parent = gnt4Files.getParentFPK(fileName);
             // If there is no parent, it does not belong to an FPK
             if (parent.isEmpty())
             {
@@ -198,22 +180,22 @@ public class FPKPacker
      */
     private static void repackFPK(String fpk, File inputDirectory, File outputDirectory) throws IOException
     {
-        String[] fpkChildren = fpkFiles.getFPKChildren(fpk);
+        String[] fpkChildren = gnt4Files.getFPKChildren(fpk);
         List<FPKFile> newFPKs = new ArrayList<FPKFile>(fpkChildren.length);
         for (String child : fpkChildren)
         {
-            String childName = filenames.getFilename(child);
+            String childName = gnt4Files.getId(child);
             byte[] input = Files.readAllBytes(inputDirectory.toPath().resolve(child));
             byte[] output;
 
-            if (uncompressedFiles.getFiles().contains(childName))
-            {
-                output = input;
-            }
-            else
+            if (gnt4Files.isChildCompressed(childName))
             {
                 PRSCompressor compressor = new PRSCompressor(input);
                 output = compressor.compress();
+            }
+            else
+            {
+                output = input;
             }
 
             // Set the offset to -1 for now, we cannot figure it out until we have all of
