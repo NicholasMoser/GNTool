@@ -8,12 +8,14 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 /**
- * Patches the Start.dol file to fix the audio issue. The audio issue is that if the offset for an audio file in the game.toc does not end with 0x0000 or 0x8000 the game will crash. This is because at
- * line 0x8016fc08 it does <code>rlwinm. r0, r0, 0, 17, 31 (00007fff)</code> and then on line 0x8016fc0c does <code>beq- 0x8016FC2C</code>. The end result of these two operations is that it will not
- * branch if the offset is something like 0x0c3e7800 and will instead enter OSPanic (crash). The reason that the offset can be changed in the game.toc it because GCRebuilder.exe will use new offsets
- * for the audio files if the files placed before them in the ISO are too large. Since GCRebuilder.exe cannot be modified, the only two solutions right now are to try and use padding or modify the
- * game code. Modifying the game code seems not to have any side effects, so this is the current accepted solution. More precisely, the instruction at 0x8016fc08 is a conditional branch. The fix is to
- * change it to an unconditional branch so that it always branches. Therefore it will never encounter the OSPanic from this method under any circumstances.
+ * Patches the Start.dol file to fix an audio offset issue. The audio issue is that if the offset for an audio file in the game.toc does not end with 0x0000 or 0x8000 the game will crash. 
+ * This is because the instruction at 0x8016fc08 is <code>rlwinm. r0, r0, 0, 17, 31 (00007fff)</code> and the instruction at 0x8016fc0c is <code>beq- 0x8016FC2C</code>.
+ * The end result of these two operations is that it will not branch if the offset is something like 0x0c3e7800 and will instead enter OSPanic (crash). The reason that the offset can be
+ * changed in the game.toc is because GCRebuilder.exe will use new offsets for the audio files if the files placed before them in the ISO have a larger size than they previously did.
+ * Since GCRebuilder.exe cannot be modified, the only two solutions right now are to try and use padding or modify the game code. Modifying the game code does not seem to have any side effects,
+ * so this is the currently accepted solution. More precisely, the instruction at 0x8016fc08 is a conditional branch. The fix is to change it to an unconditional branch so that it always branches.
+ * Therefore it will never encounter the OSPanic from this method under any circumstances.
+ * May be related to https://dolphin-emu.org/blog/2019/02/01/dolphin-progress-report-dec-2018-and-jan-2019/#50-9232-report-dtk-audio-in-increments-of-0x8000-by-booto
  */
 public class DolPatcher
 {
