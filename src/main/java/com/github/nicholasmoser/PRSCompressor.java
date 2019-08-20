@@ -54,23 +54,20 @@ public class PRSCompressor
 
         while (inputIndex < input.length)
         {
-            if (checkRunLengthEncoding())
+            if (check_window(inputIndex))
+            {
+                writeCompressedBytes(output, length, pos);
+                inputIndex += length;
+            }
+            else if (checkRunLengthEncoding())
             {
                 writeCompressedBytes(output, length, pos);
                 inputIndex += length;
             }
             else
             {
-                if (check_window(inputIndex))
-                {
-                    writeCompressedBytes(output, length, pos);
-                    inputIndex += length;
-                }
-                else
-                {
-                    writeUncompressedByte(output);
-                    inputIndex++;
-                }
+                writeUncompressedByte(output);
+                inputIndex++;
             }
         }
         terminateFile(output);
