@@ -21,7 +21,7 @@ public class GNT4Files
     private Map<String, String> fileToCrc32 = Maps.newHashMapWithExpectedSize(2585);
 
     // GNT4 has 439 FPK files.
-    private Map<String, Set<String>> fpkToChildren = Maps.newHashMapWithExpectedSize(439);
+    private Map<String, List<String>> fpkToChildren = Maps.newHashMapWithExpectedSize(439);
 
     // GNT4 has 2466 child FPK files.
     // First element of the pair is the parent path, the second is the child id
@@ -44,7 +44,7 @@ public class GNT4Files
             {
                 String fpkPath = file.getString("path");
                 JSONArray children = file.getJSONArray("children");
-                Set<String> compressedFiles = Sets.newHashSetWithExpectedSize(children.length());
+                List<String> compressedFiles = new ArrayList<String>(children.length());
                 for (Object childObject : children)
                 {
                     JSONObject child = (JSONObject) childObject;
@@ -88,7 +88,7 @@ public class GNT4Files
     public String[] getFPKChildren()
     {
         List<String> allChildren = new ArrayList<String>(119);
-        for (Set<String> children : fpkToChildren.values())
+        for (List<String> children : fpkToChildren.values())
         {
             allChildren.addAll(children);
         }
@@ -103,7 +103,7 @@ public class GNT4Files
      */
     public String[] getFPKChildren(String file)
     {
-        Set<String> children = fpkToChildren.get(file);
+        List<String> children = fpkToChildren.get(file);
         return children == null ? new String[0] : children.toArray(new String[children.size()]);
     }
 
@@ -151,10 +151,6 @@ public class GNT4Files
      */
     public boolean isChildCompressed(String file)
     {
-        if (file.endsWith(".fpk"))
-        {
-            
-        }
         return !uncompressedFpkChildren.contains(file);
     }
 }
