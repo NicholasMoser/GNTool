@@ -60,7 +60,7 @@ public class PRSCompressor
     {
         while (inputIndex < input.length)
         {
-            if (check_window())
+            if (checkWindow())
             {
                 writeCompressedBytes();
                 inputIndex += currentCompressionLength;
@@ -99,18 +99,17 @@ public class PRSCompressor
      */
     private boolean checkRunLengthEncoding()
     {
-        int p = inputIndex;
-        currentCompressionLength = 0;
-        pos = 1;
-
-        if (inputIndex < pos)
+        if (inputIndex == 0)
         {
             return false;
         }
-        while (p < input.length && input[inputIndex - pos] == input[p] && currentCompressionLength < 256)
+        int scanIndex = inputIndex;
+        currentCompressionLength = 0;
+        pos = 1;
+        while (scanIndex < input.length && input[inputIndex - 1] == input[scanIndex] && currentCompressionLength < 256)
         {
             currentCompressionLength++;
-            p++;
+            scanIndex++;
         }
 
         return currentCompressionLength > 1;
@@ -121,52 +120,47 @@ public class PRSCompressor
      * 
      * @return If previous repeated occurrences were found.
      */
-    private boolean check_window()
+    private boolean checkWindow()
     {
-        int tlength = 1;
-        int tpos = -1;
-
-        if (inputIndex < tlength)
-        {
-            return false;
-        }
-
-        int tlengthMax = 256;
+    	if (inputIndex == 0)
+    	{
+    		return false;
+    	}
+    	
+    	// 256 bytes is the maximum match length unless there are fewer bytes left than that
+        int maxMatchLength = 256;
         int bytesLeft = input.length - inputIndex;
-        if (bytesLeft < tlengthMax)
+        if (bytesLeft < maxMatchLength)
         {
-            tlengthMax = bytesLeft + 1;
+            maxMatchLength = bytesLeft + 1;
         }
+        int matchLength = 1;
+        int scanIndex = inputIndex - 1;
+        int savedIndex = scanIndex;
+        int scanArea = 8192;
 
-        int p = inputIndex - tlength;
-        int curr = inputIndex;
-        int savep = p;
-
-        // scan area = 8192 bytes
-        // no scanning beyond start of buffer
-        // limit to 256 bytes match length
-        while (((curr - p) < 8192) && (p >= 0) && (tlength < tlengthMax))
+        // Don't exceed scan area of 8192 bytes
+        // Do not scan beyond start of input bytes
+        // Limit to 256 bytes match length
+        while (((inputIndex - scanIndex) < scanArea) && (scanIndex >= 0) && (matchLength <= maxMatchLength))
         {
-            while (memcmp(curr, p, tlength) && (tlength < tlengthMax))
+            while (memcmp(inputIndex, scanIndex, matchLength) && (matchLength <= maxMatchLength))
             {
-                savep = p;
-                tlength++;
+                savedIndex = scanIndex;
+                matchLength++;
             }
-            p--;
+            scanIndex--;
         }
-
-        tlength--;
-        tpos = curr - savep;
-
-        currentCompressionLength = tlength;
-        pos = tpos;
-
-        if ((tlength == 2) && (tpos > 255))
+        
+        matchLength--;
+        currentCompressionLength = matchLength;
+        pos = inputIndex - savedIndex;
+        if ((matchLength == 2) && (pos > 255))
         {
             return false;
         }
 
-        return tlength >= 2;
+        return matchLength >= 2;
     }
 
     /**
@@ -204,54 +198,46 @@ public class PRSCompressor
     /**
      * Compresses between 2 and 5 bytes reachable through a short search. This includes the bits 0 and 0 in the flag byte,
      * which indicates that this byte is compressed and is short.
-     * 
-     * @param len
-     * @param posy
      */
-    private void writeBytesShortCompression(int len, int posy)
+    private void writeBytesShortCompression()
     {
-        int ctr = 2;
+        int length_bits = currentCompressionLength;
         writeBit(0);
         writeBit(0);
+        length_bits -= 2;
+        writeBit((length_bits >> 1) & 0x01);
+        length_bits = (length_bits << 1) & 0x02;
+        writeBit((length_bits >> 1) & 0x01);
+        length_bits = (length_bits << 1) & 0x02;
 
-        len -= 2;
-        while (ctr > 0)
-        {
-            writeBit((len >> 1) & 0x01);
-            len = (len << 1) & 0x02;
-            ctr--;
-        }
-
-        output[outputIndex++] = (byte) ((~posy + 1) & 0xFF);
+        output[outputIndex++] = (byte) (~pos + 1);
     }
 
     /**
      * Compressed a long length of bytes. This includes the bits 0 and 1 in the flag byte, which indicates that this byte is compressed
      * and is long.
-     * 
-     * @param len
-     * @param posy
      */
-    private void writeBytesLongCompression(int len, int posy)
+    private void writeBytesLongCompression()
     {
+    	int this_pos = pos;
         writeBit(0);
         writeBit(1);
 
-        posy = (~posy + 1) << 3;
+        this_pos = (~this_pos + 1) << 3;
 
-        if (len <= 9)
+        if (currentCompressionLength <= 9)
         {
-            posy |= ((len - 2) & 0x07);
+        	this_pos |= ((currentCompressionLength - 2) & 0x07);
         }
         // else lower 3 bits are empty...
 
-        output[outputIndex++] = (byte) ((posy >> 8) & 0xFF);
-        output[outputIndex++] = (byte) (posy & 0xFF);
+        output[outputIndex++] = (byte) (this_pos >> 8);
+        output[outputIndex++] = (byte) this_pos;
 
         // ... and next byte encodes full length
-        if (len > 9)
+        if (currentCompressionLength > 9)
         {
-            output[outputIndex++] = (byte) ((len - 1) & 0xFF);
+            output[outputIndex++] = (byte) (currentCompressionLength - 1);
         }
     }
 
@@ -262,11 +248,11 @@ public class PRSCompressor
     {
         if (pos > 255 || currentCompressionLength > 5)
         {
-            writeBytesLongCompression(currentCompressionLength, pos);
+            writeBytesLongCompression();
         }
         else
         {
-            writeBytesShortCompression(currentCompressionLength, pos);
+            writeBytesShortCompression();
         }
     }
 
@@ -277,6 +263,34 @@ public class PRSCompressor
     private void writeUncompressedByte()
     {
         writeBit(1);
-        output[outputIndex++] = (byte) (input[inputIndex] & 0xFF);
+        output[outputIndex++] = input[inputIndex];
     }
+
+	@Override
+	public String toString() {
+		return "\n\nPRSCompressor\nflagIndex=" +
+				String.format("0x%02X", flagIndex) +
+				"\ninputIndex=" +
+				String.format("0x%02X", inputIndex) +
+				"\noutputIndex=" +
+				String.format("0x%02X", outputIndex) +
+				"\nflagBitIndex=" +
+				flagBitIndex +
+				"\ncurrentCompressionLength=" +
+				currentCompressionLength +
+				"\npos=" +
+				pos +
+				"\nCurrent Flag Bits=" + 
+				toBinary(output[flagIndex]) +
+				"\nCurrent Input Byte=" +
+				String.format("%02X", input[inputIndex]);
+	}
+	
+	String toBinary(byte this_byte)
+	{
+	    StringBuilder sb = new StringBuilder(Byte.SIZE);
+	    for( int i = 0; i < Byte.SIZE; i++ )
+	        sb.append((this_byte << i % Byte.SIZE & 0x80) == 0 ? '0' : '1');
+	    return sb.toString();
+	}
 }
