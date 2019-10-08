@@ -1,5 +1,9 @@
 package com.github.nicholasmoser;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
@@ -62,5 +66,47 @@ public class PRSCompressionTest
         System.out.println(String.format("Uncompressed Size: %d", uncompressedSize));
 
         Verify.verify(Arrays.equals(originalBytes, outputBytes), "Data has been lost during compression/uncompression.");
+    }
+
+    /**
+     * Tests the PRS compression of a single file that is notorious for having issues.
+     * 
+     * @throws Exception If any exception occurs.
+     */
+    @Test
+    public void testSingleFileCompression() throws Exception
+    {
+        byte[] originalBytes = Files.readAllBytes(Paths.get("src/test/resources/0000_txg.dat"));
+        int originalSize = originalBytes.length;
+        System.out.println(String.format("Original Compressed Size: %d", originalSize));
+
+        byte[] uncompressedBytes = Files.readAllBytes(Paths.get("src/test/resources/0000.txg"));
+        PRSCompressor compressor = new PRSCompressor(uncompressedBytes);
+        byte[] compressedBytes = compressor.compress();
+        int compressedSize = compressedBytes.length;
+        System.out.println(String.format("Compressed Size: %d", compressedSize));
+        
+        PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, uncompressedBytes.length);
+        byte[] new_uncompressed = uncompressor.uncompress();
+        if (!Arrays.equals(uncompressedBytes, new_uncompressed))
+        {
+        	for (int i = 0; i < uncompressedBytes.length; i++)
+        	{
+        		if (uncompressedBytes[i] != new_uncompressed[i])
+        		{
+        			System.out.println(String.format("Index at %02x", i));
+        			break;
+        		}
+        	}
+        	Files.write(Paths.get("src/test/resources/0000_new.txg"), new_uncompressed);
+        	Files.write(Paths.get("src/test/resources/0000_txg_new.dat"), compressedBytes);
+        	fail("The decompression has changed the output.");
+        }
+
+        if (!Arrays.equals(originalBytes, compressedBytes))
+        {
+        	Files.write(Paths.get("src/test/resources/0000_txg_new.dat"), compressedBytes);
+        	fail("Compression does not match original compression.");
+        }
     }
 }
