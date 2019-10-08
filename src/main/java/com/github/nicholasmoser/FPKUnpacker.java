@@ -173,7 +173,7 @@ public class FPKUnpacker
      * @return The number of files in the FPK file.
      * @throws IOException If there is an exception relating to the FPK file input.
      */
-    private static int readFPKHeader(InputStream is) throws IOException
+    protected static int readFPKHeader(InputStream is) throws IOException
     {
         byte[] fileCountWord = new byte[4];
         is.skip(4);
@@ -190,7 +190,7 @@ public class FPKUnpacker
      * @return The number of files in the FPK file.
      * @throws IOException If there is an exception relating to the FPK file input.
      */
-    private static FPKFileHeader readFPKFileHeader(InputStream is) throws IOException
+    protected static FPKFileHeader readFPKFileHeader(InputStream is) throws IOException
     {
         byte[] fileNameWord = new byte[16];
         byte[] offsetWord = new byte[4];

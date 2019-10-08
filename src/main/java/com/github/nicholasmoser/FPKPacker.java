@@ -176,9 +176,10 @@ public class FPKPacker
      * @param fpk The name of the FPK file.
      * @param inputDirectory The input directory with the uncompressed files.
      * @param outputDirectory The output directory to save the compressed files as an FPK.
+     * @return The path to the repacked FPK file.
      * @throws IOException If there is an issue reading/writing bytes to the file.
      */
-    private static void repackFPK(String fpk, File inputDirectory, File outputDirectory) throws IOException
+    public static Path repackFPK(String fpk, File inputDirectory, File outputDirectory) throws IOException
     {
         String[] fpkChildren = gnt4Files.getFPKChildren(fpk);
         List<FPKFile> newFPKs = new ArrayList<FPKFile>(fpkChildren.length);
@@ -202,7 +203,7 @@ public class FPKPacker
             // the files
             FPKFileHeader header = new FPKFileHeader(childName, -1, output.length, input.length);
             newFPKs.add(new FPKFile(header, output));
-            LOGGER.info(String.format("%s has been compressed to %d bytes.", child, output.length));
+            LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.", child, input.length, output.length));
         }
 
         int outputSize = 16; // FPK header is 16 bytes so start with that.
@@ -236,7 +237,13 @@ public class FPKPacker
         {
             fpkBytes = Bytes.concat(fpkBytes, file.getData());
         }
-        Files.write(outputDirectory.toPath().resolve(fpk), fpkBytes);
+        Path outputFPK = outputDirectory.toPath().resolve(fpk);
+        if (!Files.isDirectory(outputFPK.getParent()))
+        {
+        	Files.createDirectories(outputFPK.getParent());
+        }
+        Files.write(outputFPK, fpkBytes);
+        return outputFPK;
     }
 
     /**
