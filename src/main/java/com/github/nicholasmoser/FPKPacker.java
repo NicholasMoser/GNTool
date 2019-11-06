@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.github.nicholasmoser.gnt4.GNT4Files;
 import com.google.common.base.Verify;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
@@ -45,10 +46,14 @@ public class FPKPacker
     {
         File inputDirectory = Choosers.getInputRootDirectory(currentPath.toFile(), true);
         if (inputDirectory == null || !inputDirectory.isDirectory())
+        {
             return;
+        }
         File outputDirectory = Choosers.getOutputRootDirectory(inputDirectory.getParentFile().getParentFile(), true);
         if (outputDirectory == null || !outputDirectory.isDirectory())
+        {
             return;
+        }
 
         LOGGER.info("Modding the Start.dol with the audio fix...");
         try

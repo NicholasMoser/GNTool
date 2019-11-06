@@ -1,26 +1,38 @@
 package com.github.nicholasmoser;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import com.github.nicholasmoser.gamecube.GameCubeISO;
+import com.github.nicholasmoser.gnt4.GNT4Extractor;
+import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
+
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.concurrent.WorkerStateEvent;
 
 /**
  * A tool that allows you to modify files in a Naruto GNT ISO file.
@@ -30,6 +42,10 @@ import javafx.stage.Stage;
 public class GNTool extends Application
 {
     private static final Logger LOGGER = Logger.getLogger(GNTool.class.getName());
+    
+    private static final File USER_HOME = new File(System.getProperty("user.home"));
+    
+	private final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
 
     @Override
     public void start(Stage primaryStage)
@@ -76,65 +92,55 @@ public class GNTool extends Application
      */
     private GridPane createButtonGrid()
     {
-        Font buttonTextFont = new Font(20);
+		ComboBox<Game> gameList = new ComboBox<Game>();
+		gameList.getItems().addAll(Game.values());
+		gameList.getSelectionModel().selectFirst();
+		gameList.setStyle(FONT_SIZE_CSS);
+		gameList.setTooltip(new Tooltip("The game you wish to mod against."));
 
-        Button isoExtractButton = new Button();
-        isoExtractButton.setText("Export Files from ISO");
-        isoExtractButton.setFont(buttonTextFont);
-        isoExtractButton.setTooltip(new Tooltip("From a GameCube ISO, extract all root files to a given directory."));
-        isoExtractButton.setOnAction(new EventHandler<ActionEvent>()
+        Button createWorkspaceButton = new Button();
+        createWorkspaceButton.setText("Create Workspace");
+        createWorkspaceButton.setStyle(FONT_SIZE_CSS);
+        createWorkspaceButton.setTooltip(new Tooltip("Create a new modding workspace for the selected game."));
+        createWorkspaceButton.setOnAction(new EventHandler<ActionEvent>()
         {
 
             @Override
             public void handle(ActionEvent event)
             {
-                LOGGER.info("Export Files from ISO button pressed.");
-                ISOUtils.exportFiles();
+                LOGGER.fine("Create workspace button pressed.");
+                Game game = gameList.getSelectionModel().getSelectedItem();
+                if (game != null)
+                {
+                    createWorkspace(game);
+                }
+                else
+                {
+                	Message.error("Issue with Game Selected", "No valid game was selected.");
+                }
             }
         });
 
-        Button unpackFPKButton = new Button();
-        unpackFPKButton.setText("Unpack FPKs in Directory");
-        unpackFPKButton.setFont(buttonTextFont);
-        isoExtractButton.setTooltip(new Tooltip("Decompress and extract files from FPK files."));
-        unpackFPKButton.setOnAction(new EventHandler<ActionEvent>()
+        Button loadWorkspaceButton = new Button();
+        loadWorkspaceButton.setText("Load Workspace");
+        loadWorkspaceButton.setStyle(FONT_SIZE_CSS);
+        loadWorkspaceButton.setTooltip(new Tooltip("Loads an existing modding workspace for the selected game."));
+        loadWorkspaceButton.setOnAction(new EventHandler<ActionEvent>()
         {
 
             @Override
             public void handle(ActionEvent event)
             {
-                LOGGER.info("Unpack FPKs in Directory button pressed.");
-                FPKUnpacker.unpack();
-            }
-        });
-
-        Button repackFPKButton = new Button();
-        repackFPKButton.setText("Repack FPKs in Directory");
-        repackFPKButton.setFont(buttonTextFont);
-        isoExtractButton.setTooltip(new Tooltip("Re-compress and insert files back into respective FPK files."));
-        repackFPKButton.setOnAction(new EventHandler<ActionEvent>()
-        {
-
-            @Override
-            public void handle(ActionEvent event)
-            {
-                LOGGER.info("Repack FPKs in Directory button pressed.");
-                FPKPacker.pack();
-            }
-        });
-
-        Button isoImportButton = new Button();
-        isoImportButton.setText("Import Files into ISO");
-        isoImportButton.setFont(buttonTextFont);
-        isoExtractButton.setTooltip(new Tooltip("Select root directory of game files and create an ISO from it."));
-        isoImportButton.setOnAction(new EventHandler<ActionEvent>()
-        {
-
-            @Override
-            public void handle(ActionEvent event)
-            {
-                LOGGER.info("Import Files into ISO button pressed.");
-                ISOUtils.importFiles();
+                LOGGER.fine("Load workspace button pressed.");
+                Game game = gameList.getSelectionModel().getSelectedItem();
+                if (game != null)
+                {
+                    //loadWorkspace(game);
+                }
+                else
+                {
+                	Message.error("Issue with Game Selected", "No valid game was selected.");
+                }
             }
         });
 
@@ -142,12 +148,116 @@ public class GNTool extends Application
         buttonPane.setAlignment(Pos.CENTER);
         buttonPane.setVgap(10);
         buttonPane.setPadding(new Insets(12, 12, 12, 12));
-        buttonPane.add(isoExtractButton, 0, 0);
-        buttonPane.add(unpackFPKButton, 0, 1);
-        buttonPane.add(repackFPKButton, 0, 2);
-        buttonPane.add(isoImportButton, 0, 3);
-
+        buttonPane.add(gameList, 0, 0);
+        buttonPane.add(createWorkspaceButton, 0, 1);
+        buttonPane.add(loadWorkspaceButton, 0, 2);
+        
         return buttonPane;
+    }
+    
+    /**
+     * Query the user for an ISO and a directory to extract it to. This will also decompress all files extracted.
+     * The ISO must match the provided Game else it will display a message to the user and return.
+     * 
+     * @param game The Game to create the workspace for.
+     */
+    private void createWorkspace(Game game)
+    {
+    	File iso = Choosers.getInputISO(USER_HOME);
+    	if (iso != null)
+    	{
+    		try
+    		{
+        		String gameId = GameCubeISO.getGameId(iso);
+        		if (game.getGameId().equals(gameId))
+        		{
+        			File workspacePath = Choosers.getWorkspaceDirectory(iso.getParentFile());
+        			if (workspacePath != null)
+        			{
+        				if (game == Game.GNT4)
+        				{
+        					extract(new GNT4Extractor(iso, workspacePath));
+        				}
+        			}
+        		}
+        		else
+        		{
+        			String message = String.format("%s Game ID does not match selected Game ID %s.", iso, Game.GNT4.getGameId());
+        			Message.error("Wrong Game ISO", message);
+        		}
+    		}
+    		catch (IOException e)
+    		{
+    			Message.error("Issue with Opening ISO", "An error was encountered opening " + iso);
+    		}
+    	}
+    }
+    
+    /**
+     * Extracts the ISO given the provided extractor and decompressed the game files.
+     * The Workspace will also be loaded for the user.
+     * 
+     * @param extractor The extractor for the Game.
+     */
+    private void extract(Extractor extractor)
+    {
+	    Stage loadingWindow = new Stage();
+	    loadingWindow.initModality(Modality.APPLICATION_MODAL);
+	    loadingWindow.setTitle("Creating workspace...");
+	    setIcons(loadingWindow);
+	    
+	    FlowPane flow = new FlowPane(Orientation.VERTICAL);
+	    flow.setAlignment(Pos.CENTER);
+	    flow.setVgap(20);
+	    
+        Text text = new Text();
+        text.setStyle(FONT_SIZE_CSS);
+        flow.getChildren().add(text);
+        
+        ProgressIndicator progressIndicator = new ProgressIndicator(-1.0f);
+        flow.getChildren().add(progressIndicator);
+        
+        Scene dialogScene = new Scene(flow, 300, 200);
+	    loadingWindow.setScene(dialogScene);
+	    loadingWindow.show();
+	    
+		Task<Workspace> task = new Task<Workspace>()
+		{
+		    @Override public Workspace call()
+		    {
+		    	Workspace workspace = null;
+		        final int max = 1;
+		        try
+		        {
+					updateMessage("Extracting ISO...");
+					extractor.extractISO();
+					updateMessage("Unpacking FPKs...");
+					workspace = extractor.unpackFPKs();
+					updateMessage("Workspace created.");
+		            updateProgress(1, max);
+		            Thread.sleep(1500);
+		        }
+		        catch (Exception e)
+		        {
+		            LOGGER.log(Level.SEVERE, e.toString(), e);
+	    			Message.error("Issue with Extracting ISO", "An error was encountered extracting " + extractor.getISO());
+		        }
+		        return workspace;
+		    }
+		};
+		
+		task.setOnSucceeded(new EventHandler<WorkerStateEvent>()
+		{
+	        public void handle(WorkerStateEvent event)
+	        {
+	        	loadingWindow.close();
+	        	WorkspaceView workspaceView = new GNT4WorkspaceView(task.getValue());
+	        	workspaceView.init();
+	        }
+	    });
+		progressIndicator.progressProperty().bind(task.progressProperty());
+		text.textProperty().bind(task.messageProperty());
+		new Thread(task).start();
     }
 
     /**

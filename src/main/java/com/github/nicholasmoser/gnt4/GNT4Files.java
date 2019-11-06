@@ -1,4 +1,4 @@
-package com.github.nicholasmoser;
+package com.github.nicholasmoser.gnt4;
 
 import java.io.IOException;
 import java.util.ArrayList;

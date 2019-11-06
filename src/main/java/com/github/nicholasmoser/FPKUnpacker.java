@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -25,60 +23,28 @@ public class FPKUnpacker
 {
     private static final Logger LOGGER = Logger.getLogger(FPKUnpacker.class.getName());
 
-    private static final Path currentPath = Paths.get(System.getProperty("user.dir"));
-
     /**
      * Unpacks and uncompresses FPK files. First will prompt the user for an input and output directory. The input directory will be copied to the output directory and then each FPK file will have the
      * contained files inside of it unpacked to their relative directories. This will uncompress the files from their Eighting PRS compressed format.
+     * 
+     * @throws IOException If there is an IO error with the FPK file or its extracted children.
      */
-    public static void unpack()
+    public static void unpack(File inputDirectory) throws IOException
     {
-        File inputDirectory = Choosers.getInputRootDirectory(currentPath.toFile());
-        if (inputDirectory == null || !inputDirectory.isDirectory())
-            return;
-        File outputDirectory = Choosers.getOutputNonRootDirectory(inputDirectory.getParentFile().getParentFile());
-        if (outputDirectory == null || !outputDirectory.isDirectory())
-            return;
-
-        LOGGER.info("Copying input game file directory...");
-        try
-        {
-            Path rootPath = Paths.get(outputDirectory.getAbsolutePath()).resolve("root");
-            outputDirectory = rootPath.toFile();
-            if (!outputDirectory.mkdirs())
-            {
-                throw new IOException("Error creating root folder.");
-            }
-            FileUtils.copyDirectory(inputDirectory, outputDirectory);
-        }
-        catch (IOException e)
-        {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            Alert alert = new Alert(AlertType.ERROR, "There was an issue with copying the game file directory.");
-            alert.setHeaderText("Issue with Directory Copy");
-            alert.setTitle("Error");
-            alert.showAndWait();
-            return;
-        }
-        LOGGER.info("Finished copying input game file directory.");
-
         LOGGER.info("Unpacking FPKs...");
-        extractDirectory(outputDirectory);
+        extractDirectory(inputDirectory);
         LOGGER.info("Finished unpacking FPKs.");
-        Alert alert = new Alert(AlertType.INFORMATION, String.format("FPK files have been unpacked at %s.", outputDirectory));
-        alert.setHeaderText("FPK Files Unpacked");
-        alert.setTitle("Info");
-        alert.showAndWait();
     }
 
     /**
      * A recursive method to extract and uncompress the files inside an FPK from a given directory. This method will call itself recursively for each directory it encounters.
      * 
      * @param directory The directory to search and extract from.
+     * @throws IOException If there is an IO error with the FPK file or its extracted children.
      */
-    private static void extractDirectory(File directory)
+    private static void extractDirectory(File directory) throws IOException
     {
-        for (final File fileEntry : directory.listFiles())
+        for (File fileEntry : directory.listFiles())
         {
             if (fileEntry.isDirectory())
             {
@@ -100,8 +66,9 @@ public class FPKUnpacker
      * Opens the given FPK file and extracts it contents. This includes uncompressing them from Eighting PRS compression.
      * 
      * @param filePath The FPK file to extract.
+     * @throws IOException If there is an IO error with the FPK file or its extracted children.
      */
-    public static void extractFPK(Path filePath)
+    public static void extractFPK(Path filePath) throws IOException
     {
         int bytesRead = 0;
         String fileName = "Unknown"; // Default for error message
@@ -153,15 +120,6 @@ public class FPKUnpacker
                     Files.write(outputFilePath, output);
                 }
             }
-        }
-        catch (Exception e)
-        {
-            String errorMessage = String.format("The following exception occurred during FPK extraction of %s: %s", fileName, e.toString());
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            Alert alert = new Alert(AlertType.ERROR, errorMessage);
-            alert.setHeaderText("FPK Extraction Error");
-            alert.setTitle("FPK Extraction Error");
-            alert.showAndWait();
         }
     }
 

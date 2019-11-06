@@ -7,6 +7,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.github.nicholasmoser.gnt4.GNT4Files;
 import com.google.common.base.Verify;
 import com.google.common.collect.Maps;
 

@@ -87,15 +87,15 @@ public class Choosers
     }
 
     /**
-     * Asks the user to select an output directory. This method will return null if no directory is chosen.
+     * Asks the user to select an output workspace directory. This method will return null if no directory is chosen.
      * 
      * @param initialDirectory The location to set the directory chooser to start at.
-     * @return The output directory or null if none is chosen.
+     * @return The output workspace directory or null if none is chosen.
      */
-    public static File getOutputDirectory(File initialDirectory)
+    public static File getWorkspaceDirectory(File initialDirectory)
     {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Select Output Directory");
+        directoryChooser.setTitle("Select Output Workspace Directory");
         directoryChooser.setInitialDirectory(initialDirectory);
         return directoryChooser.showDialog(null);
     }

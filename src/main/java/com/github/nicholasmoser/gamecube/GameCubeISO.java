@@ -1,12 +1,16 @@
-package com.github.nicholasmoser;
+package com.github.nicholasmoser.gamecube;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.github.nicholasmoser.Message;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -14,28 +18,52 @@ import javafx.scene.control.Alert.AlertType;
 /**
  * Utility to access GCRebuilder.exe through the command line.
  */
-public class ISOUtils
+public class GameCubeISO
 {
-    private static final Logger LOGGER = Logger.getLogger(ISOUtils.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GameCubeISO.class.getName());
 
     private static final Path currentPath = Paths.get(System.getProperty("user.dir"));
 
     private static final Path gcrPath = currentPath.resolve("gcr.exe");
 
     /**
+     * Retrieves the Game ID of a given ISO file.
+     * This String is simply the first six bytes of the file.
+     * 
+     * @param iso The iso to retrieve the Game ID from.
+     * @return The Game ID.
+     * @throws IOException If an I/O error occurs. 
+     */
+    public static String getGameId(File iso) throws IOException
+    {
+    	try(InputStream is = Files.newInputStream(iso.toPath()))
+    	{
+    		byte[] bytes = new byte[6];
+    		is.read(bytes);
+    		return new String(bytes, StandardCharsets.US_ASCII);
+    	}
+    }
+    
+    /**
      * Prompt the user for an input ISO and output directory. The files contained in the ISO will be stored in a folder named root at the given output directory. This will be accomplished by using
      * GameCube Rebuilder (gcr.exe) which should be located in the same directory as the jar. This will only work on Windows, and will return without effect if it is not.
+     * @throws IOException 
      */
-    public static void exportFiles()
+    public static void exportFiles(File inputFile, File outputDirectory) throws IOException
     {
         if (!canRunISOTools())
-            return;
-        File inputFile = Choosers.getInputISO(currentPath.toFile());
+        {
+        	Message.error("Unable to Run ISO Tools", "Please verify that you are running on Windows and have access to GameCube Rebuilder.");
+        	throw new IllegalStateException("GameCube Rebuilder is not in the directory of this executable.");
+        }
         if (inputFile == null || !inputFile.isFile())
-            return;
-        File outputDirectory = Choosers.getOutputDirectory(inputFile.getParentFile());
+        {
+        	throw new IllegalArgumentException(inputFile + " is null or not a file.");
+        }
         if (outputDirectory == null || !outputDirectory.isDirectory())
-            return;
+        {
+        	throw new IllegalArgumentException(outputDirectory + " is null or not a directory.");
+        }
         LOGGER.info("Exporting files...");
         runISOTools(inputFile.getAbsolutePath(), outputDirectory.getAbsolutePath(), true);
         LOGGER.info("Finished exporting files.");
@@ -44,17 +72,15 @@ public class ISOUtils
     /**
      * Prompt the user for an output ISO and input directory. The files contained in the directory will be imported into the given ISO. This will be accomplished by using GameCube Rebuilder (gcr.exe)
      * which should be located in the same directory as the jar. This will only work on Windows, and will return without effect if it is not.
+     * @throws IOException If there is an issue with GameCube Rebuilder.
      */
-    public static void importFiles()
+    public static void importFiles(File inputDirectory, File outputFile) throws IOException
     {
         if (!canRunISOTools())
-            return;
-        File inputDirectory = Choosers.getInputRootDirectory(currentPath.toFile());
-        if (inputDirectory == null || !inputDirectory.isDirectory())
-            return;
-        File outputFile = Choosers.getOutputISO(inputDirectory.getParentFile().getParentFile());
-        if (outputFile == null)
-            return;
+        {
+        	Message.error("Unable to Run ISO Tools", "Please verify that you are running on Windows and have access to GameCube Rebuilder.");
+        	throw new IllegalStateException("GameCube Rebuilder is not in the directory of this executable.");
+        }
         try
         {
             if (!outputFile.createNewFile())
@@ -83,38 +109,33 @@ public class ISOUtils
      * @param input For export mode this will be the path to an ISO file, for import mode it will be the path to a directory.
      * @param output For export mode this will be the path to a directory, for import mode it will be the path to an ISO file.
      * @param exportMode The output, be it ISO file or directory. If you are in ISO export mode (compared to import mode).
+     * @throws IOException If there is an issue with GameCube Rebuilder.
      */
-    private static void runISOTools(String input, String output, boolean exportMode)
+    private static void runISOTools(String input, String output, boolean exportMode) throws IOException
     {
         LOGGER.info(String.format("Input: %s; Output: %s", input, output));
         try
         {
             Process process = null;
-            String message = "";
             if (exportMode)
             {
                 process = new ProcessBuilder(gcrPath.toString(), input, "root", "e", output).start();
-                message = "You will find your exported files at: " + output;
             }
             else
             {
                 process = new ProcessBuilder(gcrPath.toString(), input, output).start();
-                message = "You will find your new ISO at: " + output;
             }
             process.waitFor();
-            Alert alert = new Alert(AlertType.INFORMATION, message);
-            alert.setHeaderText("GameCube Rebuilder has finished processing.");
-            alert.setTitle("Process Complete");
-            alert.showAndWait();
 
         }
-        catch (IOException | InterruptedException e)
+        catch (InterruptedException e)
         {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             Alert alert = new Alert(AlertType.ERROR, "There was an issue with running gcr.exe");
             alert.setHeaderText("Issue with GameCube Rebuilder");
             alert.setTitle("Error");
             alert.showAndWait();
+            throw new IOException(e);
         }
     }
 
