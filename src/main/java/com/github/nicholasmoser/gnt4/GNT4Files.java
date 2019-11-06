@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import javafx.util.Pair;
 
 public class GNT4Files {

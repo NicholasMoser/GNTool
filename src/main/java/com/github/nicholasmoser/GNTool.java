@@ -10,13 +10,12 @@ import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Extractor;
 import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -25,14 +24,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.concurrent.WorkerStateEvent;
 
 /**
  * A tool that allows you to modify files in a Naruto GNT ISO file.
