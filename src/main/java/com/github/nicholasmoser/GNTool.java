@@ -6,11 +6,9 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-
 import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Extractor;
 import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
-
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -39,249 +37,219 @@ import javafx.concurrent.WorkerStateEvent;
  * 
  * @author Nicholas Moser
  */
-public class GNTool extends Application
-{
-    private static final Logger LOGGER = Logger.getLogger(GNTool.class.getName());
-    
-    private static final File USER_HOME = new File(System.getProperty("user.home"));
-    
-	private final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
+public class GNTool extends Application {
 
-    @Override
-    public void start(Stage primaryStage)
-    {
-        LOGGER.info("Application has started.");
-        setLoggingProperties();
-        createGUI(primaryStage);
-    }
+  private static final Logger LOGGER = Logger.getLogger(GNTool.class.getName());
 
-    /**
-     * Creates the GUI for the application.
-     * 
-     * @param primaryStage The stage to use.
-     */
-    private void createGUI(Stage primaryStage)
-    {
-        setIcons(primaryStage);
-        GridPane buttonPane = createButtonGrid();
-        Scene scene = new Scene(buttonPane);
+  private static final File USER_HOME = new File(System.getProperty("user.home"));
 
-        primaryStage.setTitle("GNTool");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+  private final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
 
-    /**
-     * Sets the application icons on the stage.
-     * 
-     * @param primaryStage The primary stage to set the icons for.
-     */
-    private void setIcons(Stage primaryStage)
-    {
-        ObservableList<Image> icons = primaryStage.getIcons();
-        icons.add(new Image(getClass().getResourceAsStream("naru16.gif")));
-        icons.add(new Image(getClass().getResourceAsStream("naru32.gif")));
-        icons.add(new Image(getClass().getResourceAsStream("naru64.gif")));
-        icons.add(new Image(getClass().getResourceAsStream("naru128.gif")));
-    }
+  @Override
+  public void start(Stage primaryStage) {
+    LOGGER.info("Application has started.");
+    setLoggingProperties();
+    createGUI(primaryStage);
+  }
 
-    /**
-     * Creates the grid of buttons for the application.
-     * 
-     * @return The created button grid.
-     */
-    private GridPane createButtonGrid()
-    {
-		ComboBox<Game> gameList = new ComboBox<Game>();
-		gameList.getItems().addAll(Game.values());
-		gameList.getSelectionModel().selectFirst();
-		gameList.setStyle(FONT_SIZE_CSS);
-		gameList.setTooltip(new Tooltip("The game you wish to mod against."));
+  /**
+   * Creates the GUI for the application.
+   * 
+   * @param primaryStage The stage to use.
+   */
+  private void createGUI(Stage primaryStage) {
+    setIcons(primaryStage);
+    GridPane buttonPane = createButtonGrid();
+    Scene scene = new Scene(buttonPane);
 
-        Button createWorkspaceButton = new Button();
-        createWorkspaceButton.setText("Create Workspace");
-        createWorkspaceButton.setStyle(FONT_SIZE_CSS);
-        createWorkspaceButton.setTooltip(new Tooltip("Create a new modding workspace for the selected game."));
-        createWorkspaceButton.setOnAction(new EventHandler<ActionEvent>()
-        {
+    primaryStage.setTitle("GNTool");
+    primaryStage.setScene(scene);
+    primaryStage.show();
+  }
 
-            @Override
-            public void handle(ActionEvent event)
-            {
-                LOGGER.fine("Create workspace button pressed.");
-                Game game = gameList.getSelectionModel().getSelectedItem();
-                if (game != null)
-                {
-                    createWorkspace(game);
-                }
-                else
-                {
-                	Message.error("Issue with Game Selected", "No valid game was selected.");
-                }
-            }
-        });
+  /**
+   * Sets the application icons on the stage.
+   * 
+   * @param primaryStage The primary stage to set the icons for.
+   */
+  private void setIcons(Stage primaryStage) {
+    ObservableList<Image> icons = primaryStage.getIcons();
+    icons.add(new Image(getClass().getResourceAsStream("naru16.gif")));
+    icons.add(new Image(getClass().getResourceAsStream("naru32.gif")));
+    icons.add(new Image(getClass().getResourceAsStream("naru64.gif")));
+    icons.add(new Image(getClass().getResourceAsStream("naru128.gif")));
+  }
 
-        Button loadWorkspaceButton = new Button();
-        loadWorkspaceButton.setText("Load Workspace");
-        loadWorkspaceButton.setStyle(FONT_SIZE_CSS);
-        loadWorkspaceButton.setTooltip(new Tooltip("Loads an existing modding workspace for the selected game."));
-        loadWorkspaceButton.setOnAction(new EventHandler<ActionEvent>()
-        {
+  /**
+   * Creates the grid of buttons for the application.
+   * 
+   * @return The created button grid.
+   */
+  private GridPane createButtonGrid() {
+    ComboBox<Game> gameList = new ComboBox<Game>();
+    gameList.getItems().addAll(Game.values());
+    gameList.getSelectionModel().selectFirst();
+    gameList.setStyle(FONT_SIZE_CSS);
+    gameList.setTooltip(new Tooltip("The game you wish to mod against."));
 
-            @Override
-            public void handle(ActionEvent event)
-            {
-                LOGGER.fine("Load workspace button pressed.");
-                Game game = gameList.getSelectionModel().getSelectedItem();
-                if (game != null)
-                {
-                    //loadWorkspace(game);
-                }
-                else
-                {
-                	Message.error("Issue with Game Selected", "No valid game was selected.");
-                }
-            }
-        });
+    Button createWorkspaceButton = new Button();
+    createWorkspaceButton.setText("Create Workspace");
+    createWorkspaceButton.setStyle(FONT_SIZE_CSS);
+    createWorkspaceButton
+        .setTooltip(new Tooltip("Create a new modding workspace for the selected game."));
+    createWorkspaceButton.setOnAction(new EventHandler<ActionEvent>() {
 
-        GridPane buttonPane = new GridPane();
-        buttonPane.setAlignment(Pos.CENTER);
-        buttonPane.setVgap(10);
-        buttonPane.setPadding(new Insets(12, 12, 12, 12));
-        buttonPane.add(gameList, 0, 0);
-        buttonPane.add(createWorkspaceButton, 0, 1);
-        buttonPane.add(loadWorkspaceButton, 0, 2);
-        
-        return buttonPane;
-    }
-    
-    /**
-     * Query the user for an ISO and a directory to extract it to. This will also decompress all files extracted.
-     * The ISO must match the provided Game else it will display a message to the user and return.
-     * 
-     * @param game The Game to create the workspace for.
-     */
-    private void createWorkspace(Game game)
-    {
-    	File iso = Choosers.getInputISO(USER_HOME);
-    	if (iso != null)
-    	{
-    		try
-    		{
-        		String gameId = GameCubeISO.getGameId(iso);
-        		if (game.getGameId().equals(gameId))
-        		{
-        			File workspacePath = Choosers.getWorkspaceDirectory(iso.getParentFile());
-        			if (workspacePath != null)
-        			{
-        				if (game == Game.GNT4)
-        				{
-        					extract(new GNT4Extractor(iso, workspacePath));
-        				}
-        			}
-        		}
-        		else
-        		{
-        			String message = String.format("%s Game ID does not match selected Game ID %s.", iso, Game.GNT4.getGameId());
-        			Message.error("Wrong Game ISO", message);
-        		}
-    		}
-    		catch (IOException e)
-    		{
-    			Message.error("Issue with Opening ISO", "An error was encountered opening " + iso);
-    		}
-    	}
-    }
-    
-    /**
-     * Extracts the ISO given the provided extractor and decompressed the game files.
-     * The Workspace will also be loaded for the user.
-     * 
-     * @param extractor The extractor for the Game.
-     */
-    private void extract(Extractor extractor)
-    {
-	    Stage loadingWindow = new Stage();
-	    loadingWindow.initModality(Modality.APPLICATION_MODAL);
-	    loadingWindow.setTitle("Creating workspace...");
-	    setIcons(loadingWindow);
-	    
-	    FlowPane flow = new FlowPane(Orientation.VERTICAL);
-	    flow.setAlignment(Pos.CENTER);
-	    flow.setVgap(20);
-	    
-        Text text = new Text();
-        text.setStyle(FONT_SIZE_CSS);
-        flow.getChildren().add(text);
-        
-        ProgressIndicator progressIndicator = new ProgressIndicator(-1.0f);
-        flow.getChildren().add(progressIndicator);
-        
-        Scene dialogScene = new Scene(flow, 300, 200);
-	    loadingWindow.setScene(dialogScene);
-	    loadingWindow.show();
-	    
-		Task<Workspace> task = new Task<Workspace>()
-		{
-		    @Override public Workspace call()
-		    {
-		    	Workspace workspace = null;
-		        final int max = 1;
-		        try
-		        {
-					updateMessage("Extracting ISO...");
-					extractor.extractISO();
-					updateMessage("Unpacking FPKs...");
-					workspace = extractor.unpackFPKs();
-					updateMessage("Workspace created.");
-		            updateProgress(1, max);
-		            Thread.sleep(1500);
-		        }
-		        catch (Exception e)
-		        {
-		            LOGGER.log(Level.SEVERE, e.toString(), e);
-	    			Message.error("Issue with Extracting ISO", "An error was encountered extracting " + extractor.getISO());
-		        }
-		        return workspace;
-		    }
-		};
-		
-		task.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-		{
-	        public void handle(WorkerStateEvent event)
-	        {
-	        	loadingWindow.close();
-	        	WorkspaceView workspaceView = new GNT4WorkspaceView(task.getValue());
-	        	workspaceView.init();
-	        }
-	    });
-		progressIndicator.progressProperty().bind(task.progressProperty());
-		text.textProperty().bind(task.messageProperty());
-		new Thread(task).start();
-    }
-
-    /**
-     * Sets the custom logging properties from the logging.properties included resource file.
-     */
-    private void setLoggingProperties()
-    {
-        try (InputStream properties = getClass().getResourceAsStream("logging.properties"))
-        {
-            LogManager.getLogManager().readConfiguration(properties);
+      @Override
+      public void handle(ActionEvent event) {
+        LOGGER.fine("Create workspace button pressed.");
+        Game game = gameList.getSelectionModel().getSelectedItem();
+        if (game != null) {
+          createWorkspace(game);
+        } else {
+          Message.error("Issue with Game Selected", "No valid game was selected.");
         }
-        catch (SecurityException | IOException e)
-        {
-            String errorMessage = String.format("Unable to load logging.properties, fatal error: %s", e.toString());
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-            Alert alert = new Alert(AlertType.ERROR, errorMessage);
-            alert.setHeaderText("Logging Error");
-            alert.setTitle("Logging Error");
-            alert.showAndWait();
-        }
-    }
+      }
+    });
 
-    public static void main(String[] args)
-    {
-        launch(args);
+    Button loadWorkspaceButton = new Button();
+    loadWorkspaceButton.setText("Load Workspace");
+    loadWorkspaceButton.setStyle(FONT_SIZE_CSS);
+    loadWorkspaceButton
+        .setTooltip(new Tooltip("Loads an existing modding workspace for the selected game."));
+    loadWorkspaceButton.setOnAction(new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent event) {
+        LOGGER.fine("Load workspace button pressed.");
+        Game game = gameList.getSelectionModel().getSelectedItem();
+        if (game != null) {
+          // loadWorkspace(game);
+        } else {
+          Message.error("Issue with Game Selected", "No valid game was selected.");
+        }
+      }
+    });
+
+    GridPane buttonPane = new GridPane();
+    buttonPane.setAlignment(Pos.CENTER);
+    buttonPane.setVgap(10);
+    buttonPane.setPadding(new Insets(12, 12, 12, 12));
+    buttonPane.add(gameList, 0, 0);
+    buttonPane.add(createWorkspaceButton, 0, 1);
+    buttonPane.add(loadWorkspaceButton, 0, 2);
+
+    return buttonPane;
+  }
+
+  /**
+   * Query the user for an ISO and a directory to extract it to. This will also decompress all files
+   * extracted. The ISO must match the provided Game else it will display a message to the user and
+   * return.
+   * 
+   * @param game The Game to create the workspace for.
+   */
+  private void createWorkspace(Game game) {
+    File iso = Choosers.getInputISO(USER_HOME);
+    if (iso != null) {
+      try {
+        String gameId = GameCubeISO.getGameId(iso);
+        if (game.getGameId().equals(gameId)) {
+          File workspacePath = Choosers.getWorkspaceDirectory(iso.getParentFile());
+          if (workspacePath != null) {
+            if (game == Game.GNT4) {
+              extract(new GNT4Extractor(iso, workspacePath));
+            }
+          }
+        } else {
+          String message = String.format("%s Game ID does not match selected Game ID %s.", iso,
+              Game.GNT4.getGameId());
+          Message.error("Wrong Game ISO", message);
+        }
+      } catch (IOException e) {
+        Message.error("Issue with Opening ISO", "An error was encountered opening " + iso);
+      }
     }
+  }
+
+  /**
+   * Extracts the ISO given the provided extractor and decompressed the game files. The Workspace
+   * will also be loaded for the user.
+   * 
+   * @param extractor The extractor for the Game.
+   */
+  private void extract(Extractor extractor) {
+    Stage loadingWindow = new Stage();
+    loadingWindow.initModality(Modality.APPLICATION_MODAL);
+    loadingWindow.setTitle("Creating workspace...");
+    setIcons(loadingWindow);
+
+    FlowPane flow = new FlowPane(Orientation.VERTICAL);
+    flow.setAlignment(Pos.CENTER);
+    flow.setVgap(20);
+
+    Text text = new Text();
+    text.setStyle(FONT_SIZE_CSS);
+    flow.getChildren().add(text);
+
+    ProgressIndicator progressIndicator = new ProgressIndicator(-1.0f);
+    flow.getChildren().add(progressIndicator);
+
+    Scene dialogScene = new Scene(flow, 300, 200);
+    loadingWindow.setScene(dialogScene);
+    loadingWindow.show();
+
+    Task<Workspace> task = new Task<Workspace>() {
+      @Override
+      public Workspace call() {
+        Workspace workspace = null;
+        final int max = 1;
+        try {
+          updateMessage("Extracting ISO...");
+          extractor.extractISO();
+          updateMessage("Unpacking FPKs...");
+          workspace = extractor.unpackFPKs();
+          updateMessage("Workspace created.");
+          updateProgress(1, max);
+          Thread.sleep(1500);
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, e.toString(), e);
+          Message.error("Issue with Extracting ISO",
+              "An error was encountered extracting " + extractor.getISO());
+        }
+        return workspace;
+      }
+    };
+
+    task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+      public void handle(WorkerStateEvent event) {
+        loadingWindow.close();
+        WorkspaceView workspaceView = new GNT4WorkspaceView(task.getValue());
+        workspaceView.init();
+      }
+    });
+    progressIndicator.progressProperty().bind(task.progressProperty());
+    text.textProperty().bind(task.messageProperty());
+    new Thread(task).start();
+  }
+
+  /**
+   * Sets the custom logging properties from the logging.properties included resource file.
+   */
+  private void setLoggingProperties() {
+    try (InputStream properties = getClass().getResourceAsStream("logging.properties")) {
+      LogManager.getLogManager().readConfiguration(properties);
+    } catch (SecurityException | IOException e) {
+      String errorMessage =
+          String.format("Unable to load logging.properties, fatal error: %s", e.toString());
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+      Alert alert = new Alert(AlertType.ERROR, errorMessage);
+      alert.setHeaderText("Logging Error");
+      alert.setTitle("Logging Error");
+      alert.showAndWait();
+    }
+  }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
 }

@@ -7,27 +7,25 @@ import java.nio.charset.Charset;
 /**
  * Utility methods for working with bytes.
  */
-public class ByteUtils
-{
-    /**
-     * Converts a Java integer to a 4 byte big-endian byte array.
-     * 
-     * @param integer The integer to use.
-     * @return The 4 byte big-endian array.
-     */
-    public static byte[] intToBytes(int integer)
-    {
-        return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(integer).array();
-    }
+public class ByteUtils {
 
-    /**
-     * Converts a Java String to a 4 byte big-endian byte array.
-     * 
-     * @param string The String to use.
-     * @return The 4 byte big-endian byte array.
-     */
-    public static byte[] stringToBytes(String string)
-    {
-        return string.getBytes(Charset.forName("Windows-1252"));
-    }
+  /**
+   * Converts a Java integer to a 4 byte big-endian byte array.
+   * 
+   * @param integer The integer to use.
+   * @return The 4 byte big-endian array.
+   */
+  public static byte[] intToBytes(int integer) {
+    return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(integer).array();
+  }
+
+  /**
+   * Converts a Java String to a 4 byte big-endian byte array.
+   * 
+   * @param string The String to use.
+   * @return The 4 byte big-endian byte array.
+   */
+  public static byte[] stringToBytes(String string) {
+    return string.getBytes(Charset.forName("Windows-1252"));
+  }
 }
