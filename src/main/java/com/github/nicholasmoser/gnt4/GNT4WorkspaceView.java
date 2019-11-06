@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.github.nicholasmoser.GUI;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.WorkspaceView;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ public class GNT4WorkspaceView implements WorkspaceView {
     Stage stage = new Stage();
     stage.initModality(Modality.APPLICATION_MODAL);
     stage.setTitle("GNT4 Workspace");
+    GUI.setIcons(stage);
     VBox dialogVbox = new VBox(20);
     dialogVbox.getChildren().add(new Text("Example workspace."));
     Scene dialogScene = new Scene(dialogVbox, 800, 800);

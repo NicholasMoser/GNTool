@@ -22,7 +22,7 @@
 		</license>
 	</licenses>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,8 +47,13 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+    				<groupId>org.apache.maven.plugins</groupId>
+    				<artifactId>maven-surefire-plugin</artifactId>
+    				<version>3.0.0-M3</version>
+				</plugin>
+				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.7.0</version>
+					<version>3.8.1</version>
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
@@ -56,7 +61,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.1.2</version>
 					<configuration>
 						<archive>
 							<manifest>
@@ -89,7 +94,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.1.1</version>
+					<version>3.2.1</version>
 					<executions>
 						<execution>
 							<phase>package</phase>
@@ -109,7 +114,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>3.1.1</version>
 					<configuration>
 						<source>${java.version}</source>
 						<docfilessubdirs>true</docfilessubdirs>
@@ -119,21 +124,21 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>3.1.3</version>
+					<version>3.1.12.2</version>
 					<dependencies>
 						<!-- overwrite dependency on spotbugs if you want to specify the version 
 							of spotbugs -->
 						<dependency>
 							<groupId>com.github.spotbugs</groupId>
 							<artifactId>spotbugs</artifactId>
-							<version>3.1.3</version>
+							<version>3.1.12</version>
 						</dependency>
 					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-project-info-reports-plugin</artifactId>
-					<version>2.9</version>
+					<version>3.0.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -142,11 +147,21 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 			</plugin>
+		    <plugin>
+		        <groupId>org.openjfx</groupId>
+		        <artifactId>javafx-maven-plugin</artifactId>
+		        <version>0.0.3</version>
+		        <configuration>
+			        <source>${java.version}</source>
+			        <target>${java.version}</target>
+			        <release>${java.version}</release>
+		            <mainClass>com.github.nicholasmoser.GNTool</mainClass>
+		        </configuration>
+		    </plugin>
 		</plugins>
 	</build>
 	<reporting>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
@@ -154,12 +169,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.9</version>
 			</plugin>
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>3.1.3</version>
 				<configuration>
 					<effort>Max</effort>
 					<threshold>Default</threshold>
@@ -174,17 +187,12 @@
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
 							<artifactId>findsecbugs-plugin</artifactId>
-							<version>1.7.1</version>
+							<version>1.9.0</version>
 						</plugin>
 						<plugin>
 							<groupId>com.mebigfatguy.fb-contrib</groupId>
 							<artifactId>fb-contrib</artifactId>
-							<version>7.4.0.sb</version>
-						</plugin>
-						<plugin>
-							<groupId>com.monits</groupId>
-							<artifactId>findbugs-plugin</artifactId>
-							<version>0.2.0</version>
+							<version>7.4.7.sb</version>
 						</plugin>
 					</plugins>
 				</configuration>
@@ -192,7 +200,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.1</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -208,7 +215,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>23.6.1-jre</version>
+			<version>28.1-jre</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -220,13 +227,18 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20180813</version>
+			<version>20190722</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-controls</artifactId>
+		    <version>13.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.2.0</version>
+			<version>5.5.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

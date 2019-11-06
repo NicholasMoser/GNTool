@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class FPKTest {
@@ -56,6 +57,7 @@ public class FPKTest {
    * @throws Exception If any exception occurs.
    */
   @Test
+  @Disabled("Not ready yet.")
   public void cmn0000() throws Exception {
     String fileName = "fpack\\cmn0000.fpk";
 

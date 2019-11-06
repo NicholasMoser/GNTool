@@ -14,6 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -30,6 +31,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.concurrent.WorkerStateEvent;
 
 /**
@@ -58,26 +60,13 @@ public class GNTool extends Application {
    * @param primaryStage The stage to use.
    */
   private void createGUI(Stage primaryStage) {
-    setIcons(primaryStage);
+    GUI.setIcons(primaryStage);
     GridPane buttonPane = createButtonGrid();
     Scene scene = new Scene(buttonPane);
 
     primaryStage.setTitle("GNTool");
     primaryStage.setScene(scene);
     primaryStage.show();
-  }
-
-  /**
-   * Sets the application icons on the stage.
-   * 
-   * @param primaryStage The primary stage to set the icons for.
-   */
-  private void setIcons(Stage primaryStage) {
-    ObservableList<Image> icons = primaryStage.getIcons();
-    icons.add(new Image(getClass().getResourceAsStream("naru16.gif")));
-    icons.add(new Image(getClass().getResourceAsStream("naru32.gif")));
-    icons.add(new Image(getClass().getResourceAsStream("naru64.gif")));
-    icons.add(new Image(getClass().getResourceAsStream("naru128.gif")));
   }
 
   /**
@@ -180,19 +169,23 @@ public class GNTool extends Application {
   private void extract(Extractor extractor) {
     Stage loadingWindow = new Stage();
     loadingWindow.initModality(Modality.APPLICATION_MODAL);
+    loadingWindow.initStyle(StageStyle.UNDECORATED);
     loadingWindow.setTitle("Creating workspace...");
-    setIcons(loadingWindow);
+    GUI.setIcons(loadingWindow);
 
-    FlowPane flow = new FlowPane(Orientation.VERTICAL);
+    GridPane flow = new GridPane();
     flow.setAlignment(Pos.CENTER);
     flow.setVgap(20);
 
     Text text = new Text();
     text.setStyle(FONT_SIZE_CSS);
-    flow.getChildren().add(text);
 
     ProgressIndicator progressIndicator = new ProgressIndicator(-1.0f);
-    flow.getChildren().add(progressIndicator);
+
+    GridPane.setHalignment(text, HPos.CENTER);
+    GridPane.setHalignment(progressIndicator, HPos.CENTER);
+    flow.add(text, 0, 0);
+    flow.add(progressIndicator, 0, 1);
 
     Scene dialogScene = new Scene(flow, 300, 200);
     loadingWindow.setScene(dialogScene);
