@@ -9,9 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.github.nicholasmoser.Game;
 import com.github.nicholasmoser.Message;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 /**
  * Utility to access GCRebuilder.exe through the command line.
@@ -38,6 +37,40 @@ public class GameCubeISO {
       is.read(bytes);
       return new String(bytes, StandardCharsets.US_ASCII);
     }
+  }
+
+  public static boolean isValidWorkspace(File directory, Game game) {
+    if (!directory.isDirectory()) {
+      return false;
+    }
+    else if (!"root".equals(directory.getName()))
+    {
+      return false;
+    }
+    File systemData = new File(directory, "&&systemdata");
+    if (!systemData.isDirectory())
+    {
+      return false;
+    }
+    File isoHeader = new File(systemData, "ISO.hdr");
+    if (!isoHeader.isFile())
+    {
+      return false;
+    }
+    String gameId;
+    try
+    {
+      gameId = getGameId(isoHeader);
+    }
+    catch (IOException e)
+    {
+      return false;
+    }
+    if (!game.getGameId().equals(gameId))
+    {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -88,10 +121,7 @@ public class GameCubeISO {
     } catch (IOException e) {
       String message = String.format("Error encountered: %s.", e.getMessage());
       LOGGER.log(Level.SEVERE, e.toString(), e);
-      Alert alert = new Alert(AlertType.ERROR, message);
-      alert.setHeaderText("File Error");
-      alert.setTitle("File Error");
-      alert.showAndWait();
+      Message.error("File Error", message);
       return;
     }
     LOGGER.info("Importing files...");
@@ -124,10 +154,7 @@ public class GameCubeISO {
 
     } catch (InterruptedException e) {
       LOGGER.log(Level.SEVERE, e.toString(), e);
-      Alert alert = new Alert(AlertType.ERROR, "There was an issue with running gcr.exe");
-      alert.setHeaderText("Issue with GameCube Rebuilder");
-      alert.setTitle("Error");
-      alert.showAndWait();
+      Message.error("Issue with GameCube Rebuilder", "There was an issue with running gcr.exe");
       throw new IOException(e);
     }
   }
@@ -139,20 +166,13 @@ public class GameCubeISO {
     LOGGER.info("GameCube Rebuilder Path: " + gcrPath);
     if (!isWindows()) {
       LOGGER.info("Running OS is not Windows and therefore cannot run ISO Tools.");
-      Alert alert = new Alert(AlertType.ERROR,
-          "ISO Tools require running Windows due to it using GameCube Rebuilder (gcr.exe).");
-      alert.setHeaderText("Windows Required for ISO Tools");
-      alert.setTitle("Error");
-      alert.showAndWait();
+      Message.error("Windows Required for ISO Tools", "ISO Tools require running Windows due to it using GameCube Rebuilder (gcr.exe).");
       return false;
     }
     if (!canRunGCR()) {
-      LOGGER.info("System cannot find gcr.exe and therefore cannot run ISO Tools.");
-      Alert alert = new Alert(AlertType.ERROR,
-          "ISO Tools cannot find the GameCube Rebuilder executable. Make sure its filename is gcr.exe and is in the same folder as this jar.");
-      alert.setHeaderText("GameCube Rebuilder Required for ISO Tools");
-      alert.setTitle("Error");
-      alert.showAndWait();
+      String message = "ISO Tools cannot find the GameCube Rebuilder executable. Make sure its filename is gcr.exe and is in the same folder as this jar.";
+      LOGGER.info(message);
+      Message.error("GameCube Rebuilder Required for ISO Tools", message);
       return false;
     }
     return true;

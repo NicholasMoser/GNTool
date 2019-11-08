@@ -23,7 +23,7 @@ public class GNT4WorkspaceView implements WorkspaceView {
     stage.setTitle("GNT4 Workspace");
     GUI.setIcons(stage);
     VBox dialogVbox = new VBox(20);
-    dialogVbox.getChildren().add(new Text("Example workspace."));
+    dialogVbox.getChildren().add(new Text(workspace.getDirectory().getAbsolutePath()));
     Scene dialogScene = new Scene(dialogVbox, 800, 800);
     stage.setScene(dialogScene);
     stage.show();

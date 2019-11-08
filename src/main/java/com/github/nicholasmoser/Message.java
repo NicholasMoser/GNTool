@@ -15,10 +15,22 @@ public class Message {
    * @param message The message of the error window.
    */
   public static void error(String header, String message) {
-    Alert alert = new Alert(AlertType.ERROR);
+    Alert alert = new Alert(AlertType.ERROR, message);
     alert.setTitle("Error");
     alert.setHeaderText(header);
-    alert.setContentText(message);
+    alert.showAndWait();
+  }
+  
+  /**
+   * Display an info window to the user with the given header and message.
+   * 
+   * @param header The header of the info window.
+   * @param message The message of the info window.
+   */
+  public static void info(String header, String message) {
+    Alert alert = new Alert(AlertType.INFORMATION, message);
+    alert.setTitle("Info");
+    alert.setHeaderText(header);
     alert.showAndWait();
   }
 }

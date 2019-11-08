@@ -2,8 +2,6 @@ package com.github.nicholasmoser;
 
 import java.io.File;
 import org.apache.commons.io.FileUtils;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -44,18 +42,10 @@ public class Choosers {
       if (inputDirectory == null || !inputDirectory.isDirectory()) {
         return null;
       } else if (!inputDirectory.getAbsolutePath().endsWith("root")) {
-        Alert alert = new Alert(AlertType.INFORMATION,
-            "Please select the \"root\" folder of the GameCube files. It must be named root.");
-        alert.setHeaderText("Please Select Root");
-        alert.setTitle("Please Select Root");
-        alert.showAndWait();
+        Message.info("Please Select Root", "Please select the \"root\" folder of the GameCube files. It must be named root.");
         initialDirectory = inputDirectory;
       } else if (checkForFpk && containsFpk(inputDirectory)) {
-        Alert alert = new Alert(AlertType.INFORMATION,
-            "This directory is not an \"unpacked\" root, as it contains an fpk file. Please choose the \"unpacked\" root.");
-        alert.setHeaderText("Wrong Root Selected");
-        alert.setTitle("Wrong Root Selected");
-        alert.showAndWait();
+        Message.info("Wrong Root Selected", "This directory is not an \"unpacked\" root, as it contains an fpk file. Please choose the \"unpacked\" root.");
         initialDirectory = inputDirectory.getParentFile().getParentFile();
       } else {
         rootSelected = true;
@@ -86,9 +76,23 @@ public class Choosers {
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return The output workspace directory or null if none is chosen.
    */
-  public static File getWorkspaceDirectory(File initialDirectory) {
+  public static File getOutputWorkspaceDirectory(File initialDirectory) {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     directoryChooser.setTitle("Select Output Workspace Directory");
+    directoryChooser.setInitialDirectory(initialDirectory);
+    return directoryChooser.showDialog(null);
+  }
+
+  /**
+   * Asks the user to select an input workspace directory. This method will return null if no
+   * directory is chosen.
+   * 
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return The input workspace directory or null if none is chosen.
+   */
+  public static File getInputWorkspaceDirectory(File initialDirectory) {
+    DirectoryChooser directoryChooser = new DirectoryChooser();
+    directoryChooser.setTitle("Select Workspace Directory");
     directoryChooser.setInitialDirectory(initialDirectory);
     return directoryChooser.showDialog(null);
   }
@@ -127,18 +131,10 @@ public class Choosers {
       if (outputDirectory == null || !outputDirectory.isDirectory()) {
         return null;
       } else if (!outputDirectory.getAbsolutePath().endsWith("root")) {
-        Alert alert = new Alert(AlertType.INFORMATION,
-            "Please select the \"root\" folder of the GameCube files. It must be named root.");
-        alert.setHeaderText("Please Select Root");
-        alert.setTitle("Please Select Root");
-        alert.showAndWait();
+        Message.info("Please Select Root", "Please select the \"root\" folder of the GameCube files. It must be named root.");
         initialDirectory = outputDirectory;
       } else if (checkForFpk && !containsFpk(outputDirectory)) {
-        Alert alert = new Alert(AlertType.INFORMATION,
-            "This directory is not a \"packed\" root, as it does not contain fpk files. Please choose the \"packed\" root.");
-        alert.setHeaderText("Wrong Root Selected");
-        alert.setTitle("Wrong Root Selected");
-        alert.showAndWait();
+        Message.info("Wrong Root Selected", "This directory is not a \"packed\" root, as it does not contain fpk files. Please choose the \"packed\" root.");
         initialDirectory = outputDirectory.getParentFile().getParentFile();
       } else {
         rootSelected = true;
@@ -166,11 +162,7 @@ public class Choosers {
       if (outputDirectory == null || !outputDirectory.isDirectory()) {
         return null;
       } else if (outputDirectory.toPath().resolve("root").toFile().isDirectory()) {
-        Alert alert = new Alert(AlertType.INFORMATION,
-            "There cannot be a \"root\" folder in the directory you select.");
-        alert.setHeaderText("Select a Different Directory");
-        alert.setTitle("Select a Different Directory");
-        alert.showAndWait();
+        Message.info("Select a Different Directory", "There cannot be a \"root\" folder in the directory you select.");
         initialDirectory = outputDirectory;
       } else {
         rootNotSelected = false;

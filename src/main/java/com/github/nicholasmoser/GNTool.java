@@ -8,6 +8,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Extractor;
+import com.github.nicholasmoser.gnt4.GNT4Workspace;
 import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -18,8 +19,6 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
@@ -42,6 +41,8 @@ public class GNTool extends Application {
   private static final File USER_HOME = new File(System.getProperty("user.home"));
 
   private final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
+  
+  private final long MILLIS_WAIT_AFTER_LOAD = 1500;
 
   @Override
   public void start(Stage primaryStage) {
@@ -59,7 +60,7 @@ public class GNTool extends Application {
     GUI.setIcons(primaryStage);
     GridPane buttonPane = createButtonGrid();
     Scene scene = new Scene(buttonPane);
-
+    
     primaryStage.setTitle("GNTool");
     primaryStage.setScene(scene);
     primaryStage.show();
@@ -108,7 +109,7 @@ public class GNTool extends Application {
         LOGGER.fine("Load workspace button pressed.");
         Game game = gameList.getSelectionModel().getSelectedItem();
         if (game != null) {
-          // loadWorkspace(game);
+          loadWorkspace(game);
         } else {
           Message.error("Issue with Game Selected", "No valid game was selected.");
         }
@@ -127,6 +128,28 @@ public class GNTool extends Application {
   }
 
   /**
+   * Query the user for a Workspace directory to load. The Workspace must match the provided Game
+   * else it will display a message to the user and return.
+   * 
+   * @param game The Game to create the workspace for.
+   */
+  private void loadWorkspace(Game game) {
+    File directory = Choosers.getInputWorkspaceDirectory(USER_HOME);
+    if (directory != null) {
+      if (GameCubeISO.isValidWorkspace(directory, game)) {
+        if (game == Game.GNT4) {
+          Workspace workspace = new GNT4Workspace(directory);
+          WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
+          workspaceView.init();
+        }
+      } else {
+        String message = String.format("Please make sure you selected the root of a %s Workspace.", game);
+        Message.error("Invalid Directory", message);
+      }
+    }
+  }
+
+  /**
    * Query the user for an ISO and a directory to extract it to. This will also decompress all files
    * extracted. The ISO must match the provided Game else it will display a message to the user and
    * return.
@@ -139,7 +162,7 @@ public class GNTool extends Application {
       try {
         String gameId = GameCubeISO.getGameId(iso);
         if (game.getGameId().equals(gameId)) {
-          File workspacePath = Choosers.getWorkspaceDirectory(iso.getParentFile());
+          File workspacePath = Choosers.getOutputWorkspaceDirectory(iso.getParentFile());
           if (workspacePath != null) {
             if (game == Game.GNT4) {
               extract(new GNT4Extractor(iso, workspacePath));
@@ -199,7 +222,7 @@ public class GNTool extends Application {
           workspace = extractor.unpackFPKs();
           updateMessage("Workspace created.");
           updateProgress(1, max);
-          Thread.sleep(1500);
+          Thread.sleep(MILLIS_WAIT_AFTER_LOAD);
         } catch (Exception e) {
           LOGGER.log(Level.SEVERE, e.toString(), e);
           Message.error("Issue with Extracting ISO",
@@ -230,11 +253,8 @@ public class GNTool extends Application {
     } catch (SecurityException | IOException e) {
       String errorMessage =
           String.format("Unable to load logging.properties, fatal error: %s", e.toString());
-      LOGGER.log(Level.SEVERE, e.toString(), e);
-      Alert alert = new Alert(AlertType.ERROR, errorMessage);
-      alert.setHeaderText("Logging Error");
-      alert.setTitle("Logging Error");
-      alert.showAndWait();
+      LOGGER.log(Level.SEVERE, errorMessage, e);
+      Message.error("Logging Error", errorMessage);
     }
   }
 

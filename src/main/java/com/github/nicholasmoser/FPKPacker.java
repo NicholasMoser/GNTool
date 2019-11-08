@@ -1,6 +1,6 @@
 package com.github.nicholasmoser;
 
-import static java.nio.file.StandardCopyOption.*;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,8 +20,6 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.primitives.Bytes;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 /**
  * Packs FPK files. This includes compressing them with the Eighting PRS algorithm and modding the
@@ -66,10 +64,7 @@ public class FPKPacker {
       String message = String.format(
           "There was an error modding the Start.dol with the audio fix: %s", e.getMessage());
       LOGGER.log(Level.SEVERE, e.toString(), e);
-      Alert alert = new Alert(AlertType.ERROR, message);
-      alert.setHeaderText("Dol Error");
-      alert.setTitle("Dol Error");
-      alert.showAndWait();
+      Message.error("Dol Error", message);
       return;
     }
 
@@ -94,12 +89,9 @@ public class FPKPacker {
       }
     }
     if (changedNonFPKs.isEmpty() && changedFPKs.isEmpty()) {
-      Alert alert = new Alert(AlertType.INFORMATION,
-          "No files have been changed so there is nothing to repack.");
-      alert.setHeaderText("No Changes Found");
-      alert.setTitle("Info");
-      alert.showAndWait();
-      LOGGER.info("No changes found.");
+      String message = "No files have been changed so there is nothing to repack.";
+      LOGGER.info(message);
+      Message.info("No Changes Found", message);
       return;
     }
 
@@ -111,10 +103,7 @@ public class FPKPacker {
       } catch (IOException e) {
         String message = String.format("Error encountered: %s.", e.getMessage());
         LOGGER.log(Level.SEVERE, e.toString(), e);
-        Alert alert = new Alert(AlertType.ERROR, message);
-        alert.setHeaderText("File Error");
-        alert.setTitle("File Error");
-        alert.showAndWait();
+        Message.error("File Error", message);
         return;
       }
     }
@@ -128,20 +117,14 @@ public class FPKPacker {
       } catch (IOException e) {
         String message = String.format("Error encountered: %s.", e.getMessage());
         LOGGER.log(Level.SEVERE, e.toString(), e);
-        Alert alert = new Alert(AlertType.ERROR, message);
-        alert.setHeaderText("File Error");
-        alert.setTitle("File Error");
-        alert.showAndWait();
+        Message.error("File Error", message);
         return;
       }
       LOGGER.info(String.format("Packed %s", changedFPK));
     }
-    LOGGER.info("Finished packing FPKs.");
-    Alert alert = new Alert(AlertType.INFORMATION,
-        String.format("FPK files have been packed at %s.", outputDirectory));
-    alert.setHeaderText("FPK Files Packed");
-    alert.setTitle("Info");
-    alert.showAndWait();
+    String message = String.format("FPK files have been packed at %s.", outputDirectory);
+    LOGGER.info(message);
+    Message.info("FPK Files Packed", message);
   }
 
   /**
