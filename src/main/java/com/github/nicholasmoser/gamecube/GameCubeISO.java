@@ -39,38 +39,39 @@ public class GameCubeISO {
     }
   }
 
-  public static boolean isValidWorkspace(File directory, Game game) {
-    if (!directory.isDirectory()) {
-      return false;
+  /**
+   * Checks a GameCube ISO workspace in that it has a file at root/&&systemdata/ISO.hdr
+   * and that the game ID matches the expected game ID. This method will throw IllegalStateException
+   * for circumstances where the workspace is not valid.
+   * 
+   * @param directory The directory to check.
+   * @param game The expected game.
+   */
+  public static void checkWorkspace(File directory, Game game) {
+    File root = new File(directory, "root");
+    if (!root.isDirectory()) {
+      throw new IllegalStateException("root folder does not exist.");
     }
-    else if (!"root".equals(directory.getName()))
-    {
-      return false;
-    }
-    File systemData = new File(directory, "&&systemdata");
-    if (!systemData.isDirectory())
-    {
-      return false;
+    File systemData = new File(root, "&&systemdata");
+    if (!systemData.isDirectory()) {
+      throw new IllegalStateException("root/&&systemdata folder does not exist.");
     }
     File isoHeader = new File(systemData, "ISO.hdr");
-    if (!isoHeader.isFile())
-    {
-      return false;
+    if (!isoHeader.isFile()) {
+      throw new IllegalStateException("root/&&systemdata/ISO.hdr file does not exist.");
     }
     String gameId;
-    try
-    {
+    try {
       gameId = getGameId(isoHeader);
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to read root/&&systemdata/ISO.hdr", e);
     }
-    catch (IOException e)
-    {
-      return false;
+    String expectedGameId = game.getGameId();
+    if (!expectedGameId.equals(gameId)) {
+      String message = String.format("root/&&systemdata/ISO.hdr has game ID %s but should have %s",
+          gameId, expectedGameId);
+      throw new IllegalStateException(message);
     }
-    if (!game.getGameId().equals(gameId))
-    {
-      return false;
-    }
-    return true;
   }
 
   /**
@@ -166,11 +167,13 @@ public class GameCubeISO {
     LOGGER.info("GameCube Rebuilder Path: " + gcrPath);
     if (!isWindows()) {
       LOGGER.info("Running OS is not Windows and therefore cannot run ISO Tools.");
-      Message.error("Windows Required for ISO Tools", "ISO Tools require running Windows due to it using GameCube Rebuilder (gcr.exe).");
+      Message.error("Windows Required for ISO Tools",
+          "ISO Tools require running Windows due to it using GameCube Rebuilder (gcr.exe).");
       return false;
     }
     if (!canRunGCR()) {
-      String message = "ISO Tools cannot find the GameCube Rebuilder executable. Make sure its filename is gcr.exe and is in the same folder as this jar.";
+      String message =
+          "ISO Tools cannot find the GameCube Rebuilder executable. Make sure its filename is gcr.exe and is in the same folder as this jar.";
       LOGGER.info(message);
       Message.error("GameCube Rebuilder Required for ISO Tools", message);
       return false;

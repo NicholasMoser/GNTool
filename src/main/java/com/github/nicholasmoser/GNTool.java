@@ -41,7 +41,7 @@ public class GNTool extends Application {
   private static final File USER_HOME = new File(System.getProperty("user.home"));
 
   private final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
-  
+
   private final long MILLIS_WAIT_AFTER_LOAD = 1500;
 
   @Override
@@ -60,7 +60,7 @@ public class GNTool extends Application {
     GUI.setIcons(primaryStage);
     GridPane buttonPane = createButtonGrid();
     Scene scene = new Scene(buttonPane);
-    
+
     primaryStage.setTitle("GNTool");
     primaryStage.setScene(scene);
     primaryStage.show();
@@ -136,15 +136,15 @@ public class GNTool extends Application {
   private void loadWorkspace(Game game) {
     File directory = Choosers.getInputWorkspaceDirectory(USER_HOME);
     if (directory != null) {
-      if (GameCubeISO.isValidWorkspace(directory, game)) {
-        if (game == Game.GNT4) {
+      if (game == Game.GNT4) {
+        try {
+          GameCubeISO.checkWorkspace(directory, game);
           Workspace workspace = new GNT4Workspace(directory);
           WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
           workspaceView.init();
+        } catch (IllegalStateException e) {
+          Message.error("Invalid Workspace", e.getMessage());
         }
-      } else {
-        String message = String.format("Please make sure you selected the root of a %s Workspace.", game);
-        Message.error("Invalid Directory", message);
       }
     }
   }

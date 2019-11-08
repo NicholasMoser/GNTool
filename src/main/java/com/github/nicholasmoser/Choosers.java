@@ -42,10 +42,12 @@ public class Choosers {
       if (inputDirectory == null || !inputDirectory.isDirectory()) {
         return null;
       } else if (!inputDirectory.getAbsolutePath().endsWith("root")) {
-        Message.info("Please Select Root", "Please select the \"root\" folder of the GameCube files. It must be named root.");
+        Message.info("Please Select Root",
+            "Please select the \"root\" folder of the GameCube files. It must be named root.");
         initialDirectory = inputDirectory;
       } else if (checkForFpk && containsFpk(inputDirectory)) {
-        Message.info("Wrong Root Selected", "This directory is not an \"unpacked\" root, as it contains an fpk file. Please choose the \"unpacked\" root.");
+        Message.info("Wrong Root Selected",
+            "This directory is not an \"unpacked\" root, as it contains an fpk file. Please choose the \"unpacked\" root.");
         initialDirectory = inputDirectory.getParentFile().getParentFile();
       } else {
         rootSelected = true;
@@ -91,10 +93,23 @@ public class Choosers {
    * @return The input workspace directory or null if none is chosen.
    */
   public static File getInputWorkspaceDirectory(File initialDirectory) {
-    DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setTitle("Select Workspace Directory");
-    directoryChooser.setInitialDirectory(initialDirectory);
-    return directoryChooser.showDialog(null);
+    boolean validDirectory = false;
+    File workspaceDirectory = null;
+    while (!validDirectory) {
+      DirectoryChooser directoryChooser = new DirectoryChooser();
+      directoryChooser.setTitle("Select Workspace Directory");
+      directoryChooser.setInitialDirectory(initialDirectory);
+      workspaceDirectory = directoryChooser.showDialog(null);
+      if (workspaceDirectory == null) {
+        break;
+      } else if (new File(workspaceDirectory, "root").isDirectory()) {
+        validDirectory = true;
+      } else {
+        String message = "Please select a valid workspace.\nIt must contain a folder named root.";
+        Message.info("Please Select Valid Workspace", message);
+      }
+    }
+    return workspaceDirectory;
   }
 
   /**
@@ -131,10 +146,12 @@ public class Choosers {
       if (outputDirectory == null || !outputDirectory.isDirectory()) {
         return null;
       } else if (!outputDirectory.getAbsolutePath().endsWith("root")) {
-        Message.info("Please Select Root", "Please select the \"root\" folder of the GameCube files. It must be named root.");
+        Message.info("Please Select Root",
+            "Please select the \"root\" folder of the GameCube files. It must be named root.");
         initialDirectory = outputDirectory;
       } else if (checkForFpk && !containsFpk(outputDirectory)) {
-        Message.info("Wrong Root Selected", "This directory is not a \"packed\" root, as it does not contain fpk files. Please choose the \"packed\" root.");
+        Message.info("Wrong Root Selected",
+            "This directory is not a \"packed\" root, as it does not contain fpk files. Please choose the \"packed\" root.");
         initialDirectory = outputDirectory.getParentFile().getParentFile();
       } else {
         rootSelected = true;
@@ -162,7 +179,8 @@ public class Choosers {
       if (outputDirectory == null || !outputDirectory.isDirectory()) {
         return null;
       } else if (outputDirectory.toPath().resolve("root").toFile().isDirectory()) {
-        Message.info("Select a Different Directory", "There cannot be a \"root\" folder in the directory you select.");
+        Message.info("Select a Different Directory",
+            "There cannot be a \"root\" folder in the directory you select.");
         initialDirectory = outputDirectory;
       } else {
         rootNotSelected = false;
