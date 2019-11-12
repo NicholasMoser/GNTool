@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package gntool;
+
+option java_package = "com.github.nicholasmoser";
+option java_outer_classname = "GNTFileProtos";
+
+/* Files are either uncompressed files or FPK files.
+   FPK files will have compressed child files.
+   The hash is calculated using Google Guava CRC32. */
+
+message File {
+  required string file_path = 1;
+  required int32 hash = 2;
+  repeated ChildFile child_file = 3;
+}
+
+/* Child files are compressed using Eighting proprietary PRS compression.
+   For more info on this see the following link:
+   https://github.com/NicholasMoser/Naruto-GNT-Hacking/blob/master/gnt4/docs/file_formats/fpk.md
+   Some child files are not compressed likely due to a small file size.
+   The file paths used in the FPK header may be cut off are and therefore stored separately. */
+
+message ChildFile {
+  required string file_path = 1;
+  required int32 hash = 2;
+  optional bool compressed = 3;
+  optional string compressed_path = 4;
+}
