@@ -10,8 +10,8 @@ option java_outer_classname = "GNTFileProtos";
    The hash is calculated using Google Guava CRC32. */
 
 message File {
-  required string file_path = 1;
-  required int32 hash = 2;
+  string file_path = 1;
+  int32 hash = 2;
   repeated ChildFile child_file = 3;
 }
 
@@ -22,8 +22,8 @@ message File {
    The file paths used in the FPK header may be cut off are and therefore stored separately. */
 
 message ChildFile {
-  required string file_path = 1;
-  required int32 hash = 2;
-  optional bool compressed = 3;
-  optional string compressed_path = 4;
+  string file_path = 1;
+  int32 hash = 2;
+  bool compressed = 3;
+  string compressed_path = 4;
 }
