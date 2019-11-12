@@ -43,10 +43,13 @@ public class GNTool extends Application {
   private final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
 
   private final long MILLIS_WAIT_AFTER_LOAD = 1500;
+  
+  private Stage primaryStage;
 
   @Override
   public void start(Stage primaryStage) {
     LOGGER.info("Application has started.");
+    this.primaryStage = primaryStage;
     setLoggingProperties();
     createGUI(primaryStage);
   }
@@ -141,9 +144,11 @@ public class GNTool extends Application {
           GameCubeISO.checkWorkspace(directory, game);
           Workspace workspace = new GNT4Workspace(directory);
           WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
-          workspaceView.init();
+          workspaceView.init(primaryStage);
         } catch (IllegalStateException e) {
           Message.error("Invalid Workspace", e.getMessage());
+        } catch (IOException e) {
+          Message.error("Error Loading Workspace", "Error loading workspace defintion.");
         }
       }
     }
@@ -236,7 +241,14 @@ public class GNTool extends Application {
       public void handle(WorkerStateEvent event) {
         loadingWindow.close();
         WorkspaceView workspaceView = new GNT4WorkspaceView(task.getValue());
-        workspaceView.init();
+        try
+        {
+          workspaceView.init(primaryStage);
+        }
+        catch(IOException e)
+        {
+          Message.error("Error Loading Workspace", "Error loading workspace defintion.");
+        }
       }
     });
     progressIndicator.progressProperty().bind(task.progressProperty());
