@@ -1,4 +1,4 @@
-package com.github.nicholasmoser;
+package com.github.nicholasmoser.utils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

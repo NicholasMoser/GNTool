@@ -10,6 +10,7 @@ import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Extractor;
 import com.github.nicholasmoser.gnt4.GNT4Workspace;
 import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
+import com.github.nicholasmoser.utils.GUIUtils;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -60,7 +61,7 @@ public class GNTool extends Application {
    * @param primaryStage The stage to use.
    */
   private void createGUI(Stage primaryStage) {
-    GUI.setIcons(primaryStage);
+    GUIUtils.setIcons(primaryStage);
     GridPane buttonPane = createButtonGrid();
     Scene scene = new Scene(buttonPane);
 
@@ -195,7 +196,7 @@ public class GNTool extends Application {
     loadingWindow.initModality(Modality.APPLICATION_MODAL);
     loadingWindow.initStyle(StageStyle.UNDECORATED);
     loadingWindow.setTitle("Creating workspace...");
-    GUI.setIcons(loadingWindow);
+    GUIUtils.setIcons(loadingWindow);
 
     GridPane flow = new GridPane();
     flow.setAlignment(Pos.CENTER);

@@ -3,6 +3,7 @@ package com.github.nicholasmoser;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Disabled;
@@ -38,6 +39,28 @@ public class PRSCompressionTest {
 
     Verify.verify(Arrays.equals(originalBytes, outputBytes),
         "Data has been lost during compression/uncompression.");
+  }
+  
+  // Create test that compresses and uncompresses all GNT files
+  
+  @Test
+  public void testRandomBytes() throws Exception {
+    SecureRandom random = new SecureRandom();
+    for (int i = 10; i < 1000; i++)
+    {
+      byte[] originalBytes = new byte[i];
+      random.nextBytes(originalBytes);
+      int originalSize = originalBytes.length;
+      PRSCompressor compressor = new PRSCompressor(originalBytes);
+      byte[] compressedBytes = compressor.compress();
+      int compressedSize = compressedBytes.length;
+      PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, originalSize);
+      byte[] outputBytes = uncompressor.uncompress();
+      int uncompressedSize = outputBytes.length;
+      System.out.println(String.format("%d -> %d -> %d", originalSize, compressedSize, uncompressedSize));
+      Verify.verify(Arrays.equals(originalBytes, outputBytes),
+          "Data has been lost during compression/uncompression.");
+    }
   }
 
   /**

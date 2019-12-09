@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import com.github.nicholasmoser.Extractor;
 import com.github.nicholasmoser.FPKUnpacker;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
@@ -45,7 +46,9 @@ public class GNT4Extractor implements Extractor {
       throw new IllegalStateException("Must extract the ISO before you can unpack the FPKs.");
     }
     if (!unpacked) {
-      FPKUnpacker.unpack(extractionPath);
+      Path root = extractionPath.toPath().resolve("root");
+      FPKUnpacker unpacker = new FPKUnpacker(root);
+      unpacker.unpack();
       unpacked = true;
     }
     return new GNT4Workspace(extractionPath);

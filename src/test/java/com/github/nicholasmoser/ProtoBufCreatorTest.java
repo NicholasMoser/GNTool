@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import com.github.nicholasmoser.utils.FPKUtils;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
@@ -59,12 +60,12 @@ public class ProtoBufCreatorTest {
     String compressedFilePath = "Unknown";
     List<GNTFileProtos.GNTChildFile> children = new ArrayList<GNTFileProtos.GNTChildFile>();
     try (InputStream is = Files.newInputStream(filePath)) {
-      int fileCount = FPKUnpacker.readFPKHeader(is);
+      int fileCount = FPKUtils.readFPKHeader(is);
       bytesRead += 16;
 
       List<FPKFileHeader> fpkHeaders = new ArrayList<FPKFileHeader>(fileCount);
       for (int i = 0; i < fileCount; i++) {
-        fpkHeaders.add(FPKUnpacker.readFPKFileHeader(is));
+        fpkHeaders.add(FPKUtils.readFPKFileHeader(is));
         bytesRead += 32;
       }
 

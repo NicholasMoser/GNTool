@@ -1,5 +1,6 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 
 public class FPKFileHeader {
@@ -21,11 +22,23 @@ public class FPKFileHeader {
    * @param uncompressedSize The size of the file when uncompressed.
    */
   public FPKFileHeader(String fileName, int offset, int compressedSize, int uncompressedSize) {
-    if (fileName.length() > 16) {
-      throw new IllegalArgumentException("Filename for an FPK cannot be longer than 16 bytes.");
-    }
     this.fileName = fileName;
     this.offset = offset;
+    this.compressedSize = compressedSize;
+    this.uncompressedSize = uncompressedSize;
+  }
+
+  /**
+   * Creates an FPK file header without an offset. The offset will be -1 until it is set.
+   * 
+   * @param fileName The name of the file.
+   * @param offset The offset to the file.
+   * @param compressedSize The size of the file when compressed.
+   * @param uncompressedSize The size of the file when uncompressed.
+   */
+  public FPKFileHeader(String fileName, int compressedSize, int uncompressedSize) {
+    this.fileName = fileName;
+    this.offset = -1;
     this.compressedSize = compressedSize;
     this.uncompressedSize = uncompressedSize;
   }

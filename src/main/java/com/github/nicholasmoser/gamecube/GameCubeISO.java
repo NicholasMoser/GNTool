@@ -52,23 +52,23 @@ public class GameCubeISO {
     if (!root.isDirectory()) {
       throw new IllegalStateException("root folder does not exist.");
     }
-    File systemData = new File(root, "&&systemdata");
+    File systemData = new File(root, "sys");
     if (!systemData.isDirectory()) {
-      throw new IllegalStateException("root/&&systemdata folder does not exist.");
+      throw new IllegalStateException("root/sys folder does not exist.");
     }
     File isoHeader = new File(systemData, "ISO.hdr");
     if (!isoHeader.isFile()) {
-      throw new IllegalStateException("root/&&systemdata/ISO.hdr file does not exist.");
+      throw new IllegalStateException("root/sys/ISO.hdr file does not exist.");
     }
     String gameId;
     try {
       gameId = getGameId(isoHeader);
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to read root/&&systemdata/ISO.hdr", e);
+      throw new IllegalStateException("Unable to read root/sys/ISO.hdr", e);
     }
     String expectedGameId = game.getGameId();
     if (!expectedGameId.equals(gameId)) {
-      String message = String.format("root/&&systemdata/ISO.hdr has game ID %s but should have %s",
+      String message = String.format("root/sys/ISO.hdr has game ID %s but should have %s",
           gameId, expectedGameId);
       throw new IllegalStateException(message);
     }

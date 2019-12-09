@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.gnt4.GNT4Files;
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.base.Verify;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
@@ -31,7 +32,7 @@ public class FPKPacker {
 
   private static final Path currentPath = Paths.get(System.getProperty("user.dir"));
 
-  private static final GNT4Files gnt4Files = new GNT4Files();
+  private static final GNT4Files gnt4Files = GNT4Files.getInstance();
 
   /**
    * Packs and compresses FPK files. First will prompt the user for an input and output directory.
@@ -173,7 +174,7 @@ public class FPKPacker {
 
       // Set the offset to -1 for now, we cannot figure it out until we have all of
       // the files
-      FPKFileHeader header = new FPKFileHeader(childName, -1, output.length, input.length);
+      FPKFileHeader header = new FPKFileHeader(childName, output.length, input.length);
       newFPKs.add(new FPKFile(header, output));
       LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.", child,
           input.length, output.length));
