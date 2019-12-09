@@ -37,9 +37,9 @@ import javafx.stage.StageStyle;
  */
 public class GNTool extends Application {
 
-  private static final Logger LOGGER = Logger.getLogger(GNTool.class.getName());
+  public static final File USER_HOME = new File(System.getProperty("user.home"));
 
-  private static final File USER_HOME = new File(System.getProperty("user.home"));
+  private static final Logger LOGGER = Logger.getLogger(GNTool.class.getName());
 
   private final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
 
@@ -147,8 +147,10 @@ public class GNTool extends Application {
           WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
           workspaceView.init(primaryStage);
         } catch (IllegalStateException e) {
+          LOGGER.log(Level.SEVERE, e.toString(), e);
           Message.error("Invalid Workspace", e.getMessage());
         } catch (IOException e) {
+          LOGGER.log(Level.SEVERE, e.toString(), e);
           Message.error("Error Loading Workspace", "Error loading workspace defintion.");
         }
       }
@@ -180,6 +182,7 @@ public class GNTool extends Application {
           Message.error("Wrong Game ISO", message);
         }
       } catch (IOException e) {
+        LOGGER.log(Level.SEVERE, e.toString(), e);
         Message.error("Issue with Opening ISO", "An error was encountered opening " + iso);
       }
     }
@@ -248,6 +251,7 @@ public class GNTool extends Application {
         }
         catch(IOException e)
         {
+          LOGGER.log(Level.SEVERE, e.toString(), e);
           Message.error("Error Loading Workspace", "Error loading workspace defintion.");
         }
       }
