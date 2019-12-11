@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import org.apache.commons.io.FileUtils;
 import com.github.nicholasmoser.Extractor;
 import com.github.nicholasmoser.FPKUnpacker;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
@@ -47,7 +48,9 @@ public class GNT4Extractor implements Extractor {
     }
     if (!unpacked) {
       Path root = extractionPath.toPath().resolve("root");
-      FPKUnpacker unpacker = new FPKUnpacker(root);
+      Path uncompressed = extractionPath.toPath().resolve("uncompressed");
+      FileUtils.copyDirectory(root.toFile(), uncompressed.toFile());
+      FPKUnpacker unpacker = new FPKUnpacker(uncompressed);
       unpacker.unpack();
       unpacked = true;
     }

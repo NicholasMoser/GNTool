@@ -5,12 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,9 +30,20 @@ public class FPKPacker {
 
   private static final Logger LOGGER = Logger.getLogger(FPKPacker.class.getName());
 
-  private static final Path currentPath = Paths.get(System.getProperty("user.dir"));
-
-  private static final GNT4Files gnt4Files = GNT4Files.getInstance();
+  // Metadata describing the files of GNT4.
+  private GNT4Files gnt4Files;
+  
+  // The root containing unpacked files. e.g. C:/workspace/root
+  private Path compressedDirectory;
+  
+  // The folder container unpacked files. e.g. C:/workspace/uncompressed
+  private Path uncompressedDirectory;
+  
+  public FPKPacker(Path uncompressedDirectory, Path compressedDirectory) {
+    this.compressedDirectory = compressedDirectory;
+    this.uncompressedDirectory = uncompressedDirectory; 
+    gnt4Files = GNT4Files.getInstance();
+  }
 
   /**
    * Packs and compresses FPK files. First will prompt the user for an input and output directory.
@@ -40,92 +51,53 @@ public class FPKPacker {
    * modifications using the CRC32 hash function. Any files that have been changed will be packed
    * and compressed into their original FPK file. This new FPK file will override the FPK file in
    * the output directory.
+   * @return The path to the packed files.
+   * @throws IOException If there is an I/O issue repacking or moving the files.
    */
-  public static void pack() {
-    File inputDirectory = Choosers.getInputRootDirectory(currentPath.toFile(), true);
-    if (inputDirectory == null || !inputDirectory.isDirectory()) {
-      return;
-    }
-    File outputDirectory =
-        Choosers.getOutputRootDirectory(inputDirectory.getParentFile().getParentFile(), true);
-    if (outputDirectory == null || !outputDirectory.isDirectory()) {
-      return;
-    }
-
-    LOGGER.info("Modding the Start.dol with the audio fix...");
-    try {
-      Path startDol = inputDirectory.toPath().resolve("&&systemdata\\Start.dol");
-      DolPatcher patcher = new DolPatcher(startDol);
-      if (patcher.patchAudioOffset()) {
-        LOGGER.info("Successfully modded the Start.dol with the audio fix.");
-      } else {
-        LOGGER.info("Start.dol already contains audio fix.");
-      }
-    } catch (IOException e) {
-      String message = String.format(
-          "There was an error modding the Start.dol with the audio fix: %s", e.getMessage());
-      LOGGER.log(Level.SEVERE, e.toString(), e);
-      Message.error("Dol Error", message);
-      return;
-    }
-
+  public Optional<Path> pack() throws IOException {
     LOGGER.info("Checking files that have changed...");
-
     Map<String, String> fileCRC32Values = new HashMap<String, String>();
-    fileCRC32Values = getCRC32Values(inputDirectory, fileCRC32Values);
-    List<String> changedFiles = null;
-    changedFiles = gnt4Files.getFilesChanges(fileCRC32Values);
+    fileCRC32Values = getCRC32Values(uncompressedDirectory.toFile(), fileCRC32Values);
+    List<String> changedFiles = gnt4Files.getFilesChanges(fileCRC32Values);
     LOGGER.info(String.format("The following files have changed: %s",
         changedFiles.isEmpty() ? "None" : changedFiles));
 
     Set<String> changedFPKs = new HashSet<String>();
     Set<String> changedNonFPKs = new HashSet<String>();
     for (String fileName : changedFiles) {
-      String parent = gnt4Files.getParentFPK(fileName);
+      Optional<String> parent = gnt4Files.getParentFPK(fileName);
       // If there is no parent, it does not belong to an FPK
       if (parent.isEmpty()) {
         changedNonFPKs.add(fileName);
       } else {
-        changedFPKs.add(parent);
+        changedFPKs.add(parent.get());
       }
     }
     if (changedNonFPKs.isEmpty() && changedFPKs.isEmpty()) {
       String message = "No files have been changed so there is nothing to repack.";
       LOGGER.info(message);
       Message.info("No Changes Found", message);
-      return;
+      return Optional.empty();
     }
 
     LOGGER.info(String.format("The follow files FPKs need to be packed: %s",
         changedFPKs.isEmpty() ? "None" : changedFPKs));
     for (String changedNonFPK : changedNonFPKs) {
-      try {
-        copyFile(changedNonFPK, inputDirectory, outputDirectory);
-      } catch (IOException e) {
-        String message = String.format("Error encountered: %s.", e.getMessage());
-        LOGGER.log(Level.SEVERE, e.toString(), e);
-        Message.error("File Error", message);
-        return;
-      }
+     copyFile(changedNonFPK);
     }
     LOGGER.info(String.format("The following files were copied: %s",
         changedNonFPKs.isEmpty() ? "None" : changedNonFPKs));
 
     for (String changedFPK : changedFPKs) {
       LOGGER.info(String.format("Packing %s...", changedFPK));
-      try {
-        repackFPK(changedFPK, inputDirectory, outputDirectory);
-      } catch (IOException e) {
-        String message = String.format("Error encountered: %s.", e.getMessage());
-        LOGGER.log(Level.SEVERE, e.toString(), e);
-        Message.error("File Error", message);
-        return;
-      }
+      repackFPK(changedFPK);
       LOGGER.info(String.format("Packed %s", changedFPK));
     }
-    String message = String.format("FPK files have been packed at %s.", outputDirectory);
+    String message = String.format("FPK files have been packed at %s.", compressedDirectory);
     LOGGER.info(message);
     Message.info("FPK Files Packed", message);
+    
+    return Optional.of(compressedDirectory);
   }
 
   /**
@@ -133,14 +105,11 @@ public class FPKPacker {
    * for files not associated with an FPK in any way.
    * 
    * @param changedNonFPK The changed non-FPK asssociated file.
-   * @param inputDirectory The input directory.
-   * @param outputDirectory The output directory.
    * @throws IOException If there is an issue replacing the file.
    */
-  private static void copyFile(String changedNonFPK, File inputDirectory, File outputDirectory)
-      throws IOException {
-    Path input = inputDirectory.toPath().resolve(changedNonFPK);
-    Path output = outputDirectory.toPath().resolve(changedNonFPK);
+  private void copyFile(String changedNonFPK) throws IOException {
+    Path input = uncompressedDirectory.resolve(changedNonFPK);
+    Path output = compressedDirectory.resolve(changedNonFPK);
     Files.copy(input, output, REPLACE_EXISTING);
   }
 
@@ -151,18 +120,15 @@ public class FPKPacker {
    * uncompressed child files.
    * 
    * @param fpk The name of the FPK file.
-   * @param inputDirectory The input directory with the uncompressed files.
-   * @param outputDirectory The output directory to save the compressed files as an FPK.
    * @return The path to the repacked FPK file.
    * @throws IOException If there is an issue reading/writing bytes to the file.
    */
-  public static Path repackFPK(String fpk, File inputDirectory, File outputDirectory)
-      throws IOException {
+  public Path repackFPK(String fpk) throws IOException {
     String[] fpkChildren = gnt4Files.getFPKChildren(fpk);
     List<FPKFile> newFPKs = new ArrayList<FPKFile>(fpkChildren.length);
     for (String child : fpkChildren) {
       String childName = gnt4Files.getId(child);
-      byte[] input = Files.readAllBytes(inputDirectory.toPath().resolve(child));
+      byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(child));
       byte[] output;
 
       if (gnt4Files.isChildCompressed(childName)) {
@@ -205,7 +171,7 @@ public class FPKPacker {
     for (FPKFile file : newFPKs) {
       fpkBytes = Bytes.concat(fpkBytes, file.getData());
     }
-    Path outputFPK = outputDirectory.toPath().resolve(fpk);
+    Path outputFPK = compressedDirectory.resolve(fpk);
     if (!Files.isDirectory(outputFPK.getParent())) {
       Files.createDirectories(outputFPK.getParent());
     }

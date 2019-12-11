@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-import com.github.nicholasmoser.gnt4.WorkspaceAdjustor;
+import org.apache.commons.io.FileUtils;
+import com.github.nicholasmoser.gnt4.GNT4ModReady;
 import com.github.nicholasmoser.utils.FPKUtils;
 
 /**
@@ -38,8 +39,9 @@ public class FPKUnpacker {
   public void unpack() throws IOException {
     LOGGER.info("Unpacking FPKs...");
     extractDirectory(inputDirectory.toFile());
-    WorkspaceAdjustor adjustor = new WorkspaceAdjustor(inputDirectory);
-    adjustor.makeModReady();
+    FileUtils.deleteDirectory(inputDirectory.resolve("fpack").toFile());
+    GNT4ModReady adjustor = new GNT4ModReady(inputDirectory);
+    adjustor.prepare();
     LOGGER.info("Finished unpacking FPKs.");
   }
   

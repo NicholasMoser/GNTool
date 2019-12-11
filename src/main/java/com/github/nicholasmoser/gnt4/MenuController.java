@@ -5,14 +5,19 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.CodePatcher;
+import com.github.nicholasmoser.FPKPacker;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.Workspace;
+import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Code.ID;
+import com.google.common.io.Files;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -20,7 +25,7 @@ import javafx.scene.control.CheckBox;
 public class MenuController {
   private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
   
-  private Workspace workspace;
+  private Path workspace;
 
   /**
    * Toggles the code for fixing the audio.
@@ -73,8 +78,25 @@ public class MenuController {
    */
   @FXML
   protected void build(ActionEvent event) {
-    File isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
-    System.out.println(isoFile);
+    try
+    {
+      File isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
+      if (isoFile == null) {
+        return;
+      }
+      Path uncompressedDirectory = workspace.resolve("uncompressed");
+      Path compressedDirectory = workspace.resolve("root");
+      FPKPacker fpkPacker = new FPKPacker(uncompressedDirectory, compressedDirectory);
+      Optional<Path> compressedPath = fpkPacker.pack();
+      if (compressedPath.isPresent()) {
+        GameCubeISO.importFiles(compressedPath.get().toFile(), isoFile);
+      }
+    }
+    catch (IOException e)
+    {
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+      Message.error("Error Building ISO", e.getMessage());
+    }
   }
 
   /**
@@ -100,8 +122,12 @@ public class MenuController {
     }
   }
   
+  /**
+   * Adds a workspace to the menu controller.
+   * @param workspace The workspace to add.
+   */
   public void addWorkspace(Workspace workspace) {
-    this.workspace = workspace;
+    this.workspace = workspace.getDirectory().toPath();
   }
 
   /**

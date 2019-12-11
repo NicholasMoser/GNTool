@@ -48,27 +48,27 @@ public class GameCubeISO {
    * @param game The expected game.
    */
   public static void checkWorkspace(File directory, Game game) {
-    File root = new File(directory, "root");
-    if (!root.isDirectory()) {
-      throw new IllegalStateException("root folder does not exist.");
+    File uncompressedDirectory = new File(directory, "uncompressed");
+    if (!uncompressedDirectory.isDirectory()) {
+      throw new IllegalStateException("uncompressed directory does not exist.");
     }
-    File systemData = new File(root, "sys");
+    File systemData = new File(uncompressedDirectory, "sys");
     if (!systemData.isDirectory()) {
-      throw new IllegalStateException("root/sys folder does not exist.");
+      throw new IllegalStateException("uncompressed/sys folder does not exist.");
     }
     File isoHeader = new File(systemData, "ISO.hdr");
     if (!isoHeader.isFile()) {
-      throw new IllegalStateException("root/sys/ISO.hdr file does not exist.");
+      throw new IllegalStateException("uncompressed/sys/ISO.hdr file does not exist.");
     }
     String gameId;
     try {
       gameId = getGameId(isoHeader);
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to read root/sys/ISO.hdr", e);
+      throw new IllegalStateException("Unable to read uncompressed/sys/ISO.hdr", e);
     }
     String expectedGameId = game.getGameId();
     if (!expectedGameId.equals(gameId)) {
-      String message = String.format("root/sys/ISO.hdr has game ID %s but should have %s",
+      String message = String.format("uncompressed/sys/ISO.hdr has game ID %s but should have %s",
           gameId, expectedGameId);
       throw new IllegalStateException(message);
     }
@@ -114,16 +114,6 @@ public class GameCubeISO {
           "Please verify that you are running on Windows and have access to GameCube Rebuilder.");
       throw new IllegalStateException(
           "GameCube Rebuilder is not in the directory of this executable.");
-    }
-    try {
-      if (!outputFile.createNewFile()) {
-        throw new IOException("Unable to create new ISO file.");
-      }
-    } catch (IOException e) {
-      String message = String.format("Error encountered: %s.", e.getMessage());
-      LOGGER.log(Level.SEVERE, e.toString(), e);
-      Message.error("File Error", message);
-      return;
     }
     LOGGER.info("Importing files...");
     runISOTools(inputDirectory.getAbsolutePath(), outputFile.getAbsolutePath(), false);

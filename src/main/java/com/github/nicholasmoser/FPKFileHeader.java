@@ -32,7 +32,6 @@ public class FPKFileHeader {
    * Creates an FPK file header without an offset. The offset will be -1 until it is set.
    * 
    * @param fileName The name of the file.
-   * @param offset The offset to the file.
    * @param compressedSize The size of the file when compressed.
    * @param uncompressedSize The size of the file when uncompressed.
    */
