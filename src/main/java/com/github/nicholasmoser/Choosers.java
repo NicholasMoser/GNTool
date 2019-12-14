@@ -2,6 +2,7 @@ package com.github.nicholasmoser;
 
 import java.io.File;
 import org.apache.commons.io.FileUtils;
+import com.github.nicholasmoser.gnt4.GNT4Files;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -41,7 +42,7 @@ public class Choosers {
       inputDirectory = directoryChooser.showDialog(null);
       if (inputDirectory == null || !inputDirectory.isDirectory()) {
         return null;
-      } else if (!inputDirectory.getAbsolutePath().endsWith("root")) {
+      } else if (!inputDirectory.getAbsolutePath().endsWith(GNT4Files.ROOT_DIRECTORY)) {
         Message.info("Please Select Root",
             "Please select the \"root\" folder of the GameCube files. It must be named root.");
         initialDirectory = inputDirectory;
@@ -102,7 +103,7 @@ public class Choosers {
       workspaceDirectory = directoryChooser.showDialog(null);
       if (workspaceDirectory == null) {
         break;
-      } else if (new File(workspaceDirectory, "root").isDirectory()) {
+      } else if (new File(workspaceDirectory, GNT4Files.ROOT_DIRECTORY).isDirectory()) {
         validDirectory = true;
       } else {
         String message = "Please select a valid workspace.\nIt must contain a folder named root.";
@@ -145,7 +146,7 @@ public class Choosers {
       outputDirectory = directoryChooser.showDialog(null);
       if (outputDirectory == null || !outputDirectory.isDirectory()) {
         return null;
-      } else if (!outputDirectory.getAbsolutePath().endsWith("root")) {
+      } else if (!outputDirectory.getAbsolutePath().endsWith(GNT4Files.ROOT_DIRECTORY)) {
         Message.info("Please Select Root",
             "Please select the \"root\" folder of the GameCube files. It must be named root.");
         initialDirectory = outputDirectory;
@@ -178,7 +179,7 @@ public class Choosers {
       outputDirectory = directoryChooser.showDialog(null);
       if (outputDirectory == null || !outputDirectory.isDirectory()) {
         return null;
-      } else if (outputDirectory.toPath().resolve("root").toFile().isDirectory()) {
+      } else if (outputDirectory.toPath().resolve(GNT4Files.ROOT_DIRECTORY).toFile().isDirectory()) {
         Message.info("Select a Different Directory",
             "There cannot be a \"root\" folder in the directory you select.");
         initialDirectory = outputDirectory;

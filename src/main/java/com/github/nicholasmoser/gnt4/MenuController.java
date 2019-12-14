@@ -84,8 +84,8 @@ public class MenuController {
       if (isoFile == null) {
         return;
       }
-      Path uncompressedDirectory = workspace.resolve("uncompressed");
-      Path compressedDirectory = workspace.resolve("root");
+      Path uncompressedDirectory = workspace.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
+      Path compressedDirectory = workspace.resolve(GNT4Files.ROOT_DIRECTORY);
       FPKPacker fpkPacker = new FPKPacker(uncompressedDirectory, compressedDirectory);
       Optional<Path> compressedPath = fpkPacker.pack();
       if (compressedPath.isPresent()) {
@@ -127,7 +127,7 @@ public class MenuController {
    * @param workspace The workspace to add.
    */
   public void addWorkspace(Workspace workspace) {
-    this.workspace = workspace.getDirectory().toPath();
+    this.workspace = workspace.getWorkspaceDirectory().toPath();
   }
 
   /**

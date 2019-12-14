@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
+import com.github.nicholasmoser.gnt4.GNT4DiffChecker;
 import com.github.nicholasmoser.gnt4.GNT4Extractor;
 import com.github.nicholasmoser.gnt4.GNT4Workspace;
 import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
@@ -40,11 +41,11 @@ public class GNTool extends Application {
   public static final File USER_HOME = new File(System.getProperty("user.home"));
 
   private static final Logger LOGGER = Logger.getLogger(GNTool.class.getName());
-
-  private final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
-
-  private final long MILLIS_WAIT_AFTER_LOAD = 1500;
   
+  private static final long MILLIS_WAIT_AFTER_CREATE = 1500;
+
+  private static final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
+
   private Stage primaryStage;
 
   @Override
@@ -229,9 +230,11 @@ public class GNTool extends Application {
           extractor.extractISO();
           updateMessage("Unpacking FPKs...");
           workspace = extractor.unpackFPKs();
+          updateMessage("Saving workspace state...");
+          GNT4DiffChecker.createDiffBinary(workspace.getUncompressedDirectory(), workspace.getWorkspaceState());
           updateMessage("Workspace created.");
           updateProgress(1, max);
-          Thread.sleep(MILLIS_WAIT_AFTER_LOAD);
+          Thread.sleep(MILLIS_WAIT_AFTER_CREATE);
         } catch (Exception e) {
           LOGGER.log(Level.SEVERE, e.toString(), e);
           Message.error("Issue with Extracting ISO",

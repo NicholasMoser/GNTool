@@ -1,6 +1,7 @@
 package com.github.nicholasmoser;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * A workspace for GNTool. Represented by a directory of decompressed game files.
@@ -8,7 +9,22 @@ import java.io.File;
 public interface Workspace {
 
   /**
-   * @return The root of the decompressed game files.
+   * @return The workspace directory.
    */
-  public File getDirectory();
+  public File getWorkspaceDirectory();
+
+  /**
+   * @return The root directory in the workspace.
+   */
+  public Path getRootDirectory();
+
+  /**
+   * @return The uncompressed directory in the workspace.
+   */
+  public Path getUncompressedDirectory();
+
+  /**
+   * @return The workspace state protobuf binary file.
+   */
+  public Path getWorkspaceState();
 }

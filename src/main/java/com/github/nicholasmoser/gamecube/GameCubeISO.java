@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.Game;
 import com.github.nicholasmoser.Message;
+import com.github.nicholasmoser.gnt4.GNT4Files;
 
 /**
  * Utility to access GCRebuilder.exe through the command line.
@@ -48,7 +49,7 @@ public class GameCubeISO {
    * @param game The expected game.
    */
   public static void checkWorkspace(File directory, Game game) {
-    File uncompressedDirectory = new File(directory, "uncompressed");
+    File uncompressedDirectory = new File(directory, GNT4Files.UNCOMPRESSED_DIRECTORY);
     if (!uncompressedDirectory.isDirectory()) {
       throw new IllegalStateException("uncompressed directory does not exist.");
     }
@@ -137,7 +138,7 @@ public class GameCubeISO {
     try {
       Process process = null;
       if (exportMode) {
-        process = new ProcessBuilder(gcrPath.toString(), input, "root", "e", output).start();
+        process = new ProcessBuilder(gcrPath.toString(), input, GNT4Files.ROOT_DIRECTORY, "e", output).start();
       } else {
         process = new ProcessBuilder(gcrPath.toString(), input, output).start();
       }

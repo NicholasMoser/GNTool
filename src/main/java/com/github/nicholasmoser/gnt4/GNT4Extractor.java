@@ -47,8 +47,8 @@ public class GNT4Extractor implements Extractor {
       throw new IllegalStateException("Must extract the ISO before you can unpack the FPKs.");
     }
     if (!unpacked) {
-      Path root = extractionPath.toPath().resolve("root");
-      Path uncompressed = extractionPath.toPath().resolve("uncompressed");
+      Path root = extractionPath.toPath().resolve(GNT4Files.ROOT_DIRECTORY);
+      Path uncompressed = extractionPath.toPath().resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
       FileUtils.copyDirectory(root.toFile(), uncompressed.toFile());
       FPKUnpacker unpacker = new FPKUnpacker(uncompressed);
       unpacker.unpack();
