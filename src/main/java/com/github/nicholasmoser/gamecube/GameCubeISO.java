@@ -32,8 +32,8 @@ public class GameCubeISO {
    * @return The Game ID.
    * @throws IOException If an I/O error occurs.
    */
-  public static String getGameId(File iso) throws IOException {
-    try (InputStream is = Files.newInputStream(iso.toPath())) {
+  public static String getGameId(Path iso) throws IOException {
+    try (InputStream is = Files.newInputStream(iso)) {
       byte[] bytes = new byte[6];
       if (is.read(bytes) != 6) {
         throw new IOException("Unable to read the Game ID from the ISO file.");
@@ -50,17 +50,17 @@ public class GameCubeISO {
    * @param game The expected game.
    * @throws IOException If the workspace is not valid.
    */
-  public static void checkWorkspace(File directory, Game game) throws IOException {
-    File uncompressedDirectory = new File(directory, GNT4Files.UNCOMPRESSED_DIRECTORY);
-    if (!uncompressedDirectory.isDirectory()) {
+  public static void checkWorkspace(Path directory, Game game) throws IOException {
+    Path uncompressedDirectory = directory.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
+    if (!Files.isDirectory(uncompressedDirectory)) {
       throw new IOException("uncompressed directory does not exist.");
     }
-    File systemData = new File(uncompressedDirectory, "sys");
-    if (!systemData.isDirectory()) {
+    Path systemData = uncompressedDirectory.resolve("sys");
+    if (!Files.isDirectory(systemData)) {
       throw new IOException("uncompressed/sys folder does not exist.");
     }
-    File isoHeader = new File(systemData, "ISO.hdr");
-    if (!isoHeader.isFile()) {
+    Path isoHeader = systemData.resolve("ISO.hdr");
+    if (!Files.isRegularFile(isoHeader)) {
       throw new IOException("uncompressed/sys/ISO.hdr file does not exist.");
     }
     String gameId;
@@ -85,21 +85,21 @@ public class GameCubeISO {
    * 
    * @throws IOException
    */
-  public static void exportFiles(File inputFile, File outputDirectory) throws IOException {
+  public static void exportFiles(Path inputFile, Path outputDirectory) throws IOException {
     if (!canRunISOTools()) {
       Message.error("Unable to Run ISO Tools",
           "Please verify that you are running on Windows and have access to GameCube Rebuilder.");
       throw new IllegalStateException(
           "GameCube Rebuilder is not in the directory of this executable.");
     }
-    if (inputFile == null || !inputFile.isFile()) {
+    if (inputFile == null || !Files.isRegularFile(inputFile)) {
       throw new IllegalArgumentException(inputFile + " is null or not a file.");
     }
-    if (outputDirectory == null || !outputDirectory.isDirectory()) {
+    if (outputDirectory == null || !Files.isDirectory(outputDirectory)) {
       throw new IllegalArgumentException(outputDirectory + " is null or not a directory.");
     }
     LOGGER.info("Exporting files...");
-    runISOTools(inputFile.getAbsolutePath(), outputDirectory.getAbsolutePath(), true);
+    runISOTools(inputFile.toString(), outputDirectory.toString(), true);
     LOGGER.info("Finished exporting files.");
   }
 
@@ -111,7 +111,7 @@ public class GameCubeISO {
    * 
    * @throws IOException If there is an issue with GameCube Rebuilder.
    */
-  public static void importFiles(File inputDirectory, File outputFile) throws IOException {
+  public static void importFiles(Path inputDirectory, Path outputFile) throws IOException {
     if (!canRunISOTools()) {
       Message.error("Unable to Run ISO Tools",
           "Please verify that you are running on Windows and have access to GameCube Rebuilder.");
@@ -119,7 +119,7 @@ public class GameCubeISO {
           "GameCube Rebuilder is not in the directory of this executable.");
     }
     LOGGER.info("Importing files...");
-    runISOTools(inputDirectory.getAbsolutePath(), outputFile.getAbsolutePath(), false);
+    runISOTools(inputDirectory.toString(), outputFile.toString(), false);
     LOGGER.info("Finished importing files.");
   }
 

@@ -1,6 +1,5 @@
 package com.github.nicholasmoser.gnt4;
 
-import java.io.File;
 import java.nio.file.Path;
 import com.github.nicholasmoser.Workspace;
 
@@ -9,32 +8,32 @@ import com.github.nicholasmoser.Workspace;
  */
 public class GNT4Workspace implements Workspace {
 
-  private File directory;
+  private Path directory;
 
   /**
    * @param directory The directory of GNT4 decompressed files.
    */
-  public GNT4Workspace(File directory) {
+  public GNT4Workspace(Path directory) {
     this.directory = directory;
   }
 
   @Override
-  public File getWorkspaceDirectory() {
+  public Path getWorkspaceDirectory() {
     return directory;
   }
 
   @Override
   public Path getRootDirectory() {
-    return directory.toPath().resolve(GNT4Files.ROOT_DIRECTORY);
+    return directory.resolve(GNT4Files.ROOT_DIRECTORY);
   }
 
   @Override
   public Path getUncompressedDirectory() {
-    return directory.toPath().resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
+    return directory.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
   }
 
   @Override
   public Path getWorkspaceState() {
-    return directory.toPath().resolve(GNT4Files.WORKSPACE_STATE);
+    return directory.resolve(GNT4Files.WORKSPACE_STATE);
   }
 }

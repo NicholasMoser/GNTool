@@ -4,7 +4,6 @@ import java.io.IOException;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.WorkspaceView;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 

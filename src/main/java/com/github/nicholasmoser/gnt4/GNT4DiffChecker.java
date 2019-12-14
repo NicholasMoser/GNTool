@@ -10,21 +10,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 import com.github.nicholasmoser.FPKFileHeader;
 import com.github.nicholasmoser.GNTFileProtos;
+import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.PRSUncompressor;
 import com.github.nicholasmoser.utils.CRC32;
 import com.github.nicholasmoser.utils.FPKUtils;
 
 public class GNT4DiffChecker {
 
-  public static void createDiffBinary(Path root, Path output) throws IOException {
-    createDiffBinary(root, output, false);
+  public static GNTFiles createDiffBinary(Path root) throws IOException {
+    return createDiffBinary(root, false);
   }
 
-  public static void createDiffBinary(Path root, Path output, boolean checkForFpk)
+  public static GNTFiles createDiffBinary(Path root, boolean checkForFpk)
       throws IOException {
     List<Path> files = Files.walk(root).filter(Files::isRegularFile).collect(Collectors.toList());
-
-    GNTFileProtos.GNTFiles.Builder filesBuilder = GNTFileProtos.GNTFiles.newBuilder();
+    GNTFiles.Builder filesBuilder = GNTFiles.newBuilder();
     for (Path filePath : files) {
       GNTFileProtos.GNTFile.Builder fileBuilder = GNTFileProtos.GNTFile.newBuilder();
       int hash = CRC32.getHash(filePath);
@@ -38,10 +38,8 @@ public class GNT4DiffChecker {
       GNTFileProtos.GNTFile gntFile = fileBuilder.build();
       filesBuilder.addGntFile(gntFile);
     }
-    GNTFileProtos.GNTFiles gntFiles = filesBuilder.build();
-    try (OutputStream os = Files.newOutputStream(output)) {
-      gntFiles.writeTo(os);
-    }
+    GNTFiles gntFiles = filesBuilder.build();
+    return gntFiles;
   }
 
   /**
@@ -89,7 +87,8 @@ public class GNT4DiffChecker {
         if (bytesRead < offset) {
           int bytesToMove = offset - bytesRead;
           if (is.skip(bytesToMove) != bytesToMove) {
-            String message = String.format("Unable to skip %d bytes from %s at offset %d", bytesToMove, filePath, bytesRead);
+            String message = String.format("Unable to skip %d bytes from %s at offset %d",
+                bytesToMove, filePath, bytesRead);
             throw new IOException(message);
           }
           bytesRead += bytesToMove;
@@ -97,7 +96,8 @@ public class GNT4DiffChecker {
 
         byte[] fileBytes = new byte[compressedSize];
         if (is.read(fileBytes) != compressedSize) {
-          String message = String.format("Unable to read %d bytes from %s at offset %d", compressedSize, filePath, bytesRead);
+          String message = String.format("Unable to read %d bytes from %s at offset %d",
+              compressedSize, filePath, bytesRead);
           throw new IOException(message);
         }
         bytesRead += compressedSize;

@@ -3,9 +3,13 @@ package com.github.nicholasmoser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4DiffChecker;
 import com.github.nicholasmoser.gnt4.GNT4Extractor;
@@ -139,7 +143,7 @@ public class GNTool extends Application {
    * @param game The Game to create the workspace for.
    */
   private void loadWorkspace(Game game) {
-    File directory = Choosers.getInputWorkspaceDirectory(USER_HOME);
+    Path directory = Choosers.getInputWorkspaceDirectory(USER_HOME);
     if (directory != null) {
       if (game == Game.GNT4) {
         try {
@@ -166,12 +170,12 @@ public class GNTool extends Application {
    * @param game The Game to create the workspace for.
    */
   private void createWorkspace(Game game) {
-    File iso = Choosers.getInputISO(USER_HOME);
+    Path iso = Choosers.getInputISO(USER_HOME);
     if (iso != null) {
       try {
         String gameId = GameCubeISO.getGameId(iso);
         if (game.getGameId().equals(gameId)) {
-          File workspacePath = Choosers.getOutputWorkspaceDirectory(iso.getParentFile());
+          Path workspacePath = Choosers.getOutputWorkspaceDirectory(iso.getParent().toFile());
           if (workspacePath != null) {
             if (game == Game.GNT4) {
               extract(new GNT4Extractor(iso, workspacePath));
@@ -231,7 +235,10 @@ public class GNTool extends Application {
           updateMessage("Unpacking FPKs...");
           workspace = extractor.unpackFPKs();
           updateMessage("Saving workspace state...");
-          GNT4DiffChecker.createDiffBinary(workspace.getUncompressedDirectory(), workspace.getWorkspaceState());
+          GNTFiles gntFiles = GNT4DiffChecker.createDiffBinary(workspace.getUncompressedDirectory());
+          try (OutputStream os = Files.newOutputStream(workspace.getWorkspaceState())) {
+            gntFiles.writeTo(os);
+          }
           updateMessage("Workspace created.");
           updateProgress(1, max);
           Thread.sleep(MILLIS_WAIT_AFTER_CREATE);

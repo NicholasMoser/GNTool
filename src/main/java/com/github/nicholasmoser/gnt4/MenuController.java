@@ -1,7 +1,6 @@
 package com.github.nicholasmoser.gnt4;
 
 import java.awt.Desktop;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,14 +9,12 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.Choosers;
-import com.github.nicholasmoser.CodePatcher;
 import com.github.nicholasmoser.FPKPacker;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Code.ID;
-import com.google.common.io.Files;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -80,7 +77,7 @@ public class MenuController {
   protected void build(ActionEvent event) {
     try
     {
-      File isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
+      Path isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
       if (isoFile == null) {
         return;
       }
@@ -89,7 +86,7 @@ public class MenuController {
       FPKPacker fpkPacker = new FPKPacker(uncompressedDirectory, compressedDirectory);
       Optional<Path> compressedPath = fpkPacker.pack();
       if (compressedPath.isPresent()) {
-        GameCubeISO.importFiles(compressedPath.get().toFile(), isoFile);
+        GameCubeISO.importFiles(compressedPath.get(), isoFile);
       }
     }
     catch (IOException e)
@@ -127,7 +124,7 @@ public class MenuController {
    * @param workspace The workspace to add.
    */
   public void addWorkspace(Workspace workspace) {
-    this.workspace = workspace.getWorkspaceDirectory().toPath();
+    this.workspace = workspace.getWorkspaceDirectory();
   }
 
   /**

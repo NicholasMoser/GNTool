@@ -1,6 +1,7 @@
 package com.github.nicholasmoser;
 
 import java.io.File;
+import java.nio.file.Path;
 import org.apache.commons.io.FileUtils;
 import com.github.nicholasmoser.gnt4.GNT4Files;
 import javafx.stage.DirectoryChooser;
@@ -17,7 +18,7 @@ public class Choosers {
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return The input directory or null if none is chosen.
    */
-  public static File getInputRootDirectory(File initialDirectory) {
+  public static Path getInputRootDirectory(File initialDirectory) {
     return getInputRootDirectory(initialDirectory, false);
   }
 
@@ -31,7 +32,7 @@ public class Choosers {
    * @param checkForFpk Whether or not to require there are no fpks in the directory.
    * @return The input directory or null if none is chosen.
    */
-  public static File getInputRootDirectory(File initialDirectory, boolean checkForFpk) {
+  public static Path getInputRootDirectory(File initialDirectory, boolean checkForFpk) {
     boolean rootSelected = false;
     File inputDirectory = null;
     DirectoryChooser directoryChooser = null;
@@ -54,7 +55,7 @@ public class Choosers {
         rootSelected = true;
       }
     }
-    return inputDirectory;
+    return inputDirectory.toPath();
   }
 
   /**
@@ -63,13 +64,13 @@ public class Choosers {
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return The input ISO or null if none is chosen.
    */
-  public static File getInputISO(File initialDirectory) {
+  public static Path getInputISO(File initialDirectory) {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Input ISO File");
     fileChooser.setInitialDirectory(initialDirectory);
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("ISO Image (*.iso)", "*.iso");
     fileChooser.getExtensionFilters().add(fileExtensions);
-    return fileChooser.showOpenDialog(null);
+    return fileChooser.showOpenDialog(null).toPath();
   }
 
   /**
@@ -79,11 +80,11 @@ public class Choosers {
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return The output workspace directory or null if none is chosen.
    */
-  public static File getOutputWorkspaceDirectory(File initialDirectory) {
+  public static Path getOutputWorkspaceDirectory(File initialDirectory) {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     directoryChooser.setTitle("Select Output Workspace Directory");
     directoryChooser.setInitialDirectory(initialDirectory);
-    return directoryChooser.showDialog(null);
+    return directoryChooser.showDialog(null).toPath();
   }
 
   /**
@@ -93,7 +94,7 @@ public class Choosers {
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return The input workspace directory or null if none is chosen.
    */
-  public static File getInputWorkspaceDirectory(File initialDirectory) {
+  public static Path getInputWorkspaceDirectory(File initialDirectory) {
     boolean validDirectory = false;
     File workspaceDirectory = null;
     while (!validDirectory) {
@@ -110,7 +111,7 @@ public class Choosers {
         Message.info("Please Select Valid Workspace", message);
       }
     }
-    return workspaceDirectory;
+    return workspaceDirectory.toPath();
   }
 
   /**
@@ -121,7 +122,7 @@ public class Choosers {
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return The output directory or null if none is chosen.
    */
-  public static File getOutputRootDirectory(File initialDirectory) {
+  public static Path getOutputRootDirectory(File initialDirectory) {
     return getOutputRootDirectory(initialDirectory, false);
   }
 
@@ -135,7 +136,7 @@ public class Choosers {
    * @param checkForFpk Whether or not to require there is at least one fpk in the directory.
    * @return The output directory or null if none is chosen.
    */
-  public static File getOutputRootDirectory(File initialDirectory, boolean checkForFpk) {
+  public static Path getOutputRootDirectory(File initialDirectory, boolean checkForFpk) {
     boolean rootSelected = false;
     File outputDirectory = null;
     DirectoryChooser directoryChooser = null;
@@ -158,7 +159,7 @@ public class Choosers {
         rootSelected = true;
       }
     }
-    return outputDirectory;
+    return outputDirectory.toPath();
   }
 
   /**
@@ -168,7 +169,7 @@ public class Choosers {
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return The output directory or null if none is chosen.
    */
-  public static File getOutputNonRootDirectory(File initialDirectory) {
+  public static Path getOutputNonRootDirectory(File initialDirectory) {
     boolean rootNotSelected = true;
     File outputDirectory = null;
     DirectoryChooser directoryChooser = null;
@@ -187,7 +188,7 @@ public class Choosers {
         rootNotSelected = false;
       }
     }
-    return outputDirectory;
+    return outputDirectory.toPath();
   }
 
   /**
@@ -196,13 +197,13 @@ public class Choosers {
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return The output ISO or null if none is chosen.
    */
-  public static File getOutputISO(File initialDirectory) {
+  public static Path getOutputISO(File initialDirectory) {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Create Output ISO File");
     fileChooser.setInitialDirectory(initialDirectory);
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("ISO Image (*.iso)", "*.iso");
     fileChooser.getExtensionFilters().add(fileExtensions);
-    return fileChooser.showSaveDialog(null);
+    return fileChooser.showSaveDialog(null).toPath();
   }
 
   /**

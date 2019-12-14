@@ -1,32 +1,34 @@
 package com.github.nicholasmoser.gnt4;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import com.github.nicholasmoser.Extractor;
 import com.github.nicholasmoser.FPKUnpacker;
-import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.Workspace;
+import com.github.nicholasmoser.gamecube.GameCubeISO;
 
 /**
  * Extracts a GNT4 ISO into a GNT4Workspace.
  */
 public class GNT4Extractor implements Extractor {
 
-  File iso;
+  private static final Logger LOGGER = Logger.getLogger(GNT4Extractor.class.getName());
 
-  File extractionPath;
+  private Path iso;
 
-  boolean extracted;
+  private Path extractionPath;
 
-  boolean unpacked;
+  private boolean extracted;
+
+  private boolean unpacked;
 
   /**
    * @param iso The GNT4 ISO to extract.
    * @param extractionPath The path to extract the ISO to.
    */
-  public GNT4Extractor(File iso, File extractionPath) {
+  public GNT4Extractor(Path iso, Path extractionPath) {
     this.iso = iso;
     this.extractionPath = extractionPath;
     this.extracted = false;
@@ -47,8 +49,9 @@ public class GNT4Extractor implements Extractor {
       throw new IllegalStateException("Must extract the ISO before you can unpack the FPKs.");
     }
     if (!unpacked) {
-      Path root = extractionPath.toPath().resolve(GNT4Files.ROOT_DIRECTORY);
-      Path uncompressed = extractionPath.toPath().resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
+      Path root = extractionPath.resolve(GNT4Files.ROOT_DIRECTORY);
+      Path uncompressed = extractionPath.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
+      LOGGER.info(String.format("Copying %s to %s", root, uncompressed));
       FileUtils.copyDirectory(root.toFile(), uncompressed.toFile());
       FPKUnpacker unpacker = new FPKUnpacker(uncompressed);
       unpacker.unpack();
@@ -59,6 +62,6 @@ public class GNT4Extractor implements Extractor {
 
   @Override
   public String getISO() {
-    return iso.getAbsolutePath();
+    return iso.toString();
   }
 }

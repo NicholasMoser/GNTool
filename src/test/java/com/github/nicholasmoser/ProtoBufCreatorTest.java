@@ -1,9 +1,12 @@
 package com.github.nicholasmoser;
 
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.gnt4.GNT4DiffChecker;
 import com.github.nicholasmoser.gnt4.GNT4Files;
 
@@ -23,7 +26,10 @@ public class ProtoBufCreatorTest {
   public void testCreateDiffBinary() throws Exception {
     Path root = Paths.get("D:/GNT/aaa/uncompressed");
     Path output = Paths.get("D:/GNT/aaa/workspace.bin");
-    GNT4DiffChecker.createDiffBinary(root, output);
+    GNTFiles gntFiles = GNT4DiffChecker.createDiffBinary(root);
+    try (OutputStream os = Files.newOutputStream(output)) {
+      gntFiles.writeTo(os);
+    }
   }
   
   /**
@@ -34,6 +40,9 @@ public class ProtoBufCreatorTest {
   public void testCreateDiffBinaryWithFpks() throws Exception {
     Path root = Paths.get("D:/GNT/aaa/root");
     Path output = Paths.get("D:/GNT/aaa/fpks.bin");
-    GNT4DiffChecker.createDiffBinary(root, output, true);
+    GNTFiles gntFiles = GNT4DiffChecker.createDiffBinary(root, true);
+    try (OutputStream os = Files.newOutputStream(output)) {
+      gntFiles.writeTo(os);
+    }
   }
 }

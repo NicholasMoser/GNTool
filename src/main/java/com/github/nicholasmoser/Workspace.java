@@ -1,6 +1,5 @@
 package com.github.nicholasmoser;
 
-import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -11,7 +10,7 @@ public interface Workspace {
   /**
    * @return The workspace directory.
    */
-  public File getWorkspaceDirectory();
+  public Path getWorkspaceDirectory();
 
   /**
    * @return The root directory in the workspace.
