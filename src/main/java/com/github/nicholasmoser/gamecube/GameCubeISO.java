@@ -35,43 +35,45 @@ public class GameCubeISO {
   public static String getGameId(File iso) throws IOException {
     try (InputStream is = Files.newInputStream(iso.toPath())) {
       byte[] bytes = new byte[6];
-      is.read(bytes);
+      if (is.read(bytes) != 6) {
+        throw new IOException("Unable to read the Game ID from the ISO file.");
+      }
       return new String(bytes, StandardCharsets.US_ASCII);
     }
   }
 
   /**
-   * Checks a GameCube ISO workspace in that it has a file at root/&&systemdata/ISO.hdr
-   * and that the game ID matches the expected game ID. This method will throw IllegalStateException
-   * for circumstances where the workspace is not valid.
+   * Checks a GameCube ISO workspace in that it has an ISO.hdr file and that the game ID
+   * matches the expected game ID.
    * 
    * @param directory The directory to check.
    * @param game The expected game.
+   * @throws IOException If the workspace is not valid.
    */
-  public static void checkWorkspace(File directory, Game game) {
+  public static void checkWorkspace(File directory, Game game) throws IOException {
     File uncompressedDirectory = new File(directory, GNT4Files.UNCOMPRESSED_DIRECTORY);
     if (!uncompressedDirectory.isDirectory()) {
-      throw new IllegalStateException("uncompressed directory does not exist.");
+      throw new IOException("uncompressed directory does not exist.");
     }
     File systemData = new File(uncompressedDirectory, "sys");
     if (!systemData.isDirectory()) {
-      throw new IllegalStateException("uncompressed/sys folder does not exist.");
+      throw new IOException("uncompressed/sys folder does not exist.");
     }
     File isoHeader = new File(systemData, "ISO.hdr");
     if (!isoHeader.isFile()) {
-      throw new IllegalStateException("uncompressed/sys/ISO.hdr file does not exist.");
+      throw new IOException("uncompressed/sys/ISO.hdr file does not exist.");
     }
     String gameId;
     try {
       gameId = getGameId(isoHeader);
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to read uncompressed/sys/ISO.hdr", e);
+      throw new IOException("Unable to read uncompressed/sys/ISO.hdr", e);
     }
     String expectedGameId = game.getGameId();
     if (!expectedGameId.equals(gameId)) {
       String message = String.format("uncompressed/sys/ISO.hdr has game ID %s but should have %s",
           gameId, expectedGameId);
-      throw new IllegalStateException(message);
+      throw new IOException(message);
     }
   }
 

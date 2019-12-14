@@ -10,6 +10,4 @@ public class GNT4Code implements Code {
     SKIP_CUTSCENES,
     ASPECT_RATIO
   }
-  
-  private Path filePath;
 }

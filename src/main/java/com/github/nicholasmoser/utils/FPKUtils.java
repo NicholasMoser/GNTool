@@ -18,9 +18,15 @@ public class FPKUtils {
    */
   public static int readFPKHeader(InputStream is) throws IOException {
     byte[] fileCountWord = new byte[4];
-    is.skip(4);
-    is.read(fileCountWord);
-    is.skip(8);
+    if (is.skip(4) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.read(fileCountWord) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.skip(8) != 8) {
+      throw new IOException("Unable to read FPK header.");
+    }
     return ByteBuffer.wrap(fileCountWord).getInt();
   }
 
@@ -39,11 +45,21 @@ public class FPKUtils {
     byte[] offsetWord = new byte[4];
     byte[] compressedSizeWord = new byte[4];
     byte[] uncompressedSizeWord = new byte[4];
-    is.read(fileNameWord);
-    is.skip(4);
-    is.read(offsetWord);
-    is.read(compressedSizeWord);
-    is.read(uncompressedSizeWord);
+    if (is.read(fileNameWord) != 16) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.skip(4) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.read(offsetWord) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.read(compressedSizeWord) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.read(uncompressedSizeWord) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
     String fileName = new String(fileNameWord, Charset.forName("Shift_JIS")).trim();
     int offset = ByteBuffer.wrap(offsetWord).getInt();
     int compressedSize = ByteBuffer.wrap(compressedSizeWord).getInt();

@@ -54,7 +54,7 @@ public class GNT4DiffChecker {
    * @return The relativized file path.
    */
   private static String relativizePath(Path root, Path filePath) {
-    return filePath.toString().replace(root.toString(), "").replace("\\", "/").substring(1);
+    return filePath.toString().replace(root.toString(), "").replace('\\', '/').substring(1);
   }
 
   /**
@@ -88,12 +88,18 @@ public class GNT4DiffChecker {
         // Skip to the next offset if we are not already there
         if (bytesRead < offset) {
           int bytesToMove = offset - bytesRead;
-          is.skip(bytesToMove);
+          if (is.skip(bytesToMove) != bytesToMove) {
+            String message = String.format("Unable to skip %d bytes from %s at offset %d", bytesToMove, filePath, bytesRead);
+            throw new IOException(message);
+          }
           bytesRead += bytesToMove;
         }
 
         byte[] fileBytes = new byte[compressedSize];
-        is.read(fileBytes);
+        if (is.read(fileBytes) != compressedSize) {
+          String message = String.format("Unable to read %d bytes from %s at offset %d", compressedSize, filePath, bytesRead);
+          throw new IOException(message);
+        }
         bytesRead += compressedSize;
 
         // Files with the same compressed and uncompressed size are not compressed

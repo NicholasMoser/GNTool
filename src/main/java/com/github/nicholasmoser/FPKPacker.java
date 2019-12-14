@@ -124,8 +124,8 @@ public class FPKPacker {
    * @throws IOException If there is an issue reading/writing bytes to the file.
    */
   public Path repackFPK(String fpk) throws IOException {
-    String[] fpkChildren = gnt4Files.getFPKChildren(fpk);
-    List<FPKFile> newFPKs = new ArrayList<FPKFile>(fpkChildren.length);
+    List<String> fpkChildren = gnt4Files.getFPKChildren(fpk);
+    List<FPKFile> newFPKs = new ArrayList<FPKFile>(fpkChildren.size());
     for (String child : fpkChildren) {
       String childName = gnt4Files.getId(child);
       byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(child));
