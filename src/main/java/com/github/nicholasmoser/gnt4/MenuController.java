@@ -105,6 +105,10 @@ public class MenuController {
    */
   @FXML
   protected void build(ActionEvent event) {
+    if (!missingFiles.getItems().isEmpty()) {
+      Message.error("Missing Files", "You cannot build the ISO while files are missing.\nSee the Missing Files tab.");
+      return;
+    }
     try {
       Path isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
       if (isoFile == null) {
