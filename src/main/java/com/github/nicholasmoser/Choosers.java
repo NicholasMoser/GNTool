@@ -203,7 +203,9 @@ public class Choosers {
     fileChooser.setInitialDirectory(initialDirectory);
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("ISO Image (*.iso)", "*.iso");
     fileChooser.getExtensionFilters().add(fileExtensions);
-    return fileChooser.showSaveDialog(null).toPath();
+    File selection = fileChooser.showSaveDialog(null);
+    
+    return selection != null ? selection.toPath() : null;
   }
 
   /**
