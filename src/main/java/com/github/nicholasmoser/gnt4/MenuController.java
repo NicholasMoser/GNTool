@@ -3,14 +3,13 @@ package com.github.nicholasmoser.gnt4;
 import java.awt.Desktop;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.FPKPacker;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
@@ -21,11 +20,18 @@ import com.github.nicholasmoser.utils.ProtobufUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ListView;
 
 public class MenuController {
   private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
 
   private Workspace workspace;
+
+  @FXML
+  private ListView<String> changedFiles;
+
+  @FXML
+  private ListView<String> missingFiles;
 
   /**
    * Toggles the code for fixing the audio.
@@ -76,21 +82,15 @@ public class MenuController {
   protected void refresh(ActionEvent event) {
     try {
       System.out.println("isDirty: " + workspace.isDirty());
+      missingFiles.getItems().clear();
+      changedFiles.getItems().clear();
       GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
-      Set<GNTFile> missingFiles = workspace.getMissingFiles(newFiles);
-      if (!missingFiles.isEmpty()) {
-        String separatedFiles = missingFiles.stream()
-            .map(file -> file.getFilePath())
-            .collect(Collectors.joining("; "));
-        Message.error("Files Missing", "The following files are missing from the workspace: " + separatedFiles);
-      }
-      Set<GNTFile> changedFiles = workspace.getChangedFiles(newFiles);
-      if (!changedFiles.isEmpty()) {
-        String separatedFiles = changedFiles.stream()
-            .map(file -> file.getFilePath())
-            .collect(Collectors.joining("; "));
-        Message.error("Files Changed", "The following files have been changed: " + separatedFiles);
-      }
+      List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
+          .map(file -> file.getFilePath()).collect(Collectors.toList());
+      missingFiles.getItems().addAll(missingFilenames);
+      String changedFilenames = workspace.getChangedFiles(newFiles).stream()
+          .map(file -> file.getFilePath()).collect(Collectors.joining("; "));
+      changedFiles.getItems().addAll(changedFilenames);
       System.out.println("isDirty: " + workspace.isDirty());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -149,11 +149,11 @@ public class MenuController {
   }
 
   /**
-   * Adds a workspace to the menu controller.
+   * Initializes with a workspace.
    * 
    * @param workspace The workspace to add.
    */
-  public void addWorkspace(Workspace workspace) {
+  public void init(Workspace workspace) {
     this.workspace = workspace;
   }
 

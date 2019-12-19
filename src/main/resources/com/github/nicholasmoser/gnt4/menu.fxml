@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -19,15 +18,15 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="Refresh" onAction="#refresh" />
-            <MenuItem mnemonicParsing="false" text="Build ISO" onAction="#build" />
+            <MenuItem mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+            <MenuItem mnemonicParsing="false" onAction="#build" text="Build ISO" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" onAction="#quit" />
+            <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About GNTool" onAction="#about" />
+            <MenuItem mnemonicParsing="false" onAction="#about" text="About GNTool" />
           </items>
         </Menu>
       </menus>
@@ -44,10 +43,10 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="573.0" prefWidth="644.0">
                                        <children>
-                                          <CheckBox layoutX="29.0" layoutY="20.0" mnemonicParsing="false" text="Audio Fix" onAction="#audioFixCode" />
-                                          <CheckBox layoutX="29.0" layoutY="40.0" mnemonicParsing="false" text="Unlock Everything" onAction="#unlockEverythingCode" />
-                                          <CheckBox layoutX="29.0" layoutY="60.0" mnemonicParsing="false" text="Skip Cutscenes" onAction="#skipCutscenesCode" />
-                                          <CheckBox layoutX="29.0" layoutY="80.0" mnemonicParsing="false" text="16:9 Aspect Ratio" onAction="#aspectRatioCode" />
+                                          <CheckBox layoutX="29.0" layoutY="20.0" mnemonicParsing="false" onAction="#audioFixCode" text="Audio Fix" />
+                                          <CheckBox layoutX="29.0" layoutY="40.0" mnemonicParsing="false" onAction="#unlockEverythingCode" text="Unlock Everything" />
+                                          <CheckBox layoutX="29.0" layoutY="60.0" mnemonicParsing="false" onAction="#skipCutscenesCode" text="Skip Cutscenes" />
+                                          <CheckBox layoutX="29.0" layoutY="80.0" mnemonicParsing="false" onAction="#aspectRatioCode" text="16:9 Aspect Ratio" />
                                        </children>
                                     </AnchorPane>
                                 </content>
@@ -56,6 +55,24 @@
                         </AnchorPane>
                   </content>
                 </Tab>
+                  <Tab text="Changed Files">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" fx:id="changedFiles" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+                  <Tab text="Missing Files">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" fx:id="missingFiles" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
               </tabs>
             </TabPane>
       </children>
