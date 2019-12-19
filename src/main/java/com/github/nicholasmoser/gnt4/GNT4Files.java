@@ -2,15 +2,21 @@ package com.github.nicholasmoser.gnt4;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
+import com.github.nicholasmoser.utils.ProtobufUtils;
 import com.github.nicholasmoser.Message;
 
 public class GNT4Files {
@@ -26,14 +32,38 @@ public class GNT4Files {
   private static final Logger LOGGER = Logger.getLogger(GNT4Files.class.getName());
   
   private static final String FILE_NAME = "files.dat";
-
-  private static GNT4Files INSTANCE;
+  
+  private Path uncompressedDirectory;
+  
+  private Path workspaceState;
   
   private GNTFiles gntFiles;
+  
+  public GNT4Files(Path uncompressedDirectory, Path workspaceState) {
+    this.uncompressedDirectory = uncompressedDirectory;
+    this.workspaceState = workspaceState;
+  }
 
-  private GNT4Files() {
-    try(InputStream is = getClass().getResourceAsStream(FILE_NAME)) {
-      gntFiles = GNTFiles.parseFrom(is);
+  /**
+   * Initializes the workspace state file. Used when creating a new workspace.
+   * 
+   * @throws IOException If an I/O error occurs.
+   */
+  public void initState() throws IOException {
+    this.gntFiles = ProtobufUtils.createBinary(uncompressedDirectory);
+    try (OutputStream os = Files.newOutputStream(workspaceState)) {
+      gntFiles.writeTo(os);
+    }
+  }
+
+  /**
+   * Loads an existing workspace state file. Used when loading an existing workspace.
+   * 
+   * @throws IOException If an I/O error occurs.
+   */
+  public void loadExistingState() throws IOException {
+    try(InputStream is = Files.newInputStream(workspaceState)) {
+      this.gntFiles = GNTFiles.parseFrom(is);
     } catch (IOException e) {
       String message = "Error reading " + FILE_NAME;
       LOGGER.log(Level.SEVERE, message, e);
@@ -41,16 +71,55 @@ public class GNT4Files {
     }
   }
 
-  public static GNT4Files getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new GNT4Files();
+  /**
+   * Finds the list of files that are missing from the workspace.
+   * It will take each file that should be in the workspace and see
+   * if it is in the list of GNTFiles passed in.
+   * 
+   * @param newGntFiles The GNTFiles to compare to the existing workspace files.
+   * @return The list of files that are missing from the workspace.
+   */
+  public Set<GNTFile> getMissingFiles(GNTFiles newGntFiles) {
+    Set<GNTFile> missingFiles = new HashSet<GNTFile>();
+    Set<String> newFilePaths = newGntFiles.getGntFileList().stream()
+        .map(newFile -> newFile.getFilePath())
+        .collect(Collectors.toSet());
+    for (GNTFile gntFile : gntFiles.getGntFileList()) {
+      if (!newFilePaths.contains(gntFile.getFilePath())) {
+        missingFiles.add(gntFile);
+      }
     }
-    return INSTANCE;
+    return missingFiles;
   }
-
-  public List<String> getFilesChanges(Map<String, String> fileCRC32Values) {
-    // TODO Auto-generated method stub
-    return null;
+  
+  /**
+   * Finds the collection of files that have changed for a new set of files and the existing workspace.
+   * It is recommended to call {@link #allFilesPresent(GNTFiles)} first, as this will not check
+   * whether or not the files exist or not. It will simply use the hashCode function to test
+   * equality of the elements.
+   * @param newGntFiles The new files to compare to the workspace.
+   * @return The collection of files that have changed.
+   */
+  public Set<GNTFile> getChangedFiles(GNTFiles newGntFiles) {
+    Set<GNTFile> filesChanged = new HashSet<GNTFile>();
+    for (GNTFile newFile : newGntFiles.getGntFileList()) {
+      Optional<GNTFile> oldFile = getOldFile(newFile.getFilePath());
+      if (oldFile.isPresent()) {
+        if (newFile.getHash() != oldFile.get().getHash()) {
+          filesChanged.add(newFile);
+        }
+      }
+    }
+    return filesChanged;
+  }
+  
+  private Optional<GNTFile> getOldFile(String filePath) {
+    for (GNTFile gntFile : gntFiles.getGntFileList()) {
+      if (filePath.equals(gntFile.getFilePath())) {
+        return Optional.of(gntFile);
+      }
+    }
+    return Optional.empty();
   }
 
   public Optional<String> getParentFPK(String fileName) {
@@ -92,5 +161,7 @@ public class GNT4Files {
     return fpkChildren;
   }
   
-  
+  public void updateState() {
+    
+  }
 }

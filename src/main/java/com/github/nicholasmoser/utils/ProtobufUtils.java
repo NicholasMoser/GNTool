@@ -1,8 +1,7 @@
-package com.github.nicholasmoser.gnt4;
+package com.github.nicholasmoser.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,16 +11,31 @@ import com.github.nicholasmoser.FPKFileHeader;
 import com.github.nicholasmoser.GNTFileProtos;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.PRSUncompressor;
-import com.github.nicholasmoser.utils.CRC32;
-import com.github.nicholasmoser.utils.FPKUtils;
 
-public class GNT4DiffChecker {
+public class ProtobufUtils {
 
-  public static GNTFiles createDiffBinary(Path root) throws IOException {
-    return createDiffBinary(root, false);
+  /**
+   * Create a GNTFiles object containing all GNTFiles and respective hashes. Ignores FPK files.
+   * 
+   * @param root The root directory.
+   * @return The GNTFiles mapping of filePaths to hashes.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static GNTFiles createBinary(Path root) throws IOException {
+    return createBinary(root, false);
   }
 
-  public static GNTFiles createDiffBinary(Path root, boolean checkForFpk)
+  /**
+   * Create a GNTFiles object containing all GNTFiles and respective hashes.
+   * Optionally allows consideration for FPK files and logic to handle the relationships
+   * to their children.
+   * 
+   * @param root The root directory.
+   * @param checkForFpk Whether or not to check for FPK files and process their children.
+   * @return The GNTFiles mapping of filePaths to hashes.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static GNTFiles createBinary(Path root, boolean checkForFpk)
       throws IOException {
     List<Path> files = Files.walk(root).filter(Files::isRegularFile).collect(Collectors.toList());
     GNTFiles.Builder filesBuilder = GNTFiles.newBuilder();

@@ -11,7 +11,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
-import com.github.nicholasmoser.gnt4.GNT4DiffChecker;
 import com.github.nicholasmoser.gnt4.GNT4Extractor;
 import com.github.nicholasmoser.gnt4.GNT4Workspace;
 import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
@@ -149,6 +148,7 @@ public class GNTool extends Application {
         try {
           GameCubeISO.checkWorkspace(directory, game);
           Workspace workspace = new GNT4Workspace(directory);
+          workspace.loadExistingState();
           WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
           workspaceView.init(primaryStage);
         } catch (IllegalStateException e) {
@@ -235,10 +235,7 @@ public class GNTool extends Application {
           updateMessage("Unpacking FPKs...");
           workspace = extractor.unpackFPKs();
           updateMessage("Saving workspace state...");
-          GNTFiles gntFiles = GNT4DiffChecker.createDiffBinary(workspace.getUncompressedDirectory());
-          try (OutputStream os = Files.newOutputStream(workspace.getWorkspaceState())) {
-            gntFiles.writeTo(os);
-          }
+          workspace.initState();
           updateMessage("Workspace created.");
           updateProgress(1, max);
           Thread.sleep(MILLIS_WAIT_AFTER_CREATE);
@@ -264,6 +261,13 @@ public class GNTool extends Application {
           LOGGER.log(Level.SEVERE, e.toString(), e);
           Message.error("Error Loading Workspace", "Error loading workspace defintion.");
         }
+      }
+    });
+    task.setOnFailed(new EventHandler<WorkerStateEvent>() {
+      @Override
+      public void handle(WorkerStateEvent event) {
+        Message.error("Failed to Create Workspace", "See log for more information.");
+        loadingWindow.close();
       }
     });
     progressIndicator.progressProperty().bind(task.progressProperty());
