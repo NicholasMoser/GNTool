@@ -22,6 +22,7 @@ public class GNT4WorkspaceView implements WorkspaceView {
     controller.init(workspace);
     stage.setScene(scene);
     stage.setTitle("GNT4 Workspace");
+    stage.centerOnScreen();
     stage.show();
   }
 }

@@ -71,6 +71,7 @@ public class GNTool extends Application {
 
     primaryStage.setTitle("GNTool");
     primaryStage.setScene(scene);
+    primaryStage.centerOnScreen();
     primaryStage.show();
   }
 
