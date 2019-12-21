@@ -1,6 +1,5 @@
 package com.github.nicholasmoser.gnt4;
 
-import java.nio.file.Path;
 import com.github.nicholasmoser.Code;
 
 public class GNT4Code implements Code {

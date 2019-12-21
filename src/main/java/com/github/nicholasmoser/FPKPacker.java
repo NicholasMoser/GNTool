@@ -1,26 +1,17 @@
 package com.github.nicholasmoser;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.gnt4.GNT4Files;
 import com.github.nicholasmoser.utils.ByteUtils;
-import com.google.common.base.Verify;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import com.google.common.primitives.Bytes;
 
 /**
@@ -176,37 +167,5 @@ public class FPKPacker {
   private static byte[] createFPKHeader(int numberOfFiles, int outputSize) {
     return Bytes.concat(ByteUtils.intToBytes(0), ByteUtils.intToBytes(numberOfFiles),
         ByteUtils.intToBytes(16), ByteUtils.intToBytes(outputSize));
-  }
-
-  /**
-   * Gets the CRC32 hash values from files in a given directory. This function works recursively. It
-   * will map the file name to the CRC32 value in the given map parameter.
-   * 
-   * @param directory The directory to search for files.
-   * @param fileCRC32Values The map between file names to CRC32 values.
-   * @return The map between file names to CRC32 values.
-   */
-  private static Map<String, String> getCRC32Values(File directory,
-      Map<String, String> fileCRC32Values) {
-    Verify.verifyNotNull(directory);
-    Verify.verifyNotNull(fileCRC32Values);
-
-    File[] files = directory.listFiles();
-    HashFunction crc32 = Hashing.crc32();
-    for (File fileEntry : files) {
-      if (fileEntry.isDirectory()) {
-        getCRC32Values(fileEntry, fileCRC32Values);
-      } else {
-        try {
-          String[] fileParts = fileEntry.getAbsolutePath().split("root\\\\");
-          String fileKey = fileParts[fileParts.length - 1];
-          HashCode hashValue = crc32.hashBytes(Files.readAllBytes(fileEntry.toPath()));
-          fileCRC32Values.put(fileKey, hashValue.toString());
-        } catch (IOException e) {
-          LOGGER.log(Level.SEVERE, e.toString(), e);
-        }
-      }
-    }
-    return fileCRC32Values;
   }
 }

@@ -46,7 +46,7 @@ public class PRSCompressionTest {
   @Test
   public void testRandomBytes() throws Exception {
     SecureRandom random = new SecureRandom();
-    for (int i = 10; i < 1000; i++)
+    for (int i = 10; i < 1000; i += 50)
     {
       byte[] originalBytes = new byte[i];
       random.nextBytes(originalBytes);

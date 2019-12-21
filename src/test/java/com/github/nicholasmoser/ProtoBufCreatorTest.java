@@ -4,10 +4,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
-import com.github.nicholasmoser.gnt4.GNT4Files;
 import com.github.nicholasmoser.utils.ProtobufUtils;
 
 public class ProtoBufCreatorTest {  
