@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.gnt4.GNT4Files;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.base.Verify;
@@ -42,7 +43,6 @@ public class FPKPacker {
   public FPKPacker(Path uncompressedDirectory, Path compressedDirectory) {
     this.compressedDirectory = compressedDirectory;
     this.uncompressedDirectory = uncompressedDirectory; 
-    gnt4Files = GNT4Files.getInstance();
   }
 
   /**
@@ -54,21 +54,14 @@ public class FPKPacker {
    * @return The path to the packed files.
    * @throws IOException If there is an I/O issue repacking or moving the files.
    */
-  public Optional<Path> pack() throws IOException {
-    LOGGER.info("Checking files that have changed...");
-    Map<String, String> fileCRC32Values = new HashMap<String, String>();
-    fileCRC32Values = getCRC32Values(uncompressedDirectory.toFile(), fileCRC32Values);
-    List<String> changedFiles = gnt4Files.getFilesChanges(fileCRC32Values);
-    LOGGER.info(String.format("The following files have changed: %s",
-        changedFiles.isEmpty() ? "None" : changedFiles));
-
+  public Optional<Path> pack(List<String> changedFiles) throws IOException {
     Set<String> changedFPKs = new HashSet<String>();
     Set<String> changedNonFPKs = new HashSet<String>();
-    for (String fileName : changedFiles) {
-      Optional<String> parent = gnt4Files.getParentFPK(fileName);
+    for (String changedFile : changedFiles) {
+      Optional<String> parent = gnt4Files.getParentFPK(changedFile);
       // If there is no parent, it does not belong to an FPK
       if (parent.isEmpty()) {
-        changedNonFPKs.add(fileName);
+        changedNonFPKs.add(changedFile);
       } else {
         changedFPKs.add(parent.get());
       }

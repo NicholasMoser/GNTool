@@ -1,6 +1,8 @@
 package com.github.nicholasmoser;
 
+import java.util.Optional;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 
 /**
@@ -32,5 +34,20 @@ public class Message {
     alert.setTitle("Info");
     alert.setHeaderText(header);
     alert.showAndWait();
+  }
+  
+  /**
+   * Display a warning window to the user with the given header and message.
+   * 
+   * 
+   * @param header The header of the info window.
+   * @param message The message of the info window.
+   */
+  public static boolean warnYesNo(String header, String message) {
+    Alert alert = new Alert(AlertType.WARNING, message, ButtonType.YES, ButtonType.NO);
+    alert.setTitle("Info");
+    alert.setHeaderText(header);
+    Optional<ButtonType> selectedButton = alert.showAndWait();
+    return selectedButton.isPresent() && selectedButton.get() == ButtonType.YES ? true : false;
   }
 }

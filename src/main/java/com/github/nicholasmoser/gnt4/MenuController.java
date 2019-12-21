@@ -81,17 +81,18 @@ public class MenuController {
   @FXML
   protected void refresh(ActionEvent event) {
     try {
-      System.out.println("isDirty: " + workspace.isDirty());
-      missingFiles.getItems().clear();
-      changedFiles.getItems().clear();
+      // Refresh missing files tab list
       GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
       List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
           .map(file -> file.getFilePath()).collect(Collectors.toList());
+      missingFiles.getItems().clear();
       missingFiles.getItems().addAll(missingFilenames);
-      String changedFilenames = workspace.getChangedFiles(newFiles).stream()
-          .map(file -> file.getFilePath()).collect(Collectors.joining("; "));
+      
+      // Refresh changed files tab list
+      List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
+          .map(file -> file.getFilePath()).collect(Collectors.toList());
+      changedFiles.getItems().clear();
       changedFiles.getItems().addAll(changedFilenames);
-      System.out.println("isDirty: " + workspace.isDirty());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e.toString(), e);
       Message.error("Error Refreshing Workspace", e.getMessage());
@@ -105,10 +106,25 @@ public class MenuController {
    */
   @FXML
   protected void build(ActionEvent event) {
+    // Force refresh
+    refresh(null);
+    
+    // Prevent build if files are missing
     if (!missingFiles.getItems().isEmpty()) {
       Message.error("Missing Files", "You cannot build the ISO while files are missing.\nSee the Missing Files tab.");
       return;
     }
+    
+    // Warn user if no files have changed
+    if (changedFiles.getItems().isEmpty()) {
+      String message = "There are no changed files in your workspace. Do you still wish to build an ISO?";
+      boolean choice = Message.warnYesNo("No Changed Files", message);
+      if (!choice) {
+        return;
+      }
+    }
+    
+    // Begin building
     try {
       Path isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
       if (isoFile == null) {
@@ -117,7 +133,7 @@ public class MenuController {
       Path uncompressedDirectory = workspace.getUncompressedDirectory();
       Path compressedDirectory = workspace.getRootDirectory();
       FPKPacker fpkPacker = new FPKPacker(uncompressedDirectory, compressedDirectory);
-      Optional<Path> compressedPath = fpkPacker.pack();
+      Optional<Path> compressedPath = fpkPacker.pack(changedFiles.getItems());
       if (compressedPath.isPresent()) {
         GameCubeISO.importFiles(compressedPath.get(), isoFile);
       }
