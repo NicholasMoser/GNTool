@@ -113,7 +113,7 @@
 										--file=${project.build.directory}/modules/${project.build.finalName}.jar
 									</argument>
 									<argument>
-										--main-class=com.github.nicholasmoser.Main
+										--main-class=com.github.nicholasmoser.GNTool
 									</argument>
 									<argument>
 										--module-version=${project.version}

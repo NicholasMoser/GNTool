@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -140,10 +141,11 @@ public class GNTool extends Application {
    * @param game The Game to create the workspace for.
    */
   private void loadWorkspace(Game game) {
-    Path directory = Choosers.getInputWorkspaceDirectory(USER_HOME);
-    if (directory != null) {
+    Optional<Path> directoryResponse = Choosers.getInputWorkspaceDirectory(USER_HOME);
+    if (directoryResponse.isPresent()) {
       if (game == Game.GNT4) {
         try {
+          Path directory = directoryResponse.get();
           GameCubeISO.checkWorkspace(directory, game);
           Workspace workspace = new GNT4Workspace(directory);
           workspace.loadExistingState();
@@ -168,15 +170,16 @@ public class GNTool extends Application {
    * @param game The Game to create the workspace for.
    */
   private void createWorkspace(Game game) {
-    Path iso = Choosers.getInputISO(USER_HOME);
-    if (iso != null) {
+    Optional<Path> isoResponse = Choosers.getInputISO(USER_HOME);
+    if (isoResponse.isPresent()) {
       try {
+        Path iso = isoResponse.get();
         String gameId = GameCubeISO.getGameId(iso);
         if (game.getGameId().equals(gameId)) {
-          Path workspacePath = Choosers.getOutputWorkspaceDirectory(iso.getParent().toFile());
-          if (workspacePath != null) {
+          Optional<Path> workspaceResponse = Choosers.getOutputWorkspaceDirectory(iso.getParent().toFile());
+          if (workspaceResponse.isPresent()) {
             if (game == Game.GNT4) {
-              extract(new GNT4Extractor(iso, workspacePath));
+              extract(new GNT4Extractor(iso, workspaceResponse.get()));
             }
           }
         } else {
@@ -186,7 +189,7 @@ public class GNTool extends Application {
         }
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, e.toString(), e);
-        Message.error("Issue with Opening ISO", "An error was encountered opening " + iso);
+        Message.error("Issue with Opening ISO", "An error was encountered opening the selected ISO.");
       }
     }
   }

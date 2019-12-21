@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -127,8 +128,8 @@ public class MenuController {
     }
     
     // Get output ISO path
-    Path isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
-    if (isoFile == null) {
+    Optional<Path> isoResponse = Choosers.getOutputISO(GNTool.USER_HOME);
+    if (isoResponse.isEmpty()) {
       return;
     }
     
@@ -147,7 +148,7 @@ public class MenuController {
     
     // Build ISO
     try {
-      GameCubeISO.importFiles(workspace.getRootDirectory(), isoFile);
+      GameCubeISO.importFiles(workspace.getRootDirectory(), isoResponse.get());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e.toString(), e);
       Message.error("Error Creating ISO", e.getMessage());
