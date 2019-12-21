@@ -116,30 +116,42 @@ public class MenuController {
     }
     
     // Warn user if no files have changed
+    boolean repack = true;
     if (changedFiles.getItems().isEmpty()) {
       String message = "There are no changed files in your workspace. Do you still wish to build an ISO?";
       boolean choice = Message.warnYesNo("No Changed Files", message);
-      if (!choice) {
+      if (choice) {
+        repack = false;
+      } else {
         return;
       }
     }
     
-    // Begin building
+    // Get output ISO path
+    Path isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
+    if (isoFile == null) {
+      return;
+    }
+    
+    // Repack FPKs
+    if (repack) {
+      try {
+        Path uncompressedDirectory = workspace.getUncompressedDirectory();
+        Path compressedDirectory = workspace.getRootDirectory();
+        FPKPacker fpkPacker = new FPKPacker(uncompressedDirectory, compressedDirectory);
+        fpkPacker.pack(changedFiles.getItems());
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, e.toString(), e);
+        Message.error("Error Repacking FPKs", e.getMessage());
+      }
+    }
+    
+    // Build ISO
     try {
-      Path isoFile = Choosers.getOutputISO(GNTool.USER_HOME);
-      if (isoFile == null) {
-        return;
-      }
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
-      Path compressedDirectory = workspace.getRootDirectory();
-      FPKPacker fpkPacker = new FPKPacker(uncompressedDirectory, compressedDirectory);
-      Optional<Path> compressedPath = fpkPacker.pack(changedFiles.getItems());
-      if (compressedPath.isPresent()) {
-        GameCubeISO.importFiles(compressedPath.get(), isoFile);
-      }
+      GameCubeISO.importFiles(workspace.getRootDirectory(), isoFile);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e.toString(), e);
-      Message.error("Error Building ISO", e.getMessage());
+      Message.error("Error Creating ISO", e.getMessage());
     }
   }
 

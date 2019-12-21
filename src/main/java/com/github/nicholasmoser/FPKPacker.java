@@ -54,7 +54,7 @@ public class FPKPacker {
    * @return The path to the packed files.
    * @throws IOException If there is an I/O issue repacking or moving the files.
    */
-  public Optional<Path> pack(List<String> changedFiles) throws IOException {
+  public void pack(List<String> changedFiles) throws IOException {
     Set<String> changedFPKs = new HashSet<String>();
     Set<String> changedNonFPKs = new HashSet<String>();
     for (String changedFile : changedFiles) {
@@ -65,12 +65,6 @@ public class FPKPacker {
       } else {
         changedFPKs.add(parent.get());
       }
-    }
-    if (changedNonFPKs.isEmpty() && changedFPKs.isEmpty()) {
-      String message = "No files have been changed so there is nothing to repack.";
-      LOGGER.info(message);
-      Message.info("No Changes Found", message);
-      return Optional.empty();
     }
 
     LOGGER.info(String.format("The follow files FPKs need to be packed: %s",
@@ -89,8 +83,6 @@ public class FPKPacker {
     String message = String.format("FPK files have been packed at %s.", compressedDirectory);
     LOGGER.info(message);
     Message.info("FPK Files Packed", message);
-    
-    return Optional.of(compressedDirectory);
   }
 
   /**
