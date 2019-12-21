@@ -149,6 +149,35 @@
 					<artifactId>maven-project-info-reports-plugin</artifactId>
 					<version>3.0.0</version>
 				</plugin>
+				<plugin>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.8</version>
+					<executions>
+						<execution>
+							<phase>prepare-package</phase>
+							<configuration>
+								<target>
+									<copy todir="target">
+										<fileset dir="src/main/resources">
+											<filename name="run.bat" />
+										</fileset>
+										<fileset dir=".">
+											<filename name="gcr.exe" />
+										</fileset>
+									</copy>
+									<copy todir="target/gcr_license">
+										<fileset dir="src/main/resources/gcr_license">
+											<filename name="*.txt" />
+										</fileset>
+									</copy>
+								</target>
+							</configuration>
+							<goals>
+								<goal>run</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -158,6 +187,9 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -222,12 +254,6 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.6</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20190722</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

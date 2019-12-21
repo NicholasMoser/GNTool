@@ -3,5 +3,4 @@
 .settings/
 target/
 dependency-reduced-pom.xml
-gcr.exe
 src/test/resources/fpack/
