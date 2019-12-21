@@ -224,24 +224,18 @@ public class GNTool extends Application {
 
     Task<Workspace> task = new Task<Workspace>() {
       @Override
-      public Workspace call() {
+      public Workspace call() throws Exception {
         Workspace workspace = null;
         final int max = 1;
-        try {
-          updateMessage("Extracting ISO...");
-          extractor.extractISO();
-          updateMessage("Unpacking FPKs...");
-          workspace = extractor.unpackFPKs();
-          updateMessage("Saving workspace state...");
-          workspace.initState();
-          updateMessage("Workspace created.");
-          updateProgress(1, max);
-          Thread.sleep(MILLIS_WAIT_AFTER_CREATE);
-        } catch (Exception e) {
-          LOGGER.log(Level.SEVERE, e.toString(), e);
-          Message.error("Issue with Extracting ISO",
-              "An error was encountered extracting " + extractor.getISO());
-        }
+        updateMessage("Extracting ISO...");
+        extractor.extractISO();
+        updateMessage("Unpacking FPKs...");
+        workspace = extractor.unpackFPKs();
+        updateMessage("Saving workspace state...");
+        workspace.initState();
+        updateMessage("Workspace created.");
+        updateProgress(1, max);
+        Thread.sleep(MILLIS_WAIT_AFTER_CREATE);
         return workspace;
       }
     };
