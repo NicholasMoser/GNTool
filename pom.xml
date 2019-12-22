@@ -165,8 +165,8 @@
 											<filename name="gcr.exe" />
 										</fileset>
 									</copy>
-									<copy todir="target/gcr_license">
-										<fileset dir="src/main/resources/gcr_license">
+									<copy todir="target/licenses">
+										<fileset dir="src/main/resources/licenses">
 											<filename name="*.txt" />
 										</fileset>
 									</copy>
