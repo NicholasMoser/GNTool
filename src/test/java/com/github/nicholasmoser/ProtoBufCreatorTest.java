@@ -16,7 +16,7 @@ public class ProtoBufCreatorTest {
   @Test
   public void testCreateDiffBinary() throws Exception {
     Path root = Paths.get("D:/GNT/aaa/uncompressed");
-    Path output = Paths.get("D:/GNT/aaa/workspace.bin");
+    Path output = Paths.get("D:/GNT/aaa/testCreateDiffBinary.bin");
     GNTFiles gntFiles = ProtobufUtils.createBinary(root);
     try (OutputStream os = Files.newOutputStream(output)) {
       gntFiles.writeTo(os);
@@ -30,7 +30,7 @@ public class ProtoBufCreatorTest {
   @Test
   public void testCreateDiffBinaryWithFpks() throws Exception {
     Path root = Paths.get("D:/GNT/aaa/root");
-    Path output = Paths.get("D:/GNT/aaa/fpks.bin");
+    Path output = Paths.get("D:/GNT/aaa/testCreateDiffBinaryWithFpks.bin");
     GNTFiles gntFiles = ProtobufUtils.createBinary(root, true);
     try (OutputStream os = Files.newOutputStream(output)) {
       gntFiles.writeTo(os);

@@ -11,6 +11,7 @@ import com.github.nicholasmoser.FPKFileHeader;
 import com.github.nicholasmoser.GNTFileProtos;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.PRSUncompressor;
+import com.github.nicholasmoser.gnt4.GNT4ModReady;
 
 public class ProtobufUtils {
 
@@ -78,7 +79,6 @@ public class ProtobufUtils {
    */
   private static List<GNTFileProtos.GNTChildFile> getChildren(Path filePath) throws IOException {
     int bytesRead = 0;
-    String compressedFilePath = "Unknown";
     List<GNTFileProtos.GNTChildFile> children = new ArrayList<GNTFileProtos.GNTChildFile>();
     try (InputStream is = Files.newInputStream(filePath)) {
       int fileCount = FPKUtils.readFPKHeader(is);
@@ -92,7 +92,8 @@ public class ProtobufUtils {
 
       for (FPKFileHeader header : fpkHeaders) {
         GNTFileProtos.GNTChildFile.Builder builder = GNTFileProtos.GNTChildFile.newBuilder();
-        compressedFilePath = header.getFileName();
+        String compressedFilePath = header.getFileName();
+        String childPath = GNT4ModReady.fixBrokenFileName(compressedFilePath);
         int offset = header.getOffset();
         int compressedSize = header.getCompressedSize();
         int uncompressedSize = header.getUncompressedSize();
@@ -126,12 +127,8 @@ public class ProtobufUtils {
         }
 
         int hash = CRC32.getHash(fileBytes);
-        String afterRoot = filePath.getParent().toString().replace('\\', '/').split("/root/")[1];
-
-        int index = compressedFilePath.indexOf('/');
-        String fixedFilePath = compressedFilePath.substring(index);
-
-        builder.setFilePath(afterRoot + fixedFilePath); // ?
+        
+        builder.setFilePath("fpack/" + childPath);
         builder.setHash(hash);
         builder.setCompressedPath(compressedFilePath);
         children.add(builder.build());

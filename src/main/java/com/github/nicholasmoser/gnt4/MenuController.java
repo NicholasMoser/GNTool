@@ -136,13 +136,12 @@ public class MenuController {
     // Repack FPKs
     if (repack) {
       try {
-        Path uncompressedDirectory = workspace.getUncompressedDirectory();
-        Path compressedDirectory = workspace.getRootDirectory();
-        FPKPacker fpkPacker = new FPKPacker(uncompressedDirectory, compressedDirectory);
+        FPKPacker fpkPacker = new FPKPacker(workspace);
         fpkPacker.pack(changedFiles.getItems());
       } catch (Exception e) {
         LOGGER.log(Level.SEVERE, e.toString(), e);
         Message.error("Error Repacking FPKs", e.getMessage());
+        return;
       }
     }
     

@@ -2,7 +2,10 @@ package com.github.nicholasmoser.gnt4;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.Workspace;
@@ -67,11 +70,6 @@ public class GNT4Workspace implements Workspace {
   }
 
   @Override
-  public void updateState() throws IOException {
-    gnt4Files.updateState();
-  }
-
-  @Override
   public void setDirty(boolean isDirty) {
     this.isDirty = isDirty;
   }
@@ -89,5 +87,15 @@ public class GNT4Workspace implements Workspace {
   @Override
   public Set<GNTFile> getChangedFiles(GNTFiles newGntFiles) {
     return gnt4Files.getChangedFiles(newGntFiles);
+  }
+
+  @Override
+  public List<GNTChildFile> getFPKChildren(String filePath) {
+    return gnt4Files.getFPKChildren(filePath);
+  }
+
+  @Override
+  public Optional<GNTFile> getParentFPK(String changedFile) {
+    return gnt4Files.getParentFPK(changedFile);
   }
 }

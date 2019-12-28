@@ -2,7 +2,10 @@ package com.github.nicholasmoser;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 
@@ -46,13 +49,6 @@ public interface Workspace {
   public void loadExistingState() throws IOException;
   
   /**
-   * Updates the workspace state.
-   * 
-   * @throws IOException If any I/O exception occurs.
-   */
-  public void updateState() throws IOException;
-  
-  /**
    * Sets whether or not changes have been made to the workspace.
    * 
    * @param isDirty If the workspace has been changed.
@@ -81,4 +77,20 @@ public interface Workspace {
    * @return The collection of changed files.
    */
   public Set<GNTFile> getChangedFiles(GNTFiles newGntFiles);
+
+  /**
+   * Returns the GNTChildFile list for a given FPK file path.
+   * 
+   * @param filePath The FPK file path.
+   * @return The children of the FPK.
+   */
+  List<GNTChildFile> getFPKChildren(String filePath);
+
+  /**
+   * Attempts to find the parent FPK file path of a child file path.
+   * 
+   * @param changedFile The child file path.
+   * @return The parent FPK file.
+   */
+  Optional<GNTFile> getParentFPK(String changedFile);
 }

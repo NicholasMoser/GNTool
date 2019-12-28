@@ -81,7 +81,7 @@ public class FPKUnpacker {
       }
 
       for (FPKFileHeader header : fpkHeaders) {
-        String fileName = fixBrokenFileName(header.getFileName());
+        String fileName = GNT4ModReady.fixBrokenFileName(header.getFileName());
         int offset = header.getOffset();
         int compressedSize = header.getCompressedSize();
         int uncompressedSize = header.getUncompressedSize();
@@ -112,39 +112,5 @@ public class FPKUnpacker {
         }
       }
     }
-  }
-  
-  /**
-   * Fixes and returns filenames for compressed files that are cut off.
-   * When compressed into an FPK, certain files will have their paths cut off.
-   * One such example can be found in seq0000.fpk which has a compressed file with
-   * the name hr/ank/0000.seq that is not correct. The first directory should be
-   * chr, not hr. Therefore this method returns the filename with this fixed.
-   * @param fileName The file name to fix.
-   * @return The fixed file name or original if no fix is required.
-   */
-  private String fixBrokenFileName(String fileName) {
-    if (fileName.startsWith("aki/")) {
-      fileName = fileName.replace("aki/", "maki/");
-    } else if (fileName.startsWith("ame/")) {
-      fileName = fileName.replace("ame/", "game/");
-    } else if (fileName.startsWith("g/")) {
-      fileName = fileName.replace("g/", "stg/");
-    } else if (fileName.startsWith("hr/")) {
-      fileName = fileName.replace("hr/", "chr/");
-    } else if (fileName.startsWith("ki/")) {
-      fileName = fileName.replace("ki/", "maki/");
-    } else if (fileName.startsWith("me/")) {
-      fileName = fileName.replace("me/", "game/");
-    } else if (fileName.startsWith("ru/")) {
-      fileName = fileName.replace("ru/", "furu/");
-    } else if (fileName.startsWith("te/")) {
-      fileName = fileName.replace("te/", "unite/");
-    } else if (fileName.startsWith("tg/")) {
-      fileName = fileName.replace("tg/", "stg/");
-    } else if (fileName.startsWith("uro/")) {
-      fileName = fileName.replace("uro/", "kuro/");
-    }
-    return fileName;
   }
 }
