@@ -19,6 +19,7 @@ import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Code.ID;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.utils.ProtobufUtils;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -30,6 +31,8 @@ import javafx.stage.Stage;
 
 public class MenuController {
   private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
+  
+  private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool";
 
   private Workspace workspace;
 
@@ -152,6 +155,7 @@ public class MenuController {
       public void handle(WorkerStateEvent event) {
         Message.info("ISO Build Complete", "The new ISO was successfully created.");
         loadingWindow.close();
+        saveWorkspaceState();
       }
     });
     task.setOnFailed(new EventHandler<WorkerStateEvent>() {
@@ -159,6 +163,7 @@ public class MenuController {
       public void handle(WorkerStateEvent event) {
         Message.error("ISO Build Failure", "The ISO failed to build, see the log for more information.");
         loadingWindow.close();
+        // Don't save workspace state to make debugging easier
       }
     });
     new Thread(task).start();
@@ -182,7 +187,7 @@ public class MenuController {
   @FXML
   protected void about(ActionEvent event) {
     try {
-      Desktop.getDesktop().browse(new URI("https://github.com/NicholasMoser/GNTool"));
+      Desktop.getDesktop().browse(new URI(ABOUT_URL));
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e.toString(), e);
       Message.error("Error Opening About Page", e.getMessage());
@@ -197,6 +202,17 @@ public class MenuController {
   public void init(Workspace workspace) {
     this.workspace = workspace;
     asyncRefresh();
+  }
+  
+  /**
+   * Saves the workspace state. This means that refresh will be cleared of changes.
+   */
+  private void saveWorkspaceState() {
+    try {
+      workspace.initState();
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Failed to save workspace state.", e);
+    }
   }
 
   /**
@@ -268,10 +284,14 @@ public class MenuController {
    * @param newFiles The new GNTFiles to check against.
    */
   private void refreshMissingFiles(GNTFiles newFiles) {
-    List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
-        .map(file -> file.getFilePath()).collect(Collectors.toList());
-    missingFiles.getItems().clear();
-    missingFiles.getItems().addAll(missingFilenames);
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
+            .map(file -> file.getFilePath()).collect(Collectors.toList());
+        missingFiles.getItems().setAll(missingFilenames);
+      }
+    });
   }
   
   /**
@@ -280,10 +300,14 @@ public class MenuController {
    * @param newFiles The new GNTFiles to check against.
    */
   private void refreshChangedFiles(GNTFiles newFiles) {
-    List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
-        .map(file -> file.getFilePath()).collect(Collectors.toList());
-    changedFiles.getItems().clear();
-    changedFiles.getItems().addAll(changedFilenames);
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
+            .map(file -> file.getFilePath()).collect(Collectors.toList());
+        changedFiles.getItems().setAll(changedFilenames);
+      }
+    });
     
   }
 }
