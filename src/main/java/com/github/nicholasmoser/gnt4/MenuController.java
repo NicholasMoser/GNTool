@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4;
 
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
@@ -85,49 +86,7 @@ public class MenuController {
    */
   @FXML
   protected void refresh(ActionEvent event) {
-
-    Task<Workspace> task = new Task<Workspace>() {
-      @Override
-      public Workspace call() throws Exception {
-        final int max = 1;
-        updateMessage("Refreshing workspace...");
-        GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
-        refreshMissingFiles(newFiles);
-        refreshChangedFiles(newFiles);
-        updateProgress(1, max);
-        return workspace;
-      }
-    };
-    Stage loadingWindow = GUIUtils.createLoadingWindow("Refreshing Workspace", task);
-
-    task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-      public void handle(WorkerStateEvent event) {
-        loadingWindow.close();
-      }
-    });
-    task.setOnFailed(new EventHandler<WorkerStateEvent>() {
-      @Override
-      public void handle(WorkerStateEvent event) {
-        Message.error("Error Refreshing Workspace", "Error refreshing workspace, see log for more information.");
-        loadingWindow.close();
-      }
-    });
-    new Thread(task).start();
-  }
-  
-  private void refreshMissingFiles(GNTFiles newFiles) {
-    List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
-        .map(file -> file.getFilePath()).collect(Collectors.toList());
-    missingFiles.getItems().clear();
-    missingFiles.getItems().addAll(missingFilenames);
-  }
-  
-  private void refreshChangedFiles(GNTFiles newFiles) {
-    List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
-        .map(file -> file.getFilePath()).collect(Collectors.toList());
-    changedFiles.getItems().clear();
-    changedFiles.getItems().addAll(changedFilenames);
-    
+    asyncRefresh();
   }
 
   /**
@@ -138,7 +97,13 @@ public class MenuController {
   @FXML
   protected void build(ActionEvent event) {
     // Force refresh
-    refresh(null);
+    try {
+      syncRefresh();
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+      Message.error("Error Refreshing Workspace", e.getMessage());
+      return;
+    }
     
     // Prevent build if files are missing
     if (!missingFiles.getItems().isEmpty()) {
@@ -217,6 +182,7 @@ public class MenuController {
    */
   public void init(Workspace workspace) {
     this.workspace = workspace;
+    asyncRefresh();
   }
 
   /**
@@ -237,5 +203,73 @@ public class MenuController {
         // CodePatcher.unpatchFile(filePath, code);
       }
     }
+  }
+  
+  /**
+   * Refresh the workspace synchronously. Will not create any windows.
+   * 
+   * @throws IOException If an I/O error occurs.
+   */
+  private void syncRefresh() throws IOException {
+    GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
+    refreshMissingFiles(newFiles);
+    refreshChangedFiles(newFiles);
+  }
+  
+  /**
+   * Refresh the workspace asynchronously. Will create a loading window for progress.
+   */
+  private void asyncRefresh() {
+    Task<Void> task = new Task<Void>() {
+      @Override
+      public Void call() throws Exception {
+        updateMessage("Refreshing workspace...");
+        GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
+        refreshMissingFiles(newFiles);
+        refreshChangedFiles(newFiles);
+        updateProgress(1, 1);
+        return null;
+      }
+    };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Refreshing Workspace", task);
+
+    task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+      public void handle(WorkerStateEvent event) {
+        loadingWindow.close();
+      }
+    });
+    task.setOnFailed(new EventHandler<WorkerStateEvent>() {
+      @Override
+      public void handle(WorkerStateEvent event) {
+        Message.error("Error Refreshing Workspace", "Error refreshing workspace, see log for more information.");
+        loadingWindow.close();
+      }
+    });
+    new Thread(task).start();
+  }
+  
+  /**
+   * Given new GNTFiles refreshes the missing files tab.
+   * 
+   * @param newFiles The new GNTFiles to check against.
+   */
+  private void refreshMissingFiles(GNTFiles newFiles) {
+    List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
+        .map(file -> file.getFilePath()).collect(Collectors.toList());
+    missingFiles.getItems().clear();
+    missingFiles.getItems().addAll(missingFilenames);
+  }
+  
+  /**
+   * Given new GNTFiles refreshes the changed files tab.
+   * 
+   * @param newFiles The new GNTFiles to check against.
+   */
+  private void refreshChangedFiles(GNTFiles newFiles) {
+    List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
+        .map(file -> file.getFilePath()).collect(Collectors.toList());
+    changedFiles.getItems().clear();
+    changedFiles.getItems().addAll(changedFilenames);
+    
   }
 }

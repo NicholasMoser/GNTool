@@ -201,7 +201,6 @@ public class GNTool extends Application {
       @Override
       public Workspace call() throws Exception {
         Workspace workspace = null;
-        final int max = 1;
         updateMessage("Extracting ISO...");
         extractor.extractISO();
         updateMessage("Unpacking FPKs...");
@@ -209,7 +208,7 @@ public class GNTool extends Application {
         updateMessage("Saving workspace state...");
         workspace.initState();
         updateMessage("Workspace created.");
-        updateProgress(1, max);
+        updateProgress(1, 1);
         Thread.sleep(MILLIS_WAIT_AFTER_CREATE);
         return workspace;
       }
