@@ -148,7 +148,7 @@ public class GameCubeISO {
       process.waitFor();
 
     } catch (InterruptedException e) {
-      LOGGER.log(Level.SEVERE, e.toString(), e);
+      LOGGER.log(Level.SEVERE, "Issue with GameCube Rebuilder", e);
       Message.error("Issue with GameCube Rebuilder", "There was an issue with running gcr.exe");
       throw new IOException(e);
     }

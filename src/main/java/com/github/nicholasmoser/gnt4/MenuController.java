@@ -103,8 +103,8 @@ public class MenuController {
     try {
       syncRefresh();
     } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, e.toString(), e);
-      Message.error("Error Refreshing Workspace", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Error Refreshing Workspace", e);
+      Message.error("Error Refreshing Workspace", "See the log for more information.");
       return;
     }
 
@@ -164,8 +164,7 @@ public class MenuController {
     task.setOnFailed(new EventHandler<WorkerStateEvent>() {
       @Override
       public void handle(WorkerStateEvent event) {
-        Message.error("ISO Build Failure",
-            "The ISO failed to build, see the log for more information.");
+        Message.error("ISO Build Failure", "See the log for more information.");
         loadingWindow.close();
         // Don't save workspace state to make debugging easier
       }
@@ -193,8 +192,8 @@ public class MenuController {
     try {
       Desktop.getDesktop().browse(new URI(ABOUT_URL));
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e.toString(), e);
-      Message.error("Error Opening About Page", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
+      Message.error("Error Opening About Page", "See the log for more information.");
     }
   }
   
@@ -208,7 +207,7 @@ public class MenuController {
     try {
       Desktop.getDesktop().open(workspace.getUncompressedDirectory().toFile());
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e.toString(), e);
+      LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
       Message.error("Error Opening Workspace Directory", "See the log for more information.");
     }
   }
@@ -290,8 +289,7 @@ public class MenuController {
     task.setOnFailed(new EventHandler<WorkerStateEvent>() {
       @Override
       public void handle(WorkerStateEvent event) {
-        Message.error("Error Refreshing Workspace",
-            "Error refreshing workspace, see log for more information.");
+        Message.error("Error Refreshing Workspace", "See the log for more information.");
         loadingWindow.close();
       }
     });

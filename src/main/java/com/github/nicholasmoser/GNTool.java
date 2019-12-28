@@ -147,10 +147,10 @@ public class GNTool extends Application {
           WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
           workspaceView.init(primaryStage);
         } catch (IllegalStateException e) {
-          LOGGER.log(Level.SEVERE, e.toString(), e);
-          Message.error("Invalid Workspace", e.getMessage());
+          LOGGER.log(Level.SEVERE, "Invalid Workspace", e);
+          Message.error("Invalid Workspace", "See the log for more information.");
         } catch (IOException e) {
-          LOGGER.log(Level.SEVERE, e.toString(), e);
+          LOGGER.log(Level.SEVERE, "Error Loading Workspace", e);
           Message.error("Error Loading Workspace", "Error loading workspace defintion.");
         }
       }
@@ -184,7 +184,7 @@ public class GNTool extends Application {
           Message.error("Wrong Game ISO", message);
         }
       } catch (IOException e) {
-        LOGGER.log(Level.SEVERE, e.toString(), e);
+        LOGGER.log(Level.SEVERE, "Issue with Opening ISO", e);
         Message.error("Issue with Opening ISO",
             "An error was encountered opening the selected ISO.");
       }
@@ -224,7 +224,7 @@ public class GNTool extends Application {
         try {
           workspaceView.init(primaryStage);
         } catch (IOException e) {
-          LOGGER.log(Level.SEVERE, e.toString(), e);
+          LOGGER.log(Level.SEVERE, "Error Loading Workspace", e);
           Message.error("Error Loading Workspace", "Error loading workspace defintion.");
         }
       }
@@ -246,10 +246,8 @@ public class GNTool extends Application {
     try (InputStream properties = getClass().getResourceAsStream("logging.properties")) {
       LogManager.getLogManager().readConfiguration(properties);
     } catch (SecurityException | IOException e) {
-      String errorMessage =
-          String.format("Unable to load logging.properties, fatal error: %s", e.toString());
-      LOGGER.log(Level.SEVERE, errorMessage, e);
-      Message.error("Logging Error", errorMessage);
+      LOGGER.log(Level.SEVERE, "Unable to load logging.properties", e);
+      Message.error("Logging Error", "Unable to load logging.properties");
     }
   }
 
