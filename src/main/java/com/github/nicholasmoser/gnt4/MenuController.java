@@ -112,7 +112,7 @@ public class MenuController {
     }
     
     // Warn user if no files have changed
-    boolean repack = true;
+    final boolean repack;
     if (changedFiles.getItems().isEmpty()) {
       String message = "There are no changed files in your workspace. Do you still wish to build an ISO?";
       boolean choice = Message.warnYesNo("No Changed Files", message);
@@ -121,6 +121,8 @@ public class MenuController {
       } else {
         return;
       }
+    } else {
+      repack = true;
     }
     
     // Get output ISO path
@@ -128,26 +130,38 @@ public class MenuController {
     if (isoResponse.isEmpty()) {
       return;
     }
-    
-    // Repack FPKs
-    if (repack) {
-      try {
-        FPKPacker fpkPacker = new FPKPacker(workspace);
-        fpkPacker.pack(changedFiles.getItems());
-      } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, e.toString(), e);
-        Message.error("Error Repacking FPKs", e.getMessage());
-        return;
+
+    // Create task to repack FPKs and build ISO
+    Task<Void> task = new Task<Void>() {
+      @Override
+      public Void call() throws Exception {
+        if (repack) {
+          updateMessage("Repacking FPKs...");
+          FPKPacker fpkPacker = new FPKPacker(workspace);
+          fpkPacker.pack(changedFiles.getItems());
+        }
+        updateMessage("Building ISO...");
+        GameCubeISO.importFiles(workspace.getRootDirectory(), isoResponse.get());
+        updateProgress(1, 1);
+        return null;
       }
-    }
-    
-    // Build ISO
-    try {
-      GameCubeISO.importFiles(workspace.getRootDirectory(), isoResponse.get());
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e.toString(), e);
-      Message.error("Error Creating ISO", e.getMessage());
-    }
+    };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Building ISO", task);
+
+    task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+      public void handle(WorkerStateEvent event) {
+        Message.info("ISO Build Complete", "The new ISO was successfully created.");
+        loadingWindow.close();
+      }
+    });
+    task.setOnFailed(new EventHandler<WorkerStateEvent>() {
+      @Override
+      public void handle(WorkerStateEvent event) {
+        Message.error("ISO Build Failure", "The ISO failed to build, see the log for more information.");
+        loadingWindow.close();
+      }
+    });
+    new Thread(task).start();
   }
 
   /**
