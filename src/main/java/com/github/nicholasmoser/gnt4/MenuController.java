@@ -197,6 +197,21 @@ public class MenuController {
       Message.error("Error Opening About Page", e.getMessage());
     }
   }
+  
+  /**
+   * Opens the uncompressed files directory in the workspace using the sytem file browser.
+   * 
+   * @param event The action event.
+   */
+  @FXML
+  protected void openDirectory(ActionEvent event) {
+    try {
+      Desktop.getDesktop().open(workspace.getUncompressedDirectory().toFile());
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+      Message.error("Error Opening Workspace Directory", "See the log for more information.");
+    }
+  }
 
   /**
    * Initializes with a workspace.
