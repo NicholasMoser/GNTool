@@ -22,7 +22,7 @@ public class Message {
     alert.setHeaderText(header);
     alert.showAndWait();
   }
-  
+
   /**
    * Display an info window to the user with the given header and message.
    * 
@@ -35,15 +35,16 @@ public class Message {
     alert.setHeaderText(header);
     alert.showAndWait();
   }
-  
+
   /**
    * Display a warning window to the user with the given header and message.
-   * 
+   * This will ask the user Yes or No and return true if Yes is selected.
    * 
    * @param header The header of the info window.
    * @param message The message of the info window.
+   * @return If the user selects Yes.
    */
-  public static boolean warnYesNo(String header, String message) {
+  public static boolean warnConfirmation(String header, String message) {
     Alert alert = new Alert(AlertType.WARNING, message, ButtonType.YES, ButtonType.NO);
     alert.setTitle("Info");
     alert.setHeaderText(header);

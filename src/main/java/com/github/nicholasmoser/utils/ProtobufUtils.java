@@ -27,17 +27,15 @@ public class ProtobufUtils {
   }
 
   /**
-   * Create a GNTFiles object containing all GNTFiles and respective hashes.
-   * Optionally allows consideration for FPK files and logic to handle the relationships
-   * to their children.
+   * Create a GNTFiles object containing all GNTFiles and respective hashes. Optionally allows
+   * consideration for FPK files and logic to handle the relationships to their children.
    * 
    * @param root The root directory.
    * @param checkForFpk Whether or not to check for FPK files and process their children.
    * @return The GNTFiles mapping of filePaths to hashes.
    * @throws IOException If an I/O error occurs.
    */
-  public static GNTFiles createBinary(Path root, boolean checkForFpk)
-      throws IOException {
+  public static GNTFiles createBinary(Path root, boolean checkForFpk) throws IOException {
     List<Path> files = Files.walk(root).filter(Files::isRegularFile).collect(Collectors.toList());
     GNTFiles.Builder filesBuilder = GNTFiles.newBuilder();
     for (Path filePath : files) {
@@ -127,7 +125,7 @@ public class ProtobufUtils {
         }
 
         int hash = CRC32.getHash(fileBytes);
-        
+
         builder.setFilePath("fpack/" + childPath);
         builder.setHash(hash);
         builder.setCompressedPath(compressedFilePath);

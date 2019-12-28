@@ -10,11 +10,10 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 public class Choosers {
   /**
-   * Asks the user to select an input workspace directory. This method will return null if no
-   * directory is chosen.
+   * Asks the user to select an input workspace directory.
    * 
    * @param initialDirectory The location to set the directory chooser to start at.
-   * @return The input workspace directory or null if none is chosen.
+   * @return An optional workspace directory. Empty if none is chosen.
    */
   public static Optional<Path> getInputWorkspaceDirectory(File initialDirectory) {
     boolean validDirectory = false;
@@ -37,11 +36,10 @@ public class Choosers {
   }
 
   /**
-   * Asks the user to select an output workspace directory. This method will return null if no
-   * directory is chosen.
+   * Asks the user to select an output workspace directory.
    * 
    * @param initialDirectory The location to set the directory chooser to start at.
-   * @return The output workspace directory or null if none is chosen.
+   * @return An optional output workspace directory. Empty if none is chosen.
    */
   public static Optional<Path> getOutputWorkspaceDirectory(File initialDirectory) {
     DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -50,12 +48,12 @@ public class Choosers {
     File selection = directoryChooser.showDialog(null);
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
   }
-  
+
   /**
-   * Asks the user to select an input ISO file. This method will return null if no file is chosen.
+   * Asks the user to select an input ISO file.
    * 
    * @param initialDirectory The location to set the directory chooser to start at.
-   * @return The input ISO or null if none is chosen.
+   * @return An optional input ISO. Empty if none is chosen.
    */
   public static Optional<Path> getInputISO(File initialDirectory) {
     FileChooser fileChooser = new FileChooser();
@@ -68,10 +66,10 @@ public class Choosers {
   }
 
   /**
-   * Asks the user to select an output ISO file. This method will return null if no file is chosen.
+   * Asks the user to select an output ISO file.
    * 
    * @param initialDirectory The location to set the directory chooser to start at.
-   * @return The output ISO or null if none is chosen.
+   * @return An optional output ISO. Empty if none is chosen.
    */
   public static Optional<Path> getOutputISO(File initialDirectory) {
     FileChooser fileChooser = new FileChooser();
@@ -80,7 +78,7 @@ public class Choosers {
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("ISO Image (*.iso)", "*.iso");
     fileChooser.getExtensionFilters().add(fileExtensions);
     File selection = fileChooser.showSaveDialog(null);
-    
+
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
   }
 }

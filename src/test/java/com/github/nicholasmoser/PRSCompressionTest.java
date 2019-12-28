@@ -40,14 +40,13 @@ public class PRSCompressionTest {
     Verify.verify(Arrays.equals(originalBytes, outputBytes),
         "Data has been lost during compression/uncompression.");
   }
-  
+
   // Create test that compresses and uncompresses all GNT files
-  
+
   @Test
   public void testRandomBytes() throws Exception {
     SecureRandom random = new SecureRandom();
-    for (int i = 10; i < 1000; i += 50)
-    {
+    for (int i = 10; i < 1000; i += 50) {
       byte[] originalBytes = new byte[i];
       random.nextBytes(originalBytes);
       int originalSize = originalBytes.length;
@@ -57,7 +56,8 @@ public class PRSCompressionTest {
       PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, originalSize);
       byte[] outputBytes = uncompressor.uncompress();
       int uncompressedSize = outputBytes.length;
-      System.out.println(String.format("%d -> %d -> %d", originalSize, compressedSize, uncompressedSize));
+      System.out
+          .println(String.format("%d -> %d -> %d", originalSize, compressedSize, uncompressedSize));
       Verify.verify(Arrays.equals(originalBytes, outputBytes),
           "Data has been lost during compression/uncompression.");
     }

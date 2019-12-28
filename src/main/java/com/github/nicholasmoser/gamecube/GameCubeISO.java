@@ -42,8 +42,8 @@ public class GameCubeISO {
   }
 
   /**
-   * Checks a GameCube ISO workspace in that it has an ISO.hdr file and that the game ID
-   * matches the expected game ID.
+   * Checks a GameCube ISO workspace in that it has an ISO.hdr file and that the game ID matches the
+   * expected game ID.
    * 
    * @param directory The directory to check.
    * @param game The expected game.
@@ -139,7 +139,9 @@ public class GameCubeISO {
     try {
       Process process = null;
       if (exportMode) {
-        process = new ProcessBuilder(gcrPath.toString(), input, GNT4Files.ROOT_DIRECTORY, "e", output).start();
+        process =
+            new ProcessBuilder(gcrPath.toString(), input, GNT4Files.ROOT_DIRECTORY, "e", output)
+                .start();
       } else {
         process = new ProcessBuilder(gcrPath.toString(), input, output).start();
       }

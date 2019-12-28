@@ -30,8 +30,8 @@ public class GNT4ModReady {
   }
 
   /**
-   * Checks if the given file path is one of the two split files.
-   * boot.bin and bi2.bin in the system folder both are combined to form the ISO.hdr file.
+   * Checks if the given file path is one of the two split files. boot.bin and bi2.bin in the system
+   * folder both are combined to form the ISO.hdr file.
    * 
    * @param filePath The file path to check.
    * @return If the file path is one of the two split files (boot.bin or bi2.bin).
@@ -42,9 +42,9 @@ public class GNT4ModReady {
   }
 
   /**
-   * Converts a mod ready expected file path to the extracted GNT4 file path.
-   * Mod ready paths are the file paths expected when running the game with files extracted from their
-   * respective FPK files.
+   * Converts a mod ready expected file path to the extracted GNT4 file path. Mod ready paths are
+   * the file paths expected when running the game with files extracted from their respective FPK
+   * files.
    * 
    * @param filePath The file path to get the extracted file path for.
    * @return The extracted file path.
@@ -91,9 +91,9 @@ public class GNT4ModReady {
   }
 
   /**
-   * Converts an extracted GNT4 file path to the mod ready expected file path.
-   * Mod ready paths are the file paths expected when running the game with files extracted from their
-   * respective FPK files.
+   * Converts an extracted GNT4 file path to the mod ready expected file path. Mod ready paths are
+   * the file paths expected when running the game with files extracted from their respective FPK
+   * files.
    * 
    * @param filePath The file path to get the mod ready path for.
    * @return The mod ready path.
@@ -138,13 +138,13 @@ public class GNT4ModReady {
     }
     return filePath;
   }
-  
+
   /**
-   * Fixes and returns filenames for compressed files that are cut off.
-   * When compressed into an FPK, certain files will have their paths cut off.
-   * One such example can be found in seq0000.fpk which has a compressed file with
-   * the name hr/ank/0000.seq that is not correct. The first directory should be
-   * chr, not hr. Therefore this method returns the filename with this fixed.
+   * Fixes and returns filenames for compressed files that are cut off. When compressed into an FPK,
+   * certain files will have their paths cut off. One such example can be found in seq0000.fpk which
+   * has a compressed file with the name hr/ank/0000.seq that is not correct. The first directory
+   * should be chr, not hr. Therefore this method returns the filename with this fixed.
+   * 
    * @param fileName The file name to fix.
    * @return The fixed file name or original if no fix is required.
    */

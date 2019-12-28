@@ -19,13 +19,13 @@ import com.github.nicholasmoser.utils.FPKUtils;
 public class FPKUnpacker {
 
   private static final Logger LOGGER = Logger.getLogger(FPKUnpacker.class.getName());
-  
+
   private Path inputDirectory;
-  
+
   public FPKUnpacker(Path inputDirectory) {
     this.inputDirectory = inputDirectory;
   }
-  
+
   /**
    * Unpacks and uncompresses FPK files. First will prompt the user for an input and output
    * directory. The input directory will be copied to the output directory and then each FPK file
@@ -42,10 +42,11 @@ public class FPKUnpacker {
     adjustor.prepare();
     LOGGER.info("Finished unpacking FPKs.");
   }
-  
+
   /**
    * A recursive method to extract and uncompress the files inside an FPK from a given directory.
    * This method will call itself recursively for each directory it encounters.
+   * 
    * @param directory The directory to search and extract from.
    * @throws IOException If there is an IO error with the FPK file or its extracted children.
    */
@@ -65,6 +66,7 @@ public class FPKUnpacker {
   /**
    * Opens the given FPK file and extracts it contents. This includes uncompressing them from
    * Eighting PRS compression.
+   * 
    * @param filePath The FPK file to extract.
    * @throws IOException If there is an IO error with the FPK file or its extracted children.
    */
@@ -96,7 +98,7 @@ public class FPKUnpacker {
         byte[] fileBytes = new byte[compressedSize];
         is.read(fileBytes);
         bytesRead += compressedSize;
-        
+
         // Create directories from fileName and get output directory
         Path filesPath = inputDirectory.resolve("files");
         Path outputFilePath = filesPath.resolve(fileName);

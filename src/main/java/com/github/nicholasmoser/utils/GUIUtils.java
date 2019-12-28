@@ -18,17 +18,18 @@ import javafx.stage.StageStyle;
  */
 public class GUIUtils {
   public static final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
-  
+
   public static final String BORDER = "-fx-effect: innershadow(gaussian, #039ed3, 2, 1.0, 0, 0);";
-  
+
   private static final Image NARU_16 = new Image(GUIUtils.class.getResourceAsStream("naru16.gif"));
-  
+
   private static final Image NARU_32 = new Image(GUIUtils.class.getResourceAsStream("naru32.gif"));
-  
+
   private static final Image NARU_64 = new Image(GUIUtils.class.getResourceAsStream("naru64.gif"));
-  
-  private static final Image NARU_128 = new Image(GUIUtils.class.getResourceAsStream("naru128.gif"));
-  
+
+  private static final Image NARU_128 =
+      new Image(GUIUtils.class.getResourceAsStream("naru128.gif"));
+
   /**
    * Creates a new loading window for a specified task.
    * 
@@ -64,10 +65,10 @@ public class GUIUtils {
 
     progressIndicator.progressProperty().bind(task.progressProperty());
     text.textProperty().bind(task.messageProperty());
-    
+
     return loadingWindow;
   }
-  
+
   /**
    * Sets the application icons on the stage.
    * 

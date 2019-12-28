@@ -31,7 +31,7 @@ import javafx.stage.Stage;
 
 public class MenuController {
   private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
-  
+
   private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool";
 
   private Workspace workspace;
@@ -107,18 +107,20 @@ public class MenuController {
       Message.error("Error Refreshing Workspace", e.getMessage());
       return;
     }
-    
+
     // Prevent build if files are missing
     if (!missingFiles.getItems().isEmpty()) {
-      Message.error("Missing Files", "You cannot build the ISO while files are missing.\nSee the Missing Files tab.");
+      Message.error("Missing Files",
+          "You cannot build the ISO while files are missing.\nSee the Missing Files tab.");
       return;
     }
-    
+
     // Warn user if no files have changed
     final boolean repack;
     if (changedFiles.getItems().isEmpty()) {
-      String message = "There are no changed files in your workspace. Do you still wish to build an ISO?";
-      boolean choice = Message.warnYesNo("No Changed Files", message);
+      String message =
+          "There are no changed files in your workspace. Do you still wish to build an ISO?";
+      boolean choice = Message.warnConfirmation("No Changed Files", message);
       if (choice) {
         repack = false;
       } else {
@@ -127,7 +129,7 @@ public class MenuController {
     } else {
       repack = true;
     }
-    
+
     // Get output ISO path
     Optional<Path> isoResponse = Choosers.getOutputISO(GNTool.USER_HOME);
     if (isoResponse.isEmpty()) {
@@ -156,12 +158,14 @@ public class MenuController {
         Message.info("ISO Build Complete", "The new ISO was successfully created.");
         loadingWindow.close();
         saveWorkspaceState();
+        asyncRefresh();
       }
     });
     task.setOnFailed(new EventHandler<WorkerStateEvent>() {
       @Override
       public void handle(WorkerStateEvent event) {
-        Message.error("ISO Build Failure", "The ISO failed to build, see the log for more information.");
+        Message.error("ISO Build Failure",
+            "The ISO failed to build, see the log for more information.");
         loadingWindow.close();
         // Don't save workspace state to make debugging easier
       }
@@ -203,7 +207,7 @@ public class MenuController {
     this.workspace = workspace;
     asyncRefresh();
   }
-  
+
   /**
    * Saves the workspace state. This means that refresh will be cleared of changes.
    */
@@ -234,7 +238,7 @@ public class MenuController {
       }
     }
   }
-  
+
   /**
    * Refresh the workspace synchronously. Will not create any windows.
    * 
@@ -245,7 +249,7 @@ public class MenuController {
     refreshMissingFiles(newFiles);
     refreshChangedFiles(newFiles);
   }
-  
+
   /**
    * Refresh the workspace asynchronously. Will create a loading window for progress.
    */
@@ -271,17 +275,18 @@ public class MenuController {
     task.setOnFailed(new EventHandler<WorkerStateEvent>() {
       @Override
       public void handle(WorkerStateEvent event) {
-        Message.error("Error Refreshing Workspace", "Error refreshing workspace, see log for more information.");
+        Message.error("Error Refreshing Workspace",
+            "Error refreshing workspace, see log for more information.");
         loadingWindow.close();
       }
     });
     new Thread(task).start();
   }
-  
+
   /**
-   * Given new GNTFiles refreshes the missing files tab.
+   * Refreshes the missing files tab from a set of GNTFiles.
    * 
-   * @param newFiles The new GNTFiles to check against.
+   * @param newFiles The GNTFiles to check against.
    */
   private void refreshMissingFiles(GNTFiles newFiles) {
     Platform.runLater(new Runnable() {
@@ -293,11 +298,11 @@ public class MenuController {
       }
     });
   }
-  
+
   /**
-   * Given new GNTFiles refreshes the changed files tab.
+   * Refreshes the changed files tab from a set of GNTFiles.
    * 
-   * @param newFiles The new GNTFiles to check against.
+   * @param newFiles The GNTFiles to check against.
    */
   private void refreshChangedFiles(GNTFiles newFiles) {
     Platform.runLater(new Runnable() {
@@ -308,6 +313,6 @@ public class MenuController {
         changedFiles.getItems().setAll(changedFilenames);
       }
     });
-    
+
   }
 }

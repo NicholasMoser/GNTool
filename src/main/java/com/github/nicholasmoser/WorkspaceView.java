@@ -8,5 +8,11 @@ import javafx.stage.Stage;
  */
 public interface WorkspaceView {
 
+  /**
+   * Initializes the workspace view.
+   * 
+   * @param stage The stage to use for the workspace view.
+   * @throws IOException If any I/O exception occurs.
+   */
   public void init(Stage stage) throws IOException;
 }

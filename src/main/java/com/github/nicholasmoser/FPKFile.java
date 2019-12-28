@@ -13,7 +13,7 @@ public class FPKFile {
   private byte[] data;
 
   /**
-   * Creates a new FPK file.
+   * Creates a new FPK file. The data will be adjusted for 16-byte alignment if necessary.
    * 
    * @param header The FPK file header.
    * @param data The date of the file.

@@ -8,9 +8,10 @@ import org.junit.jupiter.api.Test;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.utils.ProtobufUtils;
 
-public class ProtoBufCreatorTest {  
+public class ProtoBufCreatorTest {
   /**
    * Tests creating a diff binary file.
+   * 
    * @throws Exception If any exception occurs.
    */
   @Test
@@ -22,9 +23,10 @@ public class ProtoBufCreatorTest {
       gntFiles.writeTo(os);
     }
   }
-  
+
   /**
    * Tests creating a diff binary file.
+   * 
    * @throws Exception If any exception occurs.
    */
   @Test

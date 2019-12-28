@@ -33,7 +33,7 @@ public interface Workspace {
    * @return The workspace state protobuf binary file.
    */
   public Path getWorkspaceState();
-  
+
   /**
    * Initializes the workspace state.
    * 
@@ -47,19 +47,19 @@ public interface Workspace {
    * @throws IOException If any I/O exception occurs.
    */
   public void loadExistingState() throws IOException;
-  
+
   /**
    * Sets whether or not changes have been made to the workspace.
    * 
    * @param isDirty If the workspace has been changed.
    */
   public void setDirty(boolean isDirty);
-  
+
   /**
    * @return If changes have been made to the workspace.
    */
   public boolean isDirty();
-  
+
   /**
    * Finds the list of files that are missing from the workspace.
    * 
@@ -67,11 +67,10 @@ public interface Workspace {
    * @return The list of files that are missing from the workspace.
    */
   public Set<GNTFile> getMissingFiles(GNTFiles newGntFiles);
-  
+
   /**
-   * Returns the files that have been changed.
-   * It is recommended to call {@link #allFilesPresent(GNTFiles)} first,
-   * as this assumes that all files are present.
+   * Returns the files that have been changed. It is recommended to call
+   * {@link #allFilesPresent(GNTFiles)} first, as this assumes that all files are present.
    * 
    * @param newGntFiles The GNTFiles to see which changed in.
    * @return The collection of changed files.

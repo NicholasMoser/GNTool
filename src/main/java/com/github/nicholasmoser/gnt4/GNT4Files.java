@@ -20,30 +20,37 @@ import com.google.common.base.Verify;
 public class GNT4Files {
   // The root directory for GNT4 files for creating ISOs in GameCube Rebuilder.
   public static final String ROOT_DIRECTORY = "root";
-  
+
   // The directory of uncompressed GNT4 files.
   public static final String UNCOMPRESSED_DIRECTORY = "uncompressed";
-  
+
   // The workspace state protobuf binary file.
   public static final String WORKSPACE_STATE = "workspace.bin";
-  
+
   private static final String VANILLA_STATE = "vanilla_with_fpks.bin";
-  
+
   private Path uncompressedDirectory;
-  
+
   private Path workspaceState;
-  
+
   private GNTFiles gntFiles;
-  
+
   private GNTFiles vanillaFiles;
-  
+
+  /**
+   * Creates a new GNT4Files object from an uncompressed directory and a protobuf workspace state binary.
+   * 
+   * @param uncompressedDirectory The uncompressed directory.
+   * @param workspaceState The protobuf workspace state binary.
+   */
   public GNT4Files(Path uncompressedDirectory, Path workspaceState) {
     this.uncompressedDirectory = uncompressedDirectory;
     this.workspaceState = workspaceState;
   }
 
   /**
-   * Initializes the workspace state file. Used when creating a new workspace.
+   * Initializes the workspace state file. Used when creating a new workspace
+   * or when saving a new workspace state.
    * 
    * @throws IOException If an I/O error occurs.
    */
@@ -61,36 +68,35 @@ public class GNT4Files {
    * @throws IOException If an I/O error occurs.
    */
   public void loadExistingState() throws IOException {
-    try(InputStream is = Files.newInputStream(workspaceState)) {
+    try (InputStream is = Files.newInputStream(workspaceState)) {
       this.gntFiles = GNTFiles.parseFrom(is);
     }
     loadVanillaState();
   }
-  
+
   /**
-   * Loads the vanilla state file. Used for
+   * Loads the vanilla state file. Used for actions involving comparisons to vanilla GNT4.
+   * 
    * @throws IOException
    */
   private void loadVanillaState() throws IOException {
-    try(InputStream is = getClass().getResourceAsStream(VANILLA_STATE)) {
+    try (InputStream is = getClass().getResourceAsStream(VANILLA_STATE)) {
       this.vanillaFiles = GNTFiles.parseFrom(is);
     }
   }
 
   /**
-   * Finds the list of files that are missing from the workspace.
-   * It will take each file that should be in the workspace and see
-   * if it is in the list of GNTFiles passed in.
+   * Finds the set of files that are missing from the workspace. It will take each file that should
+   * be in the workspace and see if it is in the list of GNTFiles passed in.
    * 
    * @param newGntFiles The GNTFiles to compare to the existing workspace files.
-   * @return The list of files that are missing from the workspace.
+   * @return The set of files that are missing from the workspace.
    */
   public Set<GNTFile> getMissingFiles(GNTFiles newGntFiles) {
     Verify.verifyNotNull(gntFiles, "Workspace state has not been initialized.");
     Set<GNTFile> missingFiles = new HashSet<GNTFile>();
     Set<String> newFilePaths = newGntFiles.getGntFileList().stream()
-        .map(newFile -> newFile.getFilePath())
-        .collect(Collectors.toSet());
+        .map(newFile -> newFile.getFilePath()).collect(Collectors.toSet());
     for (GNTFile gntFile : gntFiles.getGntFileList()) {
       if (!newFilePaths.contains(gntFile.getFilePath())) {
         missingFiles.add(gntFile);
@@ -98,20 +104,19 @@ public class GNT4Files {
     }
     return missingFiles;
   }
-  
+
   /**
-   * Finds the collection of files that have changed for a new set of files and the existing workspace.
-   * It is recommended to call {@link #allFilesPresent(GNTFiles)} first, as this will not check
-   * whether or not the files exist or not. It will simply use the hashCode function to test
-   * equality of the elements.
+   * Finds the set of files that have changed for a new set of files and the existing
+   * workspace.
+   * 
    * @param newGntFiles The new files to compare to the workspace.
-   * @return The collection of files that have changed.
+   * @return The set of files that have changed.
    */
   public Set<GNTFile> getChangedFiles(GNTFiles newGntFiles) {
     Verify.verifyNotNull(gntFiles, "Workspace state has not been initialized.");
     Set<GNTFile> filesChanged = new HashSet<GNTFile>();
     for (GNTFile newFile : newGntFiles.getGntFileList()) {
-      Optional<GNTFile> oldFile = getOldFile(newFile.getFilePath());
+      Optional<GNTFile> oldFile = getWorkspaceFile(newFile.getFilePath());
       if (oldFile.isPresent()) {
         if (newFile.getHash() != oldFile.get().getHash()) {
           filesChanged.add(newFile);
@@ -120,27 +125,12 @@ public class GNT4Files {
     }
     return filesChanged;
   }
-  
-  /**
-   * Returns the same GNTFile from the existing workspace state if it exists.
-   * 
-   * @param filePath The file path of the GNTFile you wish to return.
-   * @return The GNTFile from the existing workspace state if it exists.
-   */
-  private Optional<GNTFile> getOldFile(String filePath) {
-    for (GNTFile gntFile : gntFiles.getGntFileList()) {
-      if (filePath.equals(gntFile.getFilePath())) {
-        return Optional.of(gntFile);
-      }
-    }
-    return Optional.empty();
-  }
 
   /**
-   * Attempts to find the parent FPK file path of a child file path.
+   * Returns the parent FPK file path of a child file path if it exists.
    * 
    * @param changedFile The child file path.
-   * @return The parent FPK file.
+   * @return The parent FPK file if it exists.
    */
   public Optional<GNTFile> getParentFPK(String changedFile) {
     Verify.verifyNotNull(vanillaFiles, "Vanilla state has not been initialized.");
@@ -149,17 +139,18 @@ public class GNT4Files {
       for (GNTChildFile child : gntFile.getGntChildFileList()) {
         if (changedFile.equals(child.getFilePath())) {
           return Optional.of(gntFile);
-        }  
+        }
       }
     }
     return Optional.empty();
   }
 
   /**
-   * Returns the GNTChildFile list for a given FPK file path.
+   * Returns the list of GNTChildFile for a given FPK file path.
+   * Will return an empty list if there are no children or the file is not found.
    * 
    * @param filePath The FPK file path.
-   * @return The children of the FPK.
+   * @return The children of the FPK or an empty list.
    */
   public List<GNTChildFile> getFPKChildren(String filePath) {
     Verify.verifyNotNull(vanillaFiles, "Vanilla state has not been initialized.");
@@ -171,14 +162,31 @@ public class GNT4Files {
     }
     return Collections.emptyList();
   }
-  
+
   /**
-   * Returns the the vanilla GNTFile. Does not return children files of FPK files.
+   * Returns the GNTFile from the existing workspace state if it exists for a given path.
+   * Does not return children files of FPK files.
    * 
    * @param filePath The path to the file.
-   * @return The vanilla GNTFile.
+   * @return The GNTFile from the existing workspace state if it exists.
    */
-  public Optional<GNTFile> getFile(String filePath) {
+  private Optional<GNTFile> getWorkspaceFile(String filePath) {
+    for (GNTFile gntFile : gntFiles.getGntFileList()) {
+      if (filePath.equals(gntFile.getFilePath())) {
+        return Optional.of(gntFile);
+      }
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * Returns the GNTFile from the vanilla workspace state if it exists for a given path.
+   * Does not return children files of FPK files.
+   * 
+   * @param filePath The path to the file.
+   * @return The GNTFile from the vanilla workspace state if it exists.
+   */
+  public Optional<GNTFile> getVanillaFile(String filePath) {
     Verify.verifyNotNull(vanillaFiles, "Vanilla state has not been initialized.");
     for (GNTFile gntFile : vanillaFiles.getGntFileList()) {
       if (filePath.equals(gntFile.getFilePath())) {

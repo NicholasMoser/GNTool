@@ -37,7 +37,7 @@ public class GNTool extends Application {
   public static final File USER_HOME = new File(System.getProperty("user.home"));
 
   private static final Logger LOGGER = Logger.getLogger(GNTool.class.getName());
-  
+
   private static final long MILLIS_WAIT_AFTER_CREATE = 1500;
 
   private static final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
@@ -171,7 +171,8 @@ public class GNTool extends Application {
         Path iso = isoResponse.get();
         String gameId = GameCubeISO.getGameId(iso);
         if (game.getGameId().equals(gameId)) {
-          Optional<Path> workspaceResponse = Choosers.getOutputWorkspaceDirectory(iso.getParent().toFile());
+          Optional<Path> workspaceResponse =
+              Choosers.getOutputWorkspaceDirectory(iso.getParent().toFile());
           if (workspaceResponse.isPresent()) {
             if (game == Game.GNT4) {
               extract(new GNT4Extractor(iso, workspaceResponse.get()));
@@ -184,7 +185,8 @@ public class GNTool extends Application {
         }
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, e.toString(), e);
-        Message.error("Issue with Opening ISO", "An error was encountered opening the selected ISO.");
+        Message.error("Issue with Opening ISO",
+            "An error was encountered opening the selected ISO.");
       }
     }
   }
@@ -219,12 +221,9 @@ public class GNTool extends Application {
       public void handle(WorkerStateEvent event) {
         loadingWindow.close();
         WorkspaceView workspaceView = new GNT4WorkspaceView(task.getValue());
-        try
-        {
+        try {
           workspaceView.init(primaryStage);
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
           LOGGER.log(Level.SEVERE, e.toString(), e);
           Message.error("Error Loading Workspace", "Error loading workspace defintion.");
         }

@@ -16,15 +16,15 @@ import com.github.nicholasmoser.Workspace;
 public class GNT4Workspace implements Workspace {
 
   private Path directory;
-  
+
   private Path root;
-  
+
   private Path uncompressed;
-  
+
   private Path workspaceState;
-  
+
   private GNT4Files gnt4Files;
-  
+
   private boolean isDirty;
 
   /**
@@ -58,12 +58,12 @@ public class GNT4Workspace implements Workspace {
   public Path getWorkspaceState() {
     return workspaceState;
   }
-  
+
   @Override
   public void initState() throws IOException {
     gnt4Files.initState();
   }
-  
+
   @Override
   public void loadExistingState() throws IOException {
     gnt4Files.loadExistingState();

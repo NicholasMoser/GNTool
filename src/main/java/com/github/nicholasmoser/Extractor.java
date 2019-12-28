@@ -4,8 +4,8 @@ import java.io.IOException;
 import com.github.nicholasmoser.Workspace;
 
 /**
- * Extracts an ISO into a GNT Workspace. You must call extractISO() before unpackFPKs() This is to
- * allow a more accurate loading status.
+ * Extracts an ISO into a GNT Workspace. You must call extractISO() before unpackFPKs() This
+ * separation is to allow a more accurate loading status.
  */
 public interface Extractor {
 
