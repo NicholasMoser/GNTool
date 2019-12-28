@@ -18,19 +18,14 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
  * A tool that allows you to modify files in a Naruto GNT ISO file.
@@ -201,29 +196,6 @@ public class GNTool extends Application {
    * @param extractor The extractor for the Game.
    */
   private void extract(Extractor extractor) {
-    Stage loadingWindow = new Stage();
-    loadingWindow.initModality(Modality.APPLICATION_MODAL);
-    loadingWindow.initStyle(StageStyle.UNDECORATED);
-    loadingWindow.setTitle("Creating workspace...");
-    GUIUtils.setIcons(loadingWindow);
-
-    GridPane flow = new GridPane();
-    flow.setAlignment(Pos.CENTER);
-    flow.setVgap(20);
-
-    Text text = new Text();
-    text.setStyle(FONT_SIZE_CSS);
-
-    ProgressIndicator progressIndicator = new ProgressIndicator(-1.0f);
-
-    GridPane.setHalignment(text, HPos.CENTER);
-    GridPane.setHalignment(progressIndicator, HPos.CENTER);
-    flow.add(text, 0, 0);
-    flow.add(progressIndicator, 0, 1);
-
-    Scene dialogScene = new Scene(flow, 300, 200);
-    loadingWindow.setScene(dialogScene);
-    loadingWindow.show();
 
     Task<Workspace> task = new Task<Workspace>() {
       @Override
@@ -242,6 +214,7 @@ public class GNTool extends Application {
         return workspace;
       }
     };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Creating Workspace", task);
 
     task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
       public void handle(WorkerStateEvent event) {
@@ -265,8 +238,6 @@ public class GNTool extends Application {
         loadingWindow.close();
       }
     });
-    progressIndicator.progressProperty().bind(task.progressProperty());
-    text.textProperty().bind(task.messageProperty());
     new Thread(task).start();
   }
 

@@ -16,11 +16,16 @@ import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Code.ID;
+import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.utils.ProtobufUtils;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 
 public class MenuController {
   private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
@@ -80,23 +85,49 @@ public class MenuController {
    */
   @FXML
   protected void refresh(ActionEvent event) {
-    try {
-      // Refresh missing files tab list
-      GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
-      List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
-          .map(file -> file.getFilePath()).collect(Collectors.toList());
-      missingFiles.getItems().clear();
-      missingFiles.getItems().addAll(missingFilenames);
-      
-      // Refresh changed files tab list
-      List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
-          .map(file -> file.getFilePath()).collect(Collectors.toList());
-      changedFiles.getItems().clear();
-      changedFiles.getItems().addAll(changedFilenames);
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, e.toString(), e);
-      Message.error("Error Refreshing Workspace", e.getMessage());
-    }
+
+    Task<Workspace> task = new Task<Workspace>() {
+      @Override
+      public Workspace call() throws Exception {
+        final int max = 1;
+        updateMessage("Refreshing workspace...");
+        GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
+        refreshMissingFiles(newFiles);
+        refreshChangedFiles(newFiles);
+        updateProgress(1, max);
+        return workspace;
+      }
+    };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Refreshing Workspace", task);
+
+    task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+      public void handle(WorkerStateEvent event) {
+        loadingWindow.close();
+      }
+    });
+    task.setOnFailed(new EventHandler<WorkerStateEvent>() {
+      @Override
+      public void handle(WorkerStateEvent event) {
+        Message.error("Error Refreshing Workspace", "Error refreshing workspace, see log for more information.");
+        loadingWindow.close();
+      }
+    });
+    new Thread(task).start();
+  }
+  
+  private void refreshMissingFiles(GNTFiles newFiles) {
+    List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
+        .map(file -> file.getFilePath()).collect(Collectors.toList());
+    missingFiles.getItems().clear();
+    missingFiles.getItems().addAll(missingFilenames);
+  }
+  
+  private void refreshChangedFiles(GNTFiles newFiles) {
+    List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
+        .map(file -> file.getFilePath()).collect(Collectors.toList());
+    changedFiles.getItems().clear();
+    changedFiles.getItems().addAll(changedFilenames);
+    
   }
 
   /**
