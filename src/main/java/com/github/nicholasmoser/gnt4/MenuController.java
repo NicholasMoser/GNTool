@@ -24,9 +24,13 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class MenuController {
@@ -196,7 +200,7 @@ public class MenuController {
       Message.error("Error Opening About Page", "See the log for more information.");
     }
   }
-  
+
   /**
    * Opens the uncompressed files directory in the workspace using the sytem file browser.
    * 
@@ -209,6 +213,21 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
       Message.error("Error Opening Workspace Directory", "See the log for more information.");
+    }
+  }
+
+  @FXML
+  protected void changedFileSelected(MouseEvent event) {
+    EventTarget result = event.getTarget();
+    if (event.getButton() == MouseButton.SECONDARY && result instanceof Text) {
+      try {
+        Text text = (Text) result;
+        Path filePath = workspace.getUncompressedDirectory().resolve(text.getText());
+        Desktop.getDesktop().open(filePath.toFile());
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Error Opening File", e);
+        Message.error("Error Opening File", "See the log for more information.");
+      }
     }
   }
 
