@@ -38,7 +38,8 @@ public class GNT4Files {
   private GNTFiles vanillaFiles;
 
   /**
-   * Creates a new GNT4Files object from an uncompressed directory and a protobuf workspace state binary.
+   * Creates a new GNT4Files object from an uncompressed directory and a protobuf workspace state
+   * binary.
    * 
    * @param uncompressedDirectory The uncompressed directory.
    * @param workspaceState The protobuf workspace state binary.
@@ -49,8 +50,8 @@ public class GNT4Files {
   }
 
   /**
-   * Initializes the workspace state file. Used when creating a new workspace
-   * or when saving a new workspace state.
+   * Initializes the workspace state file. Used when creating a new workspace or when saving a new
+   * workspace state.
    * 
    * @throws IOException If an I/O error occurs.
    */
@@ -106,8 +107,7 @@ public class GNT4Files {
   }
 
   /**
-   * Finds the set of files that have changed for a new set of files and the existing
-   * workspace.
+   * Finds the set of files that have changed for a new set of files and the existing workspace.
    * 
    * @param newGntFiles The new files to compare to the workspace.
    * @return The set of files that have changed.
@@ -146,8 +146,8 @@ public class GNT4Files {
   }
 
   /**
-   * Returns the list of GNTChildFile for a given FPK file path.
-   * Will return an empty list if there are no children or the file is not found.
+   * Returns the list of GNTChildFile for a given FPK file path. Will return an empty list if there
+   * are no children or the file is not found.
    * 
    * @param filePath The FPK file path.
    * @return The children of the FPK or an empty list.
@@ -164,8 +164,8 @@ public class GNT4Files {
   }
 
   /**
-   * Returns the GNTFile from the existing workspace state if it exists for a given path.
-   * Does not return children files of FPK files.
+   * Returns the GNTFile from the existing workspace state if it exists for a given path. Does not
+   * return children files of FPK files.
    * 
    * @param filePath The path to the file.
    * @return The GNTFile from the existing workspace state if it exists.
@@ -180,8 +180,8 @@ public class GNT4Files {
   }
 
   /**
-   * Returns the GNTFile from the vanilla workspace state if it exists for a given path.
-   * Does not return children files of FPK files.
+   * Returns the GNTFile from the vanilla workspace state if it exists for a given path. Does not
+   * return children files of FPK files.
    * 
    * @param filePath The path to the file.
    * @return The GNTFile from the vanilla workspace state if it exists.

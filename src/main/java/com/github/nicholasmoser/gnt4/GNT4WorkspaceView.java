@@ -8,8 +8,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Class for the GNT4 workspace view. This window is determined by the
- * menu.fxml resource under com.github.nicholasmoser.gnt4
+ * Class for the GNT4 workspace view. This window is determined by the menu.fxml resource under
+ * com.github.nicholasmoser.gnt4
  */
 public class GNT4WorkspaceView implements WorkspaceView {
 

@@ -37,8 +37,8 @@ public class Message {
   }
 
   /**
-   * Display a warning window to the user with the given header and message.
-   * This will ask the user Yes or No and return true if Yes is selected.
+   * Display a warning window to the user with the given header and message. This will ask the user
+   * Yes or No and return true if Yes is selected.
    * 
    * @param header The header of the info window.
    * @param message The message of the info window.
