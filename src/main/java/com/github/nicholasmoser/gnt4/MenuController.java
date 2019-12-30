@@ -120,6 +120,16 @@ public class MenuController {
       return;
     }
 
+    // Warn user if audio fix not selected
+    if (!audioFixCode.isSelected()) {
+      String message =
+          "The audio fix code is not currently selected. It is recommended for it to be enabled. Do you still wish to continue?";
+      boolean choice = Message.warnConfirmation("Audio Fix Not Selected", message);
+      if (!choice) {
+        return;
+      }
+    }
+
     // Warn user if no files have changed
     final boolean repack;
     if (changedFiles.getItems().isEmpty()) {
