@@ -16,7 +16,6 @@ import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
-import com.github.nicholasmoser.gnt4.GNT4Code.ID;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.utils.ProtobufUtils;
 import javafx.application.Platform;
@@ -46,6 +45,12 @@ public class MenuController {
   @FXML
   private ListView<String> missingFiles;
 
+  @FXML
+  private CheckBox audioFixCode;
+
+  @FXML
+  private CheckBox skipCutscenesCode;
+
   /**
    * Toggles the code for fixing the audio.
    * 
@@ -53,17 +58,15 @@ public class MenuController {
    */
   @FXML
   protected void audioFixCode(ActionEvent event) {
-    toggleCode(event, GNT4Code.ID.AUDIO_FIX);
-  }
-
-  /**
-   * Toggles the code for unlocking everything.
-   * 
-   * @param event The action event.
-   */
-  @FXML
-  protected void unlockEverythingCode(ActionEvent event) {
-    toggleCode(event, GNT4Code.ID.UNLOCK_EVERYTHING);
+    boolean selected = audioFixCode.isSelected();
+    if (checkMainValidity()) {
+      Path uncompressedDirectory = workspace.getUncompressedDirectory();
+      if (selected) {
+        GNT4Codes.activateAudioFixCode(uncompressedDirectory);
+      } else {
+        GNT4Codes.inactivateAudioFixCode(uncompressedDirectory);
+      }
+    }
   }
 
   /**
@@ -73,17 +76,15 @@ public class MenuController {
    */
   @FXML
   protected void skipCutscenesCode(ActionEvent event) {
-    toggleCode(event, GNT4Code.ID.SKIP_CUTSCENES);
-  }
-
-  /**
-   * Toggles the code for setting the Aspect Ratio to 16:9.
-   * 
-   * @param event The action event.
-   */
-  @FXML
-  protected void aspectRatioCode(ActionEvent event) {
-    toggleCode(event, GNT4Code.ID.ASPECT_RATIO);
+    boolean selected = skipCutscenesCode.isSelected();
+    if (checkMainValidity()) {
+      Path uncompressedDirectory = workspace.getUncompressedDirectory();
+      if (selected) {
+        GNT4Codes.activateSkipCutscenesCode(uncompressedDirectory);
+      } else {
+        GNT4Codes.inactivateSkipCutscenesCode(uncompressedDirectory);
+      }
+    }
   }
 
   /**
@@ -253,26 +254,6 @@ public class MenuController {
   }
 
   /**
-   * Toggles the given code.
-   * 
-   * @param event The action event.
-   * @param codeId The code id.
-   */
-  private void toggleCode(ActionEvent event, ID codeId) {
-    Object source = event.getSource();
-    if (source instanceof CheckBox) {
-      CheckBox checkBox = (CheckBox) source;
-      if (checkBox.isSelected()) {
-        System.out.println("Patch: " + codeId);
-        // CodePatcher.patchFile(filePath, code);
-      } else {
-        System.out.println("Unpatch: " + codeId);
-        // CodePatcher.unpatchFile(filePath, code);
-      }
-    }
-  }
-
-  /**
    * Refresh the workspace synchronously. Will not create any windows.
    * 
    * @throws IOException If an I/O error occurs.
@@ -281,6 +262,7 @@ public class MenuController {
     GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
     refreshMissingFiles(newFiles);
     refreshChangedFiles(newFiles);
+    checkMainValidity();
   }
 
   /**
@@ -291,9 +273,7 @@ public class MenuController {
       @Override
       public Void call() throws Exception {
         updateMessage("Refreshing workspace...");
-        GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
-        refreshMissingFiles(newFiles);
-        refreshChangedFiles(newFiles);
+        syncRefresh();
         updateProgress(1, 1);
         return null;
       }
@@ -345,6 +325,25 @@ public class MenuController {
         changedFiles.getItems().setAll(changedFilenames);
       }
     });
+  }
 
+  private boolean checkMainValidity() {
+    boolean isValid = GNT4Codes.isMainValid(workspace.getUncompressedDirectory());
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        if (isValid) {
+          audioFixCode.setDisable(false);
+          skipCutscenesCode.setDisable(false);
+        } else {
+          audioFixCode.setDisable(true);
+          audioFixCode.setSelected(false);
+          skipCutscenesCode.setDisable(true);
+          skipCutscenesCode.setSelected(false);
+          Message.error("main.dol is not valid", "It must be acessible and exactly 2247168 bytes large.");
+        }
+      }
+    });
+    return isValid;
   }
 }

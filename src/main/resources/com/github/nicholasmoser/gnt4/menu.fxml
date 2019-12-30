@@ -44,10 +44,8 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="573.0" prefWidth="644.0">
                                        <children>
-                                          <CheckBox layoutX="29.0" layoutY="20.0" mnemonicParsing="false" onAction="#audioFixCode" text="Audio Fix" />
-                                          <CheckBox layoutX="29.0" layoutY="40.0" mnemonicParsing="false" onAction="#unlockEverythingCode" text="Unlock Everything" />
-                                          <CheckBox layoutX="29.0" layoutY="60.0" mnemonicParsing="false" onAction="#skipCutscenesCode" text="Skip Cutscenes" />
-                                          <CheckBox layoutX="29.0" layoutY="80.0" mnemonicParsing="false" onAction="#aspectRatioCode" text="16:9 Aspect Ratio" />
+                                          <CheckBox layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#audioFixCode" text="Audio Fix" fx:id="audioFixCode" />
+                                          <CheckBox layoutX="10.0" layoutY="32.0" mnemonicParsing="false" onAction="#skipCutscenesCode" text="Skip Cutscenes" fx:id="skipCutscenesCode" />
                                        </children>
                                     </AnchorPane>
                                 </content>
