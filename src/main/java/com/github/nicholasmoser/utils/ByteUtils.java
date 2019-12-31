@@ -2,7 +2,7 @@ package com.github.nicholasmoser.utils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 
 /**
  * Utility methods for working with bytes.
@@ -26,6 +26,6 @@ public class ByteUtils {
    * @return The 4 byte big-endian byte array.
    */
   public static byte[] stringToBytes(String string) {
-    return string.getBytes(StandardCharsets.ISO_8859_1);
+    return string.getBytes(Charset.forName("shift-jis"));
   }
 }

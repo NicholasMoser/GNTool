@@ -2,6 +2,12 @@ package com.github.nicholasmoser;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -131,8 +137,9 @@ public class FPKPacker {
 
       // Set the offset to -1 for now, we cannot figure it out until we have all of
       // the files
+      String shiftJisPath = encodeShiftJis(child.getCompressedPath());
       FPKFileHeader header =
-          new FPKFileHeader(child.getCompressedPath(), output.length, input.length);
+          new FPKFileHeader(shiftJisPath, output.length, input.length);
       newFPKs.add(new FPKFile(header, output));
       LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
           child.getFilePath(), input.length, output.length));
@@ -169,6 +176,23 @@ public class FPKPacker {
     }
     Files.write(outputFPK, fpkBytes);
     return outputFPK;
+  }
+  
+  /**
+   * Encodes the given String of text into shift-jis. This is necessary for GNT4 paths
+   * since the ISO expects them to be in shift-jis encoding.
+   * 
+   * @param text The text to encode to shift-jis.
+   * @return The shift-jis encoded text.
+   * @throws CharacterCodingException If the text cannot be encoded/decoded as shift-jis.
+   */
+  private String encodeShiftJis(String text) throws CharacterCodingException {
+    Charset charset = Charset.forName("shift-jis");
+    CharsetDecoder decoder = charset.newDecoder();
+    CharsetEncoder encoder = charset.newEncoder();
+    ByteBuffer bbuf = encoder.encode(CharBuffer.wrap(text));
+    CharBuffer cbuf = decoder.decode(bbuf);
+    return cbuf.toString();
   }
 
   /**
