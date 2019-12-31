@@ -19,7 +19,7 @@
         <Menu mnemonicParsing="false" text="File">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace" />
-            <MenuItem mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+            <MenuItem mnemonicParsing="false" onAction="#refresh" text="Refresh" accelerator="F5" />
             <MenuItem mnemonicParsing="false" onAction="#build" text="Build ISO" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
