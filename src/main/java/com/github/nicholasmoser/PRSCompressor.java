@@ -90,12 +90,12 @@ public class PRSCompressor {
    * @return If run length encoding is found.
    */
   private boolean checkRunLengthEncoding() {
-    if (inputIndex == 0) {
+    currentCompressionLength = 0;
+    pos = 1;
+    if (inputIndex < 1) {
       return false;
     }
     int scanIndex = inputIndex;
-    currentCompressionLength = 0;
-    pos = 1;
     while (scanIndex < input.length && input[inputIndex - 1] == input[scanIndex]
         && currentCompressionLength < 256) {
       currentCompressionLength++;
@@ -111,7 +111,7 @@ public class PRSCompressor {
    * @return If previous repeated occurrences were found.
    */
   private boolean checkWindow() {
-    if (inputIndex == 0) {
+    if (inputIndex < 1) {
       return false;
     }
 
@@ -123,15 +123,14 @@ public class PRSCompressor {
     }
     int matchLength = 1;
     int scanIndex = inputIndex - 1;
+    int currentIndex = inputIndex;
     int savedIndex = scanIndex;
-    int scanArea = 8192;
 
     // Don't exceed scan area of 8192 bytes
     // Do not scan beyond start of input bytes
     // Limit to 256 bytes match length
-    while (((inputIndex - scanIndex) < scanArea) && (scanIndex >= 0)
-        && (matchLength <= maxMatchLength)) {
-      while (memcmp(inputIndex, scanIndex, matchLength) && (matchLength <= maxMatchLength)) {
+    while (((currentIndex - scanIndex) < 8192) && (scanIndex >= 0) && (matchLength < maxMatchLength)) {
+      while (memcmp(currentIndex, scanIndex, matchLength) && (matchLength < maxMatchLength)) {
         savedIndex = scanIndex;
         matchLength++;
       }
@@ -140,7 +139,7 @@ public class PRSCompressor {
 
     matchLength--;
     currentCompressionLength = matchLength;
-    pos = inputIndex - savedIndex;
+    pos = currentIndex - savedIndex;
     if ((matchLength == 2) && (pos > 255)) {
       return false;
     }
@@ -182,42 +181,46 @@ public class PRSCompressor {
   /**
    * Compresses between 2 and 5 bytes reachable through a short search. This includes the bits 0 and
    * 0 in the flag byte, which indicates that this byte is compressed and is short.
+   * 
+   * @param len
+   * @param posy
    */
-  private void writeBytesShortCompression() {
-    int length_bits = currentCompressionLength;
+  private void writeBytesShortCompression(int len, int posy) {
     writeBit(0);
     writeBit(0);
-    length_bits -= 2;
-    writeBit((length_bits >> 1) & 0x01);
-    length_bits = (length_bits << 1) & 0x02;
-    writeBit((length_bits >> 1) & 0x01);
-    length_bits = (length_bits << 1) & 0x02;
+    len -= 2;
+    writeBit((len >> 1) & 0x01);
+    len = (len << 1) & 0x02;
+    writeBit((len >> 1) & 0x01);
+    len = (len << 1) & 0x02;
 
-    output[outputIndex++] = (byte) (~pos + 1);
+    output[outputIndex++] = (byte) (~posy + 1);
   }
 
   /**
    * Compressed a long length of bytes. This includes the bits 0 and 1 in the flag byte, which
    * indicates that this byte is compressed and is long.
+   * 
+   * @param len
+   * @param posy
    */
-  private void writeBytesLongCompression() {
-    int this_pos = pos;
+  private void writeBytesLongCompression(int len, int posy) {
     writeBit(0);
     writeBit(1);
 
-    this_pos = (~this_pos + 1) << 3;
+    posy = (~posy + 1) << 3;
 
-    if (currentCompressionLength <= 9) {
-      this_pos |= ((currentCompressionLength - 2) & 0x07);
+    if (len <= 9) {
+      posy |= ((len - 2) & 0x07);
     }
     // else lower 3 bits are empty...
 
-    output[outputIndex++] = (byte) (this_pos >> 8);
-    output[outputIndex++] = (byte) this_pos;
+    output[outputIndex++] = (byte) (posy >> 8);
+    output[outputIndex++] = (byte) posy;
 
     // ... and next byte encodes full length
-    if (currentCompressionLength > 9) {
-      output[outputIndex++] = (byte) (currentCompressionLength - 1);
+    if (len > 9) {
+      output[outputIndex++] = (byte) (len - 1);
     }
   }
 
@@ -226,9 +229,9 @@ public class PRSCompressor {
    */
   private void writeCompressedBytes() {
     if (pos > 255 || currentCompressionLength > 5) {
-      writeBytesLongCompression();
+      writeBytesLongCompression(currentCompressionLength, pos);
     } else {
-      writeBytesShortCompression();
+      writeBytesShortCompression(currentCompressionLength, pos);
     }
   }
 
