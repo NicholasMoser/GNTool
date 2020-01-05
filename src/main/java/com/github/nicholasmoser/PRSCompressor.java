@@ -192,7 +192,6 @@ public class PRSCompressor {
     writeBit((len >> 1) & 0x01);
     len = (len << 1) & 0x02;
     writeBit((len >> 1) & 0x01);
-    len = (len << 1) & 0x02;
 
     output[outputIndex++] = (byte) (~posy + 1);
   }

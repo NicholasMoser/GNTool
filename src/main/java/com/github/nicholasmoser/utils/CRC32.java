@@ -30,9 +30,8 @@ public class CRC32 {
    * 
    * @param bytes The bytes to hash.
    * @return The CRC32 value as an integer.
-   * @throws IOException If there is an I/O exception when reading the file.
    */
-  public static int getHash(byte[] bytes) throws IOException {
+  public static int getHash(byte[] bytes) {
     HashFunction crc32 = Hashing.crc32();
     HashCode hashValue = crc32.hashBytes(bytes);
     return hashValue.asInt();

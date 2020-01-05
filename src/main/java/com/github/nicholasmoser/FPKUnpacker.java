@@ -91,12 +91,18 @@ public class FPKUnpacker {
         // Skip to the next offset if we are not already there
         if (bytesRead < offset) {
           int bytesToMove = offset - bytesRead;
-          is.skip(bytesToMove);
+          if (is.skip(bytesToMove) != bytesToMove) {
+            String errorMessage = String.format("Failed to skip to binary data of %s", fileName);
+            throw new IOException(errorMessage);
+          }
           bytesRead += bytesToMove;
         }
 
         byte[] fileBytes = new byte[compressedSize];
-        is.read(fileBytes);
+        if (is.read(fileBytes) != compressedSize) {
+          String errorMessage = String.format("Failed to read all binary data of %s", fileName);
+          throw new IOException(errorMessage);
+        }
         bytesRead += compressedSize;
 
         // Create directories from fileName and get output directory

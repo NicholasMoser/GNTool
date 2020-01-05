@@ -51,8 +51,7 @@ public class ProtobufUtils {
       GNTFileProtos.GNTFile gntFile = fileBuilder.build();
       filesBuilder.addGntFile(gntFile);
     }
-    GNTFiles gntFiles = filesBuilder.build();
-    return gntFiles;
+    return filesBuilder.build();
   }
 
   /**

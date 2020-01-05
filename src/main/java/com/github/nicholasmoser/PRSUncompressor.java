@@ -59,7 +59,7 @@ public class PRSUncompressor {
         if (flag == 0) // Short search (length between 2 and 5)
         {
           len = getFlagBits(2) + 2;
-          pos = input[inputIndex++] | 0xffffff00;
+          pos = input[inputIndex++] & 0xff | 0xffffff00;
         } else // Long search
         {
           pos = (input[inputIndex++] << 8) | 0xffff0000;

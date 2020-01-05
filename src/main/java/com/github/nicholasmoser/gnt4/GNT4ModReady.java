@@ -86,6 +86,8 @@ public class GNT4ModReady {
       case "fpack/vs/tem/旧/4201.txg":
         filePath = "fpack/tem/旧/4201.txg";
         break;
+      default:
+        break;
     }
     return filePath;
   }
@@ -134,6 +136,8 @@ public class GNT4ModReady {
         break;
       case "files/tem/旧/4201.txg":
         filePath = "files/vs/tem/旧/4201.txg";
+        break;
+      default:
         break;
     }
     return filePath;

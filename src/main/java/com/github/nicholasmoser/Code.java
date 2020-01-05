@@ -125,7 +125,7 @@ public class Code {
    * bytes that should be inserted or overwritten at a location. For delete only an int is used to
    * represent the number of bytes that should be removed at a location.
    */
-  private class Action {
+  private static class Action {
     private ActionType actionType;
 
     private int offset;
