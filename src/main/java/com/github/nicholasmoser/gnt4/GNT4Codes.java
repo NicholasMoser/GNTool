@@ -1,7 +1,6 @@
 package com.github.nicholasmoser.gnt4;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,30 +10,6 @@ public class GNT4Codes {
   private static final Logger LOGGER = Logger.getLogger(GNT4Codes.class.getName());
 
   private static final String MAIN_DOL = "sys/main.dol";
-
-  private static final int MAIN_DOL_SIZE = 0x224A00;
-
-  /**
-   * Returns if the main.dol file under sys is valid.
-   * This means that it is acessible and exactly 2247168 bytes large.
-   * 
-   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
-   * @return If the main.dol file under sys is valid.
-   */
-  public static boolean isMainValid(Path uncompressedDirectory) {
-    Path dolPath = uncompressedDirectory.resolve(MAIN_DOL);
-    if (!Files.isRegularFile(dolPath)) {
-      return false;
-    }
-    long currentSize = 0;
-    try {
-      currentSize = Files.size(dolPath);
-    } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Error Reading Size of main.dol", e);
-      return false;
-    }
-    return currentSize == MAIN_DOL_SIZE;
-  }
 
   /**
    * Activates the code to fix audio for different ISO file offsets.

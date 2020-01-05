@@ -59,13 +59,11 @@ public class MenuController {
   @FXML
   protected void audioFixCode(ActionEvent event) {
     boolean selected = audioFixCode.isSelected();
-    if (checkMainValidity()) {
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
-      if (selected) {
-        GNT4Codes.activateAudioFixCode(uncompressedDirectory);
-      } else {
-        GNT4Codes.inactivateAudioFixCode(uncompressedDirectory);
-      }
+    Path uncompressedDirectory = workspace.getUncompressedDirectory();
+    if (selected) {
+      GNT4Codes.activateAudioFixCode(uncompressedDirectory);
+    } else {
+      GNT4Codes.inactivateAudioFixCode(uncompressedDirectory);
     }
   }
 
@@ -77,13 +75,11 @@ public class MenuController {
   @FXML
   protected void skipCutscenesCode(ActionEvent event) {
     boolean selected = skipCutscenesCode.isSelected();
-    if (checkMainValidity()) {
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
-      if (selected) {
-        GNT4Codes.activateSkipCutscenesCode(uncompressedDirectory);
-      } else {
-        GNT4Codes.inactivateSkipCutscenesCode(uncompressedDirectory);
-      }
+    Path uncompressedDirectory = workspace.getUncompressedDirectory();
+    if (selected) {
+      GNT4Codes.activateSkipCutscenesCode(uncompressedDirectory);
+    } else {
+      GNT4Codes.inactivateSkipCutscenesCode(uncompressedDirectory);
     }
   }
 
@@ -272,7 +268,6 @@ public class MenuController {
     GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
     refreshMissingFiles(newFiles);
     refreshChangedFiles(newFiles);
-    checkMainValidity();
   }
 
   /**
@@ -340,25 +335,5 @@ public class MenuController {
         changedFiles.getItems().setAll(changedFilenames);
       }
     });
-  }
-
-  private boolean checkMainValidity() {
-    boolean isValid = GNT4Codes.isMainValid(workspace.getUncompressedDirectory());
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        if (isValid) {
-          audioFixCode.setDisable(false);
-          skipCutscenesCode.setDisable(false);
-        } else {
-          audioFixCode.setDisable(true);
-          audioFixCode.setSelected(false);
-          skipCutscenesCode.setDisable(true);
-          skipCutscenesCode.setSelected(false);
-          Message.error("main.dol is not valid", "It must be acessible and exactly 2247168 bytes large.");
-        }
-      }
-    });
-    return isValid;
   }
 }
