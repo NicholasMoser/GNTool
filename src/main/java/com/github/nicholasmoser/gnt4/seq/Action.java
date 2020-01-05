@@ -5,9 +5,9 @@ package com.github.nicholasmoser.gnt4.seq;
  */
 public class Action {
   private int id;
-  
+
   private String description;
-  
+
   public Action(int id, String description) {
     this.id = id;
     this.description = description;

@@ -56,13 +56,13 @@ public class GNT4Codes {
     byte[] instruction = {0x60, 0x00, 0x00, 0x00};
     try {
       Code.getBuilder().withOverwrite(firstCutsceneOffset, instruction)
-      .withOverwrite(secondCutsceneOffset, instruction)
-      .withOverwrite(thirdCutsceneOffset, instruction).execute(dolPath);
+          .withOverwrite(secondCutsceneOffset, instruction)
+          .withOverwrite(thirdCutsceneOffset, instruction).execute(dolPath);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Error Activating Skip Cutscenes Code", e);
     }
   }
-  
+
   /**
    * Inactivates the code to skip cutscenes.
    * 
@@ -78,8 +78,8 @@ public class GNT4Codes {
     byte[] thirdInstruction = {0x48, 0x0B, (byte) 0xF5, 0x19};
     try {
       Code.getBuilder().withOverwrite(firstCutsceneOffset, firstInstruction)
-      .withOverwrite(secondCutsceneOffset, secondInstruction)
-      .withOverwrite(thirdCutsceneOffset, thirdInstruction).execute(dolPath);
+          .withOverwrite(secondCutsceneOffset, secondInstruction)
+          .withOverwrite(thirdCutsceneOffset, thirdInstruction).execute(dolPath);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Error Inactivating Skip Cutscenes Code", e);
     }

@@ -138,8 +138,7 @@ public class FPKPacker {
       // Set the offset to -1 for now, we cannot figure it out until we have all of
       // the files
       String shiftJisPath = encodeShiftJis(child.getCompressedPath());
-      FPKFileHeader header =
-          new FPKFileHeader(shiftJisPath, output.length, input.length);
+      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length);
       newFPKs.add(new FPKFile(header, output));
       LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
           child.getFilePath(), input.length, output.length));
@@ -177,10 +176,10 @@ public class FPKPacker {
     Files.write(outputFPK, fpkBytes);
     return outputFPK;
   }
-  
+
   /**
-   * Encodes the given String of text into shift-jis. This is necessary for GNT4 paths
-   * since the ISO expects them to be in shift-jis encoding.
+   * Encodes the given String of text into shift-jis. This is necessary for GNT4 paths since the ISO
+   * expects them to be in shift-jis encoding.
    * 
    * @param text The text to encode to shift-jis.
    * @return The shift-jis encoded text.

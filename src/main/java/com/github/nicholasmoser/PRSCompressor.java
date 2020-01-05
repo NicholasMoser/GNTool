@@ -129,7 +129,8 @@ public class PRSCompressor {
     // Don't exceed scan area of 8192 bytes
     // Do not scan beyond start of input bytes
     // Limit to 256 bytes match length
-    while (((currentIndex - scanIndex) < 8192) && (scanIndex >= 0) && (matchLength < maxMatchLength)) {
+    while (((currentIndex - scanIndex) < 8192) && (scanIndex >= 0)
+        && (matchLength < maxMatchLength)) {
       while (memcmp(currentIndex, scanIndex, matchLength) && (matchLength < maxMatchLength)) {
         savedIndex = scanIndex;
         matchLength++;
