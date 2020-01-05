@@ -9,14 +9,12 @@ This program allows you to modify files contained inside .FPK files for Naruto G
 1. **[Getting Started](#getting-started)**
 2. **[Prerequisites](#prerequisites)**
 3. **[How to Use](#how-to-use)**
-4. **[Example Workflow](#example-workflow)**
-5. **[How it Works](#how-it-works)**
-6. **[Logging](#logging)**
-7. **[Future Features](#future-features)**
-8. **[Contributing](#contributing)**
-9. **[Authors](#authors)**
-10. **[Special Thanks](#special-thanks)**
-11. **[License](#license)**
+4. **[How it Works](#how-it-works)**
+5. **[Logging](#logging)**
+6. **[Contributing](#contributing)**
+7. **[Authors](#authors)**
+8. **[Special Thanks](#special-thanks)**
+9. **[License](#license)**
 
 ## Getting Started
 
