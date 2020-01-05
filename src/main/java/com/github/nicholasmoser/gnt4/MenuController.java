@@ -282,9 +282,14 @@ public class MenuController {
     Task<Void> task = new Task<Void>() {
       @Override
       public Void call() throws Exception {
-        updateMessage("Refreshing workspace...");
-        syncRefresh();
-        updateProgress(1, 1);
+        try {
+          updateMessage("Refreshing workspace...");
+          syncRefresh();
+          updateProgress(1, 1);
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, "Failed to refresh workspace.", e);
+          throw e;
+        }
         return null;
       }
     };
