@@ -1,6 +1,8 @@
 .classpath
 .project
+.gradle/
 .settings/
+build/
 target/
 dependency-reduced-pom.xml
 src/test/resources/fpack/
