@@ -86,8 +86,6 @@ public class GameCubeISO {
    */
   public static void exportFiles(Path inputFile, Path outputDirectory) throws IOException {
     if (!canRunISOTools()) {
-      Message.error("Unable to Run ISO Tools",
-          "Please verify that you are running on Windows and have access to GameCube Rebuilder.");
       throw new IllegalStateException(
           "GameCube Rebuilder is not in the directory of this executable.");
     }
@@ -112,8 +110,6 @@ public class GameCubeISO {
    */
   public static void importFiles(Path inputDirectory, Path outputFile) throws IOException {
     if (!canRunISOTools()) {
-      Message.error("Unable to Run ISO Tools",
-          "Please verify that you are running on Windows and have access to GameCube Rebuilder.");
       throw new IllegalStateException(
           "GameCube Rebuilder is not in the directory of this executable.");
     }
@@ -149,7 +145,6 @@ public class GameCubeISO {
 
     } catch (InterruptedException e) {
       LOGGER.log(Level.SEVERE, "Issue with GameCube Rebuilder", e);
-      Message.error("Issue with GameCube Rebuilder", "There was an issue with running gcr.exe");
       throw new IOException(e);
     }
   }
@@ -161,15 +156,12 @@ public class GameCubeISO {
     LOGGER.info("GameCube Rebuilder Path: " + gcrPath);
     if (!isWindows()) {
       LOGGER.info("Running OS is not Windows and therefore cannot run ISO Tools.");
-      Message.error("Windows Required for ISO Tools",
-          "ISO Tools require running Windows due to it using GameCube Rebuilder (gcr.exe).");
       return false;
     }
     if (!canRunGCR()) {
       String message =
           "ISO Tools cannot find the GameCube Rebuilder executable. Make sure its filename is gcr.exe and is in the same folder as this jar.";
       LOGGER.info(message);
-      Message.error("GameCube Rebuilder Required for ISO Tools", message);
       return false;
     }
     return true;
