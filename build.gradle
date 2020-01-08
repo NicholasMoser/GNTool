@@ -4,6 +4,7 @@
 
 plugins {
     id 'java'
+    id 'eclipse'
     id 'maven-publish'
     id 'org.javamodularity.moduleplugin' version "1.6.0"
     id 'application'
@@ -32,7 +33,7 @@ dependencies {
 }
 
 group = 'com.github.nicholasmoser'
-version = '2.0-SNAPSHOT'
+version = '2.0'
 description = 'GNTool'
 sourceCompatibility = '11'
 
@@ -46,6 +47,13 @@ publishing {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
 javafx {
