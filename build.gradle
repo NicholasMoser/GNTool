@@ -30,6 +30,10 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-java:3.10.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+    // Force Gradle to load the JUnit Platform Launcher from the module-path, as
+    // configured in buildSrc/.../ModulePlugin.java -- see SKARA-69 for details.
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.5.2'
 }
 
 group = 'com.github.nicholasmoser'
@@ -49,10 +53,22 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
 eclipse {
     classpath {
-        downloadJavadoc = true
-        downloadSources = true
+        file {
+            whenMerged {
+                entries.findAll { 
+                	it.kind == 'src' || it.kind == 'lib' 
+                }.each { it.entryAttributes['module'] = 'true' }
+            }
+        }
     }
 }
 
@@ -76,7 +92,7 @@ task copyGCR(type: Copy) {
 }
 
 task copyGCRLicense(type: Copy) {
-    from "src/main/resources/licenses/gcr_readme_eng.txt", "src/main/resources/licenses/gcr_readme_rus.txt"
+    from "licenses/gcr_readme_eng.txt", "licenses/gcr_readme_rus.txt"
     into "$buildDir/image/legal"
 }
 
