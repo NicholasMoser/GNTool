@@ -1,9 +1,40 @@
+##############################
+## GNTool
+##############################
+src/test/resources/fpack/
+
+##############################
+## Gradle
+##############################
+bin/
+build/
+.gradle
+.gradletasknamecache
+gradle-app.setting
+!gradle-wrapper.jar
+
+##############################
+## Eclipse
+##############################
+.settings/
+bin/
+tmp/
+.metadata
 .classpath
 .project
-.gradle/
-.settings/
-build/
-target/
-dependency-reduced-pom.xml
-src/test/resources/fpack/
-/bin/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+
+##############################
+## IntelliJ
+##############################
+out/
+.idea/
+.idea_modules/
+*.iml
+*.ipr
+*.iws

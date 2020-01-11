@@ -5,6 +5,7 @@
 plugins {
     id 'java'
     id 'eclipse'
+    id 'idea'
     id 'maven-publish'
     id 'org.javamodularity.moduleplugin' version "1.6.0"
     id 'application'
