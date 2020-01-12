@@ -17,48 +17,36 @@ public interface Workspace {
   /**
    * @return The workspace directory.
    */
-  public Path getWorkspaceDirectory();
+  Path getWorkspaceDirectory();
 
   /**
    * @return The root directory in the workspace.
    */
-  public Path getRootDirectory();
+  Path getRootDirectory();
 
   /**
    * @return The uncompressed directory in the workspace.
    */
-  public Path getUncompressedDirectory();
+  Path getUncompressedDirectory();
 
   /**
    * @return The workspace state protobuf binary file.
    */
-  public Path getWorkspaceState();
+  Path getWorkspaceState();
 
   /**
    * Initializes the workspace state.
    * 
    * @throws IOException If any I/O exception occurs.
    */
-  public void initState() throws IOException;
+  void initState() throws IOException;
 
   /**
    * Loads the existing workspace state file.
    * 
    * @throws IOException If any I/O exception occurs.
    */
-  public void loadExistingState() throws IOException;
-
-  /**
-   * Sets whether or not changes have been made to the workspace.
-   * 
-   * @param isDirty If the workspace has been changed.
-   */
-  public void setDirty(boolean isDirty);
-
-  /**
-   * @return If changes have been made to the workspace.
-   */
-  public boolean isDirty();
+  void loadExistingState() throws IOException;
 
   /**
    * Finds the list of files that are missing from the workspace.
@@ -66,7 +54,7 @@ public interface Workspace {
    * @param newGntFiles The GNTFiles to compare to the existing workspace files.
    * @return The list of files that are missing from the workspace.
    */
-  public Set<GNTFile> getMissingFiles(GNTFiles newGntFiles);
+  Set<GNTFile> getMissingFiles(GNTFiles newGntFiles);
 
   /**
    * Returns the files that have been changed. It is recommended to call
@@ -75,7 +63,7 @@ public interface Workspace {
    * @param newGntFiles The GNTFiles to see which changed in.
    * @return The collection of changed files.
    */
-  public Set<GNTFile> getChangedFiles(GNTFiles newGntFiles);
+  Set<GNTFile> getChangedFiles(GNTFiles newGntFiles);
 
   /**
    * Returns the GNTChildFile list for a given FPK file path.

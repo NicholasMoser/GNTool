@@ -25,8 +25,6 @@ public class GNT4Workspace implements Workspace {
 
   private GNT4Files gnt4Files;
 
-  private boolean isDirty;
-
   /**
    * @param directory The directory of GNT4 decompressed files.
    */
@@ -36,7 +34,6 @@ public class GNT4Workspace implements Workspace {
     this.uncompressed = directory.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
     this.workspaceState = directory.resolve(GNT4Files.WORKSPACE_STATE);
     this.gnt4Files = new GNT4Files(uncompressed, workspaceState);
-    this.isDirty = false;
   }
 
   @Override
@@ -67,16 +64,6 @@ public class GNT4Workspace implements Workspace {
   @Override
   public void loadExistingState() throws IOException {
     gnt4Files.loadExistingState();
-  }
-
-  @Override
-  public void setDirty(boolean isDirty) {
-    this.isDirty = isDirty;
-  }
-
-  @Override
-  public boolean isDirty() {
-    return isDirty;
   }
 
   @Override

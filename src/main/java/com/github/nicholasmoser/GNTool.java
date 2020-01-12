@@ -15,9 +15,6 @@ import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
 import com.github.nicholasmoser.utils.GUIUtils;
 import javafx.application.Application;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -74,7 +71,7 @@ public class GNTool extends Application {
    * @return The created button grid.
    */
   private GridPane createButtonGrid() {
-    ComboBox<Game> gameList = new ComboBox<Game>();
+    ComboBox<Game> gameList = new ComboBox<>();
     gameList.getItems().addAll(Game.values());
     gameList.getSelectionModel().selectFirst();
     gameList.setStyle(FONT_SIZE_CSS);
@@ -85,17 +82,13 @@ public class GNTool extends Application {
     createWorkspaceButton.setStyle(FONT_SIZE_CSS);
     createWorkspaceButton
         .setTooltip(new Tooltip("Create a new modding workspace for the selected game."));
-    createWorkspaceButton.setOnAction(new EventHandler<ActionEvent>() {
-
-      @Override
-      public void handle(ActionEvent event) {
-        LOGGER.fine("Create workspace button pressed.");
-        Game game = gameList.getSelectionModel().getSelectedItem();
-        if (game != null) {
-          createWorkspace(game);
-        } else {
-          Message.error("Issue with Game Selected", "No valid game was selected.");
-        }
+    createWorkspaceButton.setOnAction(event -> {
+      LOGGER.fine("Create workspace button pressed.");
+      Game game = gameList.getSelectionModel().getSelectedItem();
+      if (game != null) {
+        createWorkspace(game);
+      } else {
+        Message.error("Issue with Game Selected", "No valid game was selected.");
       }
     });
 
@@ -104,17 +97,13 @@ public class GNTool extends Application {
     loadWorkspaceButton.setStyle(FONT_SIZE_CSS);
     loadWorkspaceButton
         .setTooltip(new Tooltip("Loads an existing modding workspace for the selected game."));
-    loadWorkspaceButton.setOnAction(new EventHandler<ActionEvent>() {
-
-      @Override
-      public void handle(ActionEvent event) {
-        LOGGER.fine("Load workspace button pressed.");
-        Game game = gameList.getSelectionModel().getSelectedItem();
-        if (game != null) {
-          loadWorkspace(game);
-        } else {
-          Message.error("Issue with Game Selected", "No valid game was selected.");
-        }
+    loadWorkspaceButton.setOnAction(event -> {
+      LOGGER.fine("Load workspace button pressed.");
+      Game game = gameList.getSelectionModel().getSelectedItem();
+      if (game != null) {
+        loadWorkspace(game);
+      } else {
+        Message.error("Issue with Game Selected", "No valid game was selected.");
       }
     });
 
@@ -199,10 +188,10 @@ public class GNTool extends Application {
    */
   private void extract(Extractor extractor) {
 
-    Task<Workspace> task = new Task<Workspace>() {
+    Task<Workspace> task = new Task<>() {
       @Override
       public Workspace call() throws Exception {
-        Workspace workspace = null;
+        Workspace workspace;
         try {
           updateMessage("Extracting ISO...");
           extractor.extractISO();
@@ -222,24 +211,19 @@ public class GNTool extends Application {
     };
     Stage loadingWindow = GUIUtils.createLoadingWindow("Creating Workspace", task);
 
-    task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-      public void handle(WorkerStateEvent event) {
-        loadingWindow.close();
-        WorkspaceView workspaceView = new GNT4WorkspaceView(task.getValue());
-        try {
-          workspaceView.init(primaryStage);
-        } catch (IOException e) {
-          LOGGER.log(Level.SEVERE, "Error Loading Workspace", e);
-          Message.error("Error Loading Workspace", "Error loading workspace defintion.");
-        }
+    task.setOnSucceeded(event -> {
+      loadingWindow.close();
+      WorkspaceView workspaceView = new GNT4WorkspaceView(task.getValue());
+      try {
+        workspaceView.init(primaryStage);
+      } catch (IOException e) {
+        LOGGER.log(Level.SEVERE, "Error Loading Workspace", e);
+        Message.error("Error Loading Workspace", "Error loading workspace defintion.");
       }
     });
-    task.setOnFailed(new EventHandler<WorkerStateEvent>() {
-      @Override
-      public void handle(WorkerStateEvent event) {
-        Message.error("Failed to Create Workspace", "See log for more information.");
-        loadingWindow.close();
-      }
+    task.setOnFailed(event -> {
+      Message.error("Failed to Create Workspace", "See log for more information.");
+      loadingWindow.close();
     });
     new Thread(task).start();
   }

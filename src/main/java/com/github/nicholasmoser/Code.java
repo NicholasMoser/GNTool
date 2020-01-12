@@ -19,7 +19,7 @@ public class Code {
   private List<Action> actions;
 
   private Code() {
-    actions = new ArrayList<Action>();
+    actions = new ArrayList<>();
   }
 
   /**

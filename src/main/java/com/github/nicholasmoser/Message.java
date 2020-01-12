@@ -49,6 +49,6 @@ public class Message {
     alert.setTitle("Info");
     alert.setHeaderText(header);
     Optional<ButtonType> selectedButton = alert.showAndWait();
-    return selectedButton.isPresent() && selectedButton.get() == ButtonType.YES ? true : false;
+    return selectedButton.isPresent() && selectedButton.get() == ButtonType.YES;
   }
 }

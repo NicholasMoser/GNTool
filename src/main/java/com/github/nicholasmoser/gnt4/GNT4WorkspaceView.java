@@ -28,7 +28,7 @@ public class GNT4WorkspaceView implements WorkspaceView {
   public void init(Stage stage) throws IOException {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("menu.fxml"));
     Scene scene = new Scene(loader.load());
-    MenuController controller = loader.<MenuController>getController();
+    MenuController controller = loader.getController();
     controller.init(workspace);
     stage.setScene(scene);
     stage.setTitle("GNT4 Workspace");

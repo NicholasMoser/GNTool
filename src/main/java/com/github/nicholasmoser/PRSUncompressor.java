@@ -44,9 +44,9 @@ public class PRSUncompressor {
   public byte[] uncompress() {
     byte[] output = new byte[outputLength];
     int outputPtr = 0;
-    int flag = 0;
-    int len = 0;
-    int pos = 0;
+    int flag;
+    int len;
+    int pos;
     while (inputIndex < input.length) {
       flag = getFlagBits(1);
       if (flag == 1) // Uncompressed value
@@ -94,8 +94,6 @@ public class PRSUncompressor {
    */
   private int getFlagBits(int n) {
     int bits = 0;
-
-    bits = 0;
     while (n > 0) {
       bits <<= 1;
       if (bitsLeft == 0) {

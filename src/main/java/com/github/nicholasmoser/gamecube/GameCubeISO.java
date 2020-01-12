@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.Game;
-import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.GNT4Files;
 
 /**
@@ -82,12 +81,13 @@ public class GameCubeISO {
    * GameCube Rebuilder (gcr.exe) which should be located in the same directory as the jar. This
    * will only work on Windows, and will return without effect if it is not.
    * 
-   * @throws IOException
+   * @throws IOException If there is an issue with GameCube Rebuilder.
    */
   public static void exportFiles(Path inputFile, Path outputDirectory) throws IOException {
-    if (!canRunISOTools()) {
-      throw new IllegalStateException(
-          "GameCube Rebuilder is not in the directory of this executable.");
+    if (isNotWindows()) {
+      throw new IllegalStateException("This application can only run on Windows.");
+    } else if (cannotRunGCR()) {
+      throw new IllegalStateException("GameCube Rebuilder cannot be executed by the current application.");
     }
     if (inputFile == null || !Files.isRegularFile(inputFile)) {
       throw new IllegalArgumentException(inputFile + " is null or not a file.");
@@ -109,9 +109,10 @@ public class GameCubeISO {
    * @throws IOException If there is an issue with GameCube Rebuilder.
    */
   public static void importFiles(Path inputDirectory, Path outputFile) throws IOException {
-    if (!canRunISOTools()) {
-      throw new IllegalStateException(
-          "GameCube Rebuilder is not in the directory of this executable.");
+    if (isNotWindows()) {
+      throw new IllegalStateException("This application can only run on Windows.");
+    } else if (cannotRunGCR()) {
+      throw new IllegalStateException("GameCube Rebuilder cannot be executed by the current application.");
     }
     LOGGER.info("Importing files...");
     runISOTools(inputDirectory.toString(), outputFile.toString(), false);
@@ -133,7 +134,7 @@ public class GameCubeISO {
       throws IOException {
     LOGGER.info(String.format("Input: %s; Output: %s", input, output));
     try {
-      Process process = null;
+      Process process;
       if (exportMode) {
         process =
             new ProcessBuilder(gcrPath.toString(), input, GNT4Files.ROOT_DIRECTORY, "e", output)
@@ -150,37 +151,16 @@ public class GameCubeISO {
   }
 
   /**
-   * @return If the running system is Windows and has access to GameCube Rebuilder (gcr.exe).
+   * @return If the current operating system is not Windows.
    */
-  private static boolean canRunISOTools() {
-    LOGGER.info("GameCube Rebuilder Path: " + gcrPath);
-    if (!isWindows()) {
-      LOGGER.info("Running OS is not Windows and therefore cannot run ISO Tools.");
-      return false;
-    }
-    if (!canRunGCR()) {
-      String message =
-          "ISO Tools cannot find the GameCube Rebuilder executable. Make sure its filename is gcr.exe and is in the same folder as this jar.";
-      LOGGER.info(message);
-      return false;
-    }
-    return true;
+  public static boolean isNotWindows() {
+    return !System.getProperty("os.name").startsWith("Windows");
   }
 
   /**
-   * @return Whether or not the operating system is Windows.
+   * @return If GameCube Rebuilder cannot be executed by the current application.
    */
-  private static boolean isWindows() {
-    return System.getProperty("os.name").startsWith("Windows");
-  }
-
-  /**
-   * Tests whether the GameCube Rebuilder executable exists in the same directory as the jar and
-   * that it is indeed an executable. It will be called gcr.exe.
-   * 
-   * @return whether this jar can run gcr.exe
-   */
-  private static boolean canRunGCR() {
-    return Files.isExecutable(gcrPath);
+  public static boolean cannotRunGCR() {
+    return !Files.isExecutable(gcrPath);
   }
 }

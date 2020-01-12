@@ -51,7 +51,11 @@ public class FPKUnpacker {
    * @throws IOException If there is an IO error with the FPK file or its extracted children.
    */
   private void extractDirectory(File directory) throws IOException {
-    for (File fileEntry : directory.listFiles()) {
+    File[] files = directory.listFiles();
+    if (files == null) {
+      return;
+    }
+    for (File fileEntry : files) {
       if (fileEntry.isDirectory()) {
         extractDirectory(fileEntry);
       } else {
@@ -76,7 +80,7 @@ public class FPKUnpacker {
       int fileCount = FPKUtils.readFPKHeader(is);
       bytesRead += 16;
 
-      List<FPKFileHeader> fpkHeaders = new ArrayList<FPKFileHeader>(fileCount);
+      List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
         fpkHeaders.add(FPKUtils.readFPKFileHeader(is));
         bytesRead += 32;

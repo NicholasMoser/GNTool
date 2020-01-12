@@ -56,13 +56,12 @@ public class FPKPacker {
    * modifications using the CRC32 hash function. Any files that have been changed will be packed
    * and compressed into their original FPK file. This new FPK file will override the FPK file in
    * the output directory.
-   * 
-   * @return The path to the packed files.
+   *
    * @throws IOException If there is an I/O issue repacking or moving the files.
    */
   public void pack(List<String> changedFiles) throws IOException {
-    Set<GNTFile> changedFPKs = new HashSet<GNTFile>();
-    Map<String, String> changedNonFPKs = new HashMap<String, String>();
+    Set<GNTFile> changedFPKs = new HashSet<>();
+    Map<String, String> changedNonFPKs = new HashMap<>();
     boolean recreateISOHeader = false;
 
     for (String changedFile : changedFiles) {
@@ -122,7 +121,7 @@ public class FPKPacker {
    */
   public Path repackFPK(GNTFile fpk) throws IOException {
     List<GNTChildFile> fpkChildren = fpk.getGntChildFileList();
-    List<FPKFile> newFPKs = new ArrayList<FPKFile>(fpkChildren.size());
+    List<FPKFile> newFPKs = new ArrayList<>(fpkChildren.size());
     for (GNTChildFile child : fpkChildren) {
       String modReadyPath = GNT4ModReady.toModReadyPath(child.getFilePath());
       byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(modReadyPath));

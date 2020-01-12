@@ -14,5 +14,5 @@ public interface WorkspaceView {
    * @param stage The stage to use for the workspace view.
    * @throws IOException If any I/O exception occurs.
    */
-  public void init(Stage stage) throws IOException;
+  void init(Stage stage) throws IOException;
 }

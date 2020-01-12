@@ -78,7 +78,7 @@ public class GNT4Files {
   /**
    * Loads the vanilla state file. Used for actions involving comparisons to vanilla GNT4.
    * 
-   * @throws IOException
+   * @throws IOException If an I/O error occurs.
    */
   private void loadVanillaState() throws IOException {
     try (InputStream is = getClass().getResourceAsStream(VANILLA_STATE)) {
@@ -95,9 +95,9 @@ public class GNT4Files {
    */
   public Set<GNTFile> getMissingFiles(GNTFiles newGntFiles) {
     Verify.verifyNotNull(gntFiles, "Workspace state has not been initialized.");
-    Set<GNTFile> missingFiles = new HashSet<GNTFile>();
+    Set<GNTFile> missingFiles = new HashSet<>();
     Set<String> newFilePaths = newGntFiles.getGntFileList().stream()
-        .map(newFile -> newFile.getFilePath()).collect(Collectors.toSet());
+        .map(GNTFile::getFilePath).collect(Collectors.toSet());
     for (GNTFile gntFile : gntFiles.getGntFileList()) {
       if (!newFilePaths.contains(gntFile.getFilePath())) {
         missingFiles.add(gntFile);
@@ -114,7 +114,7 @@ public class GNT4Files {
    */
   public Set<GNTFile> getChangedFiles(GNTFiles newGntFiles) {
     Verify.verifyNotNull(gntFiles, "Workspace state has not been initialized.");
-    Set<GNTFile> filesChanged = new HashSet<GNTFile>();
+    Set<GNTFile> filesChanged = new HashSet<>();
     for (GNTFile newFile : newGntFiles.getGntFileList()) {
       Optional<GNTFile> oldFile = getWorkspaceFile(newFile.getFilePath());
       if (oldFile.isPresent()) {

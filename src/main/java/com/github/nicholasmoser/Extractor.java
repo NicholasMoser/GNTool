@@ -1,7 +1,6 @@
 package com.github.nicholasmoser;
 
 import java.io.IOException;
-import com.github.nicholasmoser.Workspace;
 
 /**
  * Extracts an ISO into a GNT Workspace. You must call extractISO() before unpackFPKs() This
@@ -14,7 +13,7 @@ public interface Extractor {
    * 
    * @throws IOException If there is an I/O related exception.
    */
-  public void extractISO() throws IOException;
+  void extractISO() throws IOException;
 
   /**
    * Unpacks FPK files at the extraction path and returned a Workspace.
@@ -22,10 +21,10 @@ public interface Extractor {
    * @return The Workspace of decompressed game files.
    * @throws IOException If there is an I/O related exception.
    */
-  public Workspace unpackFPKs() throws IOException;
+  Workspace unpackFPKs() throws IOException;
 
   /**
    * @return The path of the ISO this extractor is extracting.
    */
-  public String getISO();
+  String getISO();
 }
