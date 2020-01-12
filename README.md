@@ -24,12 +24,11 @@ To use this tool, first satisfy the prerequisites listed below and then run the 
 ### Prerequisites
 
 1. Windows
-2. [Java 11+](https://adoptopenjdk.net/)
-3. [Naruto GNT4 ISO File](https://wiki.dolphin-emu.org/index.php?title=Ripping_Games)
+2. [Naruto GNT4 ISO File](https://wiki.dolphin-emu.org/index.php?title=Ripping_Games)
 
 ### How to Use
 
-To run the tool, extract the zip file and run `run.bat`. Before it runs the program it will verify that [JAVA_HOME has been set](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html).
+To run the tool, download the latest release zip file from the [GNTool releases](https://github.com/NicholasMoser/GNTool/releases). Then extract the zip file and under the `bin` folder run `GNTool.bat`.
 
 If this is your first time using the application you will want to create a new workspace. This workspace is created from a provided GNT4 ISO. The workspace will contain a folder titled uncompressed; this is where you can modify the contents of files.
 
