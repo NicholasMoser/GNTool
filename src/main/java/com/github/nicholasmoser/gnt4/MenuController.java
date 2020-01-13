@@ -1,10 +1,13 @@
 package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
+import com.github.nicholasmoser.audio.MusyXExtract;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -24,6 +27,7 @@ import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.input.MouseButton;
@@ -58,6 +62,9 @@ public class MenuController {
 
   @FXML
   private Spinner<Integer> demoTimeOut;
+
+  @FXML
+  private ComboBox<String> musyxSamFile;
 
   /**
    * Toggles the code for fixing the audio.
@@ -297,13 +304,64 @@ public class MenuController {
     }
   }
 
+  @FXML
+  public void musyxExtract(MouseEvent mouseEvent) {
+    try{
+      Path uncompressed = workspace.getUncompressedDirectory();
+      String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
+      Path samFilePath = uncompressed.resolve(samFile);
+      String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
+      Path sdiFilePath = Paths.get(sdiFile);
+      String name = samFilePath.getFileName().toString().replace(".sam", "/");
+      Path outputPath = samFilePath.getParent().resolve(name);
+      if (!Files.isRegularFile(sdiFilePath)) {
+        String message = "Cannot find .sdi file: " + sdiFilePath;
+        LOGGER.log(Level.SEVERE, message);
+        Message.error("Missing .sdi", message);
+        return;
+      }
+      Files.createDirectories(outputPath);
+      MusyXExtract.extract_samples(sdiFilePath, samFilePath, outputPath);
+      Desktop.getDesktop().open(outputPath.toFile());
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error running MusyXExtract", e);
+      Message.error("Error", "See log for more information");
+    }
+  }
+
+  @FXML
+  public void musyxImport(MouseEvent mouseEvent) {
+    try{
+      Path uncompressed = workspace.getUncompressedDirectory();
+      String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
+      Path samFilePath = uncompressed.resolve(samFile);
+      String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
+      Path sdiFilePath = Paths.get(sdiFile);
+      String name = samFilePath.getFileName().toString().replace(".sam", "/");
+      Path inputPath = samFilePath.getParent().resolve(name);
+      if (!Files.isDirectory(inputPath)) {
+        String message = samFile + " has not been extracted yet.";
+        LOGGER.log(Level.SEVERE, message);
+        Message.error("Missing Extraction", message);
+        return;
+      }
+      MusyXExtract.pack_samples(inputPath, sdiFilePath, samFilePath);
+      Message.info("Import Complete", ".sam and .sdi files have been created.");
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error running MusyXExtract", e);
+      Message.error("Error", "See log for more information");
+    }
+  }
+
   /**
    * Initializes with a workspace.
-   * 
+   *
    * @param workspace The workspace to add.
    */
   public void init(Workspace workspace) {
     this.workspace = workspace;
+    musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
+    musyxSamFile.getSelectionModel().selectFirst();
     asyncRefresh();
   }
 
