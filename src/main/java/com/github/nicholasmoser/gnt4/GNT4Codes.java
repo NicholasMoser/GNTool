@@ -19,14 +19,30 @@ public class GNT4Codes {
   private static final String CSS_SEQ = "files/maki/char_sel.seq";
   private static final String CSS_4P_SEQ = "files/maki/charsel4.seq";
   private static GNT4Codes INSTANCE;
+
+  // https://github.com/NicholasMoser/GNTool#audio-fix
   private GNT4Code audioFix;
+
+  // https://github.com/NicholasMoser/GNTool#skip-cutscenes
   private GNT4Code skipCutscenes1;
   private GNT4Code skipCutscenes2;
   private GNT4Code skipCutscenes3;
-  private GNT4Code cssInitialSpeed2p;
-  private GNT4Code cssInitialSpeed4p;
-  private GNT4Code cssMaxSpeed2p;
-  private GNT4Code cssMaxSpeed4p;
+
+  // https://github.com/NicholasMoser/GNTool#character-selection-speed
+  private GNT4Code cssInitialSpeed_1v1_1p;
+  private GNT4Code cssInitialSpeed_1v1_2p;
+  private GNT4Code cssInitialSpeed_ffa_1p;
+  private GNT4Code cssInitialSpeed_ffa_2p;
+  private GNT4Code cssInitialSpeed_ffa_3p;
+  private GNT4Code cssInitialSpeed_ffa_4p;
+  private GNT4Code cssMaxSpeed_1v1_1p;
+  private GNT4Code cssMaxSpeed_1v1_2p;
+  private GNT4Code cssMaxSpeed_ffa_1p;
+  private GNT4Code cssMaxSpeed_ffa_2p;
+  private GNT4Code cssMaxSpeed_ffa_3p;
+  private GNT4Code cssMaxSpeed_ffa_4p;
+
+  // https://github.com/NicholasMoser/GNTool#title-timeout-to-demo
   private GNT4Code demoTimeOut;
 
   /**
@@ -37,10 +53,18 @@ public class GNT4Codes {
     skipCutscenes1 = new GNT4Code(MAIN_DOL, 0x9B14, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x41}, new byte[]{0x60, 0x00, 0x00, 0x00});
     skipCutscenes2 = new GNT4Code(MAIN_DOL, 0x9B28, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x2D}, new byte[]{0x60, 0x00, 0x00, 0x00});
     skipCutscenes3 = new GNT4Code(MAIN_DOL, 0x9B3C, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x19}, new byte[]{0x60, 0x00, 0x00, 0x00});
-    cssInitialSpeed2p = new GNT4Code(CSS_SEQ, 0x531C);
-    cssInitialSpeed4p = new GNT4Code(CSS_4P_SEQ, 0x82BC);
-    cssMaxSpeed2p = new GNT4Code(CSS_SEQ, 0x4D80);
-    cssMaxSpeed4p = new GNT4Code(CSS_4P_SEQ, 0x5468);
+    cssInitialSpeed_1v1_1p = new GNT4Code(CSS_SEQ, 0x531C);
+    cssInitialSpeed_1v1_2p = new GNT4Code(CSS_SEQ, 0x9078);
+    cssInitialSpeed_ffa_1p = new GNT4Code(CSS_4P_SEQ, 0x82BC);
+    cssInitialSpeed_ffa_2p = new GNT4Code(CSS_4P_SEQ, 0x8680);
+    cssInitialSpeed_ffa_3p = new GNT4Code(CSS_4P_SEQ, 0x8A54);
+    cssInitialSpeed_ffa_4p = new GNT4Code(CSS_4P_SEQ, 0x8E28);
+    cssMaxSpeed_1v1_1p = new GNT4Code(CSS_SEQ, 0x4D80);
+    cssMaxSpeed_1v1_2p = new GNT4Code(CSS_SEQ, 0x8AFC);
+    cssMaxSpeed_ffa_1p = new GNT4Code(CSS_4P_SEQ, 0x5468);
+    cssMaxSpeed_ffa_2p = new GNT4Code(CSS_4P_SEQ, 0x5B48);
+    cssMaxSpeed_ffa_3p = new GNT4Code(CSS_4P_SEQ, 0x6468);
+    cssMaxSpeed_ffa_4p = new GNT4Code(CSS_4P_SEQ, 0x6F48);
     demoTimeOut = new GNT4Code(TITLE_SEQ, 0x1B6E4);
   }
 
@@ -63,8 +87,8 @@ public class GNT4Codes {
    * @throws IOException If an I/O error occurs.
    */
   public int getCssInitialSpeed(Path uncompressedDirectory) throws IOException {
-    Path filePath = uncompressedDirectory.resolve(cssInitialSpeed2p.getFilePath());
-    int offset = cssInitialSpeed2p.getOffset();
+    Path filePath = uncompressedDirectory.resolve(cssInitialSpeed_1v1_1p.getFilePath());
+    int offset = cssInitialSpeed_1v1_1p.getOffset();
     byte[] bytes = readWord(filePath, offset);
     ByteBuffer wrapped = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
     return wrapped.getInt();
@@ -79,8 +103,8 @@ public class GNT4Codes {
    * @throws IOException If an I/O error occurs.
    */
   public int getCssMaxSpeed(Path uncompressedDirectory) throws IOException {
-    Path filePath = uncompressedDirectory.resolve(cssMaxSpeed2p.getFilePath());
-    int offset = cssMaxSpeed2p.getOffset();
+    Path filePath = uncompressedDirectory.resolve(cssMaxSpeed_1v1_1p.getFilePath());
+    int offset = cssMaxSpeed_1v1_1p.getOffset();
     byte[] bytes = readWord(filePath, offset);
     ByteBuffer wrapped = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
     return wrapped.getInt();
@@ -111,12 +135,24 @@ public class GNT4Codes {
   public void setCssInitialSpeed(Path uncompressedDirectory, int value) throws IOException {
     ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
     byte[] bytes = buffer.putInt(value).array();
-    Path dolPath2p = uncompressedDirectory.resolve(cssInitialSpeed2p.getFilePath());
-    int cssInitialSpeedOffset2p = cssInitialSpeed2p.getOffset();
-    Code.getBuilder().withOverwrite(cssInitialSpeedOffset2p, bytes).execute(dolPath2p);
-    Path dolPath4p = uncompressedDirectory.resolve(cssInitialSpeed4p.getFilePath());
-    int cssInitialSpeedOffset4p = cssInitialSpeed4p.getOffset();
-    Code.getBuilder().withOverwrite(cssInitialSpeedOffset4p, bytes).execute(dolPath4p);
+    Path dolPath2p = uncompressedDirectory.resolve(cssInitialSpeed_1v1_1p.getFilePath());
+    int cssInitialSpeedOffset_1v1_1p = cssInitialSpeed_1v1_1p.getOffset();
+    int cssInitialSpeedOffset_1v1_2p = cssInitialSpeed_1v1_2p.getOffset();
+    Code.getBuilder()
+        .withOverwrite(cssInitialSpeedOffset_1v1_1p, bytes)
+        .withOverwrite(cssInitialSpeedOffset_1v1_2p, bytes)
+        .execute(dolPath2p);
+    Path dolPath4p = uncompressedDirectory.resolve(cssInitialSpeed_ffa_1p.getFilePath());
+    int cssInitialSpeedOffset_ffa_1p = cssInitialSpeed_ffa_1p.getOffset();
+    int cssInitialSpeedOffset_ffa_2p = cssInitialSpeed_ffa_2p.getOffset();
+    int cssInitialSpeedOffset_ffa_3p = cssInitialSpeed_ffa_3p.getOffset();
+    int cssInitialSpeedOffset_ffa_4p = cssInitialSpeed_ffa_4p.getOffset();
+    Code.getBuilder()
+        .withOverwrite(cssInitialSpeedOffset_ffa_1p, bytes)
+        .withOverwrite(cssInitialSpeedOffset_ffa_2p, bytes)
+        .withOverwrite(cssInitialSpeedOffset_ffa_3p, bytes)
+        .withOverwrite(cssInitialSpeedOffset_ffa_4p, bytes)
+        .execute(dolPath4p);
   }
 
   /**
@@ -129,12 +165,24 @@ public class GNT4Codes {
   public void setCssMaxSpeed(Path uncompressedDirectory, int value) throws IOException {
     ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
     byte[] bytes = buffer.putInt(value).array();
-    Path dolPath2p = uncompressedDirectory.resolve(cssMaxSpeed2p.getFilePath());
-    int cssMaxSpeedOffset2p = cssMaxSpeed2p.getOffset();
-    Code.getBuilder().withOverwrite(cssMaxSpeedOffset2p, bytes).execute(dolPath2p);
-    Path dolPath4p = uncompressedDirectory.resolve(cssMaxSpeed4p.getFilePath());
-    int cssMaxSpeedOffset4p = cssMaxSpeed4p.getOffset();
-    Code.getBuilder().withOverwrite(cssMaxSpeedOffset4p, bytes).execute(dolPath4p);
+    Path dolPath2p = uncompressedDirectory.resolve(cssMaxSpeed_1v1_1p.getFilePath());
+    int cssMaxSpeedOffset_1v1_1p = cssMaxSpeed_1v1_1p.getOffset();
+    int cssMaxSpeedOffset_1v1_2p = cssMaxSpeed_1v1_2p.getOffset();
+    Code.getBuilder()
+        .withOverwrite(cssMaxSpeedOffset_1v1_1p, bytes)
+        .withOverwrite(cssMaxSpeedOffset_1v1_2p, bytes)
+        .execute(dolPath2p);
+    Path dolPath4p = uncompressedDirectory.resolve(cssMaxSpeed_ffa_1p.getFilePath());
+    int cssMaxSpeedOffset_ffa_1p = cssMaxSpeed_ffa_1p.getOffset();
+    int cssMaxSpeedOffset_ffa_2p = cssMaxSpeed_ffa_2p.getOffset();
+    int cssMaxSpeedOffset_ffa_3p = cssMaxSpeed_ffa_3p.getOffset();
+    int cssMaxSpeedOffset_ffa_4p = cssMaxSpeed_ffa_4p.getOffset();
+    Code.getBuilder()
+        .withOverwrite(cssMaxSpeedOffset_ffa_1p, bytes)
+        .withOverwrite(cssMaxSpeedOffset_ffa_2p, bytes)
+        .withOverwrite(cssMaxSpeedOffset_ffa_3p, bytes)
+        .withOverwrite(cssMaxSpeedOffset_ffa_4p, bytes)
+        .execute(dolPath4p);
   }
 
   /**
