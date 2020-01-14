@@ -101,10 +101,11 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ComboBox fx:id="musyxSamFile" layoutX="143.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
+                              <ComboBox fx:id="musyxSamFile" layoutX="229.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
                               <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxExtract" text="Extract" />
                               <Text layoutX="23.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MusyXExtract" />
-                              <Button layoutX="81.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" />
+                              <Button layoutX="167.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" />
+                              <Button layoutX="81.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#randomizeSoundEffects" text="Randomize" />
                            </children>
                         </AnchorPane>
                     </content>

@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
+import com.github.nicholasmoser.Randomizer;
 import com.github.nicholasmoser.audio.MusyXExtract;
 import java.awt.Desktop;
 import java.io.IOException;
@@ -337,8 +338,8 @@ public class MenuController {
       Path samFilePath = uncompressed.resolve(samFile);
       String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
       Path sdiFilePath = Paths.get(sdiFile);
-      String name = samFilePath.getFileName().toString().replace(".sam", "/");
-      Path inputPath = samFilePath.getParent().resolve(name);
+      String directory = samFilePath.getFileName().toString().replace(".sam", "/");
+      Path inputPath = samFilePath.getParent().resolve(directory);
       if (!Files.isDirectory(inputPath)) {
         String message = samFile + " has not been extracted yet.";
         LOGGER.log(Level.SEVERE, message);
@@ -350,6 +351,30 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error running MusyXExtract", e);
       Message.error("Error", "See log for more information");
+    }
+  }
+
+  @FXML
+  public void randomizeSoundEffects(MouseEvent mouseEvent) {
+    try {
+      Path uncompressed = workspace.getUncompressedDirectory();
+      String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
+      Path samFilePath = uncompressed.resolve(samFile);
+      String directory = samFilePath.getFileName().toString().replace(".sam", "/");
+      Path inputPath = samFilePath.getParent().resolve(directory);
+      if (!Files.isDirectory(inputPath)) {
+        LOGGER.log(Level.SEVERE, "Must extract before you can randomize.");
+        Message.error("Error", "Must extract before you can randomize.");
+        return;
+      }
+      List<Path> files = Files.list(inputPath)
+          .sorted()
+          .collect(Collectors.toList());
+      files.remove(files.size() - 1);
+      Randomizer.randomizeFiles(files);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error running randomizer", e);
+      Message.error("Error running randomizer", "See log for more information");
     }
   }
 
