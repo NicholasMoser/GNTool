@@ -338,9 +338,7 @@ public class MusyXExtract {
     while (todo_size > 0) {
       int read_size = Math.min(4096, todo_size);
       byte[] bytes = new byte[read_size];
-      if (src.read(bytes) != read_size) {
-        throw new IOException("Failed to extract data.");
-      }
+      src.read(bytes);
       dst.write(bytes);
       todo_size -= read_size;
     }

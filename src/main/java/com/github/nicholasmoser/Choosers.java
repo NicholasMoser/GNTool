@@ -66,6 +66,49 @@ public class Choosers {
   }
 
   /**
+   * Asks the user to select an input audio file.
+   *
+   * @return An optional input audio file. Empty if none is chosen.
+   */
+  public static Optional<Path> getAudioFile(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Input Audio File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an input .dsp audio file.
+   *
+   * @return An optional input .dsp audio file. Empty if none is chosen.
+   */
+  public static Optional<Path> getDspAudioFile(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Input Audio File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("DSP Audio (*.dsp)", "*.dsp");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select DSPADPCM.exe from the Nintendo GameCube SDK.
+   *
+   * @return An optional input DSPADPCM.exe. Empty if none is chosen.
+   */
+  public static Optional<Path> getDspAdpcm(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select DSPADPCM.exe");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("DSPADPCM (DSPADPCM.exe)", "DSPADPCM.exe");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
    * Asks the user to select an output ISO file.
    * 
    * @param initialDirectory The location to set the directory chooser to start at.

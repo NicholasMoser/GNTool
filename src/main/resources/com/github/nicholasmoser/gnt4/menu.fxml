@@ -101,11 +101,14 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <ComboBox fx:id="musyxSamFile" layoutX="229.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
+                              <ComboBox fx:id="musyxSamFile" layoutX="236.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
                               <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxExtract" text="Extract" />
-                              <Text layoutX="23.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MusyXExtract" />
-                              <Button layoutX="167.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" />
-                              <Button layoutX="81.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#randomizeSoundEffects" text="Randomize" />
+                              <Button layoutX="172.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" />
+                              <Button layoutX="84.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#randomizeSoundEffects" text="Randomize" />
+                              <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sound Effects" wrappingWidth="79.13671875" />
+                              <Button layoutX="20.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#soundEffectReplace" text="Replace" />
+                              <Button layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#musyxExtractAll" text="Extract All" />
+                              <Button layoutX="101.0" layoutY="83.0" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All" />
                            </children>
                         </AnchorPane>
                     </content>

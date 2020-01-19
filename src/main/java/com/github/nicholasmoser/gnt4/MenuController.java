@@ -2,8 +2,11 @@ package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.Randomizer;
+import com.github.nicholasmoser.audio.DspAdpcmEncoder;
+import com.github.nicholasmoser.audio.FFmpeg;
 import com.github.nicholasmoser.audio.MusyXExtract;
 import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -37,6 +40,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class MenuController {
+
   private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
   private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool";
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
@@ -69,7 +73,6 @@ public class MenuController {
 
   /**
    * Toggles the code for fixing the audio.
-   *
    */
   @FXML
   protected void audioFixCode() {
@@ -90,7 +93,6 @@ public class MenuController {
 
   /**
    * Toggles the code for skipping cutscenes.
-   *
    */
   @FXML
   protected void skipCutscenesCode() {
@@ -162,7 +164,6 @@ public class MenuController {
 
   /**
    * Refreshes the current workspace for any changes having occurred outside of GNTool.
-   *
    */
   @FXML
   protected void refresh() {
@@ -171,7 +172,6 @@ public class MenuController {
 
   /**
    * Builds the GNT4 ISO for the current workspace.
-   *
    */
   @FXML
   protected void build() {
@@ -255,7 +255,6 @@ public class MenuController {
 
   /**
    * Quits GNTool.
-   *
    */
   @FXML
   protected void quit() {
@@ -264,7 +263,6 @@ public class MenuController {
 
   /**
    * Opens the Github repository web page for GNTool, which serves as the about page.
-   *
    */
   @FXML
   protected void about() {
@@ -278,7 +276,6 @@ public class MenuController {
 
   /**
    * Opens the uncompressed files directory in the workspace using the sytem file browser.
-   *
    */
   @FXML
   protected void openDirectory() {
@@ -306,8 +303,8 @@ public class MenuController {
   }
 
   @FXML
-  public void musyxExtract(MouseEvent mouseEvent) {
-    try{
+  public void musyxExtract() {
+    try {
       Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
       Path samFilePath = uncompressed.resolve(samFile);
@@ -325,14 +322,40 @@ public class MenuController {
       MusyXExtract.extract_samples(sdiFilePath, samFilePath, outputPath);
       Desktop.getDesktop().open(outputPath.toFile());
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error running MusyXExtract", e);
-      Message.error("Error", "See log for more information");
+      LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
+      Message.error("Error Extracting Audio", "See log for more information");
     }
   }
 
   @FXML
-  public void musyxImport(MouseEvent mouseEvent) {
-    try{
+  public void musyxExtractAll() {
+    try {
+      Path uncompressed = workspace.getUncompressedDirectory();
+      for (String samFile : GNT4Audio.SOUND_EFFECTS) {
+        Path samFilePath = uncompressed.resolve(samFile);
+        String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
+        Path sdiFilePath = Paths.get(sdiFile);
+        String name = samFilePath.getFileName().toString().replace(".sam", "/");
+        Path outputPath = samFilePath.getParent().resolve(name);
+        if (!Files.isRegularFile(sdiFilePath)) {
+          String message = "Skipping... cannot find .sdi file: " + sdiFilePath;
+          LOGGER.log(Level.SEVERE, message);
+          Message.error("Missing .sdi", message);
+          continue;
+        }
+        Files.createDirectories(outputPath);
+        MusyXExtract.extract_samples(sdiFilePath, samFilePath, outputPath);
+      }
+      Message.info("Extraction Complete", ".dsp files have been created.");
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
+      Message.error("Error Extracting Audio", "See log for more information");
+    }
+  }
+
+  @FXML
+  public void musyxImport() {
+    try {
       Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
       Path samFilePath = uncompressed.resolve(samFile);
@@ -342,20 +365,44 @@ public class MenuController {
       Path inputPath = samFilePath.getParent().resolve(directory);
       if (!Files.isDirectory(inputPath)) {
         String message = samFile + " has not been extracted yet.";
-        LOGGER.log(Level.SEVERE, message);
+        LOGGER.log(Level.WARNING, message);
         Message.error("Missing Extraction", message);
         return;
       }
       MusyXExtract.pack_samples(inputPath, sdiFilePath, samFilePath);
       Message.info("Import Complete", ".sam and .sdi files have been created.");
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error running MusyXExtract", e);
-      Message.error("Error", "See log for more information");
+      LOGGER.log(Level.SEVERE, "Error Importing Audio", e);
+      Message.error("Error Importing Audio", "See log for more information");
+    }
+  }
+
+  public void musyxImportAll() {
+    try {
+      Path uncompressed = workspace.getUncompressedDirectory();
+      for (String samFile : GNT4Audio.SOUND_EFFECTS) {
+        Path samFilePath = uncompressed.resolve(samFile);
+        String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
+        Path sdiFilePath = Paths.get(sdiFile);
+        String directory = samFilePath.getFileName().toString().replace(".sam", "/");
+        Path inputPath = samFilePath.getParent().resolve(directory);
+        if (!Files.isDirectory(inputPath)) {
+          String message = "Skipping... the following file has not been extracted yet: " + samFile;
+          LOGGER.log(Level.WARNING, message);
+          Message.error("Missing Extraction", message);
+          continue;
+        }
+        MusyXExtract.pack_samples(inputPath, sdiFilePath, samFilePath);
+      }
+      Message.info("Import Complete", ".sam and .sdi files have been created.");
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Importing Audio", e);
+      Message.error("Error Importing Audio", "See log for more information");
     }
   }
 
   @FXML
-  public void randomizeSoundEffects(MouseEvent mouseEvent) {
+  public void randomizeSoundEffects() {
     try {
       Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
@@ -375,6 +422,45 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error running randomizer", e);
       Message.error("Error running randomizer", "See log for more information");
+    }
+  }
+
+  @FXML
+  public void soundEffectReplace() {
+    try {
+      if (DspAdpcmEncoder.isNotAvailable()) {
+        Message.info("Nintendo SDK Required",
+            "In order to use this functionality, DSPADPCM.exe must be imported from the Nintendo GameCube SDK.");
+        boolean isMoved = DspAdpcmEncoder.moveDspAdpcm();
+        if (!isMoved) {
+          return;
+        }
+      }
+      File uncompressedDirectory = workspace.getUncompressedDirectory().toFile();
+      Optional<Path> optionalInput = Choosers.getAudioFile(uncompressedDirectory);
+      if (optionalInput.isPresent()) {
+        Optional<Path> optionalOutput = Choosers.getDspAudioFile(uncompressedDirectory);
+        if (optionalOutput.isPresent()) {
+          Path audioFilePath = optionalInput.get();
+          String baseName = System.currentTimeMillis() + "temp";
+          String wavName = baseName + ".wav";
+          String txtName = baseName + ".txt";
+          Path tempWavFilePath = audioFilePath.getParent().resolve(wavName);
+          Path tempTxtFilePath = Paths.get(txtName);
+          Path output = optionalOutput.get();
+          String ffmpegOutput = FFmpeg.run(audioFilePath, tempWavFilePath);
+          LOGGER.log(Level.INFO, ffmpegOutput);
+          String dspAdpcmOutput = DspAdpcmEncoder.run(tempWavFilePath, output);
+          LOGGER.log(Level.INFO, dspAdpcmOutput);
+          DspAdpcmEncoder.zeroLoopEndOffset(output);
+          Files.deleteIfExists(tempWavFilePath);
+          Files.deleteIfExists(tempTxtFilePath);
+          Message.info("Sound Replacement Done", "Be sure to import for changes to take effect.");
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Replacing Sound Effect", e);
+      Message.error("Error Replacing Sound Effect", "See log for more information");
     }
   }
 
@@ -403,7 +489,7 @@ public class MenuController {
 
   /**
    * Refresh the workspace synchronously. Will not create any windows.
-   * 
+   *
    * @throws IOException If an I/O error occurs.
    */
   private void syncRefresh() throws IOException {
@@ -443,7 +529,7 @@ public class MenuController {
 
   /**
    * Refreshes the missing files tab from a set of GNTFiles.
-   * 
+   *
    * @param newFiles The GNTFiles to check against.
    */
   private void refreshMissingFiles(GNTFiles newFiles) {
@@ -456,7 +542,7 @@ public class MenuController {
 
   /**
    * Refreshes the changed files tab from a set of GNTFiles.
-   * 
+   *
    * @param newFiles The GNTFiles to check against.
    */
   private void refreshChangedFiles(GNTFiles newFiles) {
