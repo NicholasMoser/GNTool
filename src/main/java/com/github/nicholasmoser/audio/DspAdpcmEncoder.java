@@ -13,7 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Wrapper class for DSPADPCM. Used for sound effects.
+ * Wrapper class for DSPADPCM.exe. Used for sound effects. DSPADPCM.exe is part of the official
+ * Nintendo GameCube SDK. It can be found under: NINTENDO GameCube SDK 1.0/X86/bin/DSPADPCM.exe
  */
 public class DspAdpcmEncoder {
 

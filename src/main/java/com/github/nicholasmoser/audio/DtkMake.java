@@ -2,7 +2,6 @@ package com.github.nicholasmoser.audio;
 
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
-import com.github.nicholasmoser.Message;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +14,10 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Wrapper class for dtkmake.exe. Used for sound effects. dtkmake.exe is part of the official
+ * Nintendo GameCube SDK. It can be found under: NINTENDO GameCube SDK 1.0/X86/bin/dtkmake.exe
+ */
 public class DtkMake {
 
   private static final Logger LOGGER = Logger.getLogger(DtkMake.class.getName());
