@@ -10,12 +10,13 @@ This program allows you to modify files contained inside .FPK files for Naruto G
 2. **[Prerequisites](#prerequisites)**
 3. **[How to Use](#how-to-use)**
 4. **[Options](#options)**
-5. **[How it Works](#how-it-works)**
-6. **[Logging](#logging)**
-7. **[Contributing](#contributing)**
-8. **[Authors](#authors)**
-9. **[Special Thanks](#special-thanks)**
-10. **[License](#license)**
+5. **[Audio](#audio)**
+6. **[How it Works](#how-it-works)**
+7. **[Logging](#logging)**
+8. **[Contributing](#contributing)**
+9. **[Authors](#authors)**
+10. **[Special Thanks](#special-thanks)**
+11. **[License](#license)**
 
 ## Getting Started
 
@@ -66,6 +67,24 @@ The value can be set between 1 and 15. 1 is extremely fast and 15 is extremely s
 #### Title Timeout to Demo
 
 When at the title screen of GNT4, after ten seconds the game will transition to the demo screen. The demo screen will load a CPU fight and upon the player pressing start will go back to the title screen. You can edit the number of seconds before it transitions to the demo screen. By selecting the Max button you can set it to a day, effectively disabling it.
+
+### Audio
+
+There are multiple settings related to audio. They can be found under the Audio tab in your workspace. Some of the tools require executables from the Nintendo GameCube SDK. You can find a copy of the SDK by searching online for it.
+
+#### Sound Effects
+
+Sound effects are stored inside .sam and .sdi files, and therefore require unpacking to listen to or replace. By using the **Extract** button you can extract a single .sam file selected by the combobox to the right. It will then open the folder that the sound effects were extracted to. After it has been extracted you can hit the randomize button to change the order of the sounds of that .sam file. When you are finished with the files, you will need to **Import** to create new .sam and .sdi files for changes to take place in the game.
+
+You can also hit **Extract All** to extract all .sam files for a given workspace. **Import All** will then import all of the sound effects back into their respective .sam and .sdi files.
+
+**Replace** will allow you to replace a single sound effect. In order to use this functionality it will ask you to select DSPADPCM.exe from the Nintendo GameCube SDK. This file can be found in the SDK under `NINTENDO GameCube SDK 1.0/X86/bin/DSPADPCM.exe`. The audio you select will first be modified into a 32k frequency .wav file and then into a .dsp file.
+
+#### Music
+
+Music files are easier to work with than sound effects since they are stored separately from each other. **Randomize** will randomize the music of similar lengths. So short songs, like from the VS screen, will be randomized together. Then the longer songs, like the stage songs, will be randomized together. The songs from the story mode with dialog will not be included.
+
+**Replace** will allow you to replace a single music file. In order to use this functionality it will ask you to select dtkmake.exe from the Nintendo GameCube SDK. This file can be found in the SDK under `NINTENDO GameCube SDK 1.0/X86/bin/dtkmake.exe`. The audio you select will first be modified into a 48k frequency .wav file and then into a .trk file.
 
 ### How it Works
 

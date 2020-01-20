@@ -108,4 +108,4 @@ task ffmpegLicense(type: Copy) {
     into "$buildDir/image/legal/ffmpeg"
 }
 
-task additionalFiles (dependsOn: [gcr, gcrLicense, ffmpeg, ffmpegLicense])
+task extra (dependsOn: [gcr, gcrLicense, ffmpeg, ffmpegLicense])
