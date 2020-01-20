@@ -16,6 +16,7 @@ import java.util.logging.Logger;
  * Wrapper class for DSPADPCM. Used for sound effects.
  */
 public class DspAdpcmEncoder {
+
   private static final Logger LOGGER = Logger.getLogger(DspAdpcmEncoder.class.getName());
 
   /**
@@ -69,12 +70,12 @@ public class DspAdpcmEncoder {
   }
 
   /**
-   * Asks the user to input a location to the Nintendo SDK to import DSPADPCM.exe from.
-   * This will also move over the associated libraries dsptool.dll and soundfile.dll
+   * Asks the user to input a location to the Nintendo SDK to import DSPADPCM.exe from. This will
+   * also move over the associated libraries dsptool.dll and soundfile.dll
    *
    * @return If the move was successful.
    */
-  public static boolean moveDspAdpcm() throws Exception {
+  public static boolean copyDspAdpcm() throws Exception {
     Optional<Path> optionalSelection = Choosers.getDspAdpcm(GNTool.USER_HOME);
     if (optionalSelection.isPresent()) {
       Path dspadpcm = optionalSelection.get();
@@ -82,11 +83,13 @@ public class DspAdpcmEncoder {
       Path soundfile = dspadpcm.getParent().resolve("soundfile.dll");
       if (!Files.isRegularFile(dsptool)) {
         LOGGER.log(Level.SEVERE, "Missing dsptool.dll");
-        Message.error("Missing dsptool.dll", "dsptool.dll should be in same directory as DSPADPCM.exe");
+        Message.error("Missing dsptool.dll",
+            "dsptool.dll should be in same directory as DSPADPCM.exe");
         return false;
       } else if (!Files.isRegularFile(soundfile)) {
         LOGGER.log(Level.SEVERE, "Missing soundfile.dll");
-        Message.error("Missing soundfile.dll", "soundfile.dll should be in same directory as DSPADPCM.exe");
+        Message.error("Missing soundfile.dll",
+            "soundfile.dll should be in same directory as DSPADPCM.exe");
         return false;
       }
       Files.copy(dspadpcm, Paths.get("DSPADPCM.exe"), StandardCopyOption.REPLACE_EXISTING);

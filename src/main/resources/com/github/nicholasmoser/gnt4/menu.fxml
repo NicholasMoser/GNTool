@@ -109,6 +109,9 @@
                               <Button layoutX="20.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#soundEffectReplace" text="Replace" />
                               <Button layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#musyxExtractAll" text="Extract All" />
                               <Button layoutX="101.0" layoutY="83.0" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All" />
+                              <Text layoutX="20.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Music" />
+                              <Button layoutX="20.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#randomizeMusic" text="Randomize" />
+                              <Button layoutX="108.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#musicReplace" text="Replace" />
                            </children>
                         </AnchorPane>
                     </content>

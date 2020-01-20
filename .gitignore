@@ -1,6 +1,7 @@
 ##############################
 ## GNTool
 ##############################
+dtkmake.exe
 DSPADPCM.exe
 dsptool.dll
 soundfile.dll

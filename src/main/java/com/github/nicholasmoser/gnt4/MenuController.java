@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.Randomizer;
 import com.github.nicholasmoser.audio.DspAdpcmEncoder;
+import com.github.nicholasmoser.audio.DtkMake;
 import com.github.nicholasmoser.audio.FFmpeg;
 import com.github.nicholasmoser.audio.MusyXExtract;
 import java.awt.Desktop;
@@ -12,6 +13,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -303,7 +305,7 @@ public class MenuController {
   }
 
   @FXML
-  public void musyxExtract() {
+  protected void musyxExtract() {
     try {
       Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
@@ -328,7 +330,7 @@ public class MenuController {
   }
 
   @FXML
-  public void musyxExtractAll() {
+  protected void musyxExtractAll() {
     try {
       Path uncompressed = workspace.getUncompressedDirectory();
       for (String samFile : GNT4Audio.SOUND_EFFECTS) {
@@ -354,7 +356,7 @@ public class MenuController {
   }
 
   @FXML
-  public void musyxImport() {
+  protected void musyxImport() {
     try {
       Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
@@ -377,7 +379,8 @@ public class MenuController {
     }
   }
 
-  public void musyxImportAll() {
+  @FXML
+  protected void musyxImportAll() {
     try {
       Path uncompressed = workspace.getUncompressedDirectory();
       for (String samFile : GNT4Audio.SOUND_EFFECTS) {
@@ -402,7 +405,7 @@ public class MenuController {
   }
 
   @FXML
-  public void randomizeSoundEffects() {
+  protected void randomizeSoundEffects() {
     try {
       Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
@@ -426,18 +429,18 @@ public class MenuController {
   }
 
   @FXML
-  public void soundEffectReplace() {
+  protected void soundEffectReplace() {
     try {
       if (DspAdpcmEncoder.isNotAvailable()) {
         Message.info("Nintendo SDK Required",
             "In order to use this functionality, DSPADPCM.exe must be imported from the Nintendo GameCube SDK.");
-        boolean isMoved = DspAdpcmEncoder.moveDspAdpcm();
+        boolean isMoved = DspAdpcmEncoder.copyDspAdpcm();
         if (!isMoved) {
           return;
         }
       }
       File uncompressedDirectory = workspace.getUncompressedDirectory().toFile();
-      Optional<Path> optionalInput = Choosers.getAudioFile(uncompressedDirectory);
+      Optional<Path> optionalInput = Choosers.getAudioFile(GNTool.USER_HOME);
       if (optionalInput.isPresent()) {
         Optional<Path> optionalOutput = Choosers.getDspAudioFile(uncompressedDirectory);
         if (optionalOutput.isPresent()) {
@@ -448,7 +451,7 @@ public class MenuController {
           Path tempWavFilePath = audioFilePath.getParent().resolve(wavName);
           Path tempTxtFilePath = Paths.get(txtName);
           Path output = optionalOutput.get();
-          String ffmpegOutput = FFmpeg.run(audioFilePath, tempWavFilePath);
+          String ffmpegOutput = FFmpeg.prepareSoundEffect(audioFilePath, tempWavFilePath);
           LOGGER.log(Level.INFO, ffmpegOutput);
           String dspAdpcmOutput = DspAdpcmEncoder.run(tempWavFilePath, output);
           LOGGER.log(Level.INFO, dspAdpcmOutput);
@@ -461,6 +464,60 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Replacing Sound Effect", e);
       Message.error("Error Replacing Sound Effect", "See log for more information");
+    }
+  }
+
+  @FXML
+  protected void randomizeMusic() {
+    try {
+      Path uncompressedDirectory = workspace.getUncompressedDirectory();
+      List<Path> fullMusicPaths = GNT4Audio.FULL_MUSIC_TO_RANDOMIZE.stream()
+          .map(uncompressedDirectory::resolve)
+          .collect(Collectors.toList());
+      Randomizer.randomizeFiles(fullMusicPaths);
+      List<Path> shortMusicPaths = GNT4Audio.SHORT_MUSIC_TO_RANDOMIZE.stream()
+          .map(uncompressedDirectory::resolve)
+          .collect(Collectors.toList());
+      Randomizer.randomizeFiles(shortMusicPaths);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error running randomizer", e);
+      Message.error("Error running randomizer", "See log for more information");
+    }
+  }
+
+  @FXML
+  protected void musicReplace() {
+    try {
+      if (DtkMake.isNotAvailable()) {
+        Message.info("Nintendo SDK Required",
+            "In order to use this functionality, dtkmake.exe must be imported from the Nintendo GameCube SDK.");
+        boolean isMoved = DtkMake.copyDtkMake();
+        if (!isMoved) {
+          return;
+        }
+      }
+      Path uncompressedDirectory = workspace.getUncompressedDirectory();
+      Optional<Path> optionalInput = Choosers.getAudioFile(GNTool.USER_HOME);
+      if (optionalInput.isPresent()) {
+        Path bgm = uncompressedDirectory.resolve("files/audio/bgm");
+        Optional<Path> optionalOutput = Choosers.getTrkAudioFile(bgm.toFile());
+        if (optionalOutput.isPresent()) {
+          Path audioFilePath = optionalInput.get();
+          String wavName = System.currentTimeMillis() + "temp.wav";
+          Path tempWavFilePath = audioFilePath.getParent().resolve(wavName);
+          Path output = optionalOutput.get();
+          String ffmpegOutput = FFmpeg.prepareMusic(audioFilePath, tempWavFilePath);
+          LOGGER.log(Level.INFO, ffmpegOutput);
+          DtkMake.fixWavHeader(tempWavFilePath);
+          String trkOutput = DtkMake.run(tempWavFilePath, output);
+          LOGGER.log(Level.INFO, trkOutput);
+          Files.deleteIfExists(tempWavFilePath);
+          Message.info("Music Replacement Done", "Music Replacement Done.");
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Replacing Music", e);
+      Message.error("Error Replacing Music", "See log for more information");
     }
   }
 
@@ -537,6 +594,7 @@ public class MenuController {
       List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
           .map(GNTFile::getFilePath).collect(Collectors.toList());
       missingFiles.getItems().setAll(missingFilenames);
+      Collections.sort(missingFiles.getItems());
     });
   }
 
@@ -550,6 +608,7 @@ public class MenuController {
       List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
           .map(GNTFile::getFilePath).collect(Collectors.toList());
       changedFiles.getItems().setAll(changedFilenames);
+      Collections.sort(changedFiles.getItems());
     });
   }
 

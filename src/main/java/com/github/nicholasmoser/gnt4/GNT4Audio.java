@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class GNT4Audio {
 
+  /* All sound effect files in the game. */
   public static final List<String> SOUND_EFFECTS = Arrays.asList(
       "files/chr/ank/3000.sam",
       "files/chr/bou/3000.sam",
@@ -103,6 +104,7 @@ public class GNT4Audio {
       "files/unite/013/3000.sam",
       "files/unite/014/3000.sam");
 
+  /* All music files in the game. */
   public static final List<String> MUSIC = Arrays.asList(
       "files/audio/bgm/m000.trk",
       "files/audio/bgm/m001.trk",
@@ -214,4 +216,63 @@ public class GNT4Audio {
       "files/audio/bgm/m149.trk",
       "files/audio/bgm/m150.trk",
       "files/audio/bgm/m151.trk");
+
+  /* Full music files to be included in music randomization. */
+  public static final List<String> FULL_MUSIC_TO_RANDOMIZE = Arrays.asList(
+      "files/audio/bgm/m000.trk",
+      "files/audio/bgm/m001.trk",
+      "files/audio/bgm/m005.trk",
+      "files/audio/bgm/m008.trk",
+      "files/audio/bgm/m009.trk",
+      "files/audio/bgm/m010.trk",
+      "files/audio/bgm/m011.trk",
+      "files/audio/bgm/m012.trk",
+      "files/audio/bgm/m013.trk",
+      "files/audio/bgm/m014.trk",
+      "files/audio/bgm/m015.trk",
+      "files/audio/bgm/m016.trk",
+      "files/audio/bgm/m017.trk",
+      "files/audio/bgm/m018.trk",
+      "files/audio/bgm/m019.trk",
+      "files/audio/bgm/m020.trk",
+      "files/audio/bgm/m021.trk",
+      "files/audio/bgm/m040.trk",
+      "files/audio/bgm/m041.trk",
+      "files/audio/bgm/m042.trk",
+      "files/audio/bgm/m043.trk",
+      "files/audio/bgm/m044.trk",
+      "files/audio/bgm/m045.trk",
+      "files/audio/bgm/m046.trk",
+      "files/audio/bgm/m047.trk",
+      "files/audio/bgm/m048.trk",
+      "files/audio/bgm/m049.trk",
+      "files/audio/bgm/m050.trk",
+      "files/audio/bgm/m051.trk",
+      "files/audio/bgm/m052.trk",
+      "files/audio/bgm/m053.trk",
+      "files/audio/bgm/m054.trk",
+      "files/audio/bgm/m055.trk",
+      "files/audio/bgm/m056.trk",
+      "files/audio/bgm/m057.trk",
+      "files/audio/bgm/m058.trk",
+      "files/audio/bgm/m059.trk",
+      "files/audio/bgm/m060.trk",
+      "files/audio/bgm/m061.trk",
+      "files/audio/bgm/m062.trk",
+      "files/audio/bgm/m063.trk",
+      "files/audio/bgm/m064.trk",
+      "files/audio/bgm/m065.trk",
+      "files/audio/bgm/m066.trk",
+      "files/audio/bgm/m067.trk",
+      "files/audio/bgm/m068.trk",
+      "files/audio/bgm/m069.trk",
+      "files/audio/bgm/m070.trk",
+      "files/audio/bgm/m071.trk");
+
+  /* Short music files to be included in music randomization. */
+  public static final List<String> SHORT_MUSIC_TO_RANDOMIZE = Arrays.asList(
+      "files/audio/bgm/m002.trk",
+      "files/audio/bgm/m003.trk",
+      "files/audio/bgm/m004.trk",
+      "files/audio/bgm/m006.trk");
 }

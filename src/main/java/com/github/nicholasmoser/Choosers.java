@@ -79,15 +79,30 @@ public class Choosers {
   }
 
   /**
-   * Asks the user to select an input .dsp audio file.
+   * Asks the user to select an output .dsp audio file.
    *
-   * @return An optional input .dsp audio file. Empty if none is chosen.
+   * @return An optional output .dsp audio file. Empty if none is chosen.
    */
   public static Optional<Path> getDspAudioFile(File initialDirectory) {
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Select Input Audio File");
+    fileChooser.setTitle("Select Output Audio File");
     fileChooser.setInitialDirectory(initialDirectory);
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("DSP Audio (*.dsp)", "*.dsp");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an output .trk audio file.
+   *
+   * @return An optional output .trk audio file. Empty if none is chosen.
+   */
+  public static Optional<Path> getTrkAudioFile(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Output Audio File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("TRK Audio (*.trk)", "*.trk");
     fileChooser.getExtensionFilters().add(fileExtensions);
     File selection = fileChooser.showOpenDialog(null);
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
@@ -102,7 +117,22 @@ public class Choosers {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select DSPADPCM.exe");
     fileChooser.setInitialDirectory(initialDirectory);
-    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("DSPADPCM (DSPADPCM.exe)", "DSPADPCM.exe");
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("DSPADPCM", "DSPADPCM.exe");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select dtkmake.exe from the Nintendo GameCube SDK.
+   *
+   * @return An optional input dtkmake.exe. Empty if none is chosen.
+   */
+  public static Optional<Path> getDtkMake(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select dtkmake.exe");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("dtkmake", "dtkmake.exe");
     fileChooser.getExtensionFilters().add(fileExtensions);
     File selection = fileChooser.showOpenDialog(null);
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
