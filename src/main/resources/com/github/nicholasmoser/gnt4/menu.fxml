@@ -10,7 +10,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -108,10 +107,24 @@
                               <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sound Effects" wrappingWidth="79.13671875" />
                               <Button layoutX="20.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#soundEffectReplace" text="Replace" />
                               <Button layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#musyxExtractAll" text="Extract All" />
-                              <Button layoutX="101.0" layoutY="83.0" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All" />
+                              <Button layoutX="101.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All" />
                               <Text layoutX="20.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Music" />
                               <Button layoutX="20.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#randomizeMusic" text="Randomize" />
                               <Button layoutX="108.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#musicReplace" text="Replace" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+                  <Tab text="Graphics">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Textures" />
+                              <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#txg2tplExtract" text="Extract" />
+                              <Button layoutX="84.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#txg2tplImport" text="Import" />
+                              <Button layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#txg2tplExtractAll" text="Extract All" />
+                              <Button layoutX="101.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#txg2tplImportAll" text="Import All" />
+                              <ComboBox fx:id="txg2tplTexture" layoutX="148.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
                            </children>
                         </AnchorPane>
                     </content>

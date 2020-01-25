@@ -6,6 +6,7 @@ import com.github.nicholasmoser.audio.DspAdpcmEncoder;
 import com.github.nicholasmoser.audio.DtkMake;
 import com.github.nicholasmoser.audio.FFmpeg;
 import com.github.nicholasmoser.audio.MusyXExtract;
+import com.github.nicholasmoser.graphics.TXG2TPL;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +73,9 @@ public class MenuController {
 
   @FXML
   private ComboBox<String> musyxSamFile;
+
+  @FXML
+  private ComboBox<String> txg2tplTexture;
 
   /**
    * Toggles the code for fixing the audio.
@@ -521,6 +525,140 @@ public class MenuController {
     }
   }
 
+  @FXML
+  protected void txg2tplExtract() {
+    try {
+      Path uncompressed = workspace.getUncompressedDirectory();
+      String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
+      Path txgFilePath = uncompressed.resolve(txgFile);
+      String name = txgFilePath.getFileName().toString().replace(".txg", "/");
+      Path outputPath = txgFilePath.getParent().resolve(name);
+      if (!Files.isRegularFile(txgFilePath)) {
+        String message = "Cannot find .txg file: " + txgFilePath;
+        LOGGER.log(Level.SEVERE, message);
+        Message.error("Missing .txg", message);
+        return;
+      }
+      Files.createDirectories(outputPath);
+      String output = TXG2TPL.unpack(txgFilePath, outputPath);
+      LOGGER.log(Level.INFO, output);
+      Desktop.getDesktop().open(outputPath.toFile());
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Extracting Textures", e);
+      Message.error("Error Extracting Textures", "See log for more information");
+    }
+  }
+
+  @FXML
+  protected void txg2tplImport() {
+    try {
+      Path uncompressed = workspace.getUncompressedDirectory();
+      String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
+      Path txgFilePath = uncompressed.resolve(txgFile);
+      String name = txgFilePath.getFileName().toString().replace(".txg", "/");
+      Path inputPath = txgFilePath.getParent().resolve(name);
+      if (!Files.isDirectory(inputPath)) {
+        String message = txgFile + " has not been extracted yet.";
+        LOGGER.log(Level.WARNING, message);
+        Message.error("Missing Extraction", message);
+        return;
+      }
+      String output = TXG2TPL.pack(inputPath, txgFilePath);
+      LOGGER.log(Level.INFO, output);
+      Message.info("Import Complete", ".txg file has been created.");
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Importing Texture", e);
+      Message.error("Error Importing Texture", "See log for more information");
+    }
+  }
+
+  @FXML
+  protected void txg2tplExtractAll() {
+    Task<Object> task = new Task<>() {
+      @Override
+      public Workspace call() throws Exception {
+        try {
+          Path uncompressed = workspace.getUncompressedDirectory();
+          int total = GNT4Graphics.TEXTURES.size();
+          for (int i = 0; i < total; i++) {
+            String texture = GNT4Graphics.TEXTURES.get(i);
+            Path txgFilePath = uncompressed.resolve(texture);
+            String name = txgFilePath.getFileName().toString().replace(".txg", "/");
+            Path outputPath = txgFilePath.getParent().resolve(name);
+            if (!Files.isRegularFile(txgFilePath)) {
+              String message = "Skipping... cannot find .txg file: " + txgFilePath;
+              LOGGER.log(Level.SEVERE, message);
+              continue;
+            }
+            Files.createDirectories(outputPath);
+            TXG2TPL.unpack(txgFilePath, outputPath);
+            updateMessage(texture);
+            updateProgress(i, total);
+          }
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, "Error Extracting Textures", e);
+          throw e;
+        }
+        return null;
+      }
+    };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Extracting All Textures", task);
+    task.setOnSucceeded(event -> {
+      LOGGER.log(Level.INFO, "Extraction Complete");
+      Message.info("Extraction Complete", ".tpl files have been created.");
+      loadingWindow.close();
+    });
+    task.setOnFailed(event -> {
+      LOGGER.log(Level.SEVERE, "Error Extracting Textures");
+      Message.error("Error Extracting Textures", "See log for more information");
+      loadingWindow.close();
+    });
+    new Thread(task).start();
+  }
+
+  @FXML
+  protected void txg2tplImportAll() {
+    Task<Object> task = new Task<>() {
+      @Override
+      public Workspace call() throws Exception {
+        try {
+          Path uncompressed = workspace.getUncompressedDirectory();
+          int total = GNT4Graphics.TEXTURES.size();
+          for (int i = 0; i < total; i++) {
+            String texture = GNT4Graphics.TEXTURES.get(i);
+            Path txgFilePath = uncompressed.resolve(texture);
+            String name = txgFilePath.getFileName().toString().replace(".txg", "/");
+            Path inputPath = txgFilePath.getParent().resolve(name);
+            if (!Files.isDirectory(inputPath)) {
+              String message = txgFilePath + " has not been extracted yet.";
+              LOGGER.log(Level.WARNING, message);
+              continue;
+            }
+            TXG2TPL.pack(inputPath, txgFilePath);
+            updateMessage(texture);
+            updateProgress(i, total);
+          }
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, "Error Importing Textures", e);
+          throw e;
+        }
+        return null;
+      }
+    };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Importing All Textures", task);
+    task.setOnSucceeded(event -> {
+      LOGGER.log(Level.INFO, "Import Complete");
+      Message.info("Import Complete", ".txg files have been created.");
+      loadingWindow.close();
+    });
+    task.setOnFailed(event -> {
+      LOGGER.log(Level.SEVERE, "Error Importing Textures");
+      Message.error("Error Importing Textures", "See log for more information");
+      loadingWindow.close();
+    });
+    new Thread(task).start();
+  }
+
   /**
    * Initializes with a workspace.
    *
@@ -530,6 +668,8 @@ public class MenuController {
     this.workspace = workspace;
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
+    txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
+    txg2tplTexture.getSelectionModel().selectFirst();
     asyncRefresh();
   }
 

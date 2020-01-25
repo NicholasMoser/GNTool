@@ -108,4 +108,14 @@ task ffmpegLicense(type: Copy) {
     into "$buildDir/image/legal/ffmpeg"
 }
 
-task extra (dependsOn: [gcr, gcrLicense, ffmpeg, ffmpegLicense])
+task txg2tpl(type: Copy) {
+    from file("TXG2TPL.exe")
+    into file("$buildDir/image/bin")
+}
+
+task txg2tplLicense(type: Copy) {
+    from "licenses/txg2tpl"
+    into "$buildDir/image/legal/txg2tpl"
+}
+
+task extra (dependsOn: [gcr, gcrLicense, ffmpeg, ffmpegLicense, txg2tpl, txg2tplLicense])
