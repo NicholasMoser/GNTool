@@ -11,12 +11,13 @@ This program allows you to modify files contained inside .FPK files for Naruto G
 3. **[How to Use](#how-to-use)**
 4. **[Options](#options)**
 5. **[Audio](#audio)**
-6. **[How it Works](#how-it-works)**
-7. **[Logging](#logging)**
-8. **[Contributing](#contributing)**
-9. **[Authors](#authors)**
-10. **[Special Thanks](#special-thanks)**
-11. **[License](#license)**
+6. **[Graphics](#graphics)**
+7. **[How it Works](#how-it-works)**
+8. **[Logging](#logging)**
+9. **[Contributing](#contributing)**
+10. **[Authors](#authors)**
+11. **[Special Thanks](#special-thanks)**
+12. **[License](#license)**
 
 ## Getting Started
 
@@ -68,6 +69,12 @@ The value can be set between 1 and 15. 1 is extremely fast and 15 is extremely s
 
 When at the title screen of GNT4, after ten seconds the game will transition to the demo screen. The demo screen will load a CPU fight and upon the player pressing start will go back to the title screen. You can edit the number of seconds before it transitions to the demo screen. By selecting the Max button you can set it to a day, effectively disabling it.
 
+#### Main Menu Character
+
+The main menu character for GNT4 can be changed. Normally it is Sakura, but you can change it to any character except Kiba, Kankuro, and Tayuya. Kiba, Kankuro, and Tayuya cause errors since they spawn additional characters.
+
+Each character has a customized sound effect for when a menu option is selected. This can be further customized by changing the byte at offset `0x1BE67` in `files/maki/m_title.seq`. The description of each menu option will still be the original voice clips read by Sakura. The eye texture upon menu option selection is the 2nd texture in `3.tpl` of each character's `1300.txg` file. Some characters do not have a `3.tpl` or 2nd texture, so this will be created upon selecting the character in GNTool.
+
 ### Audio
 
 There are multiple settings related to audio. They can be found under the Audio tab in your workspace. Some of the tools require executables from the Nintendo GameCube SDK. You can find a copy of the SDK by searching online for it.
@@ -86,11 +93,11 @@ Music files are easier to work with than sound effects since they are stored sep
 
 **Replace** will allow you to replace a single music file. In order to use this functionality it will ask you to select dtkmake.exe from the Nintendo GameCube SDK. This file can be found in the SDK under `NINTENDO GameCube SDK 1.0/X86/bin/dtkmake.exe`. The audio you select will first be modified into a 48k frequency .wav file and then into a .trk file.
 
-### Main Menu Character
+### Graphics
 
-The main menu character for GNT4 can be changed. Normally it is Sakura, but you can change it to any character except Kiba, Kankuro, and Tayuya. Kiba, Kankuro, and Tayuya cause errors since they spawn additional characters.
+#### Textures
 
-Each character has a customized sound effect for when a menu option is selected. This can be further customized by changing the byte at offset `0x1BE67` in `files/maki/m_title.seq`. The description of each menu option will still be the original voice clips read by Sakura. The eye texture upon menu option selection is the 2nd texture in `3.tpl` of each character's `1300.txg` file. Some characters do not have a `3.tpl` or 2nd texture, so this will be created upon selecting the character in GNTool.
+To replace textures in the game, first extract a specific texture archive or extract all of them. A folder matching the name of the texture archive will be created in the directory of the texture. In the folder will be one or more [.tpl files](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/file_formats/txg.md#tpl-header). These files can be viewed and modified with [BrawlBox](https://github.com/libertyernie/brawltools). When you are finished modifying .tpl files, make sure to import the specific texture in GNTool for it to appear in the game.
 
 ### How it Works
 
