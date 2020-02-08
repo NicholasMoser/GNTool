@@ -1,12 +1,22 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.github.nicholasmoser.Choosers;
+import com.github.nicholasmoser.FPKPacker;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
+import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
+import com.github.nicholasmoser.GNTool;
+import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.Randomizer;
+import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.audio.DspAdpcmEncoder;
 import com.github.nicholasmoser.audio.DtkMake;
 import com.github.nicholasmoser.audio.FFmpeg;
 import com.github.nicholasmoser.audio.MusyXExtract;
+import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.graphics.TXG2TPL;
+import com.github.nicholasmoser.graphics.Texture1300;
+import com.github.nicholasmoser.utils.GUIUtils;
+import com.github.nicholasmoser.utils.ProtobufUtils;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -20,15 +30,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import com.github.nicholasmoser.Choosers;
-import com.github.nicholasmoser.FPKPacker;
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
-import com.github.nicholasmoser.GNTool;
-import com.github.nicholasmoser.Message;
-import com.github.nicholasmoser.Workspace;
-import com.github.nicholasmoser.gamecube.GameCubeISO;
-import com.github.nicholasmoser.utils.GUIUtils;
-import com.github.nicholasmoser.utils.ProtobufUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventTarget;
@@ -76,6 +77,9 @@ public class MenuController {
 
   @FXML
   private ComboBox<String> txg2tplTexture;
+
+  @FXML
+  private ComboBox<String> mainMenuCharacter;
 
   /**
    * Toggles the code for fixing the audio.
@@ -166,6 +170,20 @@ public class MenuController {
   protected void maxTimeOut() {
     demoTimeOut.getValueFactory().setValue(MAX_DEMO_TIME_OUT_SECONDS);
     setDemoTimeOut();
+  }
+
+  @FXML
+  public void changeMainMenuCharacter() {
+    try {
+      Path uncompressed = workspace.getUncompressedDirectory();
+      String character = mainMenuCharacter.getSelectionModel().getSelectedItem();
+      GNT4Codes codes = GNT4Codes.getInstance();
+      codes.setMainMenuCharacter(uncompressed, character);
+      Texture1300.mainCharacterFix(uncompressed, character);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Update Main Menu Character.", e);
+      Message.error("Failed to Update Main Menu Character", "See the log for more information.");
+    }
   }
 
   /**
@@ -670,6 +688,8 @@ public class MenuController {
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
     txg2tplTexture.getSelectionModel().selectFirst();
+    mainMenuCharacter.getItems().setAll(GNT4Characters.MAIN_MENU_CHARS);
+    mainMenuCharacter.getSelectionModel().select(GNT4Characters.SAKURA);
     asyncRefresh();
   }
 
@@ -694,6 +714,7 @@ public class MenuController {
     refreshMissingFiles(newFiles);
     refreshChangedFiles(newFiles);
     refreshOptions();
+    refreshMainMenuCharacter();
   }
 
   /**
@@ -788,5 +809,22 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting title demo timeout.", e);
     }
+  }
+
+  /**
+   * Sets the main menu character ComboBox from the workspace upon initialization.
+   */
+  private void refreshMainMenuCharacter() {
+    Platform.runLater(() -> {
+      try {
+        GNT4Codes codes = GNT4Codes.getInstance();
+        Path uncompressed = workspace.getUncompressedDirectory();
+        String character = codes.getMainMenuCharacter(uncompressed);
+        mainMenuCharacter.getSelectionModel().select(character);
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Error Setting Current Main Menu Character", e);
+        Message.error("Error Setting Main Menu Character", "See log for more information");
+      }
+    });
   }
 }

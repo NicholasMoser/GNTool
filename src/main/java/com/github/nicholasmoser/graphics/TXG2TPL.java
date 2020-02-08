@@ -23,7 +23,7 @@ public class TXG2TPL {
     if (!Files.isRegularFile(inputFile)) {
       throw new IOException(inputFile + " is not a readable file.");
     } else if (!Files.isDirectory(outputDirectory)) {
-      throw new IOException(inputFile + " is not a valid directory.");
+      throw new IOException(outputDirectory + " is not a valid directory.");
     }
     try {
       Process process = new ProcessBuilder("TXG2TPL.exe", "-u", inputFile.toString(),

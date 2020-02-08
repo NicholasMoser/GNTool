@@ -86,13 +86,13 @@ public class FPKFileHeader {
    * @return a byte array of the file header. This will always be 32 bytes exactly.
    */
   public byte[] getBytes() {
-    byte[] fileNameBytes = ByteUtils.stringToBytes(fileName);
+    byte[] fileNameBytes = ByteUtils.fromString(fileName);
     // Need to pad with zeroes if the name is not a full 16 bytes.
     if (fileNameBytes.length < 16) {
       int difference = 16 - fileNameBytes.length;
       fileNameBytes = Bytes.concat(fileNameBytes, new byte[difference]);
     }
-    return Bytes.concat(fileNameBytes, ByteUtils.intToBytes(0), ByteUtils.intToBytes(offset),
-        ByteUtils.intToBytes(compressedSize), ByteUtils.intToBytes(uncompressedSize));
+    return Bytes.concat(fileNameBytes, ByteUtils.fromUint32(0), ByteUtils.fromUint32(offset),
+        ByteUtils.fromUint32(compressedSize), ByteUtils.fromUint32(uncompressedSize));
   }
 }

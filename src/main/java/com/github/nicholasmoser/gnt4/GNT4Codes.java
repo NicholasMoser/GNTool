@@ -8,12 +8,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import com.github.nicholasmoser.Code;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
- * A singleton object representing the different GNT4 options and codes, as well as the ability
- * to execute them.
+ * A singleton object representing the different GNT4 options and codes, as well as the ability to
+ * execute them.
  */
 public class GNT4Codes {
+
+  private static final Logger LOGGER = Logger.getLogger(GNT4Codes.class.getName());
+
   private static final String MAIN_DOL = "sys/main.dol";
   private static final String TITLE_SEQ = "files/maki/m_title.seq";
   private static final String CSS_SEQ = "files/maki/char_sel.seq";
@@ -45,14 +50,22 @@ public class GNT4Codes {
   // https://github.com/NicholasMoser/GNTool#title-timeout-to-demo
   private GNT4Code demoTimeOut;
 
+  // https://github.com/NicholasMoser/GNTool#main-menu-character
+  private GNT4Code mainMenuCharacter;
+  private GNT4Code mainMenuCharacterSound;
+
   /**
    * Private constructor to enforce singleton pattern.
    */
   private GNT4Codes() {
-    audioFix = new GNT4Code(MAIN_DOL, 0x16CC0C, new byte[]{0x41, (byte) 0x82, 0x00, 0x20}, new byte[]{0x48, 0x00, 0x00, 0x21});
-    skipCutscenes1 = new GNT4Code(MAIN_DOL, 0x9B14, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x41}, new byte[]{0x60, 0x00, 0x00, 0x00});
-    skipCutscenes2 = new GNT4Code(MAIN_DOL, 0x9B28, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x2D}, new byte[]{0x60, 0x00, 0x00, 0x00});
-    skipCutscenes3 = new GNT4Code(MAIN_DOL, 0x9B3C, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x19}, new byte[]{0x60, 0x00, 0x00, 0x00});
+    audioFix = new GNT4Code(MAIN_DOL, 0x16CC0C, new byte[]{0x41, (byte) 0x82, 0x00, 0x20},
+        new byte[]{0x48, 0x00, 0x00, 0x21});
+    skipCutscenes1 = new GNT4Code(MAIN_DOL, 0x9B14, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x41},
+        new byte[]{0x60, 0x00, 0x00, 0x00});
+    skipCutscenes2 = new GNT4Code(MAIN_DOL, 0x9B28, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x2D},
+        new byte[]{0x60, 0x00, 0x00, 0x00});
+    skipCutscenes3 = new GNT4Code(MAIN_DOL, 0x9B3C, new byte[]{0x48, 0x0B, (byte) 0xF5, 0x19},
+        new byte[]{0x60, 0x00, 0x00, 0x00});
     cssInitialSpeed_1v1_1p = new GNT4Code(CSS_SEQ, 0x531C);
     cssInitialSpeed_1v1_2p = new GNT4Code(CSS_SEQ, 0x9078);
     cssInitialSpeed_ffa_1p = new GNT4Code(CSS_4P_SEQ, 0x82BC);
@@ -66,6 +79,8 @@ public class GNT4Codes {
     cssMaxSpeed_ffa_3p = new GNT4Code(CSS_4P_SEQ, 0x6468);
     cssMaxSpeed_ffa_4p = new GNT4Code(CSS_4P_SEQ, 0x6F48);
     demoTimeOut = new GNT4Code(TITLE_SEQ, 0x1B6E4);
+    mainMenuCharacter = new GNT4Code(TITLE_SEQ, 0x1612C);
+    mainMenuCharacterSound = new GNT4Code(TITLE_SEQ, 0x1BE67);
   }
 
   /**
@@ -79,9 +94,10 @@ public class GNT4Codes {
   }
 
   /**
-   * Returns the initial character select speed. Technically it only returns it from
-   * the 2-player character select menu, but there should not be a difference between
-   * the speed of the 2-player character select menu and the 4-player one.
+   * Returns the initial character select speed. Technically it only returns it from the 2-player
+   * character select menu, but there should not be a difference between the speed of the 2-player
+   * character select menu and the 4-player one.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @return The initial character select speed.
    * @throws IOException If an I/O error occurs.
@@ -95,9 +111,10 @@ public class GNT4Codes {
   }
 
   /**
-   * Returns the max character select speed. Technically it only returns it from
-   * the 2-player character select menu, but there should not be a difference between
-   * the speed of the 2-player character select menu and the 4-player one.
+   * Returns the max character select speed. Technically it only returns it from the 2-player
+   * character select menu, but there should not be a difference between the speed of the 2-player
+   * character select menu and the 4-player one.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @return The max character select speed.
    * @throws IOException If an I/O error occurs.
@@ -111,6 +128,7 @@ public class GNT4Codes {
   }
 
   /**
+   * Returns the title demo timeout value.
    *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @return The amount of seconds in the title screen before it transitions to the demo screen.
@@ -126,10 +144,11 @@ public class GNT4Codes {
   }
 
   /**
-   * Sets the Initial speed of the character select screen.
-   * 1 is extremely fast and 15 is extremely slow.
+   * Sets the Initial speed of the character select screen. 1 is extremely fast and 15 is extremely
+   * slow.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
-   * @param value The initial speed of the character select screen.
+   * @param value                 The initial speed of the character select screen.
    * @throws IOException If an I/O error occurs.
    */
   public void setCssInitialSpeed(Path uncompressedDirectory, int value) throws IOException {
@@ -156,10 +175,11 @@ public class GNT4Codes {
   }
 
   /**
-   * Sets the maximum speed of the character select screen.
-   * 1 is extremely fast and 15 is extremely slow.
+   * Sets the maximum speed of the character select screen. 1 is extremely fast and 15 is extremely
+   * slow.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
-   * @param value The maximum speed of the character select screen.
+   * @param value                 The maximum speed of the character select screen.
    * @throws IOException If an I/O error occurs.
    */
   public void setCssMaxSpeed(Path uncompressedDirectory, int value) throws IOException {
@@ -186,10 +206,11 @@ public class GNT4Codes {
   }
 
   /**
-   * Sets the title demo timeout in seconds.
-   * The seconds will be converted to frames when inserted into the game.
+   * Sets the title demo timeout in seconds. The seconds will be converted to frames when inserted
+   * into the game.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
-   * @param value The title demo timeout in seconds.
+   * @param value                 The title demo timeout in seconds.
    * @throws IOException If an I/O error occurs.
    */
   public void setTitleDemoTimeout(Path uncompressedDirectory, int value) throws IOException {
@@ -203,6 +224,7 @@ public class GNT4Codes {
 
   /**
    * Returns whether or not the code to fix audio for different ISO file offsets is activated.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @throws IOException If an I/O error occurs.
    */
@@ -216,6 +238,7 @@ public class GNT4Codes {
 
   /**
    * Activates the code to fix audio for different ISO file offsets.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @throws IOException If an I/O error occurs.
    */
@@ -228,6 +251,7 @@ public class GNT4Codes {
 
   /**
    * Inactivates the code to fix audio for different ISO file offsets.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @throws IOException If an I/O error occurs.
    */
@@ -239,8 +263,9 @@ public class GNT4Codes {
   }
 
   /**
-   * Returns whether or not the code to skip cutscenes is activated. The code
-   * is in three locations so this only returns true if the code is in all three locations.
+   * Returns whether or not the code to skip cutscenes is activated. The code is in three locations
+   * so this only returns true if the code is in all three locations.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @throws IOException If an I/O error occurs.
    */
@@ -267,6 +292,7 @@ public class GNT4Codes {
 
   /**
    * Activates the code to skip cutscenes.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @throws IOException If an I/O error occurs.
    */
@@ -283,6 +309,7 @@ public class GNT4Codes {
 
   /**
    * Inactivates the code to skip cutscenes.
+   *
    * @param uncompressedDirectory The directory of uncompressed files for the workspace.
    * @throws IOException If an I/O error occurs.
    */
@@ -300,14 +327,62 @@ public class GNT4Codes {
   }
 
   /**
+   * Returns the current main menu character.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @return the main menu character.
+   * @throws IOException If an I/O error occurs.
+   */
+  public String getMainMenuCharacter(Path uncompressedDirectory) throws IOException {
+    Path filePath = uncompressedDirectory.resolve(mainMenuCharacter.getFilePath());
+    int offset = mainMenuCharacter.getOffset();
+    byte[] bytes = readWord(filePath, offset);
+    ByteBuffer wrapped = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
+    int internalCharNumber = wrapped.getInt();
+    for (Map.Entry<String, Integer> entry : GNT4Characters.INTERNAL_CHAR_ORDER.entrySet()) {
+      if (internalCharNumber == entry.getValue()) {
+        return entry.getKey();
+      }
+    }
+    throw new IOException(internalCharNumber + " is not a valid main menu character id.");
+  }
+
+  /**
+   * Sets main menu character.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @param chr                   The name of the main menu character.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void setMainMenuCharacter(Path uncompressedDirectory, String chr) throws IOException {
+    // Main Menu Character
+    int characterId = GNT4Characters.INTERNAL_CHAR_ORDER.get(chr);
+    ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
+    byte[] charBytes = buffer.putInt(characterId).array();
+    Path dolPath = uncompressedDirectory.resolve(mainMenuCharacter.getFilePath());
+    int mainMenuCharacterOffset = mainMenuCharacter.getOffset();
+
+    // Main Menu Character Sound
+    byte soundEffect = GNT4Characters.CHAR_SEL_SOUND.get(chr);
+    int mainMenuCharacterSoundOffset = mainMenuCharacterSound.getOffset();
+    byte[] soundByte = new byte[] { soundEffect };
+
+    Code.getBuilder()
+        .withOverwrite(mainMenuCharacterOffset, charBytes)
+        .withOverwrite(mainMenuCharacterSoundOffset, soundByte)
+        .execute(dolPath);
+  }
+
+  /**
    * Reads a 4-byte word from the given filePath starting from the given offset.
+   *
    * @param filePath The file path.
-   * @param offset The offset to begin reading at.
+   * @param offset   The offset to begin reading at.
    * @return The 4-byte word.
    * @throws IOException If an I/O error occurs.
    */
   private byte[] readWord(Path filePath, int offset) throws IOException {
-    try(InputStream is = Files.newInputStream(filePath)) {
+    try (InputStream is = Files.newInputStream(filePath)) {
       if (is.skip(offset) != offset) {
         String message = String.format("Failed to read to %d of %s", offset, filePath);
         throw new IOException(message);
@@ -322,8 +397,9 @@ public class GNT4Codes {
   }
 
   /**
-   * Converts a number of frames to a number of seconds.
-   * GNT4 runs at 60 frames per second, therefore there are 60 frames in a second.
+   * Converts a number of frames to a number of seconds. GNT4 runs at 60 frames per second,
+   * therefore there are 60 frames in a second.
+   *
    * @param frames The number of frames to convert.
    * @return The number of seconds.
    */
@@ -332,8 +408,9 @@ public class GNT4Codes {
   }
 
   /**
-   * Converts a number of seconds to a number of frames.
-   * GNT4 runs at 60 frames per second, therefore there are 60 frames in a second.
+   * Converts a number of seconds to a number of frames. GNT4 runs at 60 frames per second,
+   * therefore there are 60 frames in a second.
+   *
    * @param seconds The number of seconds to convert.
    * @return The number of frames.
    */

@@ -86,6 +86,12 @@ Music files are easier to work with than sound effects since they are stored sep
 
 **Replace** will allow you to replace a single music file. In order to use this functionality it will ask you to select dtkmake.exe from the Nintendo GameCube SDK. This file can be found in the SDK under `NINTENDO GameCube SDK 1.0/X86/bin/dtkmake.exe`. The audio you select will first be modified into a 48k frequency .wav file and then into a .trk file.
 
+### Main Menu Character
+
+The main menu character for GNT4 can be changed. Normally it is Sakura, but you can change it to any character except Kiba, Kankuro, and Tayuya. Kiba, Kankuro, and Tayuya cause errors since they spawn additional characters.
+
+Each character has a customized sound effect for when a menu option is selected. This can be further customized by changing the byte at offset `0x1BE67` in `files/maki/m_title.seq`. The description of each menu option will still be the original voice clips read by Sakura. The eye texture upon menu option selection is the 2nd texture in `3.tpl` of each character's `1300.txg` file. Some characters do not have a `3.tpl` or 2nd texture, so this will be created upon selecting the character in GNTool.
+
 ### How it Works
 
 There are multiple steps involved in the execution of this program. Extracting and creating a new ISO all occurs within the program GameCube Rebuilder. After the contents of the ISO is dumped to the root folder, it is copied to the uncompressed folder. Then in the uncompressed folder each FPK is uncompressed using a PRS uncompression algorithm. When you are ready to rebuild the ISO, only modified files are repacked. Original FPK archive files are preserved if untouched. We are able to know which files have changed by comparing each file to its expected [CRC32 value](https://en.wikipedia.org/wiki/Cyclic_redundancy_check).

@@ -203,7 +203,7 @@ public class FPKPacker {
    * @return The FPK header.
    */
   private static byte[] createFPKHeader(int numberOfFiles, int outputSize) {
-    return Bytes.concat(ByteUtils.intToBytes(0), ByteUtils.intToBytes(numberOfFiles),
-        ByteUtils.intToBytes(16), ByteUtils.intToBytes(outputSize));
+    return Bytes.concat(ByteUtils.fromUint32(0), ByteUtils.fromUint32(numberOfFiles),
+        ByteUtils.fromUint32(16), ByteUtils.fromUint32(outputSize));
   }
 }

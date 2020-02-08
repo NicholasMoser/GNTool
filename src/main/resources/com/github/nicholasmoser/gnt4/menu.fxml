@@ -10,6 +10,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -70,6 +71,8 @@
                                           <Text layoutX="183.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Title Timeout to Demo (seconds)" />
                                           <Button layoutX="78.0" layoutY="216.0" mnemonicParsing="false" onMouseClicked="#maxTimeOut" text="Max" />
                                           <Button layoutX="14.0" layoutY="216.0" mnemonicParsing="false" onMouseClicked="#defaultTimeOut" text="Default" />
+                                          <ComboBox fx:id="mainMenuCharacter" layoutX="14.0" layoutY="253.0" onAction="#changeMainMenuCharacter" prefHeight="25.0" prefWidth="179.0" />
+                                          <Text layoutX="205.0" layoutY="270.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Main Menu Character" />
                                        </children>
                                     </AnchorPane>
                                 </content>
