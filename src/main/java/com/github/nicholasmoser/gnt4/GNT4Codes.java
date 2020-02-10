@@ -9,15 +9,12 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import com.github.nicholasmoser.Code;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * A singleton object representing the different GNT4 options and codes, as well as the ability to
  * execute them.
  */
 public class GNT4Codes {
-
-  private static final Logger LOGGER = Logger.getLogger(GNT4Codes.class.getName());
 
   private static final String MAIN_DOL = "sys/main.dol";
   private static final String TITLE_SEQ = "files/maki/m_title.seq";
@@ -52,6 +49,7 @@ public class GNT4Codes {
 
   // https://github.com/NicholasMoser/GNTool#main-menu-character
   private GNT4Code mainMenuCharacter;
+  private GNT4Code mainMenuCharacterHeight;
   private GNT4Code mainMenuCharacterSound;
 
   /**
@@ -80,6 +78,7 @@ public class GNT4Codes {
     cssMaxSpeed_ffa_4p = new GNT4Code(CSS_4P_SEQ, 0x6F48);
     demoTimeOut = new GNT4Code(TITLE_SEQ, 0x1B6E4);
     mainMenuCharacter = new GNT4Code(TITLE_SEQ, 0x1612C);
+    mainMenuCharacterHeight = new GNT4Code(TITLE_SEQ, 0x161C3);
     mainMenuCharacterSound = new GNT4Code(TITLE_SEQ, 0x1BE67);
   }
 
@@ -367,9 +366,15 @@ public class GNT4Codes {
     int mainMenuCharacterSoundOffset = mainMenuCharacterSound.getOffset();
     byte[] soundByte = new byte[] { soundEffect };
 
+    // Main Menu Character Height
+    byte height = GNT4Characters.CHAR_HEIGHT_ADJUST.get(chr);
+    int mainMenuCharacterHeightOffset = mainMenuCharacterHeight.getOffset();
+    byte[] heightByte = new byte[] { height };
+
     Code.getBuilder()
         .withOverwrite(mainMenuCharacterOffset, charBytes)
         .withOverwrite(mainMenuCharacterSoundOffset, soundByte)
+        .withOverwrite(mainMenuCharacterHeightOffset, heightByte)
         .execute(dolPath);
   }
 

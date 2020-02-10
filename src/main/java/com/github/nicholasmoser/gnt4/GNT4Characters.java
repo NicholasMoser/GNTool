@@ -243,7 +243,7 @@ public class GNT4Characters {
       entry(SASUKE, (byte) 0x04),
       entry(HAKU, (byte) 0x22),
       entry(KAKASHI, (byte) 0x14),
-      entry(LEE, (byte) 0x02A),
+      entry(LEE, (byte) 0x2A),
       entry(IRUKA, (byte) 0x14),
       entry(ZABUZA, (byte) 0x1B),
       entry(SAKURA, (byte) 0x27),
@@ -282,4 +282,52 @@ public class GNT4Characters {
       entry(HINATA_AWAKENED, (byte) 0x14),
       entry(TAYUYA_DOKI, (byte) 0x00)
   );
+
+  /**
+   * A map containing the height adjustments for main menu characters.
+   * The default value is 0xE5
+   */
+  public static final Map<String, Byte> CHAR_HEIGHT_ADJUST = Map.ofEntries(
+      entry(SASUKE, (byte) 0xDF),
+      entry(HAKU, (byte) 0xD6),
+      entry(KAKASHI, (byte) 0xD0),
+      entry(LEE, (byte) 0xD8),
+      entry(IRUKA, (byte) 0xD0),
+      entry(ZABUZA, (byte) 0xC2),
+      entry(SAKURA, (byte) 0xE5),
+      entry(NARUTO, (byte) 0xE5),
+      entry(INO, (byte) 0xE5),
+      entry(SHIKAMARU, (byte) 0xE2),
+      entry(NEJI, (byte) 0xDE),
+      entry(HINATA, (byte) 0xE5),
+      entry(MIGHT_GUY, (byte) 0xCD),
+      //entry(KANKURO, ?),
+      entry(KARASU, (byte) 0xD0),
+      //entry(KIBA, ?),
+      entry(AKAMARU, (byte) 0xE5),
+      entry(GAARA, (byte) 0xE7),
+      entry(OROCHIMARU, (byte) 0xCF),
+      entry(OBORO, (byte) 0xD8),
+      entry(MIZUKI, (byte) 0xD0),
+      entry(ANKO, (byte) 0xD5),
+      entry(JIRAIYA, (byte) 0xB6),
+      entry(CHOJI, (byte) 0xED),
+      entry(TENTEN, (byte) 0xE2),
+      entry(TEMARI, (byte) 0xE1),
+      entry(SHINO, (byte) 0xDE),
+      entry(ITACHI, (byte) 0xD6),
+      entry(TSUNADE, (byte) 0xD6),
+      entry(SARUTOBI, (byte) 0xD7),
+      entry(KIMIMARO, (byte) 0xD8),
+      entry(JIROBO, (byte) 0xCA),
+      entry(KIDOMARU, (byte) 0xD6),
+      entry(SAKON, (byte) 0xD8),
+      //entry(TAYUYA, ?),
+      entry(KISAME, (byte) 0xB8),
+      entry(SASUKE_CS2, (byte) 0xDF),
+      entry(NARUTO_OTK, (byte) 0xE5),
+      entry(KABUTO, (byte) 0xD0),
+      entry(HINATA_AWAKENED, (byte) 0xE5),
+      entry(TAYUYA_DOKI, (byte) 0x88)
+    );
 }
