@@ -85,4 +85,9 @@ public class GNT4Workspace implements Workspace {
   public Optional<GNTFile> getParentFPK(String changedFile) {
     return gnt4Files.getParentFPK(changedFile);
   }
+
+  @Override
+  public void revertFile(String filePath) throws IOException {
+    gnt4Files.revertFile(uncompressed, root, filePath);
+  }
 }

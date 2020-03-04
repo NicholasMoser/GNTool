@@ -36,7 +36,9 @@ import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -50,6 +52,7 @@ public class MenuController {
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
   private Workspace workspace;
+  private Stage stage;
 
   @FXML
   private ListView<String> changedFiles;
@@ -315,14 +318,9 @@ public class MenuController {
   protected void changedFileSelected(MouseEvent event) {
     EventTarget result = event.getTarget();
     if (event.getButton() == MouseButton.SECONDARY && result instanceof Text) {
-      try {
-        Text text = (Text) result;
-        Path filePath = workspace.getUncompressedDirectory().resolve(text.getText());
-        Desktop.getDesktop().open(filePath.toFile());
-      } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Error Opening File", e);
-        Message.error("Error Opening File", "See the log for more information.");
-      }
+      Text text = (Text) result;
+      ContextMenu menu = getChangedFileContextMenu(text.getText());
+      menu.show(stage, event.getScreenX(), event.getScreenY());
     }
   }
 
@@ -681,9 +679,11 @@ public class MenuController {
    * Initializes with a workspace.
    *
    * @param workspace The workspace to add.
+   * @param stage     The stage for the application.
    */
-  public void init(Workspace workspace) {
+  public void init(Workspace workspace, Stage stage) {
     this.workspace = workspace;
+    this.stage = stage;
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
@@ -760,7 +760,7 @@ public class MenuController {
   }
 
   /**
-   * Refreshes the changed files tab from a set of GNTFiles.
+   * Refreshes the changed files tab from a set of
    *
    * @param newFiles The GNTFiles to check against.
    */
@@ -826,5 +826,43 @@ public class MenuController {
         Message.error("Error Setting Main Menu Character", "See log for more information");
       }
     });
+  }
+
+  /**
+   * Returns a context menu for a changed file. The options of this context menu include opening the
+   * file, opening the directory where the file is located, and reverting the file.
+   *
+   * @param filePath The path of the file.
+   * @return The changed file context menu.
+   */
+  private ContextMenu getChangedFileContextMenu(String filePath) {
+    ContextMenu contextMenu = new ContextMenu();
+    Path fullFilePath = workspace.getUncompressedDirectory().resolve(filePath);
+    MenuItem openFile = new MenuItem("Open File");
+    openFile.setOnAction(event -> {
+      try {
+        Desktop.getDesktop().open(fullFilePath.toFile());
+      } catch (IOException e) {
+        LOGGER.log(Level.SEVERE, "Error Opening File", e);
+      }
+    });
+    MenuItem openDirectory = new MenuItem("Open Directory");
+    openDirectory.setOnAction(event -> {
+      try {
+        Desktop.getDesktop().open(fullFilePath.getParent().toFile());
+      } catch (IOException e) {
+        LOGGER.log(Level.SEVERE, "Error Opening Directory", e);
+      }
+    });
+    MenuItem revertChanges = new MenuItem("Revert Changes");
+    revertChanges.setOnAction(event -> {
+      try {
+        workspace.revertFile(filePath);
+      } catch (IOException e) {
+        LOGGER.log(Level.SEVERE, "Error Reverting File", e);
+      }
+    });
+    contextMenu.getItems().addAll(openFile, openDirectory, revertChanges);
+    return contextMenu;
   }
 }

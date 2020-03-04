@@ -1,17 +1,21 @@
 package com.github.nicholasmoser.utils;
 
+import com.github.nicholasmoser.FPKFileHeader;
+import com.github.nicholasmoser.PRSUncompressor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import com.github.nicholasmoser.FPKFileHeader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FPKUtils {
+
   /**
    * Reads the header of the FPK file itself. This will return only the number of files from the
    * header. Make sure to only call this method on a newly opened FPK file, since the header is
    * first in the file. This method will always read exactly 16 bytes.
-   * 
+   *
    * @param is The input stream to read it from.
    * @return The number of files in the FPK file.
    * @throws IOException If there is an exception relating to the FPK file input.
@@ -35,7 +39,7 @@ public class FPKUtils {
    * object. Make sure to only call this method once you have already read the FPK header (first 16
    * bytes of the file). You will want to call this equivalent to the number of files contained in
    * the FPK file. This method will always read exactly 32 bytes.
-   * 
+   *
    * @param is The input stream to read it from.
    * @return The number of files in the FPK file.
    * @throws IOException If there is an exception relating to the FPK file input.
@@ -65,5 +69,40 @@ public class FPKUtils {
     int compressedSize = ByteBuffer.wrap(compressedSizeWord).getInt();
     int uncompressedSize = ByteBuffer.wrap(uncompressedSizeWord).getInt();
     return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize);
+  }
+
+  /**
+   * Returns the bytes for a child from the given fpk file.
+   *
+   * @param fpkPath The fpk file path to extract the child from.
+   * @param child   The child compressed path to retrieve the bytes for.
+   * @return The child bytes (compressed).
+   * @throws IOException If an I/O error occurs.
+   */
+  public static byte[] getChildBytes(Path fpkPath, String child) throws IOException {
+    try (InputStream is = Files.newInputStream(fpkPath)) {
+      int fileCount = readFPKHeader(is);
+      int bytesRead = 16;
+      for (int i = 0; i < fileCount; i++) {
+        FPKFileHeader header = readFPKFileHeader(is);
+        bytesRead += 32;
+        if (child.equals(header.getFileName())) {
+          int bytesToSkip = header.getOffset() - bytesRead;
+          if (is.skip(bytesToSkip) != bytesToSkip) {
+            throw new IOException(String.format("Failed to skip to binary data of %s", child));
+          }
+          int compressedSize = header.getCompressedSize();
+          int uncompressedSize = header.getUncompressedSize();
+          byte[] compressedBytes = is.readNBytes(compressedSize);
+          if (compressedSize == uncompressedSize) {
+            return compressedBytes;
+          } else {
+            PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, uncompressedSize);
+            return uncompressor.uncompress();
+          }
+        }
+      }
+    }
+    throw new IOException(String.format("%s could not be found in %s", child, fpkPath));
   }
 }

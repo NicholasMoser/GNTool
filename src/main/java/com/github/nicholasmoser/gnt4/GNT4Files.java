@@ -1,10 +1,13 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.github.nicholasmoser.utils.FPKUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +21,7 @@ import com.github.nicholasmoser.utils.ProtobufUtils;
 import com.google.common.base.Verify;
 
 public class GNT4Files {
+
   // The root directory for GNT4 files for creating ISOs in GameCube Rebuilder.
   public static final String ROOT_DIRECTORY = "root";
 
@@ -40,9 +44,9 @@ public class GNT4Files {
   /**
    * Creates a new GNT4Files object from an uncompressed directory and a protobuf workspace state
    * binary.
-   * 
+   *
    * @param uncompressedDirectory The uncompressed directory.
-   * @param workspaceState The protobuf workspace state binary.
+   * @param workspaceState        The protobuf workspace state binary.
    */
   public GNT4Files(Path uncompressedDirectory, Path workspaceState) {
     this.uncompressedDirectory = uncompressedDirectory;
@@ -52,7 +56,7 @@ public class GNT4Files {
   /**
    * Initializes the workspace state file. Used when creating a new workspace or when saving a new
    * workspace state.
-   * 
+   *
    * @throws IOException If an I/O error occurs.
    */
   public void initState() throws IOException {
@@ -65,7 +69,7 @@ public class GNT4Files {
 
   /**
    * Loads an existing workspace state file. Used when loading an existing workspace.
-   * 
+   *
    * @throws IOException If an I/O error occurs.
    */
   public void loadExistingState() throws IOException {
@@ -77,7 +81,7 @@ public class GNT4Files {
 
   /**
    * Loads the vanilla state file. Used for actions involving comparisons to vanilla GNT4.
-   * 
+   *
    * @throws IOException If an I/O error occurs.
    */
   private void loadVanillaState() throws IOException {
@@ -89,7 +93,7 @@ public class GNT4Files {
   /**
    * Finds the set of files that are missing from the workspace. It will take each file that should
    * be in the workspace and see if it is in the list of GNTFiles passed in.
-   * 
+   *
    * @param newGntFiles The GNTFiles to compare to the existing workspace files.
    * @return The set of files that are missing from the workspace.
    */
@@ -108,7 +112,7 @@ public class GNT4Files {
 
   /**
    * Finds the set of files that have changed for a new set of files and the existing workspace.
-   * 
+   *
    * @param newGntFiles The new files to compare to the workspace.
    * @return The set of files that have changed.
    */
@@ -128,7 +132,7 @@ public class GNT4Files {
 
   /**
    * Returns the parent FPK file path of a child file path if it exists.
-   * 
+   *
    * @param changedFile The child file path.
    * @return The parent FPK file if it exists.
    */
@@ -148,7 +152,7 @@ public class GNT4Files {
   /**
    * Returns the list of GNTChildFile for a given FPK file path. Will return an empty list if there
    * are no children or the file is not found.
-   * 
+   *
    * @param filePath The FPK file path.
    * @return The children of the FPK or an empty list.
    */
@@ -166,7 +170,7 @@ public class GNT4Files {
   /**
    * Returns the GNTFile from the existing workspace state if it exists for a given path. Does not
    * return children files of FPK files.
-   * 
+   *
    * @param filePath The path to the file.
    * @return The GNTFile from the existing workspace state if it exists.
    */
@@ -182,7 +186,7 @@ public class GNT4Files {
   /**
    * Returns the GNTFile from the vanilla workspace state if it exists for a given path. Does not
    * return children files of FPK files.
-   * 
+   *
    * @param filePath The path to the file.
    * @return The GNTFile from the vanilla workspace state if it exists.
    */
@@ -194,5 +198,40 @@ public class GNT4Files {
       }
     }
     return Optional.empty();
+  }
+
+  /**
+   * Reverts a file in the uncompressed directory. The data of this file will be replaced with the
+   * data of the file in the root directory. For children of fpk files this data will be extracted
+   * from the respective fpk file. The file path must be in the mod ready form.
+   *
+   * @param uncompressedDirectory The uncompressed directory of the workspace.
+   * @param rootDirectory         The root directory of the workspace.
+   * @param filePath              The mod ready path of the file to revert.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void revertFile(Path uncompressedDirectory, Path rootDirectory, String filePath)
+      throws IOException {
+    Verify.verifyNotNull(vanillaFiles, "Vanilla state has not been initialized.");
+    Verify.verifyNotNull(filePath, "File path cannot be null.");
+    String extractedPath = GNT4ModReady.fromModReadyPath(filePath);
+    for (GNTFile gntFile : vanillaFiles.getGntFileList()) {
+      if (extractedPath.equals(gntFile.getFilePath())) {
+        Path saved = rootDirectory.resolve(extractedPath);
+        Path current = uncompressedDirectory.resolve(filePath);
+        Files.copy(saved, current, StandardCopyOption.REPLACE_EXISTING);
+        return;
+      }
+      for (GNTChildFile child : gntFile.getGntChildFileList()) {
+        if (extractedPath.equals(child.getFilePath())) {
+          Path saved = rootDirectory.resolve(gntFile.getFilePath());
+          Path current = uncompressedDirectory.resolve(filePath);
+          byte[] bytes = FPKUtils.getChildBytes(saved, child.getCompressedPath());
+          Files.write(current, bytes);
+          return;
+        }
+      }
+    }
+    throw new IOException(filePath + " not found.");
   }
 }

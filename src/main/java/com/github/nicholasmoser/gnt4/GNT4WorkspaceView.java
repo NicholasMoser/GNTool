@@ -17,7 +17,7 @@ public class GNT4WorkspaceView implements WorkspaceView {
 
   /**
    * Creates a new GNT4 workspace view.
-   * 
+   *
    * @param workspace The workspace to use for the view.
    */
   public GNT4WorkspaceView(Workspace workspace) {
@@ -29,7 +29,7 @@ public class GNT4WorkspaceView implements WorkspaceView {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("menu.fxml"));
     Scene scene = new Scene(loader.load());
     MenuController controller = loader.getController();
-    controller.init(workspace);
+    controller.init(workspace, stage);
     stage.setScene(scene);
     stage.setTitle("GNT4 Workspace");
     stage.centerOnScreen();
