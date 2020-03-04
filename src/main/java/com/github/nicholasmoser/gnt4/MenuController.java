@@ -18,7 +18,6 @@ import com.github.nicholasmoser.graphics.Texture1300;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.utils.ProtobufUtils;
 import java.awt.Desktop;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -53,6 +52,7 @@ public class MenuController {
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
   private Workspace workspace;
   private Stage stage;
+  private Path uncompressedDirectory;
 
   @FXML
   private ListView<String> changedFiles;
@@ -91,7 +91,6 @@ public class MenuController {
   protected void audioFixCode() {
     try {
       boolean selected = audioFixCode.isSelected();
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
       GNT4Codes codes = GNT4Codes.getInstance();
       if (selected) {
         codes.activateAudioFixCode(uncompressedDirectory);
@@ -111,7 +110,6 @@ public class MenuController {
   protected void skipCutscenesCode() {
     try {
       boolean selected = skipCutscenesCode.isSelected();
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
       GNT4Codes codes = GNT4Codes.getInstance();
       if (selected) {
         codes.activateSkipCutscenesCode(uncompressedDirectory);
@@ -127,7 +125,6 @@ public class MenuController {
   @FXML
   protected void setCssInitialSpeed() {
     try {
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
       int value = cssInitialSpeed.getValue();
       GNT4Codes codes = GNT4Codes.getInstance();
       codes.setCssInitialSpeed(uncompressedDirectory, value);
@@ -140,7 +137,6 @@ public class MenuController {
   @FXML
   protected void setCssMaxSpeed() {
     try {
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
       int value = cssMaxSpeed.getValue();
       GNT4Codes codes = GNT4Codes.getInstance();
       codes.setCssMaxSpeed(uncompressedDirectory, value);
@@ -153,7 +149,6 @@ public class MenuController {
   @FXML
   protected void setDemoTimeOut() {
     try {
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
       int value = demoTimeOut.getValue();
       GNT4Codes codes = GNT4Codes.getInstance();
       codes.setTitleDemoTimeout(uncompressedDirectory, value);
@@ -178,11 +173,10 @@ public class MenuController {
   @FXML
   public void changeMainMenuCharacter() {
     try {
-      Path uncompressed = workspace.getUncompressedDirectory();
       String character = mainMenuCharacter.getSelectionModel().getSelectedItem();
       GNT4Codes codes = GNT4Codes.getInstance();
-      codes.setMainMenuCharacter(uncompressed, character);
-      Texture1300.mainCharacterFix(uncompressed, character);
+      codes.setMainMenuCharacter(uncompressedDirectory, character);
+      Texture1300.mainCharacterFix(uncompressedDirectory, character);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Main Menu Character.", e);
       Message.error("Failed to Update Main Menu Character", "See the log for more information.");
@@ -307,7 +301,7 @@ public class MenuController {
   @FXML
   protected void openDirectory() {
     try {
-      Desktop.getDesktop().open(workspace.getUncompressedDirectory().toFile());
+      Desktop.getDesktop().open(uncompressedDirectory.toFile());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
       Message.error("Error Opening Workspace Directory", "See the log for more information.");
@@ -327,9 +321,8 @@ public class MenuController {
   @FXML
   protected void musyxExtract() {
     try {
-      Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
-      Path samFilePath = uncompressed.resolve(samFile);
+      Path samFilePath = uncompressedDirectory.resolve(samFile);
       String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
       Path sdiFilePath = Paths.get(sdiFile);
       String name = samFilePath.getFileName().toString().replace(".sam", "/");
@@ -352,9 +345,8 @@ public class MenuController {
   @FXML
   protected void musyxExtractAll() {
     try {
-      Path uncompressed = workspace.getUncompressedDirectory();
       for (String samFile : GNT4Audio.SOUND_EFFECTS) {
-        Path samFilePath = uncompressed.resolve(samFile);
+        Path samFilePath = uncompressedDirectory.resolve(samFile);
         String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
         Path sdiFilePath = Paths.get(sdiFile);
         String name = samFilePath.getFileName().toString().replace(".sam", "/");
@@ -378,9 +370,8 @@ public class MenuController {
   @FXML
   protected void musyxImport() {
     try {
-      Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
-      Path samFilePath = uncompressed.resolve(samFile);
+      Path samFilePath = uncompressedDirectory.resolve(samFile);
       String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
       Path sdiFilePath = Paths.get(sdiFile);
       String directory = samFilePath.getFileName().toString().replace(".sam", "/");
@@ -402,9 +393,8 @@ public class MenuController {
   @FXML
   protected void musyxImportAll() {
     try {
-      Path uncompressed = workspace.getUncompressedDirectory();
       for (String samFile : GNT4Audio.SOUND_EFFECTS) {
-        Path samFilePath = uncompressed.resolve(samFile);
+        Path samFilePath = uncompressedDirectory.resolve(samFile);
         String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
         Path sdiFilePath = Paths.get(sdiFile);
         String directory = samFilePath.getFileName().toString().replace(".sam", "/");
@@ -427,9 +417,8 @@ public class MenuController {
   @FXML
   protected void randomizeSoundEffects() {
     try {
-      Path uncompressed = workspace.getUncompressedDirectory();
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
-      Path samFilePath = uncompressed.resolve(samFile);
+      Path samFilePath = uncompressedDirectory.resolve(samFile);
       String directory = samFilePath.getFileName().toString().replace(".sam", "/");
       Path inputPath = samFilePath.getParent().resolve(directory);
       if (!Files.isDirectory(inputPath)) {
@@ -459,10 +448,9 @@ public class MenuController {
           return;
         }
       }
-      File uncompressedDirectory = workspace.getUncompressedDirectory().toFile();
       Optional<Path> optionalInput = Choosers.getAudioFile(GNTool.USER_HOME);
       if (optionalInput.isPresent()) {
-        Optional<Path> optionalOutput = Choosers.getDspAudioFile(uncompressedDirectory);
+        Optional<Path> optionalOutput = Choosers.getDspAudioFile(uncompressedDirectory.toFile());
         if (optionalOutput.isPresent()) {
           Path audioFilePath = optionalInput.get();
           String baseName = System.currentTimeMillis() + "temp";
@@ -490,7 +478,6 @@ public class MenuController {
   @FXML
   protected void randomizeMusic() {
     try {
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
       List<Path> fullMusicPaths = GNT4Audio.FULL_MUSIC_TO_RANDOMIZE.stream()
           .map(uncompressedDirectory::resolve)
           .collect(Collectors.toList());
@@ -516,7 +503,6 @@ public class MenuController {
           return;
         }
       }
-      Path uncompressedDirectory = workspace.getUncompressedDirectory();
       Optional<Path> optionalInput = Choosers.getAudioFile(GNTool.USER_HOME);
       if (optionalInput.isPresent()) {
         Path bgm = uncompressedDirectory.resolve("files/audio/bgm");
@@ -544,9 +530,8 @@ public class MenuController {
   @FXML
   protected void txg2tplExtract() {
     try {
-      Path uncompressed = workspace.getUncompressedDirectory();
       String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
-      Path txgFilePath = uncompressed.resolve(txgFile);
+      Path txgFilePath = uncompressedDirectory.resolve(txgFile);
       String name = txgFilePath.getFileName().toString().replace(".txg", "/");
       Path outputPath = txgFilePath.getParent().resolve(name);
       if (!Files.isRegularFile(txgFilePath)) {
@@ -568,9 +553,8 @@ public class MenuController {
   @FXML
   protected void txg2tplImport() {
     try {
-      Path uncompressed = workspace.getUncompressedDirectory();
       String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
-      Path txgFilePath = uncompressed.resolve(txgFile);
+      Path txgFilePath = uncompressedDirectory.resolve(txgFile);
       String name = txgFilePath.getFileName().toString().replace(".txg", "/");
       Path inputPath = txgFilePath.getParent().resolve(name);
       if (!Files.isDirectory(inputPath)) {
@@ -594,11 +578,10 @@ public class MenuController {
       @Override
       public Workspace call() throws Exception {
         try {
-          Path uncompressed = workspace.getUncompressedDirectory();
           int total = GNT4Graphics.TEXTURES.size();
           for (int i = 0; i < total; i++) {
             String texture = GNT4Graphics.TEXTURES.get(i);
-            Path txgFilePath = uncompressed.resolve(texture);
+            Path txgFilePath = uncompressedDirectory.resolve(texture);
             String name = txgFilePath.getFileName().toString().replace(".txg", "/");
             Path outputPath = txgFilePath.getParent().resolve(name);
             if (!Files.isRegularFile(txgFilePath)) {
@@ -638,11 +621,10 @@ public class MenuController {
       @Override
       public Workspace call() throws Exception {
         try {
-          Path uncompressed = workspace.getUncompressedDirectory();
           int total = GNT4Graphics.TEXTURES.size();
           for (int i = 0; i < total; i++) {
             String texture = GNT4Graphics.TEXTURES.get(i);
-            Path txgFilePath = uncompressed.resolve(texture);
+            Path txgFilePath = uncompressedDirectory.resolve(texture);
             String name = txgFilePath.getFileName().toString().replace(".txg", "/");
             Path inputPath = txgFilePath.getParent().resolve(name);
             if (!Files.isDirectory(inputPath)) {
@@ -684,6 +666,7 @@ public class MenuController {
   public void init(Workspace workspace, Stage stage) {
     this.workspace = workspace;
     this.stage = stage;
+    this.uncompressedDirectory = workspace.getUncompressedDirectory();
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
@@ -710,7 +693,7 @@ public class MenuController {
    * @throws IOException If an I/O error occurs.
    */
   private void syncRefresh() throws IOException {
-    GNTFiles newFiles = ProtobufUtils.createBinary(workspace.getUncompressedDirectory());
+    GNTFiles newFiles = ProtobufUtils.createBinary(uncompressedDirectory);
     refreshMissingFiles(newFiles);
     refreshChangedFiles(newFiles);
     refreshOptions();
@@ -778,7 +761,6 @@ public class MenuController {
    */
   private void refreshOptions() {
     GNT4Codes codes = GNT4Codes.getInstance();
-    Path uncompressedDirectory = workspace.getUncompressedDirectory();
     try {
       boolean isActive = codes.isAudioFixCodeActivated(uncompressedDirectory);
       audioFixCode.setSelected(isActive);
@@ -818,8 +800,7 @@ public class MenuController {
     Platform.runLater(() -> {
       try {
         GNT4Codes codes = GNT4Codes.getInstance();
-        Path uncompressed = workspace.getUncompressedDirectory();
-        String character = codes.getMainMenuCharacter(uncompressed);
+        String character = codes.getMainMenuCharacter(uncompressedDirectory);
         mainMenuCharacter.getSelectionModel().select(character);
       } catch (Exception e) {
         LOGGER.log(Level.SEVERE, "Error Setting Current Main Menu Character", e);
@@ -837,7 +818,7 @@ public class MenuController {
    */
   private ContextMenu getChangedFileContextMenu(String filePath) {
     ContextMenu contextMenu = new ContextMenu();
-    Path fullFilePath = workspace.getUncompressedDirectory().resolve(filePath);
+    Path fullFilePath = uncompressedDirectory.resolve(filePath);
     MenuItem openFile = new MenuItem("Open File");
     openFile.setOnAction(event -> {
       try {
