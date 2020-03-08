@@ -2,10 +2,11 @@ package com.github.nicholasmoser.iso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TOC {
 
-  public List<TOCItemFil> fils;
+  public List<TOCItem> items;
 
   public int totalLen;
 
@@ -17,34 +18,51 @@ public class TOC {
 
   public int lastIdx;
 
-  public int dirCount = 1;
+  public int directoryCount;
 
-  public int filCount = 4;
+  public int fileCount;
 
-  public TOC(String resPath)
-  {
-    fils = new ArrayList<TOCItemFil>();
-    fils.add(new TOCItemFil(0, 0, 0, 99999, true, "root", "", resPath));
-    fils.add(new TOCItemFil(1, 0, 0, 6, true, "&&SystemData", "&&systemdata\\", resPath + "&&systemdata\\"));
-    fils.add(new TOCItemFil(2, 1, 0, 99999, false, "ISO.hdr", "&&SystemData\\iso.hdr", resPath + "&&SystemData\\iso.hdr"));
-    fils.add(new TOCItemFil(3, 1, 9280, 99999, false, "AppLoader.ldr", "&&SystemData\\apploader.ldr", resPath + "&&SystemData\\apploader.ldr"));
-    fils.add(new TOCItemFil(4, 1, 0, 99999, false, "Start.dol", "&&SystemData\\start.dol", resPath + "&&SystemData\\start.dol"));
-    fils.add(new TOCItemFil(5, 1, 0, 99999, false, "Game.toc", "&&SystemData\\game.toc", resPath + "&&SystemData\\game.toc"));
+  public Map<Integer, String> directoryIndexToPath;
+
+  public TOC() {
+    items = new ArrayList<>();
+    items.add(new TOCItem(0, 0, 0, 99999, true, "root", ""));
+    items.add(new TOCItem(1, 0, 0, 6, true, "&&SystemData", "&&systemdata/"));
     totalLen = 0;
     dataStart = this.totalLen;
     startIdx = this.totalLen;
+    directoryCount = 1;
+    fileCount = 4;
   }
 
-  public int Compare(TOCItemFil x, TOCItemFil y)
-  {
-    if (x.pos > y.pos)
-    {
-      return 1;
+  public int size() {
+    return items.size();
+  }
+
+  public void addItem(TOCItem item) {
+    items.add(item);
+    if (item.isDir) {
+      directoryCount++;
+    } else {
+      fileCount++;
     }
-    if (x.pos < y.pos)
-    {
-      return -1;
-    }
-    return 0;
+  }
+
+  public TOCItem getItem(int index) {
+    return items.get(index);
+  }
+
+  @Override
+  public String toString() {
+    return "TOC{" +
+        "items=" + items +
+        ", totalLen=" + totalLen +
+        ", dataStart=" + dataStart +
+        ", startIdx=" + startIdx +
+        ", endIdx=" + endIdx +
+        ", lastIdx=" + lastIdx +
+        ", directoryCount=" + directoryCount +
+        ", fileCount=" + fileCount +
+        '}';
   }
 }
