@@ -27,7 +27,7 @@ public class TOC {
   public TOC() {
     items = new ArrayList<>();
     items.add(new TOCItem(0, 0, 0, 99999, true, "root", ""));
-    items.add(new TOCItem(1, 0, 0, 6, true, "&&SystemData", "&&systemdata/"));
+    items.add(new TOCItem(1, 0, 0, 6, true, "sys", "sys/"));
     totalLen = 0;
     dataStart = this.totalLen;
     startIdx = this.totalLen;
@@ -50,6 +50,10 @@ public class TOC {
 
   public TOCItem getItem(int index) {
     return items.get(index);
+  }
+
+  public List<TOCItem> getItems() {
+    return items;
   }
 
   @Override

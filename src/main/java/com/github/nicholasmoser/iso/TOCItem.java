@@ -1,16 +1,10 @@
 package com.github.nicholasmoser.iso;
 
-import java.util.Objects;
-
 public class TOCItem {
 
   public int TOCIdx;
 
   public int dirIdx;
-
-  public int nextIdx;
-
-  public int prevIdx;
 
   public int pos;
 
@@ -38,8 +32,6 @@ public class TOCItem {
     return "TOCItem{" +
         "TOCIdx=" + String.format("%08X", TOCIdx) +
         ", dirIdx=" + String.format("%08X", dirIdx) +
-        ", nextIdx=" + String.format("%08X", nextIdx) +
-        ", prevIdx=" + String.format("%08X", prevIdx) +
         ", pos=" + String.format("%08X", pos) +
         ", len=" + String.format("%08X", len) +
         ", isDir=" + isDir +

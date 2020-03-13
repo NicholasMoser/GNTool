@@ -19,9 +19,11 @@ public class ISOParser {
 
   private static final Logger LOGGER = Logger.getLogger(ISOParser.class.getName());
 
-  public static final int ISO_HDR_POS = 0;
-  public static final int ISO_HDR_LEN = 9280;
-  public static final int APPLOADER_POS = 9280;
+  public static final int BOOT_BIN_POS = 0;
+  public static final int BOOT_BIN_LEN = 0x440;
+  public static final int BI_2_POS = 0x440;
+  public static final int BI_2_LEN = 0x2000;
+  public static final int APPLOADER_POS = 0x2440;
 
   private Path isoPath;
 
@@ -75,20 +77,19 @@ public class ISOParser {
     int dataStart = readInt(raf);
 
     tableOfContents.addItem(
-        new TOCItem(2, 1, ISO_HDR_POS, ISO_HDR_LEN, false, "ISO.hdr", "&&SystemData/iso.hdr"));
+        new TOCItem(2, 1, BOOT_BIN_POS, BOOT_BIN_LEN, false, "boot.bin", "sys/boot.bin"));
     tableOfContents.addItem(
-        new TOCItem(3, 1, APPLOADER_POS, apploaderLength, false, "AppLoader.ldr",
-            "&&SystemData/apploader.ldr"));
-    tableOfContents.addItem(new TOCItem(4, 1, startDolPosition, startDolLength, false, "Start.dol",
-        "&&SystemData/start.dol"));
-    tableOfContents.addItem(new TOCItem(5, 1, gameTocPosition, gameTocLength, false, "Game.toc",
-        "&&SystemData/game.toc"));
+        new TOCItem(3, 1, BI_2_POS, BI_2_LEN, false, "bi2.bin", "sys/bi2.bin"));
+    tableOfContents.addItem(
+        new TOCItem(4, 1, APPLOADER_POS, apploaderLength, false, "apploader.img",
+            "sys/apploader.img"));
+    tableOfContents.addItem(new TOCItem(5, 1, startDolPosition, startDolLength, false, "main.dol",
+        "sys/main.dol"));
+    tableOfContents.addItem(new TOCItem(6, 1, gameTocPosition, gameTocLength, false, "fst.bin",
+        "sys/fst.bin"));
 
     // Logging for debugging ISOParser
     if (LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.log(Level.FINEST, "ISO_HDR_POS: " + String.format("%08X", ISO_HDR_POS));
-      LOGGER.log(Level.FINEST, "ISO_HDR_LEN: " + String.format("%08X", ISO_HDR_LEN));
-      LOGGER.log(Level.FINEST, "APPLOADER_POS: " + String.format("%08X", APPLOADER_POS));
       LOGGER.log(Level.FINEST, "apploaderLength: " + String.format("%08X", apploaderLength));
       LOGGER.log(Level.FINEST, "startDolPosition: " + String.format("%08X", startDolPosition));
       LOGGER.log(Level.FINEST, "startDolLength: " + String.format("%08X", startDolLength));
