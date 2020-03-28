@@ -47,9 +47,9 @@ Some things to be aware of while using the application:
 
 #### Audio Fix
 
-Patches the Start.dol file to fix an audio offset issue. The audio issue is that if the offset for an audio file in the game.toc does not end with 0x0000 or 0x8000 the game will crash. This is because the instruction at 0x8016fc08 is `rlwinm. r0, r0, 0, 17, 31 (00007fff)` and the instruction at 0x8016fc0c is `beq- 0x8016FC2C`. The end result of these two operations is that it will not branch if the offset is something like 0x0c3e7800 and will instead enter OSPanic (crash).
+Patches the Start.dol file to fix an audio offset issue. The audio issue is that if the offset for an audio file in the fst.bin does not end with 0x0000 or 0x8000 the game will crash. This is because the instruction at 0x8016fc08 is `rlwinm. r0, r0, 0, 17, 31 (00007fff)` and the instruction at 0x8016fc0c is `beq- 0x8016FC2C`. The end result of these two operations is that it will not branch if the offset is something like 0x0c3e7800 and will instead enter OSPanic (crash).
 
-The reason that the offset can be changed in the game.toc is because GCRebuilder.exe will use new offsets for the audio files if the files placed before them in the ISO have a larger size than they previously did. Since GCRebuilder.exe cannot be modified, the only two solutions right now are to try and use padding or modify the game code.
+The reason that the offset can be changed in the fst.bin is because rebuilding the ISO can use new offsets for the audio files if the files placed before them in the ISO have a larger size than they previously did. To fix this, we can modify the game code.
 
 Modifying the game code does not seem to have any side effects, so this is the currently accepted solution. More precisely, the instruction at 0x8016fc08 is a conditional branch. The fix is to change it to an unconditional branch so that it always branches. Therefore it will never encounter the OSPanic from this method under any circumstances.
 
@@ -101,9 +101,9 @@ To replace textures in the game, first extract a specific texture archive or ext
 
 ### How it Works
 
-There are multiple steps involved in the execution of this program. Extracting and creating a new ISO all occurs within the program GameCube Rebuilder. After the contents of the ISO is dumped to the compressed folder, it is copied to the uncompressed folder. Then in the uncompressed folder each FPK is uncompressed using a PRS uncompression algorithm. When you are ready to rebuild the ISO, only modified files are repacked. Original FPK archive files are preserved if untouched. We are able to know which files have changed by comparing each file to its expected [CRC32 value](https://en.wikipedia.org/wiki/Cyclic_redundancy_check).
+There are multiple steps involved in the execution of this program. First, the contents of the ISO are dumped to the compressed folder in the workspace. The contents are then copied to the uncompressed folder. In the uncompressed folder each FPK is uncompressed using a PRS uncompression algorithm. When you are ready to rebuild the ISO, only modified files are repacked. Original FPK archive files are preserved if untouched. The software is able to know which files have changed by comparing each file to its expected [CRC32 value](https://en.wikipedia.org/wiki/Cyclic_redundancy_check).
 
-A recommended modification for the dol file is patch an issue with audio file offsets in the game.toc. Since GameCube Rebuilder modifies the game.toc with new file sizes, it is possible that audio file offsets change in that file. There is a line of code in GNT4 that checks that the offets end with either 0x0000 or 0x8000. I'm not entirely sure of the purpose of this line of code, but it seems to be safe to remove.
+A recommended modification for the dol file is patch an issue with audio file offsets in the fst.bin. Since the fst.bin may be rewritten with new file sizes, it is possible that audio file offsets change in that file. There is a line of code in GNT4 that checks that the offets end with either 0x0000 or 0x8000. I'm not entirely sure of the purpose of this line of code, but it seems to be safe to remove.
 
 ## Logging
 

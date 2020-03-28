@@ -88,16 +88,6 @@ jlink {
     }
 }
 
-task gcr(type: Copy) {
-    from file("gcr.exe")
-    into file("$buildDir/image/bin")
-}
-
-task gcrLicense(type: Copy) {
-    from "licenses/gcr"
-    into "$buildDir/image/legal/gcr"
-}
-
 task ffmpeg(type: Copy) {
     from file("ffmpeg.exe")
     into file("$buildDir/image/bin")
@@ -118,4 +108,4 @@ task txg2tplLicense(type: Copy) {
     into "$buildDir/image/legal/txg2tpl"
 }
 
-task extra (dependsOn: [gcr, gcrLicense, ffmpeg, ffmpegLicense, txg2tpl, txg2tplLicense])
+task extra (dependsOn: [ffmpeg, ffmpegLicense, txg2tpl, txg2tplLicense])
