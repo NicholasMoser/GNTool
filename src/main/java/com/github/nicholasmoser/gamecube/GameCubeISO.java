@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gamecube;
 
+import com.github.nicholasmoser.iso.ISOExtractor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -20,12 +21,10 @@ public class GameCubeISO {
 
   private static final Path currentPath = Paths.get(System.getProperty("user.dir"));
 
-  private static final Path gcrPath = currentPath.resolve("gcr.exe");
-
   /**
    * Retrieves the Game ID of a given ISO file. This String is simply the first six bytes of the
    * file.
-   * 
+   *
    * @param iso The iso to retrieve the Game ID from.
    * @return The Game ID.
    * @throws IOException If an I/O error occurs.
@@ -43,9 +42,9 @@ public class GameCubeISO {
   /**
    * Checks a GameCube ISO workspace in that it has an ISO.hdr file and that the game ID matches the
    * expected game ID.
-   * 
+   *
    * @param directory The directory to check.
-   * @param game The expected game.
+   * @param game      The expected game.
    * @throws IOException If the workspace is not valid.
    */
   public static void checkWorkspace(Path directory, Game game) throws IOException {
@@ -57,19 +56,19 @@ public class GameCubeISO {
     if (!Files.isDirectory(systemData)) {
       throw new IOException("uncompressed/sys folder does not exist.");
     }
-    Path isoHeader = systemData.resolve("ISO.hdr");
-    if (!Files.isRegularFile(isoHeader)) {
-      throw new IOException("uncompressed/sys/ISO.hdr file does not exist.");
+    Path bootBin = systemData.resolve("boot.bin");
+    if (!Files.isRegularFile(bootBin)) {
+      throw new IOException("uncompressed/sys/boot.bin file does not exist.");
     }
     String gameId;
     try {
-      gameId = getGameId(isoHeader);
+      gameId = getGameId(bootBin);
     } catch (IOException e) {
-      throw new IOException("Unable to read uncompressed/sys/ISO.hdr", e);
+      throw new IOException("Unable to read uncompressed/sys/boot.bin", e);
     }
     String expectedGameId = game.getGameId();
     if (!expectedGameId.equals(gameId)) {
-      String message = String.format("uncompressed/sys/ISO.hdr has game ID %s but should have %s",
+      String message = String.format("uncompressed/sys/boot.bin has game ID %s but should have %s",
           gameId, expectedGameId);
       throw new IOException(message);
     }
@@ -77,18 +76,13 @@ public class GameCubeISO {
 
   /**
    * Prompt the user for an input ISO and output directory. The files contained in the ISO will be
-   * stored in a folder named root at the given output directory. This will be accomplished by using
-   * GameCube Rebuilder (gcr.exe) which should be located in the same directory as the jar. This
-   * will only work on Windows, and will return without effect if it is not.
-   * 
+   * stored in a folder named compressed at the given output directory. This will be accomplished by
+   * using GameCube Rebuilder (gcr.exe) which should be located in the same directory as the jar.
+   * This will only work on Windows, and will return without effect if it is not.
+   *
    * @throws IOException If there is an issue with GameCube Rebuilder.
    */
   public static void exportFiles(Path inputFile, Path outputDirectory) throws IOException {
-    if (isNotWindows()) {
-      throw new IllegalStateException("This application can only run on Windows.");
-    } else if (cannotRunGCR()) {
-      throw new IllegalStateException("GameCube Rebuilder cannot be executed by the current application.");
-    }
     if (inputFile == null || !Files.isRegularFile(inputFile)) {
       throw new IllegalArgumentException(inputFile + " is null or not a file.");
     }
@@ -96,7 +90,8 @@ public class GameCubeISO {
       throw new IllegalArgumentException(outputDirectory + " is null or not a directory.");
     }
     LOGGER.info("Exporting files...");
-    runISOTools(inputFile.toString(), outputDirectory.toString(), true);
+    ISOExtractor extractor = new ISOExtractor(inputFile, outputDirectory);
+    extractor.extract();
     LOGGER.info("Finished exporting files.");
   }
 
@@ -105,62 +100,12 @@ public class GameCubeISO {
    * will be imported into the given ISO. This will be accomplished by using GameCube Rebuilder
    * (gcr.exe) which should be located in the same directory as the jar. This will only work on
    * Windows, and will return without effect if it is not.
-   * 
+   *
    * @throws IOException If there is an issue with GameCube Rebuilder.
    */
   public static void importFiles(Path inputDirectory, Path outputFile) throws IOException {
-    if (isNotWindows()) {
-      throw new IllegalStateException("This application can only run on Windows.");
-    } else if (cannotRunGCR()) {
-      throw new IllegalStateException("GameCube Rebuilder cannot be executed by the current application.");
-    }
     LOGGER.info("Importing files...");
-    runISOTools(inputDirectory.toString(), outputFile.toString(), false);
+    //runISOTools(inputDirectory, outputFile);
     LOGGER.info("Finished importing files.");
-  }
-
-  /**
-   * Main logic for ISO tools.
-   * 
-   * @param input For export mode this will be the path to an ISO file, for import mode it will be
-   *        the path to a directory.
-   * @param output For export mode this will be the path to a directory, for import mode it will be
-   *        the path to an ISO file.
-   * @param exportMode The output, be it ISO file or directory. If you are in ISO export mode
-   *        (compared to import mode).
-   * @throws IOException If there is an issue with GameCube Rebuilder.
-   */
-  private static void runISOTools(String input, String output, boolean exportMode)
-      throws IOException {
-    LOGGER.info(String.format("Input: %s; Output: %s", input, output));
-    try {
-      Process process;
-      if (exportMode) {
-        process =
-            new ProcessBuilder(gcrPath.toString(), input, GNT4Files.ROOT_DIRECTORY, "e", output)
-                .start();
-      } else {
-        process = new ProcessBuilder(gcrPath.toString(), input, output).start();
-      }
-      process.waitFor();
-
-    } catch (InterruptedException e) {
-      LOGGER.log(Level.SEVERE, "Issue with GameCube Rebuilder", e);
-      throw new IOException(e);
-    }
-  }
-
-  /**
-   * @return If the current operating system is not Windows.
-   */
-  public static boolean isNotWindows() {
-    return !System.getProperty("os.name").startsWith("Windows");
-  }
-
-  /**
-   * @return If GameCube Rebuilder cannot be executed by the current application.
-   */
-  public static boolean cannotRunGCR() {
-    return !Files.isExecutable(gcrPath);
   }
 }

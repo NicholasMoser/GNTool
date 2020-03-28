@@ -1,6 +1,7 @@
 package com.github.nicholasmoser;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -41,12 +42,12 @@ public class FPKPacker {
 
   /**
    * Creates a new FPK packer for a workspace.
-   * 
+   *
    * @param workspace The workspace to pack the FPKs for.
    */
   public FPKPacker(Workspace workspace) {
     this.workspace = workspace;
-    this.compressedDirectory = workspace.getRootDirectory();
+    this.compressedDirectory = workspace.getCompressedDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
   }
 
@@ -114,7 +115,7 @@ public class FPKPacker {
    * the input directory and packs them into an FPK file at the output directory. If the file
    * already exists in the output directory it will be overridden. The input directory must have the
    * uncompressed child files.
-   * 
+   *
    * @param fpk The FPK GNTFile.
    * @return The path to the repacked FPK file.
    * @throws IOException If there is an issue reading/writing bytes to the file.
@@ -179,7 +180,7 @@ public class FPKPacker {
   /**
    * Encodes the given String of text into shift-jis. This is necessary for GNT4 paths since the ISO
    * expects them to be in shift-jis encoding.
-   * 
+   *
    * @param text The text to encode to shift-jis.
    * @return The shift-jis encoded text.
    * @throws CharacterCodingException If the text cannot be encoded/decoded as shift-jis.
@@ -197,9 +198,9 @@ public class FPKPacker {
    * Returns the header of the FPK file. The first four bytes are zeroes. The next four are the
    * number of files. The next four is the size of this header, which is always 16. The last is the
    * output size of the whole FPK file. The byte array returned will always be 16 bytes exactly.
-   * 
+   *
    * @param numberOfFiles The number of files being packed.
-   * @param outputSize The total size of the FPK file, including this header.
+   * @param outputSize    The total size of the FPK file, including this header.
    * @return The FPK header.
    */
   private static byte[] createFPKHeader(int numberOfFiles, int outputSize) {

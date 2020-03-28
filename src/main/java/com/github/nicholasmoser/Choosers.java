@@ -25,10 +25,10 @@ public class Choosers {
       workspaceDirectory = directoryChooser.showDialog(null);
       if (workspaceDirectory == null) {
         return Optional.empty();
-      } else if (new File(workspaceDirectory, GNT4Files.ROOT_DIRECTORY).isDirectory()) {
+      } else if (new File(workspaceDirectory, GNT4Files.COMPRESSED_DIRECTORY).isDirectory()) {
         validDirectory = true;
       } else {
-        String message = "Please select a valid workspace.\nIt must contain a folder named root.";
+        String message = "Please select a valid workspace.\nIt must contain a folder named compressed.";
         Message.info("Please Select Valid Workspace", message);
       }
     }

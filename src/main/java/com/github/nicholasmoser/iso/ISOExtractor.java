@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class ISOExtractor {
 
@@ -31,25 +32,26 @@ public class ISOExtractor {
    */
   public void extract() throws IOException {
     ISOParser parser = new ISOParser(isoPath);
-    TOC tableOfContents = parser.getTOC();
-    extract(tableOfContents);
+    List<ISOItem> isoItems = parser.getISOItems();
+    extract(isoItems);
   }
 
   /**
    * Extract an ISO using a specific table of contents.
    *
-   * @param tableOfContents The table of contents to extract the ISO with.
+   * @param isoItems The ISO items.
    * @throws IOException If an I/O error occurs.
    */
-  public void extract(TOC tableOfContents)
+  public void extract(List<ISOItem> isoItems)
       throws IOException {
     try (RandomAccessFile raf = new RandomAccessFile(isoPath.toFile(), "r")) {
-      for (TOCItem item : tableOfContents.getItems()) {
+      for (ISOItem item : isoItems) {
         raf.seek(item.pos);
         Path fullPath = getFullPath(item.gamePath);
         if (item.isDir) {
           Files.createDirectories(fullPath);
         } else {
+          Files.createDirectories(fullPath.getParent());
           byte[] bytes = new byte[item.len];
           raf.read(bytes);
           Files.write(fullPath, bytes);
@@ -60,7 +62,7 @@ public class ISOExtractor {
 
   /**
    * Returns the path on your file system to save a file. All ISO system files should be saved under
-   * root/sys. All other files will be saved under root/files.
+   * compressed/sys. All other files will be saved under compressed/files.
    *
    * @param gamePath The game path.
    * @return The full path.

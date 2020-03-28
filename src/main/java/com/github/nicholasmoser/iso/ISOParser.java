@@ -9,6 +9,8 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -42,17 +44,17 @@ public class ISOParser {
    * @return The table of contents for the ISO.
    * @throws IOException If an I/O error occurs.
    */
-  public TOC getTOC() throws IOException {
-    TOC tableOfContents = new TOC();
+  public List<ISOItem> getISOItems() throws IOException {
+    List<ISOItem> isoItems = new ArrayList<>(100);
     if (!Files.exists(isoPath)) {
       throw new IOException(isoPath + " does not exist.");
     }
     try (RandomAccessFile raf = new RandomAccessFile(isoPath.toFile(), "r")) {
       checkGameCubeMagicNumber(raf);
-      int gameTocPosition = readISOHeader(raf, tableOfContents);
-      readTOC(raf, tableOfContents, gameTocPosition);
+      int gameTocPosition = readISOHeader(raf, isoItems);
+      readTOC(raf, isoItems, gameTocPosition);
     }
-    return tableOfContents;
+    return isoItems;
   }
 
   /**
@@ -61,11 +63,11 @@ public class ISOParser {
    * will be returned.
    *
    * @param raf             The RandomAccessFile for the ISO to read from.
-   * @param tableOfContents The table of contents to add the system files to.
+   * @param isoItems The ISO items.
    * @return The table of contents file position.
    * @throws IOException If an I/O error occurs.
    */
-  private int readISOHeader(RandomAccessFile raf, TOC tableOfContents) throws IOException {
+  private int readISOHeader(RandomAccessFile raf, List<ISOItem> isoItems) throws IOException {
     raf.seek(1024);
     int apploaderLength = readInt(raf);
     raf.skipBytes(28);
@@ -76,16 +78,16 @@ public class ISOParser {
     raf.skipBytes(8);
     int dataStart = readInt(raf);
 
-    tableOfContents.addItem(
-        new TOCItem(2, 1, BOOT_BIN_POS, BOOT_BIN_LEN, false, "boot.bin", "sys/boot.bin"));
-    tableOfContents.addItem(
-        new TOCItem(3, 1, BI_2_POS, BI_2_LEN, false, "bi2.bin", "sys/bi2.bin"));
-    tableOfContents.addItem(
-        new TOCItem(4, 1, APPLOADER_POS, apploaderLength, false, "apploader.img",
+    isoItems.add(
+        new ISOItem(2, 1, BOOT_BIN_POS, BOOT_BIN_LEN, false, "boot.bin", "sys/boot.bin"));
+    isoItems.add(
+        new ISOItem(3, 1, BI_2_POS, BI_2_LEN, false, "bi2.bin", "sys/bi2.bin"));
+    isoItems.add(
+        new ISOItem(4, 1, APPLOADER_POS, apploaderLength, false, "apploader.img",
             "sys/apploader.img"));
-    tableOfContents.addItem(new TOCItem(5, 1, startDolPosition, startDolLength, false, "main.dol",
+    isoItems.add(new ISOItem(5, 1, startDolPosition, startDolLength, false, "main.dol",
         "sys/main.dol"));
-    tableOfContents.addItem(new TOCItem(6, 1, gameTocPosition, gameTocLength, false, "fst.bin",
+    isoItems.add(new ISOItem(6, 1, gameTocPosition, gameTocLength, false, "fst.bin",
         "sys/fst.bin"));
 
     // Logging for debugging ISOParser
@@ -107,11 +109,11 @@ public class ISOParser {
    * each.
    *
    * @param raf             The RandomAccessFile for the ISO to read from.
-   * @param tableOfContents The table of contents to add the files to.
+   * @param isoItems The ISO items.
    * @param gameTocPosition The locate of the table of contents data in the file.
    * @throws IOException If an I/O error occurs.
    */
-  private void readTOC(RandomAccessFile raf, TOC tableOfContents, int gameTocPosition)
+  private void readTOC(RandomAccessFile raf, List<ISOItem> isoItems, int gameTocPosition)
       throws IOException {
     raf.seek(gameTocPosition);
     if (readIntLE(raf) != 1) {
@@ -126,8 +128,8 @@ public class ISOParser {
     int[] array = new int[512];
     array[1] = 99999999;
     int num = 0;
-    int tocIndex = tableOfContents.size();
-    int num4 = tableOfContents.size() - 1;
+    int tocIndex = isoItems.size();
+    int num4 = isoItems.size() - 1;
 
     for (int i = 0; i < gameTocEntries; i++) {
       boolean isDirectory = false;
@@ -167,19 +169,19 @@ public class ISOParser {
           break;
         }
         itemPathBuilder.insert(0, '/');
-        itemPathBuilder.insert(0, tableOfContents.getItem(directoryIndex).name);
-        directoryIndex = tableOfContents.getItem(directoryIndex).dirIdx;
+        itemPathBuilder.insert(0, isoItems.get(directoryIndex).name);
+        directoryIndex = isoItems.get(directoryIndex).dirIdx;
       }
       String itemPath = itemPathBuilder.toString();
-      TOCItem item = new TOCItem(tocIndex, array[num], num8, length, isDirectory, itemName,
+      ISOItem item = new ISOItem(tocIndex, array[num], num8, length, isDirectory, itemName,
           itemPath);
-      tableOfContents.addItem(item);
+      isoItems.add(item);
       if (isDirectory) {
         array[num] = tocIndex;
       }
       tocIndex++;
     }
-    tableOfContents.getItem(0).len = tableOfContents.size();
+    isoItems.get(0).len = isoItems.size();
   }
 
   /**

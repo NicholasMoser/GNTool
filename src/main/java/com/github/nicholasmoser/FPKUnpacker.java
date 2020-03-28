@@ -31,22 +31,20 @@ public class FPKUnpacker {
    * directory. The input directory will be copied to the output directory and then each FPK file
    * will have the contained files inside of it unpacked to their relative directories. This will
    * uncompress the files from their Eighting PRS compressed format.
-   * 
+   *
    * @throws IOException If there is an IO error with the FPK file or its extracted children.
    */
   public void unpack() throws IOException {
     LOGGER.info("Unpacking FPKs...");
     extractDirectory(inputDirectory.toFile());
     FileUtils.deleteDirectory(inputDirectory.resolve("fpack").toFile());
-    GNT4ModReady adjustor = new GNT4ModReady(inputDirectory);
-    adjustor.prepare();
     LOGGER.info("Finished unpacking FPKs.");
   }
 
   /**
    * A recursive method to extract and uncompress the files inside an FPK from a given directory.
    * This method will call itself recursively for each directory it encounters.
-   * 
+   *
    * @param directory The directory to search and extract from.
    * @throws IOException If there is an IO error with the FPK file or its extracted children.
    */
@@ -70,7 +68,7 @@ public class FPKUnpacker {
   /**
    * Opens the given FPK file and extracts it contents. This includes uncompressing them from
    * Eighting PRS compression.
-   * 
+   *
    * @param filePath The FPK file to extract.
    * @throws IOException If there is an IO error with the FPK file or its extracted children.
    */

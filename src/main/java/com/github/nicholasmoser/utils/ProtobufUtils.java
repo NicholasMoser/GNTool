@@ -17,31 +17,32 @@ public class ProtobufUtils {
 
   /**
    * Create a GNTFiles object containing all GNTFiles and respective hashes. Ignores FPK files.
-   * 
-   * @param root The root directory.
+   *
+   * @param compressed The compressed directory.
    * @return The GNTFiles mapping of filePaths to hashes.
    * @throws IOException If an I/O error occurs.
    */
-  public static GNTFiles createBinary(Path root) throws IOException {
-    return createBinary(root, false);
+  public static GNTFiles createBinary(Path compressed) throws IOException {
+    return createBinary(compressed, false);
   }
 
   /**
    * Create a GNTFiles object containing all GNTFiles and respective hashes. Optionally allows
    * consideration for FPK files and logic to handle the relationships to their children.
-   * 
-   * @param root The root directory.
+   *
+   * @param compressed  The compressed directory.
    * @param checkForFpk Whether or not to check for FPK files and process their children.
    * @return The GNTFiles mapping of filePaths to hashes.
    * @throws IOException If an I/O error occurs.
    */
-  public static GNTFiles createBinary(Path root, boolean checkForFpk) throws IOException {
-    List<Path> files = Files.walk(root).filter(Files::isRegularFile).collect(Collectors.toList());
+  public static GNTFiles createBinary(Path compressed, boolean checkForFpk) throws IOException {
+    List<Path> files = Files.walk(compressed).filter(Files::isRegularFile)
+        .collect(Collectors.toList());
     GNTFiles.Builder filesBuilder = GNTFiles.newBuilder();
     for (Path filePath : files) {
       GNTFileProtos.GNTFile.Builder fileBuilder = GNTFileProtos.GNTFile.newBuilder();
       int hash = CRC32.getHash(filePath);
-      String relativePath = relativizePath(root, filePath);
+      String relativePath = relativizePath(compressed, filePath);
       fileBuilder.setFilePath(relativePath);
       fileBuilder.setHash(hash);
       if (checkForFpk && relativePath.endsWith(".fpk")) {
@@ -55,33 +56,33 @@ public class ProtobufUtils {
   }
 
   /**
-   * Remotes the root of a path from the file path, as well as the first slash. All backslashes are
-   * replaced with forward slashes. So in the below example the file path goes from 1. to 3. and 3.
-   * is returned. 1. C:\\root\\files\\a.trk 2. /files/a.trk 3. files/a.trk
-   * 
-   * @param root The root folder.
-   * @param filePath The file path.
+   * Removes the compressed of a path from the file path, as well as the first slash. All
+   * backslashes are replaced with forward slashes. So in the below example the file path goes from
+   * 1. to 3. and 3. is returned. 1. C:\\compressed\\files\\a.trk 2. /files/a.trk 3. files/a.trk
+   *
+   * @param compressed The compressed folder.
+   * @param filePath   The file path.
    * @return The relativized file path.
    */
-  private static String relativizePath(Path root, Path filePath) {
-    return filePath.toString().replace(root.toString(), "").replace('\\', '/').substring(1);
+  private static String relativizePath(Path compressed, Path filePath) {
+    return filePath.toString().replace(compressed.toString(), "").replace('\\', '/').substring(1);
   }
 
   /**
    * Opens the given FPK file and extracts it contents. This includes uncompressing them from
    * Eighting PRS compression.
-   * 
+   *
    * @param filePath The FPK file to extract.
    * @throws IOException If there is an IO error with the FPK file or its extracted children.
    */
   private static List<GNTFileProtos.GNTChildFile> getChildren(Path filePath) throws IOException {
     int bytesRead = 0;
-    List<GNTFileProtos.GNTChildFile> children = new ArrayList<GNTFileProtos.GNTChildFile>();
+    List<GNTFileProtos.GNTChildFile> children = new ArrayList<>();
     try (InputStream is = Files.newInputStream(filePath)) {
       int fileCount = FPKUtils.readFPKHeader(is);
       bytesRead += 16;
 
-      List<FPKFileHeader> fpkHeaders = new ArrayList<FPKFileHeader>(fileCount);
+      List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
         fpkHeaders.add(FPKUtils.readFPKFileHeader(is));
         bytesRead += 32;
@@ -125,7 +126,7 @@ public class ProtobufUtils {
 
         int hash = CRC32.getHash(fileBytes);
 
-        builder.setFilePath("fpack/" + childPath);
+        builder.setFilePath("files/" + childPath);
         builder.setHash(hash);
         builder.setCompressedPath(compressedFilePath);
         children.add(builder.build());

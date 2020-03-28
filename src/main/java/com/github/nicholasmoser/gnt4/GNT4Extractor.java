@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -20,17 +21,20 @@ public class GNT4Extractor implements Extractor {
 
   private Path extractionPath;
 
+  private Path compressedPath;
+
   private boolean extracted;
 
   private boolean unpacked;
 
   /**
-   * @param iso The GNT4 ISO to extract.
+   * @param iso            The GNT4 ISO to extract.
    * @param extractionPath The path to extract the ISO to.
    */
   public GNT4Extractor(Path iso, Path extractionPath) {
     this.iso = iso;
     this.extractionPath = extractionPath;
+    this.compressedPath = extractionPath.resolve(GNT4Files.COMPRESSED_DIRECTORY);
     this.extracted = false;
     this.unpacked = false;
   }
@@ -38,7 +42,8 @@ public class GNT4Extractor implements Extractor {
   @Override
   public void extractISO() throws IOException {
     if (!extracted) {
-      GameCubeISO.exportFiles(iso, extractionPath);
+      Files.createDirectories(compressedPath);
+      GameCubeISO.exportFiles(iso, compressedPath);
       extracted = true;
     }
   }
@@ -49,10 +54,10 @@ public class GNT4Extractor implements Extractor {
       throw new IllegalStateException("Must extract the ISO before you can unpack the FPKs.");
     }
     if (!unpacked) {
-      Path root = extractionPath.resolve(GNT4Files.ROOT_DIRECTORY);
+      Path compressed = extractionPath.resolve(GNT4Files.COMPRESSED_DIRECTORY);
       Path uncompressed = extractionPath.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
-      LOGGER.info(String.format("Copying %s to %s", root, uncompressed));
-      FileUtils.copyDirectory(root.toFile(), uncompressed.toFile());
+      LOGGER.info(String.format("Copying %s to %s", compressed, uncompressed));
+      FileUtils.copyDirectory(compressed.toFile(), uncompressed.toFile());
       FPKUnpacker unpacker = new FPKUnpacker(uncompressed);
       unpacker.unpack();
       unpacked = true;

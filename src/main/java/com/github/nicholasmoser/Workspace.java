@@ -20,9 +20,9 @@ public interface Workspace {
   Path getWorkspaceDirectory();
 
   /**
-   * @return The root directory in the workspace.
+   * @return The compressed directory in the workspace.
    */
-  Path getRootDirectory();
+  Path getCompressedDirectory();
 
   /**
    * @return The uncompressed directory in the workspace.

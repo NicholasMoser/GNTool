@@ -1,6 +1,6 @@
 package com.github.nicholasmoser.iso;
 
-public class TOCItem {
+public class ISOItem {
 
   public int TOCIdx;
 
@@ -16,7 +16,7 @@ public class TOCItem {
 
   public String gamePath;
 
-  public TOCItem(int TOCIdx, int dirIdx, int pos, int len, boolean isDir, String name, String gamePath)
+  public ISOItem(int TOCIdx, int dirIdx, int pos, int len, boolean isDir, String name, String gamePath)
   {
     this.TOCIdx = TOCIdx;
     this.dirIdx = dirIdx;
@@ -29,8 +29,8 @@ public class TOCItem {
 
   @Override
   public String toString() {
-    return "TOCItem{" +
-        "TOCIdx=" + String.format("%08X", TOCIdx) +
+    return "ISOItem{" +
+        "ISOItem=" + String.format("%08X", TOCIdx) +
         ", dirIdx=" + String.format("%08X", dirIdx) +
         ", pos=" + String.format("%08X", pos) +
         ", len=" + String.format("%08X", len) +

@@ -39,7 +39,7 @@ Files cannot be deleted from this directory or it will prevent you from rebuildi
 Some things to be aware of while using the application:
 
 * Do not rename directories or files as you use this program. The program will look for specifically named directories and files within them, and therefore will not work correctly if these names have changed.
-* Do not modify the contents of any files in the folder titled root. This folder is needed to rebuild the game.
+* Do not modify the contents of any files in the folder titled compressed. This folder is needed to rebuild the game.
 * Compressing files can take a while depending on which .FPKs were modified. It can potentially take hours depending on how many files were modified.
 * The compression algorithm does not perfectly match Eighting's, therefore newly compressed files may be larger than they otherwise would be.
 
@@ -101,7 +101,7 @@ To replace textures in the game, first extract a specific texture archive or ext
 
 ### How it Works
 
-There are multiple steps involved in the execution of this program. Extracting and creating a new ISO all occurs within the program GameCube Rebuilder. After the contents of the ISO is dumped to the root folder, it is copied to the uncompressed folder. Then in the uncompressed folder each FPK is uncompressed using a PRS uncompression algorithm. When you are ready to rebuild the ISO, only modified files are repacked. Original FPK archive files are preserved if untouched. We are able to know which files have changed by comparing each file to its expected [CRC32 value](https://en.wikipedia.org/wiki/Cyclic_redundancy_check).
+There are multiple steps involved in the execution of this program. Extracting and creating a new ISO all occurs within the program GameCube Rebuilder. After the contents of the ISO is dumped to the compressed folder, it is copied to the uncompressed folder. Then in the uncompressed folder each FPK is uncompressed using a PRS uncompression algorithm. When you are ready to rebuild the ISO, only modified files are repacked. Original FPK archive files are preserved if untouched. We are able to know which files have changed by comparing each file to its expected [CRC32 value](https://en.wikipedia.org/wiki/Cyclic_redundancy_check).
 
 A recommended modification for the dol file is patch an issue with audio file offsets in the game.toc. Since GameCube Rebuilder modifies the game.toc with new file sizes, it is possible that audio file offsets change in that file. There is a line of code in GNT4 that checks that the offets end with either 0x0000 or 0x8000. I'm not entirely sure of the purpose of this line of code, but it seems to be safe to remove.
 

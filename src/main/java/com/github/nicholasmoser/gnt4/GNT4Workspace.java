@@ -17,7 +17,7 @@ public class GNT4Workspace implements Workspace {
 
   private Path directory;
 
-  private Path root;
+  private Path compressed;
 
   private Path uncompressed;
 
@@ -30,7 +30,7 @@ public class GNT4Workspace implements Workspace {
    */
   public GNT4Workspace(Path directory) {
     this.directory = directory;
-    this.root = directory.resolve(GNT4Files.ROOT_DIRECTORY);
+    this.compressed = directory.resolve(GNT4Files.COMPRESSED_DIRECTORY);
     this.uncompressed = directory.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
     this.workspaceState = directory.resolve(GNT4Files.WORKSPACE_STATE);
     this.gnt4Files = new GNT4Files(uncompressed, workspaceState);
@@ -42,8 +42,8 @@ public class GNT4Workspace implements Workspace {
   }
 
   @Override
-  public Path getRootDirectory() {
-    return root;
+  public Path getCompressedDirectory() {
+    return compressed;
   }
 
   @Override
@@ -88,6 +88,6 @@ public class GNT4Workspace implements Workspace {
 
   @Override
   public void revertFile(String filePath) throws IOException {
-    gnt4Files.revertFile(uncompressed, root, filePath);
+    gnt4Files.revertFile(uncompressed, compressed, filePath);
   }
 }

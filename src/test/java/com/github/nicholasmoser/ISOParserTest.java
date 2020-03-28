@@ -1,11 +1,12 @@
 package com.github.nicholasmoser;
 
 import com.github.nicholasmoser.iso.ISOExtractor;
+import com.github.nicholasmoser.iso.ISOItem;
 import com.github.nicholasmoser.iso.ISOParser;
-import com.github.nicholasmoser.iso.TOC;
 import com.google.common.base.Stopwatch;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ public class ISOParserTest {
     Path isoPath = Paths.get("D:/GNT/GNT4.iso");
     Stopwatch watch = Stopwatch.createStarted();
     ISOParser parser = new ISOParser(isoPath);
-    TOC tableOfContents = parser.getTOC();
+    List<ISOItem> tableOfContents = parser.getISOItems();
     System.out.println(watch.elapsed(TimeUnit.MILLISECONDS));
     System.out.println(tableOfContents);
   }

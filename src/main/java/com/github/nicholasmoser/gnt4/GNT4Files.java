@@ -22,10 +22,10 @@ import com.google.common.base.Verify;
 
 public class GNT4Files {
 
-  // The root directory for GNT4 files for creating ISOs in GameCube Rebuilder.
-  public static final String ROOT_DIRECTORY = "root";
+  // The compressed directory of GNT4 files for creating ISOs in GameCube Rebuilder.
+  public static final String COMPRESSED_DIRECTORY = "compressed";
 
-  // The directory of uncompressed GNT4 files.
+  // The uncompressed directory of GNT4 files.
   public static final String UNCOMPRESSED_DIRECTORY = "uncompressed";
 
   // The workspace state protobuf binary file.
@@ -202,29 +202,28 @@ public class GNT4Files {
 
   /**
    * Reverts a file in the uncompressed directory. The data of this file will be replaced with the
-   * data of the file in the root directory. For children of fpk files this data will be extracted
-   * from the respective fpk file. The file path must be in the mod ready form.
+   * data of the file in the compressedDirectory directory. For children of fpk files this data will
+   * be extracted from the respective fpk file. The file path must be in the mod ready form.
    *
    * @param uncompressedDirectory The uncompressed directory of the workspace.
-   * @param rootDirectory         The root directory of the workspace.
+   * @param compressedDirectory   The compressed directory of the workspace.
    * @param filePath              The mod ready path of the file to revert.
    * @throws IOException If an I/O error occurs.
    */
-  public void revertFile(Path uncompressedDirectory, Path rootDirectory, String filePath)
+  public void revertFile(Path uncompressedDirectory, Path compressedDirectory, String filePath)
       throws IOException {
     Verify.verifyNotNull(vanillaFiles, "Vanilla state has not been initialized.");
     Verify.verifyNotNull(filePath, "File path cannot be null.");
-    String extractedPath = GNT4ModReady.fromModReadyPath(filePath);
     for (GNTFile gntFile : vanillaFiles.getGntFileList()) {
-      if (extractedPath.equals(gntFile.getFilePath())) {
-        Path saved = rootDirectory.resolve(extractedPath);
+      if (filePath.equals(gntFile.getFilePath())) {
+        Path saved = compressedDirectory.resolve(filePath);
         Path current = uncompressedDirectory.resolve(filePath);
         Files.copy(saved, current, StandardCopyOption.REPLACE_EXISTING);
         return;
       }
       for (GNTChildFile child : gntFile.getGntChildFileList()) {
-        if (extractedPath.equals(child.getFilePath())) {
-          Path saved = rootDirectory.resolve(gntFile.getFilePath());
+        if (filePath.equals(child.getFilePath())) {
+          Path saved = compressedDirectory.resolve(gntFile.getFilePath());
           Path current = uncompressedDirectory.resolve(filePath);
           byte[] bytes = FPKUtils.getChildBytes(saved, child.getCompressedPath());
           Files.write(current, bytes);

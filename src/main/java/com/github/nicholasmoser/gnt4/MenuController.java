@@ -253,7 +253,7 @@ public class MenuController {
           fpkPacker.pack(changedFiles.getItems());
         }
         updateMessage("Building ISO...");
-        GameCubeISO.importFiles(workspace.getRootDirectory(), isoResponse.get());
+        GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get());
         updateProgress(1, 1);
         return null;
       }
