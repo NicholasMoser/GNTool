@@ -37,7 +37,7 @@ public class FPKUnpacker {
   public void unpack() throws IOException {
     LOGGER.info("Unpacking FPKs...");
     extractDirectory(inputDirectory.toFile());
-    FileUtils.deleteDirectory(inputDirectory.resolve("fpack").toFile());
+    FileUtils.deleteDirectory(inputDirectory.resolve("files/fpack").toFile());
     LOGGER.info("Finished unpacking FPKs.");
   }
 
