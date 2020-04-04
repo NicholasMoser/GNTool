@@ -46,13 +46,12 @@ public class ISOExtractor {
       throws IOException {
     try (RandomAccessFile raf = new RandomAccessFile(isoPath.toFile(), "r")) {
       for (ISOItem item : isoItems) {
-        raf.seek(item.pos);
-        Path fullPath = getFullPath(item.gamePath);
-        if (item.isDir) {
+        raf.seek(item.getPos());
+        Path fullPath = getFullPath(item.getGamePath());
+        if (item.isDirectory()) {
           Files.createDirectories(fullPath);
         } else {
-          Files.createDirectories(fullPath.getParent());
-          byte[] bytes = new byte[item.len];
+          byte[] bytes = new byte[item.getLen()];
           raf.read(bytes);
           Files.write(fullPath, bytes);
         }

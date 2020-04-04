@@ -1,5 +1,6 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.iso.ISOCreator;
 import com.github.nicholasmoser.iso.ISOExtractor;
 import com.github.nicholasmoser.iso.ISOItem;
 import com.github.nicholasmoser.iso.ISOParser;
@@ -30,5 +31,16 @@ public class ISOParserTest {
     ISOExtractor extractor = new ISOExtractor(isoPath, outputPath);
     extractor.extract();
     System.out.println(watch.elapsed(TimeUnit.MILLISECONDS));
+  }
+
+  @Test
+  public void test3() throws Exception {
+    Path inputPath = Paths.get("D:\\GNT\\aaa\\compressed");
+    Path inputIso = Paths.get("D:/GNT/GNT4.iso");
+    Path outputIso = Paths.get("D:/GNT/test.iso");
+    ISOParser parser = new ISOParser(inputIso);
+    List<ISOItem> tableOfContents = parser.getISOItems();
+    ISOCreator creator = new ISOCreator(inputPath, outputIso);
+    creator.create(tableOfContents);
   }
 }

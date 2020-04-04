@@ -21,12 +21,6 @@ public class ISOParser {
 
   private static final Logger LOGGER = Logger.getLogger(ISOParser.class.getName());
 
-  public static final int BOOT_BIN_POS = 0;
-  public static final int BOOT_BIN_LEN = 0x440;
-  public static final int BI_2_POS = 0x440;
-  public static final int BI_2_LEN = 0x2000;
-  public static final int APPLOADER_POS = 0x2440;
-
   private Path isoPath;
 
   /**
@@ -72,22 +66,26 @@ public class ISOParser {
     int apploaderLength = readInt(raf);
     raf.skipBytes(28);
     int startDolPosition = readInt(raf);
-    int gameTocPosition = readInt(raf);
-    int gameTocLength = readInt(raf);
-    int startDolLength = gameTocPosition - startDolPosition;
+    int fileSystemTablePosition = readInt(raf);
+    int fileSystemTableLength = readInt(raf);
+    int startDolLength = fileSystemTablePosition - startDolPosition;
     raf.skipBytes(8);
     int dataStart = readInt(raf);
 
     isoItems.add(
-        new ISOItem(2, 1, BOOT_BIN_POS, BOOT_BIN_LEN, false, "boot.bin", "sys/boot.bin"));
+        new ISOItem(0, 0, 0, true, "root", ""));
     isoItems.add(
-        new ISOItem(3, 1, BI_2_POS, BI_2_LEN, false, "bi2.bin", "sys/bi2.bin"));
+        new ISOItem(0, 0, 0, true, "sys", "sys/"));
     isoItems.add(
-        new ISOItem(4, 1, APPLOADER_POS, apploaderLength, false, "apploader.img",
+        new ISOItem(1, ISO.BOOT_BIN_POS, ISO.BOOT_BIN_LEN, false, "boot.bin", "sys/boot.bin"));
+    isoItems.add(
+        new ISOItem(1, ISO.BI_2_POS, ISO.BI_2_LEN, false, "bi2.bin", "sys/bi2.bin"));
+    isoItems.add(
+        new ISOItem(1, ISO.APPLOADER_POS, apploaderLength, false, "apploader.img",
             "sys/apploader.img"));
-    isoItems.add(new ISOItem(5, 1, startDolPosition, startDolLength, false, "main.dol",
+    isoItems.add(new ISOItem(1, startDolPosition, startDolLength, false, "main.dol",
         "sys/main.dol"));
-    isoItems.add(new ISOItem(6, 1, gameTocPosition, gameTocLength, false, "fst.bin",
+    isoItems.add(new ISOItem(1, fileSystemTablePosition, fileSystemTableLength, false, "fst.bin",
         "sys/fst.bin"));
 
     // Logging for debugging ISOParser
@@ -95,12 +93,12 @@ public class ISOParser {
       LOGGER.log(Level.FINEST, "apploaderLength: " + String.format("%08X", apploaderLength));
       LOGGER.log(Level.FINEST, "startDolPosition: " + String.format("%08X", startDolPosition));
       LOGGER.log(Level.FINEST, "startDolLength: " + String.format("%08X", startDolLength));
-      LOGGER.log(Level.FINEST, "gameTocPosition: " + String.format("%08X", gameTocPosition));
-      LOGGER.log(Level.FINEST, "gameTocLength: " + String.format("%08X", gameTocLength));
+      LOGGER.log(Level.FINEST, "gameTocPosition: " + String.format("%08X", fileSystemTablePosition));
+      LOGGER.log(Level.FINEST, "gameTocLength: " + String.format("%08X", fileSystemTableLength));
       LOGGER.log(Level.FINEST, "dataStart: " + String.format("%08X", dataStart));
     }
 
-    return gameTocPosition;
+    return fileSystemTablePosition;
   }
 
   /**
@@ -169,11 +167,11 @@ public class ISOParser {
           break;
         }
         itemPathBuilder.insert(0, '/');
-        itemPathBuilder.insert(0, isoItems.get(directoryIndex).name);
-        directoryIndex = isoItems.get(directoryIndex).dirIdx;
+        itemPathBuilder.insert(0, isoItems.get(directoryIndex).getName());
+        directoryIndex = isoItems.get(directoryIndex).getDirectoryIndex();
       }
       String itemPath = itemPathBuilder.toString();
-      ISOItem item = new ISOItem(tocIndex, array[num], num8, length, isDirectory, itemName,
+      ISOItem item = new ISOItem(array[num], num8, length, isDirectory, itemName,
           itemPath);
       isoItems.add(item);
       if (isDirectory) {
@@ -181,7 +179,6 @@ public class ISOParser {
       }
       tocIndex++;
     }
-    isoItems.get(0).len = isoItems.size();
   }
 
   /**
