@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gamecube;
 
+import com.github.nicholasmoser.iso.ISOCreator;
 import com.github.nicholasmoser.iso.ISOExtractor;
 import java.io.IOException;
 import java.io.InputStream;
@@ -105,7 +106,8 @@ public class GameCubeISO {
    */
   public static void importFiles(Path inputDirectory, Path outputFile) throws IOException {
     LOGGER.info("Importing files...");
-    //runISOTools(inputDirectory, outputFile);
+    ISOCreator creator = new ISOCreator(inputDirectory, outputFile);
+    creator.create();
     LOGGER.info("Finished importing files.");
   }
 }
