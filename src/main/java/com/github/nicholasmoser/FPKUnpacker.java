@@ -1,5 +1,9 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.gnt4.GNT4ModReady;
+import com.github.nicholasmoser.utils.FPKUtils;
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,9 +13,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.apache.commons.io.FileUtils;
-import com.github.nicholasmoser.gnt4.GNT4ModReady;
-import com.github.nicholasmoser.utils.FPKUtils;
 
 /**
  * Unpacks FPK files. This includes uncompressing them with the Eighting PRS algorithm.
@@ -37,7 +38,7 @@ public class FPKUnpacker {
   public void unpack() throws IOException {
     LOGGER.info("Unpacking FPKs...");
     extractDirectory(inputDirectory.toFile());
-    FileUtils.deleteDirectory(inputDirectory.resolve("files/fpack").toFile());
+    MoreFiles.deleteRecursively(inputDirectory.resolve("files/fpack"), RecursiveDeleteOption.ALLOW_INSECURE);
     LOGGER.info("Finished unpacking FPKs.");
   }
 

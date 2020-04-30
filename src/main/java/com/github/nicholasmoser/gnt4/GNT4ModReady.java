@@ -1,12 +1,13 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.google.common.base.Verify;
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import org.apache.commons.io.FileUtils;
-import com.google.common.base.Verify;
 
 /**
  * Class to handle making the GNT4 files mod ready. Mod ready in this case means that it can be run
@@ -268,7 +269,7 @@ public class GNT4ModReady {
     Path sourceAltTextureFolder = files.resolve(character).resolve(inputFolder);
     Path targetAltTextureFolder = files.resolve("vs").resolve(character).resolve(inputFolder);
     move(sourceAltTextureFolder, targetAltTextureFolder);
-    FileUtils.deleteDirectory(files.resolve(character).toFile());
+    MoreFiles.deleteRecursively(files.resolve(character), RecursiveDeleteOption.ALLOW_INSECURE);
   }
 
   /**
