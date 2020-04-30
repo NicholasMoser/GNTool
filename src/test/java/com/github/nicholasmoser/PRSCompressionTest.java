@@ -1,14 +1,15 @@
 package com.github.nicholasmoser;
 
 import static org.junit.jupiter.api.Assertions.fail;
+
+import com.google.common.base.Verify;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import com.google.common.base.Verify;
 
 /**
  * Test class for PRS compression and uncompression algorithms.
@@ -71,7 +72,8 @@ public class PRSCompressionTest {
    */
   @Test
   public void testRandomHex() throws Exception {
-    byte[] originalBytes = IOUtils.toByteArray(getClass().getResourceAsStream("random_hex.seq"));
+    Path randomHexPath = Paths.get("src/test/resources/random_hex.seq");
+    byte[] originalBytes = Files.readAllBytes(randomHexPath);
     int originalSize = originalBytes.length;
     System.out.println(String.format("Original Size: %d", originalSize));
 
