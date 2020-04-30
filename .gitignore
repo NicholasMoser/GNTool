@@ -5,6 +5,7 @@ dtkmake.exe
 DSPADPCM.exe
 dsptool.dll
 soundfile.dll
+GNT4.iso
 
 ##############################
 ## Gradle
