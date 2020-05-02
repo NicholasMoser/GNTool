@@ -17,7 +17,7 @@ plugins {
 repositories {
     mavenLocal()
     maven {
-        url = 'http://repo.maven.apache.org/maven2'
+        url = 'https://repo.maven.apache.org/maven2'
     }
     jcenter()
 }
@@ -30,9 +30,9 @@ dependencies {
     implementation 'org.openjfx:javafx-base:13.0.1'
     implementation 'org.openjfx:javafx-fxml:13.0.1'
     implementation 'com.google.protobuf:protobuf-java:3.10.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
     // Force Gradle to load the JUnit Platform Launcher from the module-path, as
     // configured in buildSrc/.../ModulePlugin.java -- see SKARA-69 for details.
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.5.2'
@@ -41,7 +41,7 @@ dependencies {
 group = 'com.github.nicholasmoser'
 version = '2.4-SNAPSHOT'
 description = 'GNTool'
-sourceCompatibility = '11'
+sourceCompatibility = '14'
 
 publishing {
     publications {
@@ -60,18 +60,6 @@ test {
 	testLogging {
 		events "passed", "skipped", "failed"
 	}
-}
-
-eclipse {
-    classpath {
-        file {
-            whenMerged {
-                entries.findAll { 
-                	it.kind == 'src' || it.kind == 'lib' 
-                }.each { it.entryAttributes['module'] = 'true' }
-            }
-        }
-    }
 }
 
 javafx {
