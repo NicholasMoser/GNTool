@@ -28,9 +28,7 @@ public class FileSystemTable {
     Path fstBinPath = inputPath.resolve(isoHeader.getFstBin().getGamePath());
     List<ISOItem> items = isoHeader.getFiles();
     int numEntries = items.size();
-    int stringTableOffset = numEntries * 12;
     int currentStringTableOffset = 0;
-    System.out.println(stringTableOffset);
     try (CountingOutputStream os = new CountingOutputStream(Files.newOutputStream(fstBinPath))) {
       // Write the rest of the entries
       for (ISOItem item : items) {

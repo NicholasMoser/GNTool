@@ -1,7 +1,7 @@
 package com.github.nicholasmoser.utils;
 
+import com.google.common.io.Files;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
@@ -20,8 +20,7 @@ public class CRC32 {
    */
   public static int getHash(Path filePath) throws IOException {
     HashFunction crc32 = Hashing.crc32();
-    byte[] bytes = Files.readAllBytes(filePath);
-    HashCode hashValue = crc32.hashBytes(bytes);
+    HashCode hashValue = Files.asByteSource(filePath.toFile()).hash(crc32);
     return hashValue.asInt();
   }
 

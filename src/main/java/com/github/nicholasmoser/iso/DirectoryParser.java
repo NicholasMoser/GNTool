@@ -6,11 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class DirectoryParser {
 
   private final Path inputDirectory;
   private final Path filesDirectory;
+  private final boolean pushFilesToEnd;
   private List<ISOItem> files;
 
   private int currentPosition;
@@ -24,6 +26,21 @@ public class DirectoryParser {
   public DirectoryParser(Path inputDirectory) {
     this.inputDirectory = inputDirectory;
     this.filesDirectory = inputDirectory.resolve("files");
+    pushFilesToEnd = false;
+  }
+
+  /**
+   * Create a new DirectoryParser for parsing ISOItems. Has an added option to push files to the end
+   * of the ISO, similar to the original ISO. This should only be done if trying to match the
+   * original ISO or if burning to an ISO.
+   *
+   * @param inputDirectory The path to the game file directory.
+   * @param pushFilesToEnd If the files should be pushed to the end of the ISO.
+   */
+  public DirectoryParser(Path inputDirectory, boolean pushFilesToEnd) {
+    this.inputDirectory = inputDirectory;
+    this.filesDirectory = inputDirectory.resolve("files");
+    this.pushFilesToEnd = pushFilesToEnd;
   }
 
   /**
@@ -103,8 +120,13 @@ public class DirectoryParser {
     headerBuilder.setFstBin(fstBin);
 
     // Let's get a match with the original ISO first before we be efficient
-    //currentPosition = getNextByteAlignedPosition(fileSystemTablePosition + fileSystemTableLength);
-    currentPosition = 0x0C4F8000;
+    if (pushFilesToEnd) {
+      currentPosition = 0x0C4F8000;
+    } else {
+      // Specified start address must be 32KB aligned in "dvdfs.c" on line 1211
+      int fstEnd = fileSystemTablePosition + fileSystemTableLength;
+      currentPosition = getNextByteAlignedPosition(fstEnd, 32768);
+    }
 
     addFiles(filesDirectory);
     headerBuilder.setFiles(files);
@@ -128,28 +150,31 @@ public class DirectoryParser {
         .build();
     files.add(root);
     // Iterate over and add each file and directory; this cannot be done in parallel
-    Files.list(rootPath).forEach(path -> {
-          try {
-            if (Files.isDirectory(path)) {
-              addDirectory(path, "");
-            } else {
-              int size = (int) Files.size(path);
-              String fileName = path.getFileName().toString();
-              ISOFile file = new ISOFile.Builder()
-                  .setPos(currentPosition)
-                  .setLen(size)
-                  .setParent("")
-                  .setName(fileName)
-                  .setGamePath(getRelativeFilePath(fileName))
-                  .build();
-              files.add(file);
-              currentPosition = currentPosition + size;
+    try (Stream<Path> paths = Files.list(rootPath)) {
+      paths.forEach(path -> {
+            try {
+              if (Files.isDirectory(path)) {
+                addDirectory(path, "");
+              } else {
+                currentPosition = getNextByteAlignedPosition(currentPosition, 4);
+                int size = (int) Files.size(path);
+                String fileName = path.getFileName().toString();
+                ISOFile file = new ISOFile.Builder()
+                    .setPos(currentPosition)
+                    .setLen(size)
+                    .setParent("")
+                    .setName(fileName)
+                    .setGamePath(getRelativeFilePath(fileName))
+                    .build();
+                files.add(file);
+                currentPosition = currentPosition + size;
+              }
+            } catch (IOException e) {
+              throw new RuntimeException(e);
             }
-          } catch (IOException e) {
-            throw new RuntimeException(e);
           }
-        }
-    );
+      );
+    }
   }
 
   /**
@@ -173,36 +198,36 @@ public class DirectoryParser {
         .build();
     files.add(dirItem);
 
-    Files.list(directoryPath).forEach(path -> {
-          try {
-            if (Files.isDirectory(path)) {
-              addDirectory(path, dirItem.getGamePath());
-            } else {
-              // Temporary to mimic ISO
-              if (currentPosition == 0x45530000) {
-                currentPosition = 0x45532B80;
-              }
+    try (Stream<Path> paths = Files.list(directoryPath)) {
+      paths.forEach(path -> {
+            try {
+              if (Files.isDirectory(path)) {
+                addDirectory(path, dirItem.getGamePath());
+              } else {
+                // Original ISO skips bytes here
+                if (pushFilesToEnd && currentPosition == 0x45530000) {
+                  currentPosition = 0x45532B80;
+                }
 
-              currentPosition = getNextByteAlignedPosition(currentPosition, 4);
-              // This line below is what we should be doing....
-              //currentPosition = getNextByteAlignedPosition(currentPosition, 2048);
-              int size = (int) Files.size(path);
-              String fileName = path.getFileName().toString();
-              ISOFile fileItem = new ISOFile.Builder()
-                  .setPos(currentPosition)
-                  .setLen(size)
-                  .setParent(dirItem.getGamePath())
-                  .setName(fileName)
-                  .setGamePath(getRelativeFilePath(fileName))
-                  .build();
-              files.add(fileItem);
-              currentPosition = currentPosition + size;
+                currentPosition = getNextByteAlignedPosition(currentPosition, 4);
+                int size = (int) Files.size(path);
+                String fileName = path.getFileName().toString();
+                ISOFile fileItem = new ISOFile.Builder()
+                    .setPos(currentPosition)
+                    .setLen(size)
+                    .setParent(dirItem.getGamePath())
+                    .setName(fileName)
+                    .setGamePath(getRelativeFilePath(fileName))
+                    .build();
+                files.add(fileItem);
+                currentPosition = currentPosition + size;
+              }
+            } catch (IOException e) {
+              throw new RuntimeException(e);
             }
-          } catch (IOException e) {
-            throw new RuntimeException(e);
           }
-        }
-    );
+      );
+    }
 
     // Now exiting this directory, remove it from the path stack
     dirItem.setFstExitIndex(files.size());
@@ -246,7 +271,7 @@ public class DirectoryParser {
    * Gets the next byte aligned position using a given modulo.
    *
    * @param currentPosition The current position to check against.
-   * @param modulo The modulo to use.
+   * @param modulo          The modulo to use.
    * @return
    */
   private int getNextByteAlignedPosition(int currentPosition, int modulo) {
