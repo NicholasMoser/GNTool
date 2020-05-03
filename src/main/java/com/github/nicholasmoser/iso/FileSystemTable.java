@@ -112,7 +112,7 @@ public class FileSystemTable {
     if (ByteUtils.readUint32LE(raf) != 0) {
       throw new IOException("Multiple FST image not supported.");
     }
-    int numberOfEntries = ByteUtils.readUint32(raf);
+    int numberOfEntries = ByteUtils.readInt32(raf);
     int stringTableOffset = fstBinPosition + (numberOfEntries * 12);
 
     // Read rest of files until the string table is reached
@@ -120,7 +120,7 @@ public class FileSystemTable {
       // Check if this item is a directory and retrieve the name of it. The first byte of this
       // value is if it is a directory, the next three bytes are the item name position in the
       // item name table.
-      int value = ByteUtils.readUint32(raf);
+      int value = ByteUtils.readInt32(raf);
       boolean isDirectory = false;
       if (value >> 24 == 1) {
         isDirectory = true;
@@ -143,8 +143,8 @@ public class FileSystemTable {
 
       if (isDirectory) {
         // Read and add a directory
-        int parentOffset = ByteUtils.readUint32(raf);
-        int nextOffset = ByteUtils.readUint32(raf);
+        int parentOffset = ByteUtils.readInt32(raf);
+        int nextOffset = ByteUtils.readInt32(raf);
         String parent = offsetToDirectory.get(parentOffset);
         if (parent == null) {
           throw new IOException(name + " parent is null");
@@ -158,8 +158,8 @@ public class FileSystemTable {
         offsetToDirectory.put(entryNumber, dir.getGamePath());
       } else {
         // Read and add a file
-        int fileOffset = ByteUtils.readUint32(raf);
-        int fileLength = ByteUtils.readUint32(raf);
+        int fileOffset = ByteUtils.readInt32(raf);
+        int fileLength = ByteUtils.readInt32(raf);
         String currentDirectory =
             directoryStack.isEmpty() ? "" : directoryStack.getFirst().getGamePath();
         String gamePath = getFileGamePath(currentDirectory, name);

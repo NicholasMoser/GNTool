@@ -8,15 +8,15 @@ import java.util.Objects;
  */
 public class ISOFile implements ISOItem {
 
-  private String parent;
+  private final String parent;
 
-  private int pos;
+  private final int pos;
 
-  private int len;
+  private final int len;
 
-  private String name;
+  private final String name;
 
-  private String gamePath;
+  private final String gamePath;
 
   /**
    * Creates a new ISOFile.

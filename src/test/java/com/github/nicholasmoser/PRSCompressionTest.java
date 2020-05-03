@@ -1,8 +1,8 @@
 package com.github.nicholasmoser;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.google.common.base.Verify;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,11 +19,10 @@ public class PRSCompressionTest {
   /**
    * Tests compressing and uncompressing ten zeroes. The ten bytes of zeroes and output of
    * compressing and uncompressing should be the same.
-   * 
-   * @throws Exception If any exception occurs.
+   *
    */
   @Test
-  public void testTenZeroes() throws Exception {
+  public void testTenZeroes() {
     byte[] originalBytes = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     int originalSize = originalBytes.length;
     System.out.println(String.format("Original Size: %d", originalSize));
@@ -38,14 +37,13 @@ public class PRSCompressionTest {
     int uncompressedSize = outputBytes.length;
     System.out.println(String.format("Uncompressed Size: %d", uncompressedSize));
 
-    Verify.verify(Arrays.equals(originalBytes, outputBytes),
-        "Data has been lost during compression/uncompression.");
+    assertArrayEquals(originalBytes, outputBytes);
   }
 
   // Create test that compresses and uncompresses all GNT files
 
   @Test
-  public void testRandomBytes() throws Exception {
+  public void testRandomBytes() {
     SecureRandom random = new SecureRandom();
     for (int i = 10; i < 1000; i += 50) {
       byte[] originalBytes = new byte[i];
@@ -59,8 +57,7 @@ public class PRSCompressionTest {
       int uncompressedSize = outputBytes.length;
       System.out
           .println(String.format("%d -> %d -> %d", originalSize, compressedSize, uncompressedSize));
-      Verify.verify(Arrays.equals(originalBytes, outputBytes),
-          "Data has been lost during compression/uncompression.");
+      assertArrayEquals(originalBytes, outputBytes);
     }
   }
 
@@ -87,8 +84,7 @@ public class PRSCompressionTest {
     int uncompressedSize = outputBytes.length;
     System.out.println(String.format("Uncompressed Size: %d", uncompressedSize));
 
-    Verify.verify(Arrays.equals(originalBytes, outputBytes),
-        "Data has been lost during compression/uncompression.");
+    assertArrayEquals(originalBytes, outputBytes);
   }
 
   /**

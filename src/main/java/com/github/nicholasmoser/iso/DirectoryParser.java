@@ -272,7 +272,7 @@ public class DirectoryParser {
    *
    * @param currentPosition The current position to check against.
    * @param modulo          The modulo to use.
-   * @return
+   * @return The next byte aligned position.
    */
   private int getNextByteAlignedPosition(int currentPosition, int modulo) {
     int remainder = currentPosition % modulo;

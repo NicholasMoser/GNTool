@@ -15,71 +15,126 @@ import java.util.Arrays;
 public class ByteUtils {
 
   /**
-   * Converts a Java integer to a 16-bit big-endian byte array.
+   * Converts a uint16 (as an int) to a 2-byte big-endian byte array. Values over 65,535 will wrap
+   * back to zero.
    *
-   * @param integer The integer to use.
-   * @return The 16-bit big-endian array.
+   * @param value the uint16 (as an int).
+   * @return The output bytes.
    */
-  public static byte[] fromUint16(int integer) {
-    return ByteBuffer.allocate(2).order(ByteOrder.BIG_ENDIAN).putShort((short) integer).array();
-  }
-
-  /**
-   * Converts a Java integer to a 24-bit big-endian byte array.
-   *
-   * @param integer The integer to use.
-   * @return The 24-bit big-endian array.
-   */
-  public static byte[] fromUint24(int integer) {
-    return new byte[] {
-        (byte)((integer >> 16) & 0xff),
-        (byte)((integer >> 8) & 0xff),
-        (byte)((integer >> 0) & 0xff),
+  public static byte[] fromUint16(int value) {
+    return new byte[]{
+        (byte) (value >> 8),
+        (byte) (value >> 0),
     };
   }
 
   /**
-   * Converts a Java integer to a 32-bit big-endian byte array.
+   * Converts a uint24 (as an int) to a 3-byte big-endian byte array. Values over 16,777,215 will
+   * wrap back to zero.
    *
-   * @param integer The integer to use.
-   * @return The 32-bit big-endian array.
+   * @param value the uint24 (as an int).
+   * @return The output bytes.
    */
-  public static byte[] fromUint32(int integer) {
-    return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(integer).array();
+  public static byte[] fromUint24(int value) {
+    return new byte[]{
+        (byte) (value >> 16),
+        (byte) (value >> 8),
+        (byte) (value >> 0),
+    };
   }
 
   /**
-   * Converts a Java float to a 32-bit big-endian byte array.
+   * Converts a uint32 (as a long) to a 4-byte big-endian byte array. Values over 4,294,967,295 will
+   * wrap back to zero.
    *
-   * @param floatValue The float to use.
-   * @return The 32-bit big-endian array.
+   * @param value The uint32 (as a long) as a 4-byte big-endian array.
+   * @return The output bytes.
    */
-  public static byte[] fromFloat(float floatValue) {
-    return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putFloat(floatValue).array();
+  public static byte[] fromUint32(long value) {
+    return new byte[]{
+        (byte) (value >> 24),
+        (byte) (value >> 16),
+        (byte) (value >> 8),
+        (byte) (value >> 0),
+    };
   }
 
   /**
-   * Converts a 16-bit big-endian byte array to an integer.
+   * Converts an int32 (as a long) to a 4-byte big-endian byte array.
+   *
+   * @param value The int32 (as an int) as a 4-byte big-endian array.
+   * @return The output bytes.
+   */
+  public static byte[] fromInt32(int value) {
+    return new byte[]{
+        (byte) (value >> 24),
+        (byte) (value >> 16),
+        (byte) (value >> 8),
+        (byte) (value >> 0),
+    };
+  }
+
+  /**
+   * Converts a float to a 4-byte big-endian byte array.
+   *
+   * @param value The float.
+   * @return The output bytes.
+   */
+  public static byte[] fromFloat(float value) {
+    return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putFloat(value).array();
+  }
+
+  /**
+   * Converts a 2-byte big-endian byte array to a uint16 (as an int).
    *
    * @param bytes The bytes to use.
-   * @return The integer.
+   * @return The output uint16 (as an int).
    */
   public static int toUint16(byte[] bytes) {
-    return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getShort();
+    ByteBuffer buffer = ByteBuffer.allocate(4).put(new byte[]{0, 0}).put(bytes);
+    buffer.position(0);
+
+    return buffer.getInt();
   }
 
   /**
-   * Converts a 32-bit big-endian byte array to an integer.
+   * Converts a 4-byte big-endian byte array to a uint32 (as a long).
    *
    * @param bytes The bytes to use.
-   * @return The integer.
+   * @return The output uint32 (as a long).
    */
-  public static int toUint32(byte[] bytes) {
+  public static long toUint32(byte[] bytes) {
+    ByteBuffer buffer = ByteBuffer.allocate(8).put(new byte[]{0, 0, 0, 0}).put(bytes);
+    buffer.position(0);
+
+    return buffer.getLong();
+  }
+
+  /**
+   * Converts a 4-byte little-endian byte array to a uint32 (as a long).
+   *
+   * @param bytes The bytes to use.
+   * @return The output uint32 (as a long).
+   */
+  public static long toUint32LE(byte[] bytes) {
+    ByteBuffer buffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).put(bytes).put(new byte[]{0, 0, 0, 0});
+    buffer.position(0);
+
+    return buffer.getLong();
+  }
+
+  /**
+   * Converts a 4-byte big-endian byte array to a int32 (as an int).
+   *
+   * @param bytes The bytes to use.
+   * @return The output int32 (as an int).
+   */
+  public static int toInt32(byte[] bytes) {
     return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getInt();
   }
 
   /**
-   * Converts a 32-bit big-endian byte array to a float.
+   * Converts a 4-byte big-endian byte array to a float.
    *
    * @param bytes The bytes to use.
    * @return The float.
@@ -100,13 +155,24 @@ public class ByteUtils {
   }
 
   /**
-   * Retrieves a uint32 from an array of bytes at the given offset.
+   * Retrieves an int32 (as an int) from an array of bytes at the given offset.
    *
    * @param bytes  The bytes to retrieve the int from.
    * @param offset The offset to retrieve the int from.
-   * @return The uint32.
+   * @return The int32 (as an int).
    */
-  public static int toUint32(byte[] bytes, int offset) {
+  public static int toInt32(byte[] bytes, int offset) {
+    return toInt32(Arrays.copyOfRange(bytes, offset, offset + 4));
+  }
+
+  /**
+   * Retrieves a uint32 (as a long) from an array of bytes at the given offset.
+   *
+   * @param bytes  The bytes to retrieve the long from.
+   * @param offset The offset to retrieve the long from.
+   * @return The uint32 (as a long).
+   */
+  public static long toUint32(byte[] bytes, int offset) {
     return toUint32(Arrays.copyOfRange(bytes, offset, offset + 4));
   }
 
@@ -122,26 +188,52 @@ public class ByteUtils {
   }
 
   /**
-   * Converts a Java String to a 4 byte big-endian byte array.
+   * Converts a String to a 4 byte big-endian byte array.
    *
    * @param string The String to use.
-   * @return The 4 byte big-endian byte array.
+   * @return The output bytes.
    */
   public static byte[] fromString(String string) {
     return string.getBytes(Charset.forName("shift-jis"));
   }
 
   /**
-   * Reads a 32-bit big-endian integer from a RandomAccessFile.
+   * Reads a big-endian uint32 (as a long) from a RandomAccessFile.
    *
    * @param raf The RandomAccessFile to read from.
-   * @return The integer.
+   * @return The uint32 (as a long).
    * @throws IOException If an I/O error occurs.
    */
-  public static int readUint32(RandomAccessFile raf) throws IOException {
+  public static long readUint32(RandomAccessFile raf) throws IOException {
     byte[] bytes = new byte[4];
     raf.read(bytes);
-    return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getInt();
+    return toUint32(bytes);
+  }
+
+  /**
+   * Reads a little-endian uint32 (as a long) from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The long.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static int readUint32LE(RandomAccessFile raf) throws IOException {
+    byte[] buffer = new byte[4];
+    raf.read(buffer);
+    return ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
+  }
+
+  /**
+   * Reads a big-endian int32 (as an int) from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The int32 (as an int).
+   * @throws IOException If an I/O error occurs.
+   */
+  public static int readInt32(RandomAccessFile raf) throws IOException {
+    byte[] bytes = new byte[4];
+    raf.read(bytes);
+    return toInt32(bytes);
   }
 
   /**
@@ -165,7 +257,7 @@ public class ByteUtils {
    * Returns an ASCII String as bytes terminated by a null byte (0).
    *
    * @param text The text to return as null terminated bytes.
-   * @return The null terminated bytes.
+   * @return The null terminated output bytes.
    * @throws IOException If an I/O error occurs.
    */
   public static byte[] toNullTerminatedBytes(String text) throws IOException {
@@ -173,18 +265,5 @@ public class ByteUtils {
     baos.write(text.getBytes(StandardCharsets.US_ASCII));
     baos.write(0);
     return baos.toByteArray();
-  }
-
-  /**
-   * Reads a little-endian 4-byte uint from a RandomAccessFile.
-   *
-   * @param raf The RandomAccessFile to read from.
-   * @return The little-endian 4-byte uint.
-   * @throws IOException If an I/O error occurs.
-   */
-  public static int readUint32LE(RandomAccessFile raf) throws IOException {
-    byte[] buffer = new byte[4];
-    raf.read(buffer);
-    return ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
   }
 }

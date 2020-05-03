@@ -11,7 +11,7 @@ public class ISODirectory implements ISOItem {
   private final String name;
   private final String gamePath;
   private int fstExitIndex;
-  private boolean isRoot;
+  private final boolean isRoot;
 
   /**
    * Creates a new ISODirectory.

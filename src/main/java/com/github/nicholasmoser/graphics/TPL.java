@@ -6,20 +6,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class TPL {
 
-  private int fileId;
+  private final int fileId;
   private int numOfImages;
-  private int imageTableOffset;
-  private List<Texture> textures;
+  private final int imageTableOffset;
+  private final List<Texture> textures;
 
   public TPL(byte[] bytes) {
     textures = new ArrayList<>();
-    this.fileId = ByteUtils.toUint32(bytes, 0);
-    this.numOfImages = ByteUtils.toUint32(bytes, 4);
-    this.imageTableOffset = ByteUtils.toUint32(bytes, 8);
+    this.fileId = ByteUtils.toInt32(bytes, 0);
+    this.numOfImages = ByteUtils.toInt32(bytes, 4);
+    this.imageTableOffset = ByteUtils.toInt32(bytes, 8);
     for (int i = 0; i < numOfImages; i++) {
       Texture texture = createTexture(bytes, i);
       textures.add(texture);
@@ -116,18 +115,18 @@ public class TPL {
   private Texture createTexture(byte[] bytes, int index) {
     Texture.Builder builder = new Texture.Builder();
     int entryOffset = imageTableOffset + (index * 8);
-    int imgHeaderOffset = ByteUtils.toUint32(bytes, entryOffset);
-    int paletteHeaderOffset = ByteUtils.toUint32(bytes, entryOffset + 4);
+    int imgHeaderOffset = ByteUtils.toInt32(bytes, entryOffset);
+    int paletteHeaderOffset = ByteUtils.toInt32(bytes, entryOffset + 4);
     return builder.setImageHeaderOffset(imgHeaderOffset)
         .setPaletteHeaderOffset(paletteHeaderOffset)
         .setHeight(ByteUtils.toUint16(bytes, imgHeaderOffset))
         .setWidth(ByteUtils.toUint16(bytes, imgHeaderOffset + 2))
-        .setFormat(ByteUtils.toUint32(bytes, imgHeaderOffset + 4))
-        .setImageDataAddress(ByteUtils.toUint32(bytes, imgHeaderOffset + 8))
-        .setWrapS(ByteUtils.toUint32(bytes, imgHeaderOffset + 12))
-        .setWrapT(ByteUtils.toUint32(bytes, imgHeaderOffset + 16))
-        .setMinFilter(ByteUtils.toUint32(bytes, imgHeaderOffset + 20))
-        .setMagFilter(ByteUtils.toUint32(bytes, imgHeaderOffset + 24))
+        .setFormat(ByteUtils.toInt32(bytes, imgHeaderOffset + 4))
+        .setImageDataAddress(ByteUtils.toInt32(bytes, imgHeaderOffset + 8))
+        .setWrapS(ByteUtils.toInt32(bytes, imgHeaderOffset + 12))
+        .setWrapT(ByteUtils.toInt32(bytes, imgHeaderOffset + 16))
+        .setMinFilter(ByteUtils.toInt32(bytes, imgHeaderOffset + 20))
+        .setMagFilter(ByteUtils.toInt32(bytes, imgHeaderOffset + 24))
         .setLodBias(ByteUtils.toFloat(bytes, imgHeaderOffset + 28))
         .setEdgeLODEnable(bytes[imgHeaderOffset + 32] & 0xFF)
         .setMinLOD(bytes[imgHeaderOffset + 33] & 0xFF)

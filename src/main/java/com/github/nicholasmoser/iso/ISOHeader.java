@@ -10,25 +10,25 @@ import java.util.Objects;
 public class ISOHeader {
 
   /* The sys directory. */
-  private ISODirectory sys;
+  private final ISODirectory sys;
 
   /* The disk header file. */
-  private ISOFile bootBin;
+  private final ISOFile bootBin;
 
   /* The disk header information file. */
-  private ISOFile bi2Bin;
+  private final ISOFile bi2Bin;
 
   /* The apploader. */
-  private ISOFile apploaderImg;
+  private final ISOFile apploaderImg;
 
   /* The PowerPC executable code of the game. */
-  private ISOFile mainDol;
+  private final ISOFile mainDol;
 
   /* The file system table of the disk. */
-  private ISOFile fstBin;
+  private final ISOFile fstBin;
 
   /* All files and directories under the files directory. */
-  private List<ISOItem> files;
+  private final List<ISOItem> files;
 
   /**
    * Creates a new ISOHeader.

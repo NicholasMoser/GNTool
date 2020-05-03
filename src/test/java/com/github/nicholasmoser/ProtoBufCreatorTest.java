@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.utils.ProtobufUtils;
@@ -16,6 +17,7 @@ public class ProtoBufCreatorTest {
    * @throws Exception If any exception occurs.
    */
   @Test
+  @Disabled("Requires refactors to work from GNT4 iso")
   public void testCreateDiffBinary() throws Exception {
     Path compressed = Paths.get("D:/GNT/aaa/uncompressed");
     Path output = Paths.get("D:/GNT/aaa/testCreateDiffBinary.bin");
@@ -31,6 +33,7 @@ public class ProtoBufCreatorTest {
    * @throws Exception If any exception occurs.
    */
   @Test
+  @Disabled("Requires refactors to work from GNT4 iso")
   public void testCreateDiffBinaryWithFpks() throws Exception {
     Path compressed = Paths.get("D:/GNT/bbb/compressed");
     Path output = Paths

@@ -6,15 +6,11 @@ import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class to parse an ISO and extract files.
  */
 public class ISOParser {
-
-  private static final Logger LOGGER = Logger.getLogger(ISOParser.class.getName());
 
   private final Path isoPath;
 
@@ -58,14 +54,14 @@ public class ISOParser {
   private int buildSysFiles(RandomAccessFile raf, ISOHeader.Builder headerBuilder)
       throws IOException {
     raf.seek(1024);
-    int apploaderLength = ByteUtils.readUint32(raf);
+    int apploaderLength = ByteUtils.readInt32(raf);
     raf.skipBytes(28);
-    int mainDolPosition = ByteUtils.readUint32(raf);
-    int fileSystemTablePosition = ByteUtils.readUint32(raf);
-    int fileSystemTableLength = ByteUtils.readUint32(raf);
+    int mainDolPosition = ByteUtils.readInt32(raf);
+    int fileSystemTablePosition = ByteUtils.readInt32(raf);
+    int fileSystemTableLength = ByteUtils.readInt32(raf);
     int mainDolLength = fileSystemTablePosition - mainDolPosition;
     raf.skipBytes(8);
-    int dataStart = ByteUtils.readUint32(raf);
+    int dataStart = ByteUtils.readInt32(raf);
 
     ISODirectory sys = new ISODirectory.Builder()
         .setParent("").setName("sys").setGamePath("sys/").build();
@@ -141,7 +137,7 @@ public class ISOParser {
    */
   public void checkGameCubeMagicNumber(RandomAccessFile raf) throws IOException {
     raf.seek(28);
-    if (ByteUtils.readUint32(raf) != 0xC2339F3D) {
+    if (ByteUtils.readInt32(raf) != 0xC2339F3D) {
       throw new IOException("Not a GameCube ISO.");
     }
   }
