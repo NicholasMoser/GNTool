@@ -21,7 +21,7 @@ public class FPKUnpacker {
 
   private static final Logger LOGGER = Logger.getLogger(FPKUnpacker.class.getName());
 
-  private Path inputDirectory;
+  private final Path inputDirectory;
 
   public FPKUnpacker(Path inputDirectory) {
     this.inputDirectory = inputDirectory;

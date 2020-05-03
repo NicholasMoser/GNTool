@@ -66,23 +66,16 @@ public class FPKPacker {
     boolean recreateISOHeader = false;
 
     for (String changedFile : changedFiles) {
-      if (GNT4ModReady.isSplitFiles(changedFile)) {
-        recreateISOHeader = true;
+      String fixedPath = GNT4ModReady.fromModReadyPath(changedFile);
+      Optional<GNTFile> parent = workspace.getParentFPK(fixedPath);
+      // If there is no parent, it does not belong to an FPK
+      if (parent.isPresent()) {
+        changedFPKs.add(parent.get());
       } else {
-        String fixedPath = GNT4ModReady.fromModReadyPath(changedFile);
-        Optional<GNTFile> parent = workspace.getParentFPK(fixedPath);
-        // If there is no parent, it does not belong to an FPK
-        if (parent.isPresent()) {
-          changedFPKs.add(parent.get());
-        } else {
-          changedNonFPKs.put(changedFile, fixedPath);
-        }
+        changedNonFPKs.put(changedFile, fixedPath);
       }
     }
 
-    if (recreateISOHeader) {
-      recreateISOHeader();
-    }
     for (Entry<String, String> changedNonFPK : changedNonFPKs.entrySet()) {
       Path newFile = uncompressedDirectory.resolve(changedNonFPK.getKey());
       Path oldFile = compressedDirectory.resolve(changedNonFPK.getValue());
