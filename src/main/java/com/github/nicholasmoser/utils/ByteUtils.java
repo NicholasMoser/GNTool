@@ -24,7 +24,7 @@ public class ByteUtils {
   public static byte[] fromUint16(int value) {
     return new byte[]{
         (byte) (value >> 8),
-        (byte) (value >> 0),
+        (byte) (value),
     };
   }
 
@@ -39,7 +39,7 @@ public class ByteUtils {
     return new byte[]{
         (byte) (value >> 16),
         (byte) (value >> 8),
-        (byte) (value >> 0),
+        (byte) (value),
     };
   }
 
@@ -55,7 +55,7 @@ public class ByteUtils {
         (byte) (value >> 24),
         (byte) (value >> 16),
         (byte) (value >> 8),
-        (byte) (value >> 0),
+        (byte) (value),
     };
   }
 
@@ -70,7 +70,7 @@ public class ByteUtils {
         (byte) (value >> 24),
         (byte) (value >> 16),
         (byte) (value >> 8),
-        (byte) (value >> 0),
+        (byte) (value),
     };
   }
 

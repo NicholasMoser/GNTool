@@ -8,9 +8,9 @@ import com.google.common.primitives.Bytes;
  */
 public class FPKFile {
 
-  private FPKFileHeader header;
+  private final FPKFileHeader header;
 
-  private byte[] data;
+  private final byte[] data;
 
   /**
    * Creates a new FPK file. The data will be adjusted for 16-byte alignment if necessary.

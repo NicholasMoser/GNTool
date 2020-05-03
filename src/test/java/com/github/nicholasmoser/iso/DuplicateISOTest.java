@@ -113,7 +113,7 @@ public class DuplicateISOTest {
    * @throws IOException If an I/O error occurs
    */
   private void validateISO(Path testIso) throws IOException {
-    assertEquals(0x57058000, Files.size(testIso));
+    assertEquals(ISO.DISC_SIZE, Files.size(testIso));
     int hash = CRC32.getHash(testIso);
     assertEquals(0x55EE8B1A, hash, "Hash of new ISO does not match original");
   }

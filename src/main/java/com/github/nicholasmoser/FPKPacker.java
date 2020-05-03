@@ -34,11 +34,11 @@ public class FPKPacker {
 
   private static final Logger LOGGER = Logger.getLogger(FPKPacker.class.getName());
 
-  private Path compressedDirectory;
+  private final Path compressedDirectory;
 
-  private Path uncompressedDirectory;
+  private final Path uncompressedDirectory;
 
-  private Workspace workspace;
+  private final Workspace workspace;
 
   /**
    * Creates a new FPK packer for a workspace.
@@ -63,7 +63,6 @@ public class FPKPacker {
   public void pack(List<String> changedFiles) throws IOException {
     Set<GNTFile> changedFPKs = new HashSet<>();
     Map<String, String> changedNonFPKs = new HashMap<>();
-    boolean recreateISOHeader = false;
 
     for (String changedFile : changedFiles) {
       String fixedPath = GNT4ModReady.fromModReadyPath(changedFile);
@@ -91,16 +90,6 @@ public class FPKPacker {
       LOGGER.info(String.format("Packed %s", changedFPK.getFilePath()));
     }
     LOGGER.info("FPK files have been packed at " + compressedDirectory);
-  }
-
-  private void recreateISOHeader() throws IOException {
-    Path boot = uncompressedDirectory.resolve("sys/boot.bin");
-    Path bi2 = uncompressedDirectory.resolve("sys/bi2.bin");
-    byte[] bootBytes = Files.readAllBytes(boot);
-    byte[] bi2Bytes = Files.readAllBytes(bi2);
-    byte[] isoHeaderBytes = Bytes.concat(bootBytes, bi2Bytes);
-    Path isoHeader = compressedDirectory.resolve("&&systemdata/ISO.hdr");
-    Files.write(isoHeader, isoHeaderBytes);
   }
 
   /**

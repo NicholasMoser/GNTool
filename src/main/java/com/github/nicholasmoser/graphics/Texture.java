@@ -10,22 +10,23 @@ import java.util.Arrays;
 public class Texture {
 
   private byte[] data;
-  private int imageHeaderOffset;
   // palette is not supported yet
-  private int paletteHeaderOffset;
-  private int height;
-  private int width;
-  private int format;
+  private final int paletteHeaderOffset;
+  private final int height;
+  private final int width;
+  private final int format;
+  private final int wrapS;
+  private final int wrapT;
+  private final int minFilter;
+  private final int magFilter;
+  private final float lodBias;
+  private final int edgeLODEnable;
+  private final int minLOD;
+  private final int maxLOD;
+  private final int unpacked;
+
   private int imageDataAddress;
-  private int wrapS;
-  private int wrapT;
-  private int minFilter;
-  private int magFilter;
-  private float lodBias;
-  private int edgeLODEnable;
-  private int minLOD;
-  private int maxLOD;
-  private int unpacked;
+  private int imageHeaderOffset;
 
   /**
    * Private constructor for a Texture.

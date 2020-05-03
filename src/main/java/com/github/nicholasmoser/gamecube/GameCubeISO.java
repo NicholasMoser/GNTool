@@ -1,5 +1,7 @@
 package com.github.nicholasmoser.gamecube;
 
+import com.github.nicholasmoser.Game;
+import com.github.nicholasmoser.gnt4.GNT4Files;
 import com.github.nicholasmoser.iso.ISOCreator;
 import com.github.nicholasmoser.iso.ISOExtractor;
 import java.io.IOException;
@@ -7,11 +9,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.github.nicholasmoser.Game;
-import com.github.nicholasmoser.gnt4.GNT4Files;
 
 /**
  * Utility to access GCRebuilder.exe through the command line.
@@ -19,8 +17,6 @@ import com.github.nicholasmoser.gnt4.GNT4Files;
 public class GameCubeISO {
 
   private static final Logger LOGGER = Logger.getLogger(GameCubeISO.class.getName());
-
-  private static final Path currentPath = Paths.get(System.getProperty("user.dir"));
 
   /**
    * Retrieves the Game ID of a given ISO file. This String is simply the first six bytes of the

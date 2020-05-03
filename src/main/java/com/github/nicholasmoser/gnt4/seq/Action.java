@@ -4,9 +4,9 @@ package com.github.nicholasmoser.gnt4.seq;
  * An action in a sequence file.
  */
 public class Action {
-  private int id;
+  private final int id;
 
-  private String description;
+  private final String description;
 
   public Action(int id, String description) {
     this.id = id;

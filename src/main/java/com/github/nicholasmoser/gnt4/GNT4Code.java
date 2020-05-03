@@ -5,8 +5,8 @@ package com.github.nicholasmoser.gnt4;
  * and a new instruction.
  */
 public class GNT4Code {
-  private String filePath;
-  private int offset;
+  private final String filePath;
+  private final int offset;
   private byte[] oldInstruction;
   private byte[] newInstruction;
 

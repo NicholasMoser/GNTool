@@ -12,10 +12,10 @@ import java.util.Arrays;
 public class PRSCompressor {
 
   // Input bytes to compress.
-  private byte[] input;
+  private final byte[] input;
 
   // Output bytes that have been compressed.
-  private byte[] output;
+  private final byte[] output;
 
   // The location in the output bytes of the current flag byte.
   private int flagIndex;

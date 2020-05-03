@@ -15,15 +15,15 @@ import com.github.nicholasmoser.Workspace;
  */
 public class GNT4Workspace implements Workspace {
 
-  private Path directory;
+  private final Path directory;
 
-  private Path compressed;
+  private final Path compressed;
 
-  private Path uncompressed;
+  private final Path uncompressed;
 
-  private Path workspaceState;
+  private final Path workspaceState;
 
-  private GNT4Files gnt4Files;
+  private final GNT4Files gnt4Files;
 
   /**
    * @param directory The directory of GNT4 decompressed files.

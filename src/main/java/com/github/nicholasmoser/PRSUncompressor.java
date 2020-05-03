@@ -8,10 +8,10 @@ package com.github.nicholasmoser;
 public class PRSUncompressor {
 
   // Input bytes to uncompress.
-  private byte[] input;
+  private final byte[] input;
 
   // The expected output length (uncompressed size).
-  private int outputLength;
+  private final int outputLength;
 
   // The current index of the input bytes.
   private int inputIndex;

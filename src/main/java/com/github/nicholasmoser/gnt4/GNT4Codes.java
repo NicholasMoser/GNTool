@@ -23,34 +23,34 @@ public class GNT4Codes {
   private static GNT4Codes INSTANCE;
 
   // https://github.com/NicholasMoser/GNTool#audio-fix
-  private GNT4Code audioFix;
+  private final GNT4Code audioFix;
 
   // https://github.com/NicholasMoser/GNTool#skip-cutscenes
-  private GNT4Code skipCutscenes1;
-  private GNT4Code skipCutscenes2;
-  private GNT4Code skipCutscenes3;
+  private final GNT4Code skipCutscenes1;
+  private final GNT4Code skipCutscenes2;
+  private final GNT4Code skipCutscenes3;
 
   // https://github.com/NicholasMoser/GNTool#character-selection-speed
-  private GNT4Code cssInitialSpeed_1v1_1p;
-  private GNT4Code cssInitialSpeed_1v1_2p;
-  private GNT4Code cssInitialSpeed_ffa_1p;
-  private GNT4Code cssInitialSpeed_ffa_2p;
-  private GNT4Code cssInitialSpeed_ffa_3p;
-  private GNT4Code cssInitialSpeed_ffa_4p;
-  private GNT4Code cssMaxSpeed_1v1_1p;
-  private GNT4Code cssMaxSpeed_1v1_2p;
-  private GNT4Code cssMaxSpeed_ffa_1p;
-  private GNT4Code cssMaxSpeed_ffa_2p;
-  private GNT4Code cssMaxSpeed_ffa_3p;
-  private GNT4Code cssMaxSpeed_ffa_4p;
+  private final GNT4Code cssInitialSpeed_1v1_1p;
+  private final GNT4Code cssInitialSpeed_1v1_2p;
+  private final GNT4Code cssInitialSpeed_ffa_1p;
+  private final GNT4Code cssInitialSpeed_ffa_2p;
+  private final GNT4Code cssInitialSpeed_ffa_3p;
+  private final GNT4Code cssInitialSpeed_ffa_4p;
+  private final GNT4Code cssMaxSpeed_1v1_1p;
+  private final GNT4Code cssMaxSpeed_1v1_2p;
+  private final GNT4Code cssMaxSpeed_ffa_1p;
+  private final GNT4Code cssMaxSpeed_ffa_2p;
+  private final GNT4Code cssMaxSpeed_ffa_3p;
+  private final GNT4Code cssMaxSpeed_ffa_4p;
 
   // https://github.com/NicholasMoser/GNTool#title-timeout-to-demo
-  private GNT4Code demoTimeOut;
+  private final GNT4Code demoTimeOut;
 
   // https://github.com/NicholasMoser/GNTool#main-menu-character
-  private GNT4Code mainMenuCharacter;
-  private GNT4Code mainMenuCharacterHeight;
-  private GNT4Code mainMenuCharacterSound;
+  private final GNT4Code mainMenuCharacter;
+  private final GNT4Code mainMenuCharacterHeight;
+  private final GNT4Code mainMenuCharacterSound;
 
   /**
    * Private constructor to enforce singleton pattern.

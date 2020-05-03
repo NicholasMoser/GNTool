@@ -5,13 +5,13 @@ import com.google.common.primitives.Bytes;
 
 public class FPKFileHeader {
 
-  private String fileName;
+  private final String fileName;
 
   private int offset;
 
-  private int compressedSize;
+  private final int compressedSize;
 
-  private int uncompressedSize;
+  private final int uncompressedSize;
 
   /**
    * Creates an FPK file header.

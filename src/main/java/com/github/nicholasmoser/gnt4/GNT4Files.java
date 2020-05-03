@@ -1,24 +1,23 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
+import com.github.nicholasmoser.GNTFileProtos.GNTFile;
+import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.utils.FPKUtils;
+import com.github.nicholasmoser.utils.ProtobufUtils;
+import com.google.common.base.Verify;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
-import com.github.nicholasmoser.utils.ProtobufUtils;
-import com.google.common.base.Verify;
 
 public class GNT4Files {
 
@@ -33,9 +32,9 @@ public class GNT4Files {
 
   private static final String VANILLA_STATE = "vanilla_with_fpks.bin";
 
-  private Path uncompressedDirectory;
+  private final Path uncompressedDirectory;
 
-  private Path workspaceState;
+  private final Path workspaceState;
 
   private GNTFiles gntFiles;
 

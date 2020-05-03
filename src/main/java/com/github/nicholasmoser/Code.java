@@ -16,7 +16,7 @@ public class Code {
     INSERT, OVERWRITE, DELETE
   }
 
-  private List<Action> actions;
+  private final List<Action> actions;
 
   private Code() {
     actions = new ArrayList<>();
@@ -126,9 +126,9 @@ public class Code {
    * represent the number of bytes that should be removed at a location.
    */
   private static class Action {
-    private ActionType actionType;
+    private final ActionType actionType;
 
-    private int offset;
+    private final int offset;
 
     private byte[] bytes;
 

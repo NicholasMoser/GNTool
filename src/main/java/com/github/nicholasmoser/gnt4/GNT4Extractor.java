@@ -17,11 +17,11 @@ public class GNT4Extractor implements Extractor {
 
   private static final Logger LOGGER = Logger.getLogger(GNT4Extractor.class.getName());
 
-  private Path iso;
+  private final Path iso;
 
-  private Path extractionPath;
+  private final Path extractionPath;
 
-  private Path compressedPath;
+  private final Path compressedPath;
 
   private boolean extracted;
 

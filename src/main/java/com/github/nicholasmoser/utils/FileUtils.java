@@ -24,7 +24,7 @@ public class FileUtils {
    */
   public static void copyFolder(Path source, Path target, CopyOption... options)
       throws IOException {
-    Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(source, new SimpleFileVisitor<>() {
 
       @Override
       public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
