@@ -36,7 +36,7 @@ public class ISOCreator {
    * @throws IOException If an I/O error occurs.
    */
   public void create() throws IOException {
-    ISOParser parser = new ISOParser(isoPath);
+    DirectoryParser parser = new DirectoryParser(inputPath);
     ISOHeader isoHeader = parser.getISOHeader();
     create(isoHeader);
   }

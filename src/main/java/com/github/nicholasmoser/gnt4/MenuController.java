@@ -247,15 +247,20 @@ public class MenuController {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() throws Exception {
-        if (repack) {
-          updateMessage("Repacking FPKs...");
-          FPKPacker fpkPacker = new FPKPacker(workspace);
-          fpkPacker.pack(changedFiles.getItems());
+        try {
+          if (repack) {
+            updateMessage("Repacking FPKs...");
+            FPKPacker fpkPacker = new FPKPacker(workspace);
+            fpkPacker.pack(changedFiles.getItems());
+          }
+          updateMessage("Building ISO...");
+          GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get());
+          updateProgress(1, 1);
+          return null;
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, "Failed to repack FPKs and build ISO", e);
+          throw e;
         }
-        updateMessage("Building ISO...");
-        GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get());
-        updateProgress(1, 1);
-        return null;
       }
     };
     Stage loadingWindow = GUIUtils.createLoadingWindow("Building ISO", task);

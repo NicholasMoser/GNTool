@@ -2441,7 +2441,7 @@ T
 files/shop/0001.jcvÅú½«"shop/0001.jcv,
 files/shop/1300.txgáÌÍ"shop/1300.txg*
 files/sel/1000.txg½”ı"sel/1000.txg
-Å
+×
 files/fpack/game0006.fpkÃç¼ãúÿÿÿÿ*
 files/sel/0052.txgÒ‹ı"sel/0052.txg5
 files/vs/sas/4200.txg¥»™ğÿÿÿÿÿ"vs/sas/4200.txg5
@@ -2450,23 +2450,23 @@ T
 files/vs/loc/4200.txg°ÜŒ¿ùÿÿÿÿ"vs/loc/4200.txg0
 files/vs/iru/4200.txg£Íåê"vs/iru/4200.txg5
 files/vs/zab/4200.txg ÷¸‹ûÿÿÿÿ"vs/zab/4200.txg5
-files/vs/sak/4200.txgÌ’ç¼ıÿÿÿÿ"vs/sak/4200.txg2
-files/sak/é•·/4201.txg‚‰ÖÕ"sak/é•·/4201.txg5
+files/vs/sak/4200.txgÌ’ç¼ıÿÿÿÿ"vs/sak/4200.txg5
+files/vs/sak/é•·/4201.txg‚‰ÖÕ"sak/é•·/4201.txg5
 files/vs/nar/4200.txg‘ì³„úÿÿÿÿ"vs/nar/4200.txg0
-files/vs/ino/4200.txgñ´ğÄ"vs/ino/4200.txg7
-files/ino/é•·/4201.txg ç²’ıÿÿÿÿ"ino/é•·/4201.txg5
-files/vs/sik/4200.txg¦³ùÛùÿÿÿÿ"vs/sik/4200.txg2
-files/sik/æ—§/4201.txg”õÏØ"sik/æ—§/4201.txg0
+files/vs/ino/4200.txgñ´ğÄ"vs/ino/4200.txg:
+files/vs/ino/é•·/4201.txg ç²’ıÿÿÿÿ"ino/é•·/4201.txg5
+files/vs/sik/4200.txg¦³ùÛùÿÿÿÿ"vs/sik/4200.txg5
+files/vs/sik/æ—§/4201.txg”õÏØ"sik/æ—§/4201.txg0
 files/vs/nej/4200.txgá¯Ñ¯"vs/nej/4200.txg5
 files/vs/hin/4200.txg¼ø£úÿÿÿÿ"vs/hin/4200.txg5
 files/vs/gai/4200.txgëíÑÖıÿÿÿÿ"vs/gai/4200.txg0
-files/vs/kan/4200.txg»ÑÉú"vs/kan/4200.txg7
-files/kan/æ—§/4201.txgÃ¢¶˜ûÿÿÿÿ"kan/æ—§/4201.txg0
+files/vs/kan/4200.txg»ÑÉú"vs/kan/4200.txg:
+files/vs/kan/æ—§/4201.txgÃ¢¶˜ûÿÿÿÿ"kan/æ—§/4201.txg0
 files/vs/kar/4200.txgò¿Ÿ÷"vs/kar/4200.txg0
 files/vs/kib/4200.txgÍÎ›"vs/kib/4200.txg5
 files/vs/dog/4200.txgòŠËÚùÿÿÿÿ"vs/dog/4200.txg0
-files/vs/gar/4200.txgÏĞ"vs/gar/4200.txg2
-files/gar/æ—§/4201.txgÁ¾Ïß"gar/æ—§/4201.txg5
+files/vs/gar/4200.txgÏĞ"vs/gar/4200.txg5
+files/vs/gar/æ—§/4201.txgÁ¾Ïß"gar/æ—§/4201.txg5
 files/vs/oro/4200.txg£Éëüøÿÿÿÿ"vs/oro/4200.txg5
 files/vs/obo/4200.txg²ğ¬›ÿÿÿÿÿ"vs/obo/4200.txg5
 files/vs/miz/4200.txg¶½Ú³ıÿÿÿÿ"vs/miz/4200.txg5
@@ -2474,8 +2474,8 @@ T
 files/vs/jir/4200.txg°Ïş"vs/jir/4200.txg0
 files/vs/cho/4200.txg·¨ö§"vs/cho/4200.txg0
 files/vs/ten/4200.txgæ×»Õ"vs/ten/4200.txg0
-files/vs/tem/4200.txgı½·‹"vs/tem/4200.txg2
-files/tem/æ—§/4201.txgÂ®ùœ"tem/æ—§/4201.txg5
+files/vs/tem/4200.txgı½·‹"vs/tem/4200.txg5
+files/vs/tem/æ—§/4201.txgÂ®ùœ"tem/æ—§/4201.txg5
 files/vs/sin/4200.txg†’ë°úÿÿÿÿ"vs/sin/4200.txg5
 files/vs/ita/4200.txg€ õ’ùÿÿÿÿ"vs/ita/4200.txg0
 files/vs/tsu/4200.txg£¡ÊÆ"vs/tsu/4200.txg0
@@ -3592,7 +3592,7 @@ a
 
 sys/bi2.bin‘ÒÅY
 
-sys/boot.biná©ØÑ
+sys/boot.binÁÅÑ‡
 
 sys/fst.bin¡ğĞĞ
 

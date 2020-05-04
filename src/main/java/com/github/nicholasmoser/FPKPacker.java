@@ -62,26 +62,29 @@ public class FPKPacker {
    */
   public void pack(List<String> changedFiles) throws IOException {
     Set<GNTFile> changedFPKs = new HashSet<>();
-    Map<String, String> changedNonFPKs = new HashMap<>();
+    Set<String> changedNonFPKs = new HashSet<>();
 
     for (String changedFile : changedFiles) {
-      String fixedPath = GNT4ModReady.fromModReadyPath(changedFile);
-      Optional<GNTFile> parent = workspace.getParentFPK(fixedPath);
+      //String fixedPath = GNT4ModReady.fromModReadyPath(changedFile);
+      Optional<GNTFile> parent = workspace.getParentFPK(changedFile);
       // If there is no parent, it does not belong to an FPK
       if (parent.isPresent()) {
         changedFPKs.add(parent.get());
       } else {
-        changedNonFPKs.put(changedFile, fixedPath);
+        changedNonFPKs.add(changedFile);
       }
     }
 
-    for (Entry<String, String> changedNonFPK : changedNonFPKs.entrySet()) {
-      Path newFile = uncompressedDirectory.resolve(changedNonFPK.getKey());
-      Path oldFile = compressedDirectory.resolve(changedNonFPK.getValue());
+    for (String changedNonFPK : changedNonFPKs) {
+      Path newFile = uncompressedDirectory.resolve(changedNonFPK);
+      Path oldFile = compressedDirectory.resolve(changedNonFPK);
       Files.copy(newFile, oldFile, REPLACE_EXISTING);
     }
-    LOGGER.info(String.format("The following files were copied: %s",
-        changedNonFPKs.isEmpty() ? "None" : changedNonFPKs.values()));
+    if (changedNonFPKs.isEmpty()) {
+      LOGGER.info("No non-FPK files were copied.");
+    } else {
+      LOGGER.info(String.format("The following files were copied: %s", changedNonFPKs));
+    }
 
     LOGGER.info(String.format("%d FPK file(s) need to be packed.", changedFPKs.size()));
     for (GNTFile changedFPK : changedFPKs) {
@@ -106,8 +109,8 @@ public class FPKPacker {
     List<GNTChildFile> fpkChildren = fpk.getGntChildFileList();
     List<FPKFile> newFPKs = new ArrayList<>(fpkChildren.size());
     for (GNTChildFile child : fpkChildren) {
-      String modReadyPath = GNT4ModReady.toModReadyPath(child.getFilePath());
-      byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(modReadyPath));
+      //String modReadyPath = GNT4ModReady.toModReadyPath(child.getFilePath());
+      byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(child.getFilePath()));
       byte[] output;
 
       if (child.getCompressed()) {
