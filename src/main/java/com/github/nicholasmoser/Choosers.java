@@ -1,5 +1,6 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.gamecube.GameCubeISO;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -25,6 +26,9 @@ public class Choosers {
       workspaceDirectory = directoryChooser.showDialog(null);
       if (workspaceDirectory == null) {
         return Optional.empty();
+      } else if (GameCubeISO.isOldGNToolWorkspace(workspaceDirectory.toPath())) {
+        String message = "GNTool 2.x workspaces are no longer supported in GNTool.";
+        Message.info("Workspace No Longer Supported", message);
       } else if (new File(workspaceDirectory, GNT4Files.COMPRESSED_DIRECTORY).isDirectory()) {
         validDirectory = true;
       } else {

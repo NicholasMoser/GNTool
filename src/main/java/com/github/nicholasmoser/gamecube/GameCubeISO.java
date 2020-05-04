@@ -37,6 +37,17 @@ public class GameCubeISO {
   }
 
   /**
+   * Returns whether or not this workspace is a GNTool 2.x workspace. This is determined by the
+   * existence of a folder named root.
+   *
+   * @param directory The workspace directory to check.
+   * @return If it is a GNTool 2.x workspace.
+   */
+  public static boolean isOldGNToolWorkspace(Path directory) {
+    return Files.isDirectory(directory.resolve("root"));
+  }
+
+  /**
    * Checks a GameCube ISO workspace in that it has an ISO.hdr file and that the game ID matches the
    * expected game ID.
    *
