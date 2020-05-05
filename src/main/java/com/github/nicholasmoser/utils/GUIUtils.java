@@ -81,4 +81,13 @@ public class GUIUtils {
     icons.add(NARU_64);
     icons.add(NARU_128);
   }
+
+  /**
+   * Sets dark theme on the scene.
+   *
+   * @param scene The scene to make dark themed.
+   */
+  public static void setDarkTheme(Scene scene) {
+    scene.getStylesheets().add(GUIUtils.class.getResource("stylesheet.css").toExternalForm());
+  }
 }

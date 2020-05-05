@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.github.nicholasmoser.utils.GUIUtils;
 import java.io.IOException;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.WorkspaceView;
@@ -28,6 +29,7 @@ public class GNT4WorkspaceView implements WorkspaceView {
   public void init(Stage stage) throws IOException {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("menu.fxml"));
     Scene scene = new Scene(loader.load());
+    GUIUtils.setDarkTheme(scene);
     MenuController controller = loader.getController();
     controller.init(workspace, stage);
     stage.setScene(scene);
