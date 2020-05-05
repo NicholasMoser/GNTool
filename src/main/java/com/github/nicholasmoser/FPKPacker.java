@@ -98,7 +98,7 @@ public class FPKPacker {
               LOGGER.info(String.format("Packed %s", fpk.getFilePath()));
             } catch (IOException e) {
               String message = String.format("Failed to pack %s", fpk.getFilePath());
-              LOGGER.log(Level.SEVERE, message, e);
+              throw new RuntimeException(message, e);
             }
           }
       );
@@ -108,8 +108,6 @@ public class FPKPacker {
         repackFPK(fpk);
         LOGGER.info(String.format("Packed %s", fpk.getFilePath()));
       }
-    }
-    for (GNTFile changedFPK : changedFPKs) {
     }
     LOGGER.info("FPK files have been packed at " + compressedDirectory);
   }
