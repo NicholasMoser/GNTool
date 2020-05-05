@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.CheckMenuItem?>
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.nicholasmoser.gnt4.MenuController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
@@ -25,6 +26,7 @@
           <items>
             <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace" />
             <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+            <CheckMenuItem fx:id="parallelBuild" mnemonicParsing="false" text="Parallel Build" />
             <MenuItem mnemonicParsing="false" onAction="#build" text="Build ISO" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
@@ -66,13 +68,13 @@
                                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="86400" min="0" />
                                            </valueFactory>
                                          </Spinner>
-                                          <Text layoutX="184.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Character Selection Initial Speed" />
-                                          <Text layoutX="183.0" layoutY="154.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Character Selection Max Speed" />
-                                          <Text layoutX="183.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Title Timeout to Demo (seconds)" />
+                                          <Text layoutX="184.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Initial Speed" />
+                                          <Text layoutX="183.0" layoutY="154.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Max Speed" />
+                                          <Text layoutX="183.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Title Timeout to Demo (seconds)" />
                                           <Button layoutX="78.0" layoutY="216.0" mnemonicParsing="false" onMouseClicked="#maxTimeOut" text="Max" />
                                           <Button layoutX="14.0" layoutY="216.0" mnemonicParsing="false" onMouseClicked="#defaultTimeOut" text="Default" />
                                           <ComboBox fx:id="mainMenuCharacter" layoutX="14.0" layoutY="253.0" onAction="#changeMainMenuCharacter" prefHeight="25.0" prefWidth="179.0" />
-                                          <Text layoutX="205.0" layoutY="270.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Main Menu Character" />
+                                          <Text layoutX="205.0" layoutY="270.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Main Menu Character" />
                                        </children>
                                     </AnchorPane>
                                 </content>

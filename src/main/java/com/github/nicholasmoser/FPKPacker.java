@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
@@ -58,9 +59,11 @@ public class FPKPacker {
    * and compressed into their original FPK file. This new FPK file will override the FPK file in
    * the output directory.
    *
+   * @param changedFiles The files that have been changed.
+   * @param parallel     If the repacking should attempt to be done in parallel.
    * @throws IOException If there is an I/O issue repacking or moving the files.
    */
-  public void pack(List<String> changedFiles) throws IOException {
+  public void pack(List<String> changedFiles, boolean parallel) throws IOException {
     Set<GNTFile> changedFPKs = new HashSet<>();
     Set<String> changedNonFPKs = new HashSet<>();
 
@@ -87,10 +90,26 @@ public class FPKPacker {
     }
 
     LOGGER.info(String.format("%d FPK file(s) need to be packed.", changedFPKs.size()));
+    if (parallel) {
+      changedFPKs.parallelStream().forEach(fpk -> {
+            try {
+              LOGGER.info(String.format("Packing %s...", fpk.getFilePath()));
+              repackFPK(fpk);
+              LOGGER.info(String.format("Packed %s", fpk.getFilePath()));
+            } catch (IOException e) {
+              String message = String.format("Failed to pack %s", fpk.getFilePath());
+              LOGGER.log(Level.SEVERE, message, e);
+            }
+          }
+      );
+    } else {
+      for (GNTFile fpk : changedFPKs) {
+        LOGGER.info(String.format("Packing %s...", fpk.getFilePath()));
+        repackFPK(fpk);
+        LOGGER.info(String.format("Packed %s", fpk.getFilePath()));
+      }
+    }
     for (GNTFile changedFPK : changedFPKs) {
-      LOGGER.info(String.format("Packing %s...", changedFPK.getFilePath()));
-      repackFPK(changedFPK);
-      LOGGER.info(String.format("Packed %s", changedFPK.getFilePath()));
     }
     LOGGER.info("FPK files have been packed at " + compressedDirectory);
   }

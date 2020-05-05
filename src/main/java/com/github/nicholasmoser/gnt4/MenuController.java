@@ -34,6 +34,7 @@ import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
@@ -83,6 +84,9 @@ public class MenuController {
 
   @FXML
   private ComboBox<String> mainMenuCharacter;
+
+  @FXML
+  private CheckMenuItem parallelBuild;
 
   /**
    * Toggles the code for fixing the audio.
@@ -251,7 +255,7 @@ public class MenuController {
           if (repack) {
             updateMessage("Repacking FPKs...");
             FPKPacker fpkPacker = new FPKPacker(workspace);
-            fpkPacker.pack(changedFiles.getItems());
+            fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");
           GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get());
