@@ -6,6 +6,7 @@ import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.utils.FPKUtils;
 import com.github.nicholasmoser.utils.ProtobufUtils;
 import com.google.common.base.Verify;
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,6 +41,8 @@ public class GNT4Files {
 
   private GNTFiles vanillaFiles;
 
+  private Set<String> allowedWorkspaceFiles;
+
   /**
    * Creates a new GNT4Files object from an uncompressed directory and a protobuf workspace state
    * binary.
@@ -59,11 +62,20 @@ public class GNT4Files {
    * @throws IOException If an I/O error occurs.
    */
   public void initState() throws IOException {
-    this.gntFiles = ProtobufUtils.createBinary(uncompressedDirectory);
+    loadVanillaState();
+    this.gntFiles = ProtobufUtils.createBinary(uncompressedDirectory, allowedWorkspaceFiles);
     try (OutputStream os = Files.newOutputStream(workspaceState)) {
       gntFiles.writeTo(os);
     }
-    loadVanillaState();
+  }
+
+  /**
+   * Returns a new GNTFiles object reflecting the current workspace state.
+   * @return A new GNTFiles object reflecting the current workspace state.
+   * @throws IOException If an I/O error occurs.
+   */
+  public GNTFiles getNewWorkspaceState() throws IOException {
+    return ProtobufUtils.createBinary(uncompressedDirectory, allowedWorkspaceFiles);
   }
 
   /**
@@ -86,6 +98,17 @@ public class GNT4Files {
   private void loadVanillaState() throws IOException {
     try (InputStream is = getClass().getResourceAsStream(VANILLA_STATE)) {
       this.vanillaFiles = GNTFiles.parseFrom(is);
+    }
+
+    allowedWorkspaceFiles = Sets.newHashSetWithExpectedSize(2574);
+    for (GNTFile gntFile : vanillaFiles.getGntFileList()) {
+      if (gntFile.getGntChildFileCount() == 0) {
+        allowedWorkspaceFiles.add(gntFile.getFilePath());
+      } else {
+        for (GNTChildFile child : gntFile.getGntChildFileList()) {
+          allowedWorkspaceFiles.add(child.getFilePath());
+        }
+      }
     }
   }
 

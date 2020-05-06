@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import com.github.nicholasmoser.FPKFileHeader;
 import com.github.nicholasmoser.GNTFileProtos;
@@ -19,11 +20,12 @@ public class ProtobufUtils {
    * Create a GNTFiles object containing all GNTFiles and respective hashes. Ignores FPK files.
    *
    * @param compressed The compressed directory.
+   * @param allowedFiles The set of files that are allowed to be stored in binary.
    * @return The GNTFiles mapping of filePaths to hashes.
    * @throws IOException If an I/O error occurs.
    */
-  public static GNTFiles createBinary(Path compressed) throws IOException {
-    return createBinary(compressed, false);
+  public static GNTFiles createBinary(Path compressed, Set<String> allowedFiles) throws IOException {
+    return createBinary(compressed, allowedFiles, false);
   }
 
   /**
@@ -31,26 +33,29 @@ public class ProtobufUtils {
    * consideration for FPK files and logic to handle the relationships to their children.
    *
    * @param compressed  The compressed directory.
+   * @param allowedFiles The set of files that are allowed to be stored in binary.
    * @param checkForFpk Whether or not to check for FPK files and process their children.
    * @return The GNTFiles mapping of filePaths to hashes.
    * @throws IOException If an I/O error occurs.
    */
-  public static GNTFiles createBinary(Path compressed, boolean checkForFpk) throws IOException {
+  public static GNTFiles createBinary(Path compressed, Set<String> allowedFiles, boolean checkForFpk) throws IOException {
     List<Path> files = Files.walk(compressed).filter(Files::isRegularFile)
         .collect(Collectors.toList());
     GNTFiles.Builder filesBuilder = GNTFiles.newBuilder();
     for (Path filePath : files) {
-      GNTFileProtos.GNTFile.Builder fileBuilder = GNTFileProtos.GNTFile.newBuilder();
-      int hash = CRC32.getHash(filePath);
       String relativePath = relativizePath(compressed, filePath);
-      fileBuilder.setFilePath(relativePath);
-      fileBuilder.setHash(hash);
-      if (checkForFpk && relativePath.endsWith(".fpk")) {
-        List<GNTFileProtos.GNTChildFile> children = getChildren(filePath);
-        fileBuilder.addAllGntChildFile(children);
+      if (allowedFiles.contains(relativePath)) {
+        GNTFileProtos.GNTFile.Builder fileBuilder = GNTFileProtos.GNTFile.newBuilder();
+        int hash = CRC32.getHash(filePath);
+        fileBuilder.setFilePath(relativePath);
+        fileBuilder.setHash(hash);
+        if (checkForFpk && relativePath.endsWith(".fpk")) {
+          List<GNTFileProtos.GNTChildFile> children = getChildren(filePath);
+          fileBuilder.addAllGntChildFile(children);
+        }
+        GNTFileProtos.GNTFile gntFile = fileBuilder.build();
+        filesBuilder.addGntFile(gntFile);
       }
-      GNTFileProtos.GNTFile gntFile = fileBuilder.build();
-      filesBuilder.addGntFile(gntFile);
     }
     return filesBuilder.build();
   }

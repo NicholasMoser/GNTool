@@ -702,7 +702,7 @@ public class MenuController {
    * @throws IOException If an I/O error occurs.
    */
   private void syncRefresh() throws IOException {
-    GNTFiles newFiles = ProtobufUtils.createBinary(uncompressedDirectory);
+    GNTFiles newFiles = workspace.getNewWorkspaceState();
     refreshMissingFiles(newFiles);
     refreshChangedFiles(newFiles);
     refreshOptions();

@@ -90,4 +90,9 @@ public class GNT4Workspace implements Workspace {
   public void revertFile(String filePath) throws IOException {
     gnt4Files.revertFile(uncompressed, compressed, filePath);
   }
+
+  @Override
+  public GNTFiles getNewWorkspaceState() throws IOException {
+    return gnt4Files.getNewWorkspaceState();
+  }
 }

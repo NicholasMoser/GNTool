@@ -86,4 +86,9 @@ public interface Workspace {
    * @param filePath The file path.
    */
   void revertFile(String filePath) throws IOException;
+
+  /**
+   * @return A new GNTFiles object reflecting the current workspace state.
+   */
+  GNTFiles getNewWorkspaceState() throws IOException;
 }
