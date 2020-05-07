@@ -143,6 +143,21 @@ public class Choosers {
   }
 
   /**
+   * Asks the user to select SEQKage.exe.
+   *
+   * @return An optional input SEQKage.exe. Empty if none is chosen.
+   */
+  public static Optional<Path> getSeqKage(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select SEQKage.exe");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("SEQKage", "SEQKage.exe");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
    * Asks the user to select an output ISO file.
    * 
    * @param initialDirectory The location to set the directory chooser to start at.

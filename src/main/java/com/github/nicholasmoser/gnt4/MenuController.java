@@ -13,6 +13,8 @@ import com.github.nicholasmoser.audio.DtkMake;
 import com.github.nicholasmoser.audio.FFmpeg;
 import com.github.nicholasmoser.audio.MusyXExtract;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
+import com.github.nicholasmoser.gnt4.seq.SeqKage;
+import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
 import com.github.nicholasmoser.utils.GUIUtils;
@@ -87,6 +89,9 @@ public class MenuController {
 
   @FXML
   private CheckMenuItem parallelBuild;
+
+  @FXML
+  private ComboBox<String> seqs;
 
   /**
    * Toggles the code for fixing the audio.
@@ -666,6 +671,30 @@ public class MenuController {
     new Thread(task).start();
   }
 
+  @FXML
+  protected void seqKage(MouseEvent mouseEvent) {
+    try {
+      if (SeqKage.isNotAvailable()) {
+        Message.info("SEQKage 3.1 Required",
+            "In order to use this functionality, SEQKage.exe 3.1 must be imported.");
+        boolean isMoved = SeqKage.copySeqKage();
+        if (!isMoved) {
+          return;
+        }
+      }
+      String seq = seqs.getSelectionModel().getSelectedItem();
+      Path seqPath = uncompressedDirectory.resolve(seq);
+      if (!Files.exists(seqPath)) {
+        LOGGER.log(Level.SEVERE, "Unable to find " + seqPath);
+      }
+      String output = SeqKage.run(seqPath);
+      LOGGER.log(Level.INFO, output);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQKage", e);
+      Message.error("Error Running SEQKage", "See log for more information");
+    }
+  }
+
   /**
    * Initializes with a workspace.
    *
@@ -680,6 +709,8 @@ public class MenuController {
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
     txg2tplTexture.getSelectionModel().selectFirst();
+    seqs.getItems().setAll(Seqs.ALL);
+    seqs.getSelectionModel().selectFirst();
     mainMenuCharacter.getItems().setAll(GNT4Characters.MAIN_MENU_CHARS);
     mainMenuCharacter.getSelectionModel().select(GNT4Characters.SAKURA);
     asyncRefresh();
