@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.utils;
 
+import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.geometry.HPos;
@@ -87,7 +88,12 @@ public class GUIUtils {
    *
    * @param scene The scene to make dark themed.
    */
-  public static void setDarkTheme(Scene scene) {
-    scene.getStylesheets().add(GUIUtils.class.getResource("stylesheet.css").toExternalForm());
+  public static void toggleDarkMode(Scene scene) {
+    List<String> stylesheets = scene.getStylesheets();
+    if (stylesheets.isEmpty()) {
+      scene.getStylesheets().add(GUIUtils.class.getResource("stylesheet.css").toExternalForm());
+    } else {
+      stylesheets.clear();
+    }
   }
 }

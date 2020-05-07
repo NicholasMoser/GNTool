@@ -29,7 +29,7 @@ public class GNT4WorkspaceView implements WorkspaceView {
   public void init(Stage stage) throws IOException {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("menu.fxml"));
     Scene scene = new Scene(loader.load());
-    GUIUtils.setDarkTheme(scene);
+    GUIUtils.toggleDarkMode(scene);
     MenuController controller = loader.getController();
     controller.init(workspace, stage);
     stage.setScene(scene);

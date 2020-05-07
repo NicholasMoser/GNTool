@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -198,6 +199,14 @@ public class MenuController {
   @FXML
   protected void refresh() {
     asyncRefresh();
+  }
+
+  /**
+   * Toggles dark mode on and off.
+   */
+  @FXML
+  public void toggleDarkMode() {
+    GUIUtils.toggleDarkMode(audioFixCode.getScene());
   }
 
   /**

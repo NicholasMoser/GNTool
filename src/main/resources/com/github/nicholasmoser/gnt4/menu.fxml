@@ -10,6 +10,7 @@
     <Menu mnemonicParsing="false" text="File">
       <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace"/>
       <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh"/>
+      <MenuItem accelerator="F6" mnemonicParsing="false" onAction="#toggleDarkMode" text="Toggle Dark Mode"/>
       <CheckMenuItem fx:id="parallelBuild" mnemonicParsing="false" text="Parallel Build"/>
       <MenuItem mnemonicParsing="false" onAction="#build" text="Build ISO"/>
       <SeparatorMenuItem mnemonicParsing="false"/>
