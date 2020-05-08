@@ -9,7 +9,7 @@ This program allows you to modify files contained inside .FPK files for Naruto G
 1. **[Getting Started](#getting-started)**
 2. **[Prerequisites](#prerequisites)**
 3. **[How to Use](#how-to-use)**
-4. **[Options](#options)**
+4. **[Features](#features)**
 5. **[Audio](#audio)**
 6. **[Graphics](#graphics)**
 7. **[How it Works](#how-it-works)**
@@ -21,8 +21,6 @@ This program allows you to modify files contained inside .FPK files for Naruto G
 
 ## Getting Started
 
-To use this tool, first satisfy the prerequisites listed below and then run the latest executable jar from the release section of this repository.
-
 ### Prerequisites
 
 1. Windows
@@ -32,18 +30,31 @@ To use this tool, first satisfy the prerequisites listed below and then run the 
 
 To run the tool, download the latest release zip file from the [GNTool releases](https://github.com/NicholasMoser/GNTool/releases). Then extract the zip file and under the `bin` folder run `GNTool.bat`.
 
-If this is your first time using the application you will want to create a new workspace. This workspace is created from a provided GNT4 ISO. The workspace will contain a folder titled uncompressed; this is where you can modify the contents of files.
+![Launch](/docs/launch.png?raw=true "Launch")
 
-Files cannot be deleted from this directory or it will prevent you from rebuilding the ISO. Refreshing the workspace will detect any changes you made to files outside of the application. You can also right click on any changed files in the Changed Files view to open them in your system editor.
+If this is your first time using the application you will want to create a new workspace. Otherwise, you can load your existing workspace. Workspaces are created from a GNT4 ISO located on your file system.
 
-Some things to be aware of while using the application:
+![Workspace Example](/docs/workspace.png?raw=true "Workspace Example")
 
-* Do not rename directories or files as you use this program. The program will look for specifically named directories and files within them, and therefore will not work correctly if these names have changed.
-* Do not modify the contents of any files in the folder titled compressed. This folder is needed to rebuild the game.
-* Compressing files can take a while depending on which .FPKs were modified. It can potentially take hours depending on how many files were modified.
-* The compression algorithm does not perfectly match Eighting's, therefore newly compressed files may be larger than they otherwise would be.
+A workspace will contain a folder named `compressed` and a folder named `uncompressed`. Files should only be modified by you in the `uncompressed` folder. GNTool is responsible for managing the `compressed` folder and `workspace.bin` file. Refreshing the workspace will detect any changes you've made to files outside of the application
 
-### Options
+The **Menu** tab contains features for modifying the game in a general sense. You can find explanations of each feature under [Features](#features).
+
+The **Changed Files** tab contains the list of files you or GNTool has modified in the `uncompressed` directory. These files will be moved or recompressed upon building an ISO from the File menu. You can also right click on any changed files in the Changed Files view to open them, open their directory, or revert the changes.
+
+The **Missing Files** tab contains the list of files that have been removed from the `uncompressed` directory. These must be added back or you will not be able to build an ISO.
+
+The **Audio**, **Graphics**, and **Seqence** tabs contain tools and options for managing each of their respective files.
+
+You can build ISOs by selecting *Build ISO* under the File menu at the top. It is recommended to also select *Parallel Build* if using a multi-core CPU.
+
+:warning: Please be aware of the following :warning:
+
+* Do not rename or delete the `workspace.bin` file or any file in the `compressed` or `uncompressed` directory.
+* Do not modify the contents of any files in the `compressed` directory.
+* The compression algorithm used by GNTool does not match Eighting's, therefore newly compressed files may be larger than they otherwise would be.
+
+### Features
 
 #### Audio Fix
 
@@ -101,13 +112,13 @@ To replace textures in the game, first extract a specific texture archive or ext
 
 ### How it Works
 
-There are multiple steps involved in the execution of this program. First, the contents of the ISO are dumped to the compressed folder in the workspace. The contents are then copied to the uncompressed folder. In the uncompressed folder each FPK is uncompressed using a PRS uncompression algorithm. When you are ready to rebuild the ISO, only modified files are repacked. Original FPK archive files are preserved if untouched. The software is able to know which files have changed by comparing each file to its expected [CRC32 value](https://en.wikipedia.org/wiki/Cyclic_redundancy_check).
+There are multiple steps involved in the execution of this program. First, the contents of the ISO are dumped to the `compressed` folder in the workspace. The contents are then copied to the `uncompressed` folder. In the `uncompressed` folder, each FPK is uncompressed using a PRS uncompression algorithm. The FPKs in the `uncompressed` folder are then deleted. This will leave the `compressed` folder as the compressed version of the game files and the `uncompressed` folder as the uncompressed version of the game files.
 
-A recommended modification for the dol file is patch an issue with audio file offsets in the fst.bin. Since the fst.bin may be rewritten with new file sizes, it is possible that audio file offsets change in that file. There is a line of code in GNT4 that checks that the offets end with either 0x0000 or 0x8000. I'm not entirely sure of the purpose of this line of code, but it seems to be safe to remove.
+When you are ready to rebuild the ISO, only modified files are repacked. This is the benefit of keeping the `compressed` folder, the original FPKs are maintained in the workspace state. GNTool calculates which files have changed by comparing each file to its expected [CRC32 value](https://en.wikipedia.org/wiki/Cyclic_redundancy_check).
 
 ## Logging
 
-This tool has logging implemented with it to allow easier debugging of issues. To access the logs, go to your home directory and look for a log file that starts with fpk (fpkjava0.log.0 for example). This tool will store 5 log files at a time with different numbers at the end for each instance. Make sure to include all of these for any bug reports.
+This tool has logging implemented with it to allow easier debugging of issues. To access the logs, go to your home directory (e.g. `C:\Users\yourname`) and look for a log file that starts with fpk (fpkjava0.log.0 for example). This tool will store 5 log files at a time with different numbers at the end for each instance. Make sure to include all of these for any bug reports.
 
 ## Contributing
 
@@ -121,7 +132,10 @@ If you have enhancement ideas, defect requests, or generally want to contribute 
 
 * **tpu** - Wrote original PRS uncompression algorithm.
 * **RupertAvery** - Wrote original PRS compression algorithm.
-* **Luigi Auriemma** - Ported PRS compression/uncompression algorithms to QuickBMS.
+* **[Luigi Auriemma](https://aluigi.altervista.org/quickbms.htm)** - Ported PRS compression/uncompression algorithms to QuickBMS.
+* **[Nisto](https://github.com/Struggleton)** - For writing musyx-extract for sound file reading and writing.
+* **[Struggleton](https://github.com/Struggleton)** - For writing TXG2TPL for txg file reading and writing.
+* **[The Dueling Potato](https://github.com/mitchellhumphrey)** - For writing seq-kage for seq file reading and writing.
 
 ## License
 
