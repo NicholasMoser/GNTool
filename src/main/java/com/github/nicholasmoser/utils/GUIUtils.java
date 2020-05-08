@@ -1,6 +1,12 @@
 package com.github.nicholasmoser.utils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.geometry.HPos;
@@ -18,6 +24,8 @@ import javafx.stage.StageStyle;
  * GUI utilities.
  */
 public class GUIUtils {
+  private static final Logger LOGGER = Logger.getLogger(GUIUtils.class.getName());
+
   public static final String FONT_SIZE_CSS = "-fx-font-size: 26px;";
 
   public static final String BORDER = "-fx-effect: innershadow(gaussian, #039ed3, 2, 1.0, 0, 0);";
@@ -30,6 +38,8 @@ public class GUIUtils {
 
   private static final Image NARU_128 =
       new Image(GUIUtils.class.getResourceAsStream("naru128.gif"));
+
+  private static final Path DARK_MODE_DISABLED = Paths.get("DARK_MODE_DISABLED");
 
   /**
    * Creates a new loading window for a specified task.
@@ -83,6 +93,12 @@ public class GUIUtils {
     icons.add(NARU_128);
   }
 
+  public static void initDarkMode(Scene scene) {
+    if (!Files.exists(DARK_MODE_DISABLED)) {
+      toggleDarkMode(scene);
+    }
+  }
+
   /**
    * Sets dark theme on the scene.
    *
@@ -92,8 +108,20 @@ public class GUIUtils {
     List<String> stylesheets = scene.getStylesheets();
     if (stylesheets.isEmpty()) {
       scene.getStylesheets().add(GUIUtils.class.getResource("stylesheet.css").toExternalForm());
+      try {
+        Files.deleteIfExists(DARK_MODE_DISABLED);
+      } catch (IOException e) {
+        LOGGER.log(Level.SEVERE, "Failed to delete dark mode config file", e);
+      }
     } else {
       stylesheets.clear();
+      if (!Files.exists(DARK_MODE_DISABLED)) {
+        try {
+          Files.createFile(DARK_MODE_DISABLED);
+        } catch (IOException e) {
+          LOGGER.log(Level.SEVERE, "Failed to create dark mode config file", e);
+        }
+      }
     }
   }
 }

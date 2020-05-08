@@ -58,7 +58,7 @@ public class GNTool extends Application {
     GUIUtils.setIcons(primaryStage);
     GridPane buttonPane = createButtonGrid();
     Scene scene = new Scene(buttonPane);
-    GUIUtils.toggleDarkMode(scene);
+    GUIUtils.initDarkMode(scene);
     primaryStage.setTitle("GNTool");
     primaryStage.setScene(scene);
     primaryStage.centerOnScreen();
