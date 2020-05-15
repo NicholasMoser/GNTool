@@ -18,7 +18,6 @@ import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
 import com.github.nicholasmoser.utils.GUIUtils;
-import com.github.nicholasmoser.utils.ProtobufUtils;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -33,7 +32,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -681,7 +679,7 @@ public class MenuController {
   }
 
   @FXML
-  protected void seqKage(MouseEvent mouseEvent) {
+  protected void seqKage() {
     try {
       if (SeqKage.isNotAvailable()) {
         Message.info("SEQKage 3.1 Required",
