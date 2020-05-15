@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.nicholasmoser.ToolController">
+  <AnchorPane
+    VBox.vgrow="ALWAYS">
+    <ListView fx:id="tools" onMouseClicked="#toolSelected" layoutX="226.0" layoutY="100.0" prefHeight="400.0" prefWidth="640.0"
+      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+      AnchorPane.topAnchor="0.0"/>
+  </AnchorPane>
+</VBox>

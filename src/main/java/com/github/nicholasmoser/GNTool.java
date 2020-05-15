@@ -1,5 +1,6 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.gnt4.MenuController;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +16,8 @@ import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
 import com.github.nicholasmoser.utils.GUIUtils;
 import javafx.application.Application;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -107,11 +111,39 @@ public class GNTool extends Application {
       }
     });
 
+    Button toolsButton = new Button();
+    toolsButton.setText("\uD83D\uDD27");
+    toolsButton.setStyle(FONT_SIZE_CSS);
+    toolsButton
+        .setTooltip(new Tooltip("Other tools for various games."));
+    toolsButton.setOnAction(event -> {
+      LOGGER.fine("Tools button pressed.");
+      try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("tools.fxml"));
+        Scene scene = new Scene(loader.load());
+        GUIUtils.initDarkMode(scene);
+        ToolController controller = loader.getController();
+        controller.init();
+        Stage stage = new Stage();
+        GUIUtils.setIcons(stage);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(primaryStage);
+        stage.setScene(scene);
+        stage.setTitle("Other Tools");
+        stage.centerOnScreen();
+        stage.show();
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Tools button pressed.", e);
+      }
+    });
+
     GridPane buttonPane = new GridPane();
     buttonPane.setAlignment(Pos.CENTER);
     buttonPane.setVgap(10);
     buttonPane.setPadding(new Insets(12, 12, 12, 12));
     buttonPane.add(gameList, 0, 0);
+    buttonPane.add(toolsButton, 0, 0);
+    GridPane.setHalignment(toolsButton, HPos.RIGHT);
     buttonPane.add(createWorkspaceButton, 0, 1);
     buttonPane.add(loadWorkspaceButton, 0, 2);
 
