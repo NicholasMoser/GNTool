@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -265,5 +269,22 @@ public class ByteUtils {
     baos.write(text.getBytes(StandardCharsets.US_ASCII));
     baos.write(0);
     return baos.toByteArray();
+  }
+
+  /**
+   * Encodes the given String of text into shift-jis. This is necessary for GNT4 paths since the ISO
+   * expects them to be in shift-jis encoding.
+   *
+   * @param text The text to encode to shift-jis.
+   * @return The shift-jis encoded text.
+   * @throws CharacterCodingException If the text cannot be encoded/decoded as shift-jis.
+   */
+  public static String encodeShiftJis(String text) throws CharacterCodingException {
+    Charset charset = Charset.forName("shift-jis");
+    CharsetDecoder decoder = charset.newDecoder();
+    CharsetEncoder encoder = charset.newEncoder();
+    ByteBuffer bbuf = encoder.encode(CharBuffer.wrap(text));
+    CharBuffer cbuf = decoder.decode(bbuf);
+    return cbuf.toString();
   }
 }

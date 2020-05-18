@@ -1,13 +1,19 @@
 package com.github.nicholasmoser.utils;
 
+import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.FPKFileHeader;
+import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.PRSUncompressor;
+import com.google.common.primitives.Bytes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class FPKUtils {
 
@@ -104,5 +110,19 @@ public class FPKUtils {
       }
     }
     throw new IOException(String.format("%s could not be found in %s", child, fpkPath));
+  }
+
+  /**
+   * Returns the header of the FPK file. The first four bytes are zeroes. The next four are the
+   * number of files. The next four is the size of this header, which is always 16. The last is the
+   * output size of the whole FPK file. The byte array returned will always be 16 bytes exactly.
+   *
+   * @param numberOfFiles The number of files being packed.
+   * @param outputSize    The total size of the FPK file, including this header.
+   * @return The FPK header.
+   */
+  public static byte[] createFPKHeader(int numberOfFiles, int outputSize) {
+    return Bytes.concat(ByteUtils.fromUint32(0), ByteUtils.fromUint32(numberOfFiles),
+        ByteUtils.fromUint32(16), ByteUtils.fromUint32(outputSize));
   }
 }

@@ -10,6 +10,20 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class Choosers {
+
+  /**
+   * Asks the user to select a file.
+   *
+   * @return An optional file. Empty if none is chosen.
+   */
+  public static Optional<Path> getFile(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
   /**
    * Asks the user to select an input workspace directory.
    * 
@@ -168,6 +182,39 @@ public class Choosers {
     fileChooser.setTitle("Create Output ISO File");
     fileChooser.setInitialDirectory(initialDirectory);
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("ISO Image (*.iso)", "*.iso");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showSaveDialog(null);
+
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an input FPK file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input FPK. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputFPK(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Original FPK File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("FPK File (*.fpk)", "*.fpk");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an output FPK file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional output FPK. Empty if none is chosen.
+   */
+  public static Optional<Path> getOutputFPK(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Create Output FPK File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("FPK File (*.fpk)", "*.fpk");
     fileChooser.getExtensionFilters().add(fileExtensions);
     File selection = fileChooser.showSaveDialog(null);
 

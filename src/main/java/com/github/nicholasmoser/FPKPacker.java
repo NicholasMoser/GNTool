@@ -2,30 +2,20 @@ package com.github.nicholasmoser;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
+import com.github.nicholasmoser.GNTFileProtos.GNTFile;
+import com.github.nicholasmoser.utils.ByteUtils;
+import com.github.nicholasmoser.utils.FPKUtils;
+import com.google.common.primitives.Bytes;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
-import com.github.nicholasmoser.gnt4.GNT4ModReady;
-import com.github.nicholasmoser.utils.ByteUtils;
-import com.google.common.primitives.Bytes;
 
 /**
  * Packs FPK files. This includes compressing them with the Eighting PRS algorithm and modding the
@@ -126,7 +116,6 @@ public class FPKPacker {
     List<GNTChildFile> fpkChildren = fpk.getGntChildFileList();
     List<FPKFile> newFPKs = new ArrayList<>(fpkChildren.size());
     for (GNTChildFile child : fpkChildren) {
-      //String modReadyPath = GNT4ModReady.toModReadyPath(child.getFilePath());
       byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(child.getFilePath()));
       byte[] output;
 
@@ -139,7 +128,7 @@ public class FPKPacker {
 
       // Set the offset to -1 for now, we cannot figure it out until we have all of
       // the files
-      String shiftJisPath = encodeShiftJis(child.getCompressedPath());
+      String shiftJisPath = ByteUtils.encodeShiftJis(child.getCompressedPath());
       FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length);
       newFPKs.add(new FPKFile(header, output));
       LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
@@ -162,7 +151,7 @@ public class FPKPacker {
     }
 
     // FPK Header
-    byte[] fpkBytes = createFPKHeader(newFPKs.size(), outputSize);
+    byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize);
     // File headers
     for (FPKFile file : newFPKs) {
       fpkBytes = Bytes.concat(fpkBytes, file.getHeader().getBytes());
@@ -177,36 +166,5 @@ public class FPKPacker {
     }
     Files.write(outputFPK, fpkBytes);
     return outputFPK;
-  }
-
-  /**
-   * Encodes the given String of text into shift-jis. This is necessary for GNT4 paths since the ISO
-   * expects them to be in shift-jis encoding.
-   *
-   * @param text The text to encode to shift-jis.
-   * @return The shift-jis encoded text.
-   * @throws CharacterCodingException If the text cannot be encoded/decoded as shift-jis.
-   */
-  private String encodeShiftJis(String text) throws CharacterCodingException {
-    Charset charset = Charset.forName("shift-jis");
-    CharsetDecoder decoder = charset.newDecoder();
-    CharsetEncoder encoder = charset.newEncoder();
-    ByteBuffer bbuf = encoder.encode(CharBuffer.wrap(text));
-    CharBuffer cbuf = decoder.decode(bbuf);
-    return cbuf.toString();
-  }
-
-  /**
-   * Returns the header of the FPK file. The first four bytes are zeroes. The next four are the
-   * number of files. The next four is the size of this header, which is always 16. The last is the
-   * output size of the whole FPK file. The byte array returned will always be 16 bytes exactly.
-   *
-   * @param numberOfFiles The number of files being packed.
-   * @param outputSize    The total size of the FPK file, including this header.
-   * @return The FPK header.
-   */
-  private static byte[] createFPKHeader(int numberOfFiles, int outputSize) {
-    return Bytes.concat(ByteUtils.fromUint32(0), ByteUtils.fromUint32(numberOfFiles),
-        ByteUtils.fromUint32(16), ByteUtils.fromUint32(outputSize));
   }
 }
