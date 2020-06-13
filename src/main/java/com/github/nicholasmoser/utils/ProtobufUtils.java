@@ -89,7 +89,7 @@ public class ProtobufUtils {
 
       List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
-        fpkHeaders.add(FPKUtils.readFPKFileHeader(is));
+        fpkHeaders.add(FPKUtils.readGCFPKFileHeader(is));
         bytesRead += 32;
       }
 

@@ -1,7 +1,5 @@
 package com.github.nicholasmoser.gnt4;
 
-import com.google.common.base.Verify;
-
 /**
  * Class to handle making the GNT4 files mod ready. Mod ready in this case means that it can be run
  * as-is in Dolphin. GNT4 was programmed to be able to be run both with the files compressed into

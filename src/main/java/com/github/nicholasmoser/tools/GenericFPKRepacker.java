@@ -31,22 +31,50 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * A tool to repack FPK files.
+ */
 public class GenericFPKRepacker {
 
   private static final Logger LOGGER = Logger.getLogger(GenericFPKRepacker.class.getName());
 
   private static File currentDirectory = GNTool.USER_HOME;
 
-  public static void genericFPKRepack() throws IOException {
+  /**
+   * Repack an FPK file on the GameCube.
+   *
+   * @throws IOException If there is an I/O related exception.
+   */
+  public static void genericFPKRepackGamecube() throws IOException {
     Optional<Path> optionalFPK = Choosers.getInputFPK(GNTool.USER_HOME);
     if (optionalFPK.isEmpty()) {
       return;
     }
-    List<FPKFileHeader> fpkHeaders = getFileHeaders(optionalFPK.get());
-    createRepackWindow(fpkHeaders);
+    List<FPKFileHeader> fpkHeaders = getGCFileHeaders(optionalFPK.get());
+    createRepackWindow(fpkHeaders, false);
   }
 
-  private static void createRepackWindow(List<FPKFileHeader> fpkHeaders) {
+  /**
+   * Repack an FPK file on the Wii.
+   *
+   * @throws IOException If there is an I/O related exception.
+   */
+  public static void genericFPKRepackWii() throws IOException {
+    Optional<Path> optionalFPK = Choosers.getInputFPK(GNTool.USER_HOME);
+    if (optionalFPK.isEmpty()) {
+      return;
+    }
+    List<FPKFileHeader> fpkHeaders = getWiiFileHeaders(optionalFPK.get());
+    createRepackWindow(fpkHeaders, true);
+  }
+
+  /**
+   * Creates an FPK repack window with each FPK file entry.
+   *
+   * @param fpkHeaders The list of FPK file entry headers.
+   * @param isWii Whether the FPK is Wii or not (GameCube otherwise).
+   */
+  private static void createRepackWindow(List<FPKFileHeader> fpkHeaders, boolean isWii) {
     int numHeaders = fpkHeaders.size();
     Stage stage = new Stage();
     GUIUtils.setIcons(stage);
@@ -101,14 +129,14 @@ public class GenericFPKRepacker {
       if (outputFPK.isEmpty()) {
         return;
       }
-      repackFPK(fpkHeaders, filePaths, outputFPK.get());
+      repackFPK(fpkHeaders, filePaths, outputFPK.get(), isWii);
     });
 
     // Configure the rest of the stage and scene
     repackButton.setFont(new Font(24));
     buttonPane.add(repackButton, 1, numHeaders);
     ScrollPane scrollPane = new ScrollPane();
-    scrollPane.setPrefSize(640, 400);
+    scrollPane.setPrefSize(800, 600);
     buttonPane.setVgap(10);
     buttonPane.setHgap(10);
     buttonPane.setPadding(new Insets(12, 12, 12, 12));
@@ -130,7 +158,7 @@ public class GenericFPKRepacker {
    * @param outputFPK  The output FPK.
    */
   private static void repackFPK(List<FPKFileHeader> fpkHeaders, List<String> filePaths,
-      Path outputFPK) {
+      Path outputFPK, boolean isWii) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() {
@@ -153,7 +181,7 @@ public class GenericFPKRepacker {
             // Set the offset to -1 for now, we cannot figure it out until we have all of
             // the files
             FPKFileHeader newHeader = new FPKFileHeader(header.getFileName(), output.length,
-                input.length);
+                input.length, isWii);
             newFPKs.add(new FPKFile(newHeader, output));
             LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
                 filePath, input.length, output.length));
@@ -161,7 +189,11 @@ public class GenericFPKRepacker {
           updateMessage("Writing FPK...");
 
           int outputSize = 16; // FPK header is 16 bytes so start with that.
-          outputSize += newFPKs.size() * 32; // Each FPK file header is 32 bytes
+          if (isWii) {
+            outputSize += newFPKs.size() * 48; // Each Wii FPK file header is 48 bytes
+          } else {
+            outputSize += newFPKs.size() * 32; // Each GameCube FPK file header is 32 bytes
+          }
           for (FPKFile file : newFPKs) {
             FPKFileHeader header = file.getHeader();
             header.setOffset(outputSize);
@@ -207,18 +239,36 @@ public class GenericFPKRepacker {
   }
 
   /**
-   * Get the list of file headers from an FPK at the given path.
+   * Get the list of file headers from a GameCube FPK at the given path.
    *
    * @param fpkPath The path to the FPK.
    * @return The FPK file headers.
    * @throws IOException If there is an exception relating to the FPK file input.
    */
-  private static List<FPKFileHeader> getFileHeaders(Path fpkPath) throws IOException {
+  private static List<FPKFileHeader> getGCFileHeaders(Path fpkPath) throws IOException {
     try (InputStream is = Files.newInputStream(fpkPath)) {
       int fileCount = FPKUtils.readFPKHeader(is);
       List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
-        fpkHeaders.add(FPKUtils.readFPKFileHeader(is));
+        fpkHeaders.add(FPKUtils.readGCFPKFileHeader(is));
+      }
+      return fpkHeaders;
+    }
+  }
+
+  /**
+   * Get the list of file headers from a Wii FPK at the given path.
+   *
+   * @param fpkPath The path to the FPK.
+   * @return The FPK file headers.
+   * @throws IOException If there is an exception relating to the FPK file input.
+   */
+  private static List<FPKFileHeader> getWiiFileHeaders(Path fpkPath) throws IOException {
+    try (InputStream is = Files.newInputStream(fpkPath)) {
+      int fileCount = FPKUtils.readFPKHeader(is);
+      List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
+      for (int i = 0; i < fileCount; i++) {
+        fpkHeaders.add(FPKUtils.readWiiFPKFileHeader(is));
       }
       return fpkHeaders;
     }

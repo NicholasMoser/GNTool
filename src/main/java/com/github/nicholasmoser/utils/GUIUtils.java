@@ -72,7 +72,7 @@ public class GUIUtils {
     flow.add(progressIndicator, 0, 1);
     flow.setStyle(BORDER);
 
-    Scene dialogScene = new Scene(flow, 300, 200);
+    Scene dialogScene = new Scene(flow, 450, 200);
     loadingWindow.setScene(dialogScene);
     loadingWindow.show();
 

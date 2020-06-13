@@ -1,8 +1,6 @@
 package com.github.nicholasmoser.utils;
 
-import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.FPKFileHeader;
-import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.PRSUncompressor;
 import com.google.common.primitives.Bytes;
 import java.io.IOException;
@@ -11,9 +9,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class FPKUtils {
 
@@ -41,16 +36,16 @@ public class FPKUtils {
   }
 
   /**
-   * Reads an individual file header from the FPK file. This will return the relevant FPKFileHeader
-   * object. Make sure to only call this method once you have already read the FPK header (first 16
-   * bytes of the file). You will want to call this equivalent to the number of files contained in
-   * the FPK file. This method will always read exactly 32 bytes.
+   * Reads an individual file header from a GameCube FPK file. This will return the relevant
+   * FPKFileHeader object. Make sure to only call this method once you have already read the FPK
+   * header (first 16 bytes of the file). You will want to call this equivalent to the number of
+   * files contained in the FPK file. This method will always read exactly 32 bytes.
    *
    * @param is The input stream to read it from.
    * @return The number of files in the FPK file.
    * @throws IOException If there is an exception relating to the FPK file input.
    */
-  public static FPKFileHeader readFPKFileHeader(InputStream is) throws IOException {
+  public static FPKFileHeader readGCFPKFileHeader(InputStream is) throws IOException {
     byte[] fileNameWord = new byte[16];
     byte[] offsetWord = new byte[4];
     byte[] compressedSizeWord = new byte[4];
@@ -74,7 +69,44 @@ public class FPKUtils {
     int offset = ByteBuffer.wrap(offsetWord).getInt();
     int compressedSize = ByteBuffer.wrap(compressedSizeWord).getInt();
     int uncompressedSize = ByteBuffer.wrap(uncompressedSizeWord).getInt();
-    return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize);
+    return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize, false);
+  }
+
+  /**
+   * Reads an individual file header from a Wii FPK file. This will return the relevant
+   * FPKFileHeader object. Make sure to only call this method once you have already read the FPK
+   * header (first 16 bytes of the file). You will want to call this equivalent to the number of
+   * files contained in the FPK file. This method will always read exactly 48 bytes.
+   *
+   * @param is The input stream to read it from.
+   * @return The number of files in the FPK file.
+   * @throws IOException If there is an exception relating to the FPK file input.
+   */
+  public static FPKFileHeader readWiiFPKFileHeader(InputStream is) throws IOException {
+    byte[] fileNameWord = new byte[32];
+    byte[] offsetWord = new byte[4];
+    byte[] compressedSizeWord = new byte[4];
+    byte[] uncompressedSizeWord = new byte[4];
+    if (is.read(fileNameWord) != 32) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.skip(4) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.read(offsetWord) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.read(compressedSizeWord) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    if (is.read(uncompressedSizeWord) != 4) {
+      throw new IOException("Unable to read FPK header.");
+    }
+    String fileName = new String(fileNameWord, Charset.forName("Shift_JIS")).trim();
+    int offset = ByteBuffer.wrap(offsetWord).getInt();
+    int compressedSize = ByteBuffer.wrap(compressedSizeWord).getInt();
+    int uncompressedSize = ByteBuffer.wrap(uncompressedSizeWord).getInt();
+    return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize, true);
   }
 
   /**
@@ -90,7 +122,7 @@ public class FPKUtils {
       int fileCount = readFPKHeader(is);
       int bytesRead = 16;
       for (int i = 0; i < fileCount; i++) {
-        FPKFileHeader header = readFPKFileHeader(is);
+        FPKFileHeader header = readGCFPKFileHeader(is);
         bytesRead += 32;
         if (child.equals(header.getFileName())) {
           int bytesToSkip = header.getOffset() - bytesRead;

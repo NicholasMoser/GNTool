@@ -13,6 +13,8 @@ public class FPKFileHeader {
 
   private final int uncompressedSize;
 
+  private final boolean isWii;
+
   /**
    * Creates an FPK file header.
    * 
@@ -20,12 +22,14 @@ public class FPKFileHeader {
    * @param offset The offset to the file.
    * @param compressedSize The size of the file when compressed.
    * @param uncompressedSize The size of the file when uncompressed.
+   * @param isWii Whether or not this FPK file is for the Wii (GameCube otherwise).
    */
-  public FPKFileHeader(String fileName, int offset, int compressedSize, int uncompressedSize) {
+  public FPKFileHeader(String fileName, int offset, int compressedSize, int uncompressedSize, boolean isWii) {
     this.fileName = fileName;
     this.offset = offset;
     this.compressedSize = compressedSize;
     this.uncompressedSize = uncompressedSize;
+    this.isWii = isWii;
   }
 
   /**
@@ -35,11 +39,12 @@ public class FPKFileHeader {
    * @param compressedSize The size of the file when compressed.
    * @param uncompressedSize The size of the file when uncompressed.
    */
-  public FPKFileHeader(String fileName, int compressedSize, int uncompressedSize) {
+  public FPKFileHeader(String fileName, int compressedSize, int uncompressedSize, boolean isWii) {
     this.fileName = fileName;
     this.offset = -1;
     this.compressedSize = compressedSize;
     this.uncompressedSize = uncompressedSize;
+    this.isWii = isWii;
   }
 
   /**
@@ -83,13 +88,15 @@ public class FPKFileHeader {
   }
 
   /**
-   * @return a byte array of the file header. This will always be 32 bytes exactly.
+   * @return a byte array of the file header. This will be 48 bytes for Wii FPKs and 32 for
+   * GameCube FPKs.
    */
   public byte[] getBytes() {
     byte[] fileNameBytes = ByteUtils.fromString(fileName);
-    // Need to pad with zeroes if the name is not a full 16 bytes.
-    if (fileNameBytes.length < 16) {
-      int difference = 16 - fileNameBytes.length;
+    // Need to pad with zeroes if the name is not a full 16 bytes on GameCube and 32 bytes on Wii.
+    int fullLength = isWii ? 32 : 16;
+    if (fileNameBytes.length < fullLength) {
+      int difference = fullLength - fileNameBytes.length;
       fileNameBytes = Bytes.concat(fileNameBytes, new byte[difference]);
     }
     return Bytes.concat(fileNameBytes, ByteUtils.fromUint32(0), ByteUtils.fromUint32(offset),
