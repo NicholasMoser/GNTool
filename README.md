@@ -2,7 +2,7 @@
 
 ![GNTool Logo](/docs/logo.png?raw=true "GNTool Logo")
 
-This program allows you to modify files contained inside .FPK files for Naruto GNT4. [FPK files](https://github.com/NicholasMoser/Naruto-GNT-Hacking/blob/master/gnt4/docs/file_formats/fpk.md) are archives that contain various game related files. Each entry is compressed with an Eighting specific PRS compression algorithm. This tool can both unpack and repack FPK files with any changes that you've made.
+This program contains tools that allow you to modify the Naruto GNT/Clash of Ninja games. Primarily, it allows you to modify files contained inside .FPK files for Naruto GNT4. [FPK files](https://github.com/NicholasMoser/Naruto-GNT-Hacking/blob/master/gnt4/docs/file_formats/fpk.md) are archives that contain various game related files. Each entry is compressed with an Eighting specific PRS compression algorithm. This tool can both unpack and repack FPK files with any changes that you've made. Also contained are other generic tools such as a generic ISO extractor and FPK repacker.
 
 ## Table of Contents
 
@@ -55,6 +55,22 @@ You can build ISOs by selecting *Build ISO* under the File menu at the top. It i
 * The compression algorithm used by GNTool does not match Eighting's, therefore newly compressed files may be larger than they otherwise would be.
 
 ### Features
+
+#### Tools
+
+In the main menu of GNTool, you can click on the wrench icon to open the list of generic tools. These are tools that can be used across a variety of games.
+
+#### FPK Repacker (GameCube)
+
+This allows you to repack an FPK file for any Eighting title on the GameCube.
+
+#### FPK Repacker (Wii)
+
+This allows you to repack an FPK file for any Eighting title on the Wii.
+
+#### ISO Extractor (GameCube)
+
+This allows you to extract the files from any GameCube ISO.
 
 #### Audio Fix
 
