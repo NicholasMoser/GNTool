@@ -13,6 +13,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
+/**
+ * UI controller for the list of tools.
+ */
 public class ToolController {
 
   private static final Logger LOGGER = Logger.getLogger(ToolController.class.getName());
@@ -24,6 +27,9 @@ public class ToolController {
   @FXML
   private ListView<String> tools;
 
+  /**
+   * Initialize the list of tools.
+   */
   public void init() {
     List<String> items = tools.getItems();
     items.add(FPK_REPACKER_GC);
