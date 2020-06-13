@@ -34,9 +34,9 @@ import javafx.stage.Stage;
 /**
  * A tool to repack FPK files.
  */
-public class GenericFPKRepacker {
+public class FPKRepackerTool {
 
-  private static final Logger LOGGER = Logger.getLogger(GenericFPKRepacker.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(FPKRepackerTool.class.getName());
 
   private static File currentDirectory = GNTool.USER_HOME;
 
@@ -45,7 +45,7 @@ public class GenericFPKRepacker {
    *
    * @throws IOException If there is an I/O related exception.
    */
-  public static void genericFPKRepackGamecube() throws IOException {
+  public static void repackGamecubeFPK() throws IOException {
     Optional<Path> optionalFPK = Choosers.getInputFPK(GNTool.USER_HOME);
     if (optionalFPK.isEmpty()) {
       return;
@@ -59,7 +59,7 @@ public class GenericFPKRepacker {
    *
    * @throws IOException If there is an I/O related exception.
    */
-  public static void genericFPKRepackWii() throws IOException {
+  public static void repackWiiFPK() throws IOException {
     Optional<Path> optionalFPK = Choosers.getInputFPK(GNTool.USER_HOME);
     if (optionalFPK.isEmpty()) {
       return;
