@@ -12,7 +12,7 @@ import com.github.nicholasmoser.FPKFileHeader;
 import com.github.nicholasmoser.GNTFileProtos;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.PRSUncompressor;
-import com.github.nicholasmoser.gnt4.GNT4ModReady;
+import com.github.nicholasmoser.gnt4.GNT4FileNames;
 
 public class ProtobufUtils {
 
@@ -96,7 +96,7 @@ public class ProtobufUtils {
       for (FPKFileHeader header : fpkHeaders) {
         GNTFileProtos.GNTChildFile.Builder builder = GNTFileProtos.GNTChildFile.newBuilder();
         String compressedFilePath = header.getFileName();
-        String childPath = GNT4ModReady.fixBrokenFileName(compressedFilePath);
+        String childPath = new GNT4FileNames().fix(compressedFilePath);
         int offset = header.getOffset();
         int compressedSize = header.getCompressedSize();
         int uncompressedSize = header.getUncompressedSize();

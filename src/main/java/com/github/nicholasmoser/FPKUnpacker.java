@@ -1,92 +1,124 @@
 package com.github.nicholasmoser;
 
-import com.github.nicholasmoser.gnt4.GNT4ModReady;
+import com.github.nicholasmoser.fpk.FileNames;
 import com.github.nicholasmoser.utils.FPKUtils;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
- * Unpacks FPK files. This includes uncompressing them with the Eighting PRS algorithm.
+ * Class for unpacking fpk files. Fpk files are compressed archives of files used by Eighting that
+ * use a proprietary PRS based compression algorithm. This class can be used as an object to unpack
+ * an entire directory or to simply unpack a single fpk file. An optional file names object is used
+ * for cases where the file name in the fpk is truncated and must be fixed.
  */
 public class FPKUnpacker {
 
   private static final Logger LOGGER = Logger.getLogger(FPKUnpacker.class.getName());
 
-  private final Path inputDirectory;
+  Path inputDirectory;
+  Path filesDirectory;
+  Optional<FileNames> fileNames;
+  boolean isWii;
 
-  public FPKUnpacker(Path inputDirectory) {
+  /**
+   * Create a new FPKUnpacker object to unpack an entire directory.
+   *
+   * @param inputDirectory The input directory to unpack.
+   * @param fileNames      The optional list of file names to fix for the unpacking.
+   * @param isWii          Whether this fpk file is for the Wii or not (GameCube otherwise).
+   */
+  public FPKUnpacker(Path inputDirectory, Optional<FileNames> fileNames, boolean isWii) {
+    if (!Files.isDirectory(inputDirectory)) {
+      throw new IllegalArgumentException(inputDirectory + " is not a directory.");
+    }
     this.inputDirectory = inputDirectory;
+    this.filesDirectory = inputDirectory.resolve("files");
+    this.fileNames = fileNames;
+    this.isWii = isWii;
   }
 
   /**
-   * Unpacks and uncompresses FPK files. First will prompt the user for an input and output
-   * directory. The input directory will be copied to the output directory and then each FPK file
-   * will have the contained files inside of it unpacked to their relative directories. This will
-   * uncompress the files from their Eighting PRS compressed format.
+   * Unpacks all fpks in the input directory. The contents will be stored in the "files" directory
+   * in the input directory. The "fpack" directory in the "files" directory will be deleted upon
+   * completion.
    *
-   * @throws IOException If there is an IO error with the FPK file or its extracted children.
+   * @throws IOException If there is an I/O related exception.
    */
-  public void unpack() throws IOException {
+  public void unpackDirectory() throws IOException {
     LOGGER.info("Unpacking FPKs...");
-    extractDirectory(inputDirectory.toFile());
-    MoreFiles.deleteRecursively(inputDirectory.resolve("files/fpack"), RecursiveDeleteOption.ALLOW_INSECURE);
+    extractDirectory(inputDirectory);
+    MoreFiles.deleteRecursively(inputDirectory.resolve("files/fpack"),
+        RecursiveDeleteOption.ALLOW_INSECURE);
     LOGGER.info("Finished unpacking FPKs.");
   }
 
   /**
-   * A recursive method to extract and uncompress the files inside an FPK from a given directory.
-   * This method will call itself recursively for each directory it encounters.
+   * Extracts and uncompresses the files inside an FPK from a given directory recursively.
    *
    * @param directory The directory to search and extract from.
-   * @throws IOException If there is an IO error with the FPK file or its extracted children.
+   * @throws IOException If there is an I/O related exception.
    */
-  private void extractDirectory(File directory) throws IOException {
-    File[] files = directory.listFiles();
-    if (files == null) {
-      return;
-    }
-    for (File fileEntry : files) {
-      if (fileEntry.isDirectory()) {
-        extractDirectory(fileEntry);
-      } else {
-        String fileName = fileEntry.getName();
-        if (fileName.endsWith(".fpk")) {
-          extractFPK(Paths.get(directory.getAbsolutePath()).resolve(fileName));
-        }
-      }
+  private void extractDirectory(Path directory) throws IOException {
+    try (Stream<Path> paths = Files.list(directory)) {
+      paths.forEach(path -> {
+            try {
+              if (Files.isDirectory(path)) {
+                extractDirectory(path);
+              } else {
+                if (path.toString().toLowerCase().endsWith(".fpk")) {
+                  extractFPK(path, filesDirectory, fileNames, isWii);
+                }
+              }
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          }
+      );
     }
   }
 
+
   /**
-   * Opens the given FPK file and extracts it contents. This includes uncompressing them from
-   * Eighting PRS compression.
+   * Extracts the given Wii or GameCube fpk file to the given output directory path.
    *
-   * @param filePath The FPK file to extract.
-   * @throws IOException If there is an IO error with the FPK file or its extracted children.
+   * @param fpkPath         The path to the fpk file.
+   * @param outputDirectory The path to the output directory.
+   * @param fileNames       The file names fixer for the respective game.
+   * @param isWii           If the fpk is a Wii fpk or not (GameCube otherwise).
+   * @throws IOException If there is an I/O related exception.
    */
-  private void extractFPK(Path filePath) throws IOException {
+  public static void extractFPK(Path fpkPath, Path outputDirectory, Optional<FileNames> fileNames,
+      boolean isWii) throws IOException {
     int bytesRead = 0;
-    try (InputStream is = Files.newInputStream(filePath)) {
+    try (InputStream is = Files.newInputStream(fpkPath)) {
       int fileCount = FPKUtils.readFPKHeader(is);
       bytesRead += 16;
 
       List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
-        fpkHeaders.add(FPKUtils.readGCFPKFileHeader(is));
-        bytesRead += 32;
+        if (isWii) {
+          fpkHeaders.add(FPKUtils.readWiiFPKFileHeader(is));
+          bytesRead += 48;
+        } else {
+          fpkHeaders.add(FPKUtils.readGCFPKFileHeader(is));
+          bytesRead += 32;
+        }
       }
 
       for (FPKFileHeader header : fpkHeaders) {
-        String fileName = GNT4ModReady.fixBrokenFileName(header.getFileName());
+        String fileName = header.getFileName();
+        if (fileNames.isPresent()) {
+          fileName = fileNames.get().fix(fileName);
+        }
         int offset = header.getOffset();
         int compressedSize = header.getCompressedSize();
         int uncompressedSize = header.getUncompressedSize();
@@ -109,8 +141,7 @@ public class FPKUnpacker {
         bytesRead += compressedSize;
 
         // Create directories from fileName and get output directory
-        Path filesPath = inputDirectory.resolve("files");
-        Path outputFilePath = filesPath.resolve(fileName);
+        Path outputFilePath = outputDirectory.resolve(fileName);
         Files.createDirectories(outputFilePath.getParent());
 
         // Files with the same compressed and uncompressed size are not compressed

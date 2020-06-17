@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -219,6 +220,7 @@ public class FPKRepackerTool {
           }
           Files.write(outputFPK, fpkBytes);
         } catch (IOException ex) {
+          LOGGER.log(Level.SEVERE, "Error", ex);
           throw new RuntimeException(ex);
         }
         updateMessage("Complete");

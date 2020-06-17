@@ -1,6 +1,7 @@
 package com.github.nicholasmoser;
 
 import com.github.nicholasmoser.tools.FPKRepackerTool;
+import com.github.nicholasmoser.tools.FPKUnpackerTool;
 import com.github.nicholasmoser.tools.ISOExtractorTool;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,9 +21,11 @@ public class ToolController {
 
   private static final Logger LOGGER = Logger.getLogger(ToolController.class.getName());
 
+  private static final String ISO_EXTRACTOR_GC = "ISO Extractor (GameCube)";
+  private static final String FPK_UNPACKER_GC = "FPK Unpacker (GameCube)";
+  private static final String FPK_UNPACKER_WII = "FPK Unpacker (Wii)";
   private static final String FPK_REPACKER_GC = "FPK Repacker (GameCube)";
   private static final String FPK_REPACKER_WII = "FPK Repacker (Wii)";
-  private static final String ISO_EXTRACTOR_GC = "ISO Extractor (GameCube)";
 
   @FXML
   private ListView<String> tools;
@@ -32,9 +35,11 @@ public class ToolController {
    */
   public void init() {
     List<String> items = tools.getItems();
+    items.add(ISO_EXTRACTOR_GC);
+    items.add(FPK_UNPACKER_GC);
+    items.add(FPK_UNPACKER_WII);
     items.add(FPK_REPACKER_GC);
     items.add(FPK_REPACKER_WII);
-    items.add(ISO_EXTRACTOR_GC);
   }
 
   @FXML
@@ -70,6 +75,12 @@ public class ToolController {
           break;
         case ISO_EXTRACTOR_GC:
           ISOExtractorTool.extractGameCubeISO();
+          break;
+        case FPK_UNPACKER_GC:
+          FPKUnpackerTool.unpackGamecubeFPK();
+          break;
+        case FPK_UNPACKER_WII:
+          FPKUnpackerTool.unpackWiiFPK();
           break;
       }
     } catch (Exception e) {

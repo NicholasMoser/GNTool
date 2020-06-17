@@ -1,10 +1,14 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.github.nicholasmoser.fpk.FileNames;
 import com.github.nicholasmoser.utils.FileUtils;
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
+import java.util.Optional;
 import com.github.nicholasmoser.Extractor;
 import com.github.nicholasmoser.FPKUnpacker;
 import com.github.nicholasmoser.Workspace;
@@ -58,8 +62,9 @@ public class GNT4Extractor implements Extractor {
       Path uncompressed = extractionPath.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
       LOGGER.info(String.format("Copying %s to %s", compressed, uncompressed));
       FileUtils.copyFolder(compressed, uncompressed);
-      FPKUnpacker unpacker = new FPKUnpacker(uncompressed);
-      unpacker.unpack();
+      Optional<FileNames> gnt4FileNames = Optional.of(new GNT4FileNames());
+      FPKUnpacker unpacker = new FPKUnpacker(uncompressed, gnt4FileNames, false);
+      unpacker.unpackDirectory();
       unpacked = true;
     }
     return new GNT4Workspace(extractionPath);
