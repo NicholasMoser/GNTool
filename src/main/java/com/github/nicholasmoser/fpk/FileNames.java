@@ -1,5 +1,8 @@
 package com.github.nicholasmoser.fpk;
 
+/**
+ * File names used to fix truncated file names in compressed fpk files.
+ */
 public interface FileNames {
-  public String fix(String fileName);
+  String fix(String fileName);
 }
