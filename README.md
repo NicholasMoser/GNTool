@@ -58,7 +58,19 @@ You can build ISOs by selecting *Build ISO* under the File menu at the top. It i
 
 #### Tools
 
+#### ISO Extractor (GameCube)
+
+This allows you to extract the files from any GameCube ISO.
+
 In the main menu of GNTool, you can click on the wrench icon to open the list of generic tools. These are tools that can be used across a variety of games.
+
+#### FPK Unpacker (GameCube)
+
+This allows you to unpack an FPK file for any Eighting title on the GameCube.
+
+#### FPK Unpacker (Wii)
+
+This allows you to unpack an FPK file for any Eighting title on the Wii.
 
 #### FPK Repacker (GameCube)
 
@@ -67,10 +79,6 @@ This allows you to repack an FPK file for any Eighting title on the GameCube.
 #### FPK Repacker (Wii)
 
 This allows you to repack an FPK file for any Eighting title on the Wii.
-
-#### ISO Extractor (GameCube)
-
-This allows you to extract the files from any GameCube ISO.
 
 #### Audio Fix
 
