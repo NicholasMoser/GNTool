@@ -210,8 +210,26 @@ public class ByteUtils {
    */
   public static long readUint32(RandomAccessFile raf) throws IOException {
     byte[] bytes = new byte[4];
-    raf.read(bytes);
+    if (raf.read(bytes) != 4) {
+      throw new IOException("Failed to read uint32 from file at offset " + raf.getFilePointer());
+    }
     return toUint32(bytes);
+  }
+
+  /**
+   * Reads a number of big-endian uint32 values (as longs) from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The uint32 values (as longs).
+   * @throws IOException If an I/O error occurs.
+   */
+  public static long[] readUint32s(RandomAccessFile raf, int num) throws IOException {
+    long[] values = new long[num];
+    for (int i = 0; i < num; i++) {
+      long value = ByteUtils.readUint32(raf);
+      values[i] = value;
+    }
+    return values;
   }
 
   /**
