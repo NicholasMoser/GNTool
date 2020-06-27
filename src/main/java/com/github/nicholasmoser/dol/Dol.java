@@ -28,6 +28,65 @@ import java.nio.file.Path;
  * for the operating system and the loader.
  * <p>
  * For more info see http://wiki.tockdom.com/wiki/DOL_(File_Format)
+ * <p>
+ *   <table border="1">
+ *   <tr>
+ *     <td>.init</td>
+ *     <td>Code which will be executed when program initializes.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.text</td>
+ *     <td>User's executable code.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>extab</td>
+ *     <td>Read only C++ Exception Tables </td>
+ *   </tr>
+ *   <tr>
+ *     <td>extabindex</td>
+ *     <td>Read only C++ Exception Tables.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.ctors</td>
+ *     <td>Pointers to functions which are marked as __attribute__ ((constructor)) as well as
+ *     static C++ objects' constructors.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.dtors</td>
+ *     <td>Pointers to functions which are marked as __attribute__ ((destructor)) as well as
+ *     static C++ objects' destructors.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.rodata</td>
+ *     <td>Read-only data.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.data</td>
+ *     <td>Initialized data.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.sdata</td>
+ *     <td>Holds small initialized modifiable data that contribute to the program memory image.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.sdata2</td>
+ *     <td>PPC embedded small initialized data.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.bss</td>
+ *     <td>Read/write initialized (zeroed) data.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.sbss</td>
+ *     <td>Small initialized (zeroed) data.</td>
+ *   </tr>
+ *   <tr>
+ *     <td>.sbss2</td>
+ *     <td>PPC embedded small initialized (zeroed) data.</td>
+ *   </tr>
+ * </table>
+ * <p>
+ * For more info see https://www.nxp.com/docs/en/application-note/PPCEABI.pdf
  */
 public class Dol {
 
