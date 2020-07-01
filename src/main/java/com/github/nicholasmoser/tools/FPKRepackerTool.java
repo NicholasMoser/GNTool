@@ -73,7 +73,7 @@ public class FPKRepackerTool {
    * Creates an FPK repack window with each FPK file entry.
    *
    * @param fpkHeaders The list of FPK file entry headers.
-   * @param isWii Whether the FPK is Wii or not (GameCube otherwise).
+   * @param isWii      Whether the FPK is Wii or not (GameCube otherwise).
    */
   private static void createRepackWindow(List<FPKFileHeader> fpkHeaders, boolean isWii) {
     int numHeaders = fpkHeaders.size();
@@ -110,6 +110,7 @@ public class FPKRepackerTool {
       // Validate file paths are filled out and exist
       for (int i = 0; i < numHeaders; i++) {
         Optional<Node> node = GUIUtils.getNodeFromGridPane(buttonPane, 1, i);
+
         if (node.isEmpty()) {
           throw new IllegalStateException("Unable to get node from GridPane.");
         }
@@ -133,9 +134,44 @@ public class FPKRepackerTool {
       repackFPK(fpkHeaders, filePaths, outputFPK.get(), isWii);
     });
 
+    // Load template button and accompanying logic
+    Button templateButton = new Button("Load Template");
+    templateButton.setOnAction(e -> {
+      Optional<Path> inputTxt = Choosers.getInputTxt(currentDirectory);
+      if (inputTxt.isEmpty()) {
+        return;
+      }
+      try {
+        Path txtPath = inputTxt.get();
+        List<String> lines = Files.readAllLines(txtPath);
+        LOGGER.info(String.format("Read %d lines from %s", lines.size(), txtPath));
+        for (int i = 0; i < lines.size(); i++) {
+          if (i >= numHeaders) {
+            String msg = "Template has too many lines, skipping lines after line " + numHeaders;
+            LOGGER.info(msg);
+            Message.info("Too Many Lines", msg);
+            break;
+          }
+          String line = lines.get(i);
+          Optional<Node> node = GUIUtils.getNodeFromGridPane(buttonPane, 1, i);
+
+          if (node.isEmpty()) {
+            throw new IllegalStateException("Unable to get node from GridPane.");
+          }
+          TextField textField = (TextField) node.get();
+          textField.setText(line.trim());
+        }
+
+      } catch (Exception ex) {
+        LOGGER.log(Level.SEVERE, "Error Reading Template", ex);
+        Message.error("Error Reading Template", "See the log for more information.");
+      }
+    });
+
     // Configure the rest of the stage and scene
     repackButton.setFont(new Font(24));
     buttonPane.add(repackButton, 1, numHeaders);
+    buttonPane.add(templateButton, 2, numHeaders);
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setPrefSize(800, 600);
     buttonPane.setVgap(10);
