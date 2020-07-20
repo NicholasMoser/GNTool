@@ -8,10 +8,12 @@ import java.nio.ShortBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class PRSCompare {
   @Test
+  @Disabled("This test is not ready to be used yet.")
   public void testCompare() throws Exception {
     if (!Platform.isWindows()) {
       System.out.println("Platforms other than Windows not supported for this test.");
