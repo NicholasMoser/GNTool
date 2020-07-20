@@ -162,7 +162,7 @@ public class GNTool extends Application {
       if (game == Game.GNT4) {
         try {
           Path directory = directoryResponse.get();
-          GameCubeISO.checkWorkspace(directory, game);
+          GameCubeISO.checkWorkspace(directory);
           Workspace workspace = new GNT4Workspace(directory);
           workspace.loadExistingState();
           WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
@@ -188,26 +188,13 @@ public class GNTool extends Application {
   private void createWorkspace(Game game) {
     Optional<Path> isoResponse = Choosers.getInputISO(USER_HOME);
     if (isoResponse.isPresent()) {
-      try {
-        Path iso = isoResponse.get();
-        String gameId = GameCubeISO.getGameId(iso);
-        if (game.getGameId().equals(gameId)) {
-          Optional<Path> workspaceResponse =
-              Choosers.getOutputWorkspaceDirectory(iso.getParent().toFile());
-          if (workspaceResponse.isPresent()) {
-            if (game == Game.GNT4) {
-              extract(new GNT4Extractor(iso, workspaceResponse.get()));
-            }
-          }
-        } else {
-          String message = String.format("%s Game ID does not match selected Game ID %s.", iso,
-              Game.GNT4.getGameId());
-          Message.error("Wrong Game ISO", message);
+      Path iso = isoResponse.get();
+      Optional<Path> workspaceResponse =
+          Choosers.getOutputWorkspaceDirectory(iso.getParent().toFile());
+      if (workspaceResponse.isPresent()) {
+        if (game == Game.GNT4) {
+          extract(new GNT4Extractor(iso, workspaceResponse.get()));
         }
-      } catch (IOException e) {
-        LOGGER.log(Level.SEVERE, "Issue with Opening ISO", e);
-        Message.error("Issue with Opening ISO",
-            "An error was encountered opening the selected ISO.");
       }
     }
   }
