@@ -76,9 +76,17 @@ This allows you to unpack an FPK file for any Eighting title on the Wii.
 
 This allows you to repack an FPK file for any Eighting title on the GameCube.
 
+There is an optional button at the bottom of the window titled **Load Template**. This button will
+allow you to load a .txt file with file paths separated by newlines. This allows quicker repacking
+for FPKs you intend to repack more than once.
+
 #### FPK Repacker (Wii)
 
 This allows you to repack an FPK file for any Eighting title on the Wii.
+
+There is an optional button at the bottom of the window titled **Load Template**. This button will
+allow you to load a .txt file with file paths separated by newlines. This allows quicker repacking
+for FPKs you intend to repack more than once.
 
 #### Audio Fix
 
