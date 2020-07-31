@@ -69,6 +69,12 @@ public class MenuController {
   private CheckBox skipCutscenesCode;
 
   @FXML
+  private CheckBox playAudioWhilePaused;
+
+  @FXML
+  private CheckBox noSlowDownOnKill;
+
+  @FXML
   private Spinner<Integer> cssInitialSpeed;
 
   @FXML
@@ -108,6 +114,46 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to trigger the audio fix code.", e);
       Message.error("Error Triggering Audio Fix Code", "See the log for more information.");
+    }
+  }
+
+  /**
+   * Toggles the code for playing audio while paused.
+   */
+  @FXML
+  protected void playAudioWhilePaused() {
+    try {
+      boolean selected = playAudioWhilePaused.isSelected();
+      GNT4Codes codes = GNT4Codes.getInstance();
+      if (selected) {
+        codes.activateAudioPlaysWhilePaused(uncompressedDirectory);
+      } else {
+        codes.inactivateAudioPlaysWhilePaused(uncompressedDirectory);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to trigger the play audio while paused code.", e);
+      Message.error("Error Triggering Play Audio While Paused Code",
+          "See the log for more information.");
+    }
+  }
+
+  /**
+   * Toggles the code for no slowdown on kill.
+   */
+  @FXML
+  protected void noSlowDownOnKill() {
+    try {
+      boolean selected = noSlowDownOnKill.isSelected();
+      GNT4Codes codes = GNT4Codes.getInstance();
+      if (selected) {
+        codes.activateNoSlowdownOnKillCode(uncompressedDirectory);
+      } else {
+        codes.inactivateNoSlowdownOnKillCode(uncompressedDirectory);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to trigger the no slowdown on kill code.", e);
+      Message
+          .error("Error Triggering No Slowdown On Kill Code", "See the log for more information.");
     }
   }
 
@@ -837,6 +883,18 @@ public class MenuController {
       demoTimeOut.getValueFactory().setValue(value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting title demo timeout.", e);
+    }
+    try {
+      boolean isActive = codes.isAudioPlaysWhilePausedActivated(uncompressedDirectory);
+      playAudioWhilePaused.setSelected(isActive);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error getting Play Audio While Paused Code.", e);
+    }
+    try {
+      boolean isActive = codes.isNoSlowdownOnKillActivated(uncompressedDirectory);
+      noSlowDownOnKill.setSelected(isActive);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error getting No Slowdown On Kill Code.", e);
     }
   }
 

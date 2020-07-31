@@ -81,6 +81,12 @@
               <Text layoutX="205.0" layoutY="270.0" strokeType="OUTSIDE"
                 strokeWidth="0.0" styleClass="text-id"
                 text="Main Menu Character"/>
+              <CheckBox fx:id="playAudioWhilePaused" layoutX="14.0"
+                layoutY="300.0" mnemonicParsing="false"
+                onAction="#playAudioWhilePaused" text="Play Audio While Paused"/>
+              <CheckBox fx:id="noSlowDownOnKill" layoutX="14.0"
+                layoutY="338.0" mnemonicParsing="false"
+                onAction="#noSlowDownOnKill" text="No Slow Down on Kill"/>
             </AnchorPane>
           </ScrollPane>
         </AnchorPane>

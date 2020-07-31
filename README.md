@@ -118,6 +118,14 @@ The main menu character for GNT4 can be changed. Normally it is Sakura, but you 
 
 Each character has a customized sound effect for when a menu option is selected. This can be further customized by changing the byte at offset `0x1BE67` in `files/maki/m_title.seq`. The description of each menu option will still be the original voice clips read by Sakura. The eye texture upon menu option selection is the 2nd texture in `3.tpl` of each character's `1300.txg` file. Some characters do not have a `3.tpl` or 2nd texture, so this will be created upon selecting the character in GNTool.
 
+#### Play Audio While Paused
+
+Continues playing background music when the game is paused.
+
+#### No Slow Down on Kill
+
+Avoids the slowdown when a player is killed in the game.
+
 ### Audio
 
 There are multiple settings related to audio. They can be found under the Audio tab in your workspace. Some of the tools require executables from the Nintendo GameCube SDK. You can find a copy of the SDK by searching online for it.

@@ -52,6 +52,14 @@ public class GNT4Codes {
   private final GNT4Code mainMenuCharacterHeight;
   private final GNT4Code mainMenuCharacterSound;
 
+  // https://github.com/NicholasMoser/GNTool#play-audio-while-paused
+  private final GNT4Code playAudioWhilePausedMissionMode;
+  private final GNT4Code playAudioWhilePausedTrainingMode;
+  private final GNT4Code playAudioWhilePausedOtherModes;
+
+  // https://github.com/NicholasMoser/GNTool#no-slow-down-on-kill
+  private final GNT4Code noSlowDownOnKill;
+
   /**
    * Private constructor to enforce singleton pattern.
    */
@@ -80,6 +88,14 @@ public class GNT4Codes {
     mainMenuCharacter = new GNT4Code(TITLE_SEQ, 0x1612C);
     mainMenuCharacterHeight = new GNT4Code(TITLE_SEQ, 0x161C3);
     mainMenuCharacterSound = new GNT4Code(TITLE_SEQ, 0x1BE67);
+    playAudioWhilePausedMissionMode = new GNT4Code(MAIN_DOL, 0x4412C, new byte[]{0x38, 0x60, 0x00, 0x00},
+        new byte[]{0x38, 0x60, (byte) 0xFF, (byte) 0xFF});
+    playAudioWhilePausedTrainingMode = new GNT4Code(MAIN_DOL, 0x41D28, new byte[]{0x38, 0x60, 0x00, 0x00},
+        new byte[]{0x38, 0x60, (byte) 0xFF, (byte) 0xFF});
+    playAudioWhilePausedOtherModes = new GNT4Code(MAIN_DOL, 0x447FC, new byte[]{0x38, 0x60, 0x00, 0x00},
+        new byte[]{0x38, 0x60, (byte) 0xFF, (byte) 0xFF});
+    noSlowDownOnKill = new GNT4Code(MAIN_DOL, 0x11868, new byte[]{(byte) 0xB0, 0x65, 0x00, 0x00},
+        new byte[]{0x60, 0x00, 0x00, 0x00});
   }
 
   /**
@@ -376,6 +392,107 @@ public class GNT4Codes {
         .withOverwrite(mainMenuCharacterSoundOffset, soundByte)
         .withOverwrite(mainMenuCharacterHeightOffset, heightByte)
         .execute(dolPath);
+  }
+
+  /**
+   * Returns whether or not the code to play audio while paused is activated.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public boolean isAudioPlaysWhilePausedActivated(Path uncompressedDirectory) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(MAIN_DOL);
+    int soundCheckOffset1 = playAudioWhilePausedMissionMode.getOffset();
+    byte[] bytes1 = readWord(dolPath, soundCheckOffset1);
+    byte[] patchedInstruction1 = playAudioWhilePausedMissionMode.getNewInstruction();
+    if (Arrays.equals(bytes1, patchedInstruction1)) {
+      int soundCheckOffset2 = playAudioWhilePausedOtherModes.getOffset();
+      byte[] bytes2 = readWord(dolPath, soundCheckOffset2);
+      byte[] patchedInstruction2 = playAudioWhilePausedOtherModes.getNewInstruction();
+      if (Arrays.equals(bytes2, patchedInstruction2)) {
+        int soundCheckOffset3 = playAudioWhilePausedTrainingMode.getOffset();
+        byte[] bytes3 = readWord(dolPath, soundCheckOffset3);
+        byte[] patchedInstruction3 = playAudioWhilePausedTrainingMode.getNewInstruction();
+        return Arrays.equals(bytes3, patchedInstruction3);
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Activates the code to play audio while paused.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void activateAudioPlaysWhilePaused(Path uncompressedDirectory) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(MAIN_DOL);
+    int firstCodeOffset = playAudioWhilePausedMissionMode.getOffset();
+    int secondCodeOffset = playAudioWhilePausedOtherModes.getOffset();
+    int thirdCodeOffset = playAudioWhilePausedTrainingMode.getOffset();
+    byte[] instruction = playAudioWhilePausedMissionMode.getNewInstruction();
+    Code.getBuilder().withOverwrite(firstCodeOffset, instruction)
+        .withOverwrite(secondCodeOffset, instruction)
+        .withOverwrite(thirdCodeOffset, instruction).execute(dolPath);
+  }
+
+  /**
+   * Inactivates the code to play audio while paused.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void inactivateAudioPlaysWhilePaused(Path uncompressedDirectory) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(MAIN_DOL);
+    int firstCodeOffset = playAudioWhilePausedMissionMode.getOffset();
+    int secondCodeOffset = playAudioWhilePausedOtherModes.getOffset();
+    int thirdCodeOffset = playAudioWhilePausedTrainingMode.getOffset();
+    byte[] firstInstruction = playAudioWhilePausedMissionMode.getOldInstruction();
+    byte[] secondInstruction = playAudioWhilePausedOtherModes.getOldInstruction();
+    byte[] thirdInstruction = playAudioWhilePausedTrainingMode.getOldInstruction();
+    Code.getBuilder().withOverwrite(firstCodeOffset, firstInstruction)
+        .withOverwrite(secondCodeOffset, secondInstruction)
+        .withOverwrite(thirdCodeOffset, thirdInstruction).execute(dolPath);
+  }
+
+  /**
+   * Returns whether or not the code for no slowdown on kill is activated.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public boolean isNoSlowdownOnKillActivated(Path uncompressedDirectory) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(noSlowDownOnKill.getFilePath());
+    int offset = noSlowDownOnKill.getOffset();
+    byte[] bytes = readWord(dolPath, offset);
+    byte[] patchedInstruction = noSlowDownOnKill.getNewInstruction();
+    return Arrays.equals(bytes, patchedInstruction);
+  }
+
+  /**
+   * Activates the code for no slowdown on kill.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void activateNoSlowdownOnKillCode(Path uncompressedDirectory) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(noSlowDownOnKill.getFilePath());
+    byte[] newInstruction = noSlowDownOnKill.getNewInstruction();
+    int offset = noSlowDownOnKill.getOffset();
+    Code.getBuilder().withOverwrite(offset, newInstruction).execute(dolPath);
+  }
+
+  /**
+   * Inactivates the code for no slowdown on kill.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void inactivateNoSlowdownOnKillCode(Path uncompressedDirectory) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(noSlowDownOnKill.getFilePath());
+    byte[] oldInstruction = noSlowDownOnKill.getOldInstruction();
+    int offset = noSlowDownOnKill.getOffset();
+    Code.getBuilder().withOverwrite(offset, oldInstruction).execute(dolPath);
   }
 
   /**
