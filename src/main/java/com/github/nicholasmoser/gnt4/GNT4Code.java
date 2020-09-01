@@ -1,5 +1,8 @@
 package com.github.nicholasmoser.gnt4;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * An immutable POJO for a GNT4Code. If it is a code change it will have both an old instruction
  * and a new instruction.
@@ -60,5 +63,28 @@ public class GNT4Code {
    */
   public byte[] getNewInstruction() {
     return newInstruction;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    GNT4Code gnt4Code = (GNT4Code) o;
+    return offset == gnt4Code.offset &&
+        Objects.equals(filePath, gnt4Code.filePath) &&
+        Arrays.equals(oldInstruction, gnt4Code.oldInstruction) &&
+        Arrays.equals(newInstruction, gnt4Code.newInstruction);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(filePath, offset);
+    result = 31 * result + Arrays.hashCode(oldInstruction);
+    result = 31 * result + Arrays.hashCode(newInstruction);
+    return result;
   }
 }

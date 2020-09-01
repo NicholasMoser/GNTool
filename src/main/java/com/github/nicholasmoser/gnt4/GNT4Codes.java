@@ -1,13 +1,17 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.github.nicholasmoser.Code;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import com.github.nicholasmoser.Code;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,6 +64,29 @@ public class GNT4Codes {
   // https://github.com/NicholasMoser/GNTool#no-slow-down-on-kill
   private final GNT4Code noSlowDownOnKill;
 
+  // https://github.com/NicholasMoser/GNTool#unlock-all
+  private final List<GNT4Code> unlockAllCodes;
+  private final GNT4Code unlockAll1;
+  private final GNT4Code unlockAll2;
+  private final GNT4Code unlockAll3;
+  private final GNT4Code unlockAll4;
+  private final GNT4Code unlockAll5;
+  private final GNT4Code unlockAll6;
+  private final GNT4Code unlockAll7;
+  private final GNT4Code unlockAll8;
+  private final GNT4Code unlockAll9;
+  private final GNT4Code unlockAll10;
+  private final GNT4Code unlockAll11;
+  private final GNT4Code unlockStages;
+  private final GNT4Code unlockCharacters1;
+  private final GNT4Code unlockCharacters2;
+  private final GNT4Code unlockAll15;
+  private final GNT4Code unlockOptions;
+  private final GNT4Code unlockAll17;
+  private final GNT4Code unlockAll18;
+  private final GNT4Code unlockAll19;
+  private final GNT4Code unlockAll20;
+
   /**
    * Private constructor to enforce singleton pattern.
    */
@@ -88,14 +115,64 @@ public class GNT4Codes {
     mainMenuCharacter = new GNT4Code(TITLE_SEQ, 0x1612C);
     mainMenuCharacterHeight = new GNT4Code(TITLE_SEQ, 0x161C3);
     mainMenuCharacterSound = new GNT4Code(TITLE_SEQ, 0x1BE67);
-    playAudioWhilePausedMissionMode = new GNT4Code(MAIN_DOL, 0x4412C, new byte[]{0x38, 0x60, 0x00, 0x00},
+    playAudioWhilePausedMissionMode = new GNT4Code(MAIN_DOL, 0x4412C,
+        new byte[]{0x38, 0x60, 0x00, 0x00},
         new byte[]{0x38, 0x60, (byte) 0xFF, (byte) 0xFF});
-    playAudioWhilePausedTrainingMode = new GNT4Code(MAIN_DOL, 0x41D28, new byte[]{0x38, 0x60, 0x00, 0x00},
+    playAudioWhilePausedTrainingMode = new GNT4Code(MAIN_DOL, 0x41D28,
+        new byte[]{0x38, 0x60, 0x00, 0x00},
         new byte[]{0x38, 0x60, (byte) 0xFF, (byte) 0xFF});
-    playAudioWhilePausedOtherModes = new GNT4Code(MAIN_DOL, 0x447FC, new byte[]{0x38, 0x60, 0x00, 0x00},
+    playAudioWhilePausedOtherModes = new GNT4Code(MAIN_DOL, 0x447FC,
+        new byte[]{0x38, 0x60, 0x00, 0x00},
         new byte[]{0x38, 0x60, (byte) 0xFF, (byte) 0xFF});
     noSlowDownOnKill = new GNT4Code(MAIN_DOL, 0x11868, new byte[]{(byte) 0xB0, 0x65, 0x00, 0x00},
         new byte[]{0x60, 0x00, 0x00, 0x00});
+
+    // Unlock All
+    unlockAll1 = new GNT4Code(MAIN_DOL, 0x7BB0, new byte[]{(byte) 0x80, 0x04, 0x01, 0x60},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll2 = new GNT4Code(MAIN_DOL, 0x7BDC, new byte[]{(byte) 0x80, 0x04, 0x01, 0x5c},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll3 = new GNT4Code(MAIN_DOL, 0x7BF0, new byte[]{(byte) 0x80, 0x04, 0x01, 0x58},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll4 = new GNT4Code(MAIN_DOL, 0x7C34, new byte[]{(byte) 0x80, 0x04, 0x01, 0x54},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll5 = new GNT4Code(MAIN_DOL, 0x7C48, new byte[]{(byte) 0x80, 0x04, 0x01, 0x50},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll6 = new GNT4Code(MAIN_DOL, 0x7C8C, new byte[]{(byte) 0x80, 0x04, 0x01, 0x4c},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll7 = new GNT4Code(MAIN_DOL, 0x7CA0, new byte[]{(byte) 0x80, 0x04, 0x01, 0x48},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll8 = new GNT4Code(MAIN_DOL, 0x7CE4, new byte[]{(byte) 0x80, 0x04, 0x01, 0x44},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll9 = new GNT4Code(MAIN_DOL, 0x7CF8, new byte[]{(byte) 0x80, 0x04, 0x01, 0x40},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll10 = new GNT4Code(MAIN_DOL, 0x7D0C, new byte[]{(byte) 0x80, 0x04, 0x01, 0x3c},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll11 = new GNT4Code(MAIN_DOL, 0x7D68, new byte[]{(byte) 0x80, 0x04, 0x01, 0x38},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockStages = new GNT4Code(MAIN_DOL, 0x7D7C, new byte[]{(byte) 0x80, 0x04, 0x01, 0x34},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockCharacters1 = new GNT4Code(MAIN_DOL, 0x7DC0, new byte[]{(byte) 0x80, 0x04, 0x01, 0x30},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockCharacters2 = new GNT4Code(MAIN_DOL, 0x7DD4, new byte[]{(byte) 0x80, 0x04, 0x01, 0x2c},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll15 = new GNT4Code(MAIN_DOL, 0x7E18, new byte[]{(byte) 0x80, 0x04, 0x01, 0x28},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockOptions = new GNT4Code(MAIN_DOL, 0x7E2C, new byte[]{(byte) 0x80, 0x04, 0x01, 0x24},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll17 = new GNT4Code(MAIN_DOL, 0x7E70, new byte[]{(byte) 0x80, 0x04, 0x01, 0x20},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll18 = new GNT4Code(MAIN_DOL, 0x7E84, new byte[]{(byte) 0x80, 0x04, 0x01, 0x1c},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll19 = new GNT4Code(MAIN_DOL, 0x7EC8, new byte[]{(byte) 0x80, 0x04, 0x01, 0x18},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAll20 = new GNT4Code(MAIN_DOL, 0x7EDC, new byte[]{(byte) 0x80, 0x04, 0x01, 0x14},
+        new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
+    unlockAllCodes = Arrays
+        .asList(unlockAll1, unlockAll2, unlockAll3, unlockAll4, unlockAll5, unlockAll6, unlockAll7,
+            unlockAll8, unlockAll9, unlockAll10, unlockAll11, unlockStages, unlockCharacters1,
+            unlockCharacters2, unlockAll15, unlockOptions, unlockAll17, unlockAll18, unlockAll19,
+            unlockAll20);
   }
 
   /**
@@ -380,12 +457,12 @@ public class GNT4Codes {
     // Main Menu Character Sound
     byte soundEffect = GNT4Characters.CHAR_SEL_SOUND.get(chr);
     int mainMenuCharacterSoundOffset = mainMenuCharacterSound.getOffset();
-    byte[] soundByte = new byte[] { soundEffect };
+    byte[] soundByte = new byte[]{soundEffect};
 
     // Main Menu Character Height
     byte height = GNT4Characters.CHAR_HEIGHT_ADJUST.get(chr);
     int mainMenuCharacterHeightOffset = mainMenuCharacterHeight.getOffset();
-    byte[] heightByte = new byte[] { height };
+    byte[] heightByte = new byte[]{height};
 
     Code.getBuilder()
         .withOverwrite(mainMenuCharacterOffset, charBytes)
@@ -496,6 +573,57 @@ public class GNT4Codes {
   }
 
   /**
+   * Returns whether or not the code to unlock everything is activated. The code is in 20 locations
+   * so this only returns true if the code is in all three locations.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public boolean isUnlockAllActivated(Path uncompressedDirectory) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(unlockAll1.getFilePath());
+    Map<GNT4Code, byte[]> codeToWord = readWords(dolPath, unlockAllCodes);
+    boolean isActivated = true;
+    for (GNT4Code code : unlockAllCodes) {
+      byte[] currentWord = codeToWord.get(code);
+      if (!Arrays.equals(currentWord, code.getNewInstruction())) {
+        isActivated = false;
+        break;
+      }
+    }
+    return isActivated;
+  }
+
+  /**
+   * Activates the code to unlock everything.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void activateUnlockAll(Path uncompressedDirectory) throws IOException {
+    Code builder = Code.getBuilder();
+    for (GNT4Code code : unlockAllCodes) {
+      builder.withOverwrite(code.getOffset(), code.getNewInstruction());
+    }
+    Path dolPath = uncompressedDirectory.resolve(unlockAll1.getFilePath());
+    builder.execute(dolPath);
+  }
+
+  /**
+   * Inactivates the code to unlock everything.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void inactivateUnlockAll(Path uncompressedDirectory) throws IOException {
+    Code builder = Code.getBuilder();
+    for (GNT4Code code : unlockAllCodes) {
+      builder.withOverwrite(code.getOffset(), code.getOldInstruction());
+    }
+    Path dolPath = uncompressedDirectory.resolve(unlockAll1.getFilePath());
+    builder.execute(dolPath);
+  }
+
+  /**
    * Reads a 4-byte word from the given filePath starting from the given offset.
    *
    * @param filePath The file path.
@@ -506,15 +634,39 @@ public class GNT4Codes {
   private byte[] readWord(Path filePath, int offset) throws IOException {
     try (InputStream is = Files.newInputStream(filePath)) {
       if (is.skip(offset) != offset) {
-        String message = String.format("Failed to read to %d of %s", offset, filePath);
-        throw new IOException(message);
+        throw new IOException(String.format("Failed to read to offset %d of %s", offset, filePath));
       }
       byte[] bytes = new byte[4];
       if (is.read(bytes) != 4) {
-        String message = String.format("Failed to read TitleDemoTimeout of %s", filePath);
-        throw new IOException(message);
+        throw new IOException("Failed to read from " + filePath);
       }
       return bytes;
+    }
+  }
+
+  /**
+   * Reads 4-byte words from the given filePath from the given codes. The words will be returned as
+   * a mapping of the code to its word. The codes will be sorted by offset. Please ensure that all
+   * codes correspond to the same file path or undefined behavior may occur.
+   *
+   * @param filePath The file path.
+   * @param codes    The list of GNT4Codes.
+   * @return The mapping of a GNT4Code to its current word in the file.
+   * @throws IOException If an I/O error occurs.
+   */
+  private Map<GNT4Code, byte[]> readWords(Path filePath, List<GNT4Code> codes) throws IOException {
+    codes.sort(Comparator.comparingInt(GNT4Code::getOffset));
+    Map<GNT4Code, byte[]> offsetToWord = Maps.newHashMapWithExpectedSize(codes.size());
+    try (RandomAccessFile raf = new RandomAccessFile(filePath.toFile(), "r")) {
+      for (GNT4Code code : codes) {
+        raf.seek(code.getOffset());
+        byte[] bytes = new byte[4];
+        if (raf.read(bytes) != 4) {
+          throw new IOException("Failed to read from " + filePath);
+        }
+        offsetToWord.put(code, bytes);
+      }
+      return offsetToWord;
     }
   }
 

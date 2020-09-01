@@ -75,6 +75,9 @@ public class MenuController {
   private CheckBox noSlowDownOnKill;
 
   @FXML
+  private CheckBox unlockAll;
+
+  @FXML
   private Spinner<Integer> cssInitialSpeed;
 
   @FXML
@@ -154,6 +157,26 @@ public class MenuController {
       LOGGER.log(Level.SEVERE, "Failed to trigger the no slowdown on kill code.", e);
       Message
           .error("Error Triggering No Slowdown On Kill Code", "See the log for more information.");
+    }
+  }
+
+  /**
+   * Toggles the code for unlocking everything.
+   */
+  @FXML
+  protected void unlockAll() {
+    try {
+      boolean selected = unlockAll.isSelected();
+      GNT4Codes codes = GNT4Codes.getInstance();
+      if (selected) {
+        codes.activateUnlockAll(uncompressedDirectory);
+      } else {
+        codes.inactivateUnlockAll(uncompressedDirectory);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to trigger the unlock everything code.", e);
+      Message
+          .error("Error Triggering Unlock Everything Code", "See the log for more information.");
     }
   }
 
@@ -895,6 +918,12 @@ public class MenuController {
       noSlowDownOnKill.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting No Slowdown On Kill Code.", e);
+    }
+    try {
+      boolean isActive = codes.isUnlockAllActivated(uncompressedDirectory);
+      unlockAll.setSelected(isActive);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error getting Unlock All Code.", e);
     }
   }
 

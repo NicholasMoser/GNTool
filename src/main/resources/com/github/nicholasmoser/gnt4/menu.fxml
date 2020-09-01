@@ -87,6 +87,9 @@
               <CheckBox fx:id="noSlowDownOnKill" layoutX="14.0"
                 layoutY="338.0" mnemonicParsing="false"
                 onAction="#noSlowDownOnKill" text="No Slow Down on Kill"/>
+              <CheckBox fx:id="unlockAll" layoutX="14.0"
+                layoutY="376.0" mnemonicParsing="false"
+                onAction="#unlockAll" text="Unlock Everything"/>
             </AnchorPane>
           </ScrollPane>
         </AnchorPane>
