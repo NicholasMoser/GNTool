@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.Code;
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,6 +87,11 @@ public class GNT4Codes {
   private final GNT4Code unlockAll18;
   private final GNT4Code unlockAll19;
   private final GNT4Code unlockAll20;
+
+  // https://github.com/NicholasMoser/GNTool#ZTK-Damage-Taken-Multiplier
+  private final GNT4Code ztkDamageMultiplier;
+  // https://github.com/NicholasMoser/GNTool#Ukon-Damage-Taken-Multiplier
+  private final GNT4Code ukonDamageMultiplier;
 
   /**
    * Private constructor to enforce singleton pattern.
@@ -173,6 +179,9 @@ public class GNT4Codes {
             unlockAll8, unlockAll9, unlockAll10, unlockAll11, unlockStages, unlockCharacters1,
             unlockCharacters2, unlockAll15, unlockOptions, unlockAll17, unlockAll18, unlockAll19,
             unlockAll20);
+
+    ztkDamageMultiplier = new GNT4Code(MAIN_DOL, 0x220C90);
+    ukonDamageMultiplier = new GNT4Code(MAIN_DOL, 0x220C94);
   }
 
   /**
@@ -621,6 +630,58 @@ public class GNT4Codes {
     }
     Path dolPath = uncompressedDirectory.resolve(unlockAll1.getFilePath());
     builder.execute(dolPath);
+  }
+
+  /**
+   * Gets Naruto's ZTK transformation damage taken multiplier. takes and by default is 1.5x.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @return The ZTK damage multiplier as a float.
+   * @throws IOException If an I/O error occurs.
+   */
+  public byte[] getZTKDamageMultiplier(Path uncompressedDirectory) throws IOException {
+    Path filePath = uncompressedDirectory.resolve(ztkDamageMultiplier.getFilePath());
+    int offset = ztkDamageMultiplier.getOffset();
+    return readWord(filePath, offset);
+  }
+
+  /**
+   * Sets Naruto's ZTK transformation damage taken multiplier.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @param bytes                 The bytes to set.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void setZTKDamageMultiplier(Path uncompressedDirectory, byte[] bytes) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(ztkDamageMultiplier.getFilePath());
+    int offset = ztkDamageMultiplier.getOffset();
+    Code.getBuilder().withOverwrite(offset, bytes).execute(dolPath);
+  }
+
+  /**
+   * Gets Ukon's damage taken multiplier. takes and by default is 1.5x.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @return The ZTK damage multiplier as a float.
+   * @throws IOException If an I/O error occurs.
+   */
+  public byte[] getUkonDamageMultiplier(Path uncompressedDirectory) throws IOException {
+    Path filePath = uncompressedDirectory.resolve(ukonDamageMultiplier.getFilePath());
+    int offset = ukonDamageMultiplier.getOffset();
+    return readWord(filePath, offset);
+  }
+
+  /**
+   * Sets Ukon's damage taken multiplier.
+   *
+   * @param uncompressedDirectory The directory of uncompressed files for the workspace.
+   * @param bytes                 The bytes to set.
+   * @throws IOException If an I/O error occurs.
+   */
+  public void setUkonDamageMultiplier(Path uncompressedDirectory, byte[] bytes) throws IOException {
+    Path dolPath = uncompressedDirectory.resolve(ukonDamageMultiplier.getFilePath());
+    int offset = ukonDamageMultiplier.getOffset();
+    Code.getBuilder().withOverwrite(offset, bytes).execute(dolPath);
   }
 
   /**

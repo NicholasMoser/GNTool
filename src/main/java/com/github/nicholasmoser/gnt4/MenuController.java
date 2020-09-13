@@ -17,6 +17,7 @@ import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.IOException;
@@ -41,6 +42,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
@@ -100,6 +102,12 @@ public class MenuController {
 
   @FXML
   private ComboBox<String> seqs;
+
+  @FXML
+  private TextField ztkDamageMultiplier;
+
+  @FXML
+  private TextField ukonDamageMultiplier;
 
   /**
    * Toggles the code for fixing the audio.
@@ -257,6 +265,38 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Main Menu Character.", e);
       Message.error("Failed to Update Main Menu Character", "See the log for more information.");
+    }
+  }
+
+  @FXML
+  protected void applyZTKDamageMultiplier() {
+    String multiplier = ztkDamageMultiplier.getText();
+    try {
+      byte[] bytes = ByteUtils.floatStringToBytes(multiplier);
+      GNT4Codes codes = GNT4Codes.getInstance();
+      codes.setZTKDamageMultiplier(uncompressedDirectory, bytes);
+    } catch (NumberFormatException e) {
+      LOGGER.log(Level.SEVERE, "Failed to format number.", e);
+      Message.error("Invalid Number", multiplier + " is not a valid number.");
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Failed to Update ZTK Damage Multiplier", e);
+      Message.error("Failed to Update ZTK Damage Multiplier", "See the log for more information.");
+    }
+  }
+
+  @FXML
+  protected void applyUkonDamageMultiplier() {
+    String multiplier = ukonDamageMultiplier.getText();
+    try {
+      byte[] bytes = ByteUtils.floatStringToBytes(multiplier);
+      GNT4Codes codes = GNT4Codes.getInstance();
+      codes.setUkonDamageMultiplier(uncompressedDirectory, bytes);
+    } catch (NumberFormatException e) {
+      LOGGER.log(Level.SEVERE, "Failed to format number.", e);
+      Message.error("Invalid Number", multiplier + " is not a valid number.");
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Failed to Update Ukon Damage Multiplier", e);
+      Message.error("Failed to Update Ukon Damage Multiplier", "See the log for more information.");
     }
   }
 
@@ -924,6 +964,20 @@ public class MenuController {
       unlockAll.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting Unlock All Code.", e);
+    }
+    try {
+      byte[] bytes = codes.getZTKDamageMultiplier(uncompressedDirectory);
+      float value = ByteUtils.bytesToFloat(bytes);
+      ztkDamageMultiplier.setText(Float.toString(value));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error getting ZTK Damage Multiplier.", e);
+    }
+    try {
+      byte[] bytes = codes.getUkonDamageMultiplier(uncompressedDirectory);
+      float value = ByteUtils.bytesToFloat(bytes);
+      ukonDamageMultiplier.setText(Float.toString(value));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error getting Ukon Damage Multiplier.", e);
     }
   }
 

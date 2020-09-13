@@ -111,6 +111,16 @@
             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
         </AnchorPane>
       </Tab>
+      <Tab text="Characters">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <Button layoutX="26.0" layoutY="25.0" mnemonicParsing="false" onMouseClicked="#applyZTKDamageMultiplier" text="Apply" />
+          <Text layoutX="241.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="ZTK Damage Taken Multiplier" wrappingWidth="159.13671875" />
+          <TextField fx:id="ztkDamageMultiplier" layoutX="81.0" layoutY="25.0" />
+          <Button layoutX="26.0" layoutY="60.0" mnemonicParsing="false" onMouseClicked="#applyUkonDamageMultiplier" text="Apply" />
+          <TextField fx:id="ukonDamageMultiplier" layoutX="81.0" layoutY="60.0" prefHeight="25.0" prefWidth="148.0" />
+          <Text layoutX="241.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Ukon Damage Taken Multiplier" wrappingWidth="179.13671875" />
+        </AnchorPane>
+      </Tab>
       <Tab text="Audio">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
           prefWidth="200.0">

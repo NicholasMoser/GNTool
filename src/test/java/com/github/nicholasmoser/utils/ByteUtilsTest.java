@@ -1,6 +1,8 @@
 package com.github.nicholasmoser.utils;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.primitives.Bytes;
@@ -280,24 +282,24 @@ public class ByteUtilsTest {
    */
   @Test
   public void testToUint32() {
-    byte[] bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+    byte[] bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
     long value = ByteUtils.toUint32(bytes);
     assertEquals(0L, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0B };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0B};
     value = ByteUtils.toUint32(bytes);
     assertEquals(11L, value);
-    bytes = new byte[] { (byte) 0x3C, (byte) 0x07, (byte) 0x00, (byte) 0x02 };
+    bytes = new byte[]{(byte) 0x3C, (byte) 0x07, (byte) 0x00, (byte) 0x02};
     value = ByteUtils.toUint32(bytes);
     assertEquals(0x3C070002L, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0x81, (byte) 0x03, (byte) 0x00, (byte) 0x02 };
+    bytes = new byte[]{(byte) 0x81, (byte) 0x03, (byte) 0x00, (byte) 0x02};
     value = ByteUtils.toUint32(bytes);
     assertEquals(0x81030002L, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE};
     value = ByteUtils.toUint32(bytes);
     assertEquals(0xFFFFFFFEL, value);
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toUint32(bytes);
     assertEquals(0xFFFFFFFFL, value);
   }
@@ -307,24 +309,24 @@ public class ByteUtilsTest {
    */
   @Test
   public void testToInt32() {
-    byte[] bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+    byte[] bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
     long value = ByteUtils.toInt32(bytes);
     assertEquals(0, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0B };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0B};
     value = ByteUtils.toInt32(bytes);
     assertEquals(11, value);
-    bytes = new byte[] { (byte) 0x3C, (byte) 0x07, (byte) 0x00, (byte) 0x02 };
+    bytes = new byte[]{(byte) 0x3C, (byte) 0x07, (byte) 0x00, (byte) 0x02};
     value = ByteUtils.toInt32(bytes);
     assertEquals(0x3C070002, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0x81, (byte) 0x03, (byte) 0x00, (byte) 0x02 };
+    bytes = new byte[]{(byte) 0x81, (byte) 0x03, (byte) 0x00, (byte) 0x02};
     value = ByteUtils.toInt32(bytes);
     assertEquals(0x81030002, value);
     assertTrue(value < 0);
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE};
     value = ByteUtils.toInt32(bytes);
     assertEquals(0xFFFFFFFE, value);
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toInt32(bytes);
     assertEquals(0xFFFFFFFF, value);
   }
@@ -334,24 +336,24 @@ public class ByteUtilsTest {
    */
   @Test
   public void testToUint16() {
-    byte[] bytes = new byte[] { (byte) 0x00, (byte) 0x00 };
+    byte[] bytes = new byte[]{(byte) 0x00, (byte) 0x00};
     long value = ByteUtils.toUint16(bytes);
     assertEquals(0, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x0B };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x0B};
     value = ByteUtils.toUint16(bytes);
     assertEquals(11, value);
-    bytes = new byte[] { (byte) 0x3C, (byte) 0x07 };
+    bytes = new byte[]{(byte) 0x3C, (byte) 0x07};
     value = ByteUtils.toUint16(bytes);
     assertEquals(0x3C07, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0x81, (byte) 0x03 };
+    bytes = new byte[]{(byte) 0x81, (byte) 0x03};
     value = ByteUtils.toUint16(bytes);
     assertEquals(0x8103, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFE };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFE};
     value = ByteUtils.toUint16(bytes);
     assertEquals(0xFFFE, value);
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toUint16(bytes);
     assertEquals(0xFFFF, value);
   }
@@ -361,89 +363,91 @@ public class ByteUtilsTest {
    */
   @Test
   public void testToFloat() {
-    byte[] bytes = new byte[] { (byte) 0xBF, (byte) 0x80, (byte) 0x00, (byte) 0x00 };
+    byte[] bytes = new byte[]{(byte) 0xBF, (byte) 0x80, (byte) 0x00, (byte) 0x00};
     float value = ByteUtils.toFloat(bytes);
     assertEquals(-1.0f, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
     value = ByteUtils.toFloat(bytes);
     assertEquals(0.0f, value);
-    bytes = new byte[] { (byte) 0x41, (byte) 0x30, (byte) 0x00, (byte) 0x00 };
+    bytes = new byte[]{(byte) 0x41, (byte) 0x30, (byte) 0x00, (byte) 0x00};
     value = ByteUtils.toFloat(bytes);
     assertEquals(11.0f, value);
-    bytes = new byte[] { (byte) 0x43, (byte) 0xD4, (byte) 0xF6, (byte) 0x46 };
+    bytes = new byte[]{(byte) 0x43, (byte) 0xD4, (byte) 0xF6, (byte) 0x46};
     value = ByteUtils.toFloat(bytes);
     assertEquals(425.924f, value);
-    bytes = new byte[] { (byte) 0x7F, (byte) 0x7F, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0x7F, (byte) 0x7F, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toFloat(bytes);
     assertEquals(Float.MAX_VALUE - 1.0f, value);
-    bytes = new byte[] { (byte) 0x7F, (byte) 0x7F, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0x7F, (byte) 0x7F, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toFloat(bytes);
     assertEquals(Float.MAX_VALUE, value);
-    bytes = new byte[] { (byte) 0x7F, (byte) 0x7F, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0x7F, (byte) 0x7F, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toFloat(bytes);
     assertEquals(Float.MAX_VALUE + 1.0f, value);
   }
 
   /**
-   * Edge case testing for {@link ByteUtils#toUint32(byte[], int)} 
+   * Edge case testing for {@link ByteUtils#toUint32(byte[], int)}
    */
   @Test
   public void testToUint32WithOffset() {
-    byte[] bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+    byte[] bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
     long value = ByteUtils.toUint32(bytes, 0);
     assertEquals(0L, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0B, (byte) 0x00 };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0B, (byte) 0x00};
     value = ByteUtils.toUint32(bytes, 0);
     assertEquals(11L, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x3C, (byte) 0x07, (byte) 0x00, (byte) 0x02 };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x3C, (byte) 0x07, (byte) 0x00, (byte) 0x02};
     value = ByteUtils.toUint32(bytes, 1);
     assertEquals(0x3C070002L, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x81, (byte) 0x03, (byte) 0x00, (byte) 0x02, (byte) 0x00 };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x81, (byte) 0x03, (byte) 0x00, (byte) 0x02,
+        (byte) 0x00};
     value = ByteUtils.toUint32(bytes, 1);
     assertEquals(0x81030002L, value);
     assertTrue(value > 0);
     byte[] zeroes = new byte[512];
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE};
     value = ByteUtils.toUint32(Bytes.concat(zeroes, bytes), 512);
     assertEquals(0xFFFFFFFEL, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toUint32(Bytes.concat(bytes, zeroes), 1);
     assertEquals(0xFFFFFFFFL, value);
     Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      byte[] errorBytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+      byte[] errorBytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
       ByteUtils.toUint32(errorBytes, 5);
     });
   }
 
   /**
-   * Edge case testing for {@link ByteUtils#toInt32(byte[], int)} 
+   * Edge case testing for {@link ByteUtils#toInt32(byte[], int)}
    */
   @Test
   public void testToInt32WithOffset() {
-    byte[] bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+    byte[] bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
     long value = ByteUtils.toInt32(bytes, 0);
     assertEquals(0, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0B, (byte) 0x00 };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0B, (byte) 0x00};
     value = ByteUtils.toInt32(bytes, 0);
     assertEquals(11, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x3C, (byte) 0x07, (byte) 0x00, (byte) 0x02 };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x3C, (byte) 0x07, (byte) 0x00, (byte) 0x02};
     value = ByteUtils.toInt32(bytes, 1);
     assertEquals(0x3C070002, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0x00, (byte) 0x81, (byte) 0x03, (byte) 0x00, (byte) 0x02, (byte) 0x00 };
+    bytes = new byte[]{(byte) 0x00, (byte) 0x81, (byte) 0x03, (byte) 0x00, (byte) 0x02,
+        (byte) 0x00};
     value = ByteUtils.toInt32(bytes, 1);
     assertEquals(0x81030002, value);
     assertTrue(value < 0);
     byte[] zeroes = new byte[512];
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE};
     value = ByteUtils.toInt32(Bytes.concat(zeroes, bytes), 512);
     assertEquals(0xFFFFFFFE, value);
-    bytes = new byte[] { (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toInt32(Bytes.concat(bytes, zeroes), 1);
     assertEquals(0xFFFFFFFF, value);
     Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      byte[] errorBytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+      byte[] errorBytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
       ByteUtils.toInt32(errorBytes, 5);
     });
   }
@@ -453,25 +457,124 @@ public class ByteUtilsTest {
    */
   @Test
   public void testToUint32LE() {
-    byte[] bytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+    byte[] bytes = new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
     long value = ByteUtils.toUint32LE(bytes);
     assertEquals(0L, value);
-    bytes = new byte[] { (byte) 0x0B, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+    bytes = new byte[]{(byte) 0x0B, (byte) 0x00, (byte) 0x00, (byte) 0x00};
     value = ByteUtils.toUint32LE(bytes);
     assertEquals(11L, value);
-    bytes = new byte[] { (byte) 0x02, (byte) 0x00, (byte) 0x07, (byte) 0x3C };
+    bytes = new byte[]{(byte) 0x02, (byte) 0x00, (byte) 0x07, (byte) 0x3C};
     value = ByteUtils.toUint32LE(bytes);
     assertEquals(0x3C070002L, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0x02, (byte) 0x00, (byte) 0x03, (byte) 0x81 };
+    bytes = new byte[]{(byte) 0x02, (byte) 0x00, (byte) 0x03, (byte) 0x81};
     value = ByteUtils.toUint32LE(bytes);
     assertEquals(0x81030002L, value);
     assertTrue(value > 0);
-    bytes = new byte[] { (byte) 0xFE, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0xFE, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toUint32LE(bytes);
     assertEquals(0xFFFFFFFEL, value);
-    bytes = new byte[] { (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
+    bytes = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
     value = ByteUtils.toUint32LE(bytes);
     assertEquals(0xFFFFFFFFL, value);
+  }
+
+  @Test
+  public void testFloatToBytes() {
+    assertArrayEquals(new byte[]{(byte) 0xC2, (byte) 0xC9, 0x1E, (byte) 0xB8},
+        ByteUtils.floatToBytes(-100.56f));
+    assertArrayEquals(new byte[]{(byte) 0xC0, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(-2.0f));
+    assertArrayEquals(new byte[]{0x00, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(0.0f));
+    assertArrayEquals(new byte[]{0x3F, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(0.5f));
+    assertArrayEquals(new byte[]{0x3F, (byte) 0x80, 0x00, 0x00}, ByteUtils.floatToBytes(1.0f));
+    assertArrayEquals(new byte[]{0x3F, (byte) 0x80, 0x00, 0x08}, ByteUtils.floatToBytes(1.0000009f));
+    assertArrayEquals(new byte[]{0x3F, (byte) 0xC0, 0x00, 0x00}, ByteUtils.floatToBytes(1.5f));
+    assertArrayEquals(new byte[]{0x40, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(2.0f));
+    assertArrayEquals(new byte[]{0x40, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(2f));
+    assertArrayEquals(new byte[]{0x42, (byte) 0xC9, 0x1E, (byte) 0xB8},
+        ByteUtils.floatToBytes(100.56f));
+  }
+
+  @Test
+  public void testBytesToFloat() {
+    assertEquals(-100.56f,
+        ByteUtils.bytesToFloat(new byte[]{(byte) 0xC2, (byte) 0xC9, 0x1E, (byte) 0xB8}));
+    assertEquals(-2.0f, ByteUtils.bytesToFloat(new byte[]{(byte) 0xC0, 0x00, 0x00, 0x00}));
+    assertEquals(0.0f, ByteUtils.bytesToFloat(new byte[]{0x00, 0x00, 0x00, 0x00}));
+    assertEquals(0.5f, ByteUtils.bytesToFloat(new byte[]{0x3F, 0x00, 0x00, 0x00}));
+    assertEquals(1.0f, ByteUtils.bytesToFloat(new byte[]{0x3F, (byte) 0x80, 0x00, 0x00}));
+    assertEquals(1.0000009f, ByteUtils.bytesToFloat(new byte[]{0x3F, (byte) 0x80, 0x00, 0x08}));
+    assertEquals(1.5f, ByteUtils.bytesToFloat(new byte[]{0x3F, (byte) 0xC0, 0x00, 0x00}));
+    assertEquals(2.0f, ByteUtils.bytesToFloat(new byte[]{0x40, 0x00, 0x00, 0x00}));
+    assertEquals(2f, ByteUtils.bytesToFloat(new byte[]{0x40, 0x00, 0x00, 0x00}));
+    assertEquals(100.56f, ByteUtils.bytesToFloat(new byte[]{0x42, (byte) 0xC9, 0x1E, (byte) 0xB8}));
+
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      ByteUtils.bytesToFloat(new byte[]{0x00, 0x00, 0x00});
+    });
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      ByteUtils.bytesToFloat(new byte[]{0x00, 0x00});
+    });
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      ByteUtils.bytesToFloat(new byte[]{0x00});
+    });
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      ByteUtils.bytesToFloat(new byte[]{});
+    });
+  }
+
+  @Test
+  public void testFloatStringToBytes() {
+    assertArrayEquals(new byte[]{(byte) 0xC2, (byte) 0xC9, 0x1E, (byte) 0xB8},
+        ByteUtils.floatStringToBytes("-100.56"));
+    assertArrayEquals(new byte[]{(byte) 0xC0, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("-2.0"));
+    assertArrayEquals(new byte[]{0x00, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("0.0"));
+    assertArrayEquals(new byte[]{0x3F, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("0.5"));
+    assertArrayEquals(new byte[]{0x3F, (byte) 0x80, 0x00, 0x00}, ByteUtils.floatStringToBytes("1.0"));
+    assertArrayEquals(new byte[]{0x3F, (byte) 0xC0, 0x00, 0x00}, ByteUtils.floatStringToBytes("1.5"));
+    assertArrayEquals(new byte[]{0x40, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("2.0"));
+    assertArrayEquals(new byte[]{0x40, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("2"));
+    assertArrayEquals(new byte[]{0x42, (byte) 0xC9, 0x1E, (byte) 0xB8},
+        ByteUtils.floatStringToBytes("100.56"));
+
+    assertThrows(NumberFormatException.class, () -> {
+      ByteUtils.floatStringToBytes("");
+    });
+    assertThrows(NumberFormatException.class, () -> {
+      ByteUtils.floatStringToBytes("two");
+    });
+    assertThrows(NumberFormatException.class, () -> {
+      ByteUtils.floatStringToBytes("asdf");
+    });
+    assertThrows(NumberFormatException.class, () -> {
+      ByteUtils.floatStringToBytes("1 2");
+    });
+  }
+
+  @Test
+  public void testBytesToFloatString() {
+    assertEquals(-100.56f,
+        ByteUtils.bytesToFloat(new byte[]{(byte) 0xC2, (byte) 0xC9, 0x1E, (byte) 0xB8}));
+    assertEquals(-2.0f, ByteUtils.bytesToFloat(new byte[]{(byte) 0xC0, 0x00, 0x00, 0x00}));
+    assertEquals(0.0f, ByteUtils.bytesToFloat(new byte[]{0x00, 0x00, 0x00, 0x00}));
+    assertEquals(0.5f, ByteUtils.bytesToFloat(new byte[]{0x3F, 0x00, 0x00, 0x00}));
+    assertEquals(1.0f, ByteUtils.bytesToFloat(new byte[]{0x3F, (byte) 0x80, 0x00, 0x00}));
+    assertEquals(1.5f, ByteUtils.bytesToFloat(new byte[]{0x3F, (byte) 0xC0, 0x00, 0x00}));
+    assertEquals(2.0f, ByteUtils.bytesToFloat(new byte[]{0x40, 0x00, 0x00, 0x00}));
+    assertEquals(2.0f, ByteUtils.bytesToFloat(new byte[]{0x40, 0x00, 0x00, 0x00}));
+    assertEquals(100.56f, ByteUtils.bytesToFloat(new byte[]{0x42, (byte) 0xC9, 0x1E, (byte) 0xB8}));
+
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      ByteUtils.bytesToFloat(new byte[]{0x00, 0x00, 0x00});
+    });
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      ByteUtils.bytesToFloat(new byte[]{0x00, 0x00});
+    });
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      ByteUtils.bytesToFloat(new byte[]{0x00});
+    });
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      ByteUtils.bytesToFloat(new byte[]{});
+    });
   }
 }

@@ -121,7 +121,8 @@ public class ByteUtils {
    * @return The output uint32 (as a long).
    */
   public static long toUint32LE(byte[] bytes) {
-    ByteBuffer buffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).put(bytes).put(new byte[]{0, 0, 0, 0});
+    ByteBuffer buffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).put(bytes)
+        .put(new byte[]{0, 0, 0, 0});
     buffer.position(0);
 
     return buffer.getLong();
@@ -304,5 +305,49 @@ public class ByteUtils {
     ByteBuffer bbuf = encoder.encode(CharBuffer.wrap(text));
     CharBuffer cbuf = decoder.decode(bbuf);
     return cbuf.toString();
+  }
+
+  /**
+   * Converts a float to a four-byte array.
+   *
+   * @param value The float to convert.
+   * @return The four byte array representing the float.
+   */
+  public static byte[] floatToBytes(float value) {
+    return ByteBuffer.allocate(4).putFloat(value).array();
+  }
+
+  /**
+   * Converts a four-byte array to a float.
+   *
+   * @param bytes The bytes to convert.
+   * @return The float representing the bytes.
+   */
+  public static float bytesToFloat(byte[] bytes) {
+    int intBits =
+        bytes[0] << 24 | (bytes[1] & 0xFF) << 16 | (bytes[2] & 0xFF) << 8 | (bytes[3] & 0xFF);
+    return Float.intBitsToFloat(intBits);
+  }
+
+  /**
+   * Converts a float String to a four-byte array. A float String in this case is a String like
+   * "1.5", "2", or "-0.0000056".
+   *
+   * @param value The float String to convert.
+   * @return The bytes representing the float String.
+   */
+  public static byte[] floatStringToBytes(String value) {
+    return floatToBytes(Float.valueOf(value));
+  }
+
+  /**
+   * Converts a four-byte array to a float String. A float String in this case is a String like
+   * "1.5", "2", or "-0.0000056".
+   *
+   * @param bytes The four-byte array to convert.
+   * @return The float String representing the bytes.
+   */
+  public static String bytesToStringFloat(byte[] bytes) {
+    return Float.toString(bytesToFloat(bytes));
   }
 }

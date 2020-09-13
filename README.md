@@ -2,61 +2,71 @@
 
 ![GNTool Logo](/docs/logo.png?raw=true "GNTool Logo")
 
-This program contains tools that allow you to modify the Naruto GNT/Clash of Ninja games. Primarily, it allows you to modify files contained inside .FPK files for Naruto GNT4. [FPK files](https://github.com/NicholasMoser/Naruto-GNT-Hacking/blob/master/gnt4/docs/file_formats/fpk.md) are archives that contain various game related files. Each entry is compressed with an Eighting specific PRS compression algorithm. This tool can both unpack and repack FPK files with any changes that you've made. Also contained are other generic tools such as a generic ISO extractor and FPK repacker.
+This program contains tools that allow you to modify the Naruto GNT/Clash of Ninja games. Primarily, it allows you to modify files contained inside FPK files for Naruto GNT4. [FPK files](https://github.com/NicholasMoser/Naruto-GNT-Hacking/blob/master/gnt4/docs/file_formats/fpk.md) are archives that contain various game related files. Each entry is compressed with an Eighting specific PRS compression algorithm. This tool can both unpack and repack FPK files with any changes that you've made. Also contained are other generic tools such as a generic ISO extractor and FPK repacker.
 
 ## Table of Contents
 
-1. **[Getting Started](#getting-started)**
-2. **[Prerequisites](#prerequisites)**
-3. **[How to Use](#how-to-use)**
-4. **[Features](#features)**
-5. **[Audio](#audio)**
-6. **[Graphics](#graphics)**
-7. **[How it Works](#how-it-works)**
-8. **[Logging](#logging)**
-9. **[Contributing](#contributing)**
-10. **[Authors](#authors)**
-11. **[Special Thanks](#special-thanks)**
-12. **[License](#license)**
+- [Prerequisites](#Prerequisites)
+  - [Windows](#Windows)
+- [How to Use](#How-to-Use)
+- [Features](#Features)
+  - [Tools](#Tools)
+  - [GNT4 Options](#GNT4-Options)
+- [How it Works](#How-it-Works)
+- [Logging](#Logging)
+- [Contributing](#Contributing)
+- [Authors](#Authors)
+- [Special Thanks](#Special-Thanks)
+- [License](#License)
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+The [ISO File](https://wiki.dolphin-emu.org/index.php?title=Ripping_Games) you wish to work with.
 
-1. Windows
-2. [Naruto GNT4 ISO File](https://wiki.dolphin-emu.org/index.php?title=Ripping_Games)
+### Windows
 
-### How to Use
+Windows is only required for a few specific features. These include:
 
-To run the tool, download the latest release zip file from the [GNTool releases](https://github.com/NicholasMoser/GNTool/releases). Then extract the zip file and under the `bin` folder run `GNTool.bat`.
+- Replacing texture graphics, due to usage of `txg2tpl.exe`
+- Replacing sound effects and music, due to usage of `ffmpeg.exe`
+
+## How to Use
+
+To run the tool, download the latest release zip file from the [GNTool releases](https://github.com/NicholasMoser/GNTool/releases). Then extract the zip file and navigate to the `bin` folder. If on Windows run `GNTool.bat`, otherwise run `GNTool`.
 
 ![Launch](/docs/launch.png?raw=true "Launch")
 
-If this is your first time using the application you will want to create a new workspace. Otherwise, you can load your existing workspace. Workspaces are created from a GNT4 ISO located on your file system.
+Most of the functionality of GNTool is centered around the usage of workspaces. Only games in the top combobox are supported for workspaces. There are a handful of tools found under the wrench button that support all GameCube and Wii games. For more information on these tools see [Tools](#Tools).
+
+If this is your first time using the application you will want to create a new workspace. Otherwise, you can load your existing workspace. Workspaces are created via extracting files from an ISO located on your file system.
 
 ![Workspace Example](/docs/workspace.png?raw=true "Workspace Example")
 
-A workspace will contain a folder named `compressed` and a folder named `uncompressed`. Files should only be modified by you in the `uncompressed` folder. GNTool is responsible for managing the `compressed` folder and `workspace.bin` file. Refreshing the workspace will detect any changes you've made to files outside of the application
+A workspace will contain a directory named `compressed` and a directory named `uncompressed`. Files should only be manually modified by you in the `uncompressed` directory. GNTool is responsible for managing the `compressed` directory and `workspace.bin` file. Refreshing the workspace will detect any changes you've made to files in the `uncompressed` directory. You can make these changes through options in GNTool or through manual edits outside of GNTool.
 
-The **Menu** tab contains features for modifying the game in a general sense. You can find explanations of each feature under [Features](#features).
+The **Menu** tab contains features for making general modifications to the game. You can find explanations of each feature under [Features](#Features).
 
-The **Changed Files** tab contains the list of files you or GNTool has modified in the `uncompressed` directory. These files will be moved or recompressed upon building an ISO from the File menu. You can also right click on any changed files in the Changed Files view to open them, open their directory, or revert the changes.
+The **Changed Files** tab contains the list of files you or GNTool have modified in the `uncompressed` directory. These files will be recompressed and moved upon building an ISO from the **File** menu. You can also right click on any changed files in the **Changed Files** view to open them, open their directory, or revert the changes.
+
+![Right Click Example](/docs/rightclick.png?raw=true "Right Click Example")
 
 The **Missing Files** tab contains the list of files that have been removed from the `uncompressed` directory. These must be added back or you will not be able to build an ISO.
 
-The **Audio**, **Graphics**, and **Seqence** tabs contain tools and options for managing each of their respective files.
+The **Characters**, **Audio**, **Graphics**, and **Seqence** tabs contain tools and options for managing each of their respective files.
 
 You can build ISOs by selecting *Build ISO* under the File menu at the top. It is recommended to also select *Parallel Build* if using a multi-core CPU.
 
 :warning: Please be aware of the following :warning:
 
-* Do not rename or delete the `workspace.bin` file or any file in the `compressed` or `uncompressed` directory.
-* Do not modify the contents of any files in the `compressed` directory.
-* The compression algorithm used by GNTool does not match Eighting's, therefore newly compressed files may be larger than they otherwise would be.
+- Do not rename or delete the `workspace.bin` file or any file in the `compressed` or `uncompressed` directory.
+- Do not modify the contents of `workspace.bin` or any files in the `compressed` directory.
+- The compression algorithm used by GNTool does not perfectly match Eighting's, therefore newly compressed files may be larger than they otherwise would be.
 
-### Features
+## Features
 
-#### Tools
+### Tools
+
+Even if you have a GameCube or Wii ISO that does not yet have workspace support, there are a number of tools that still may be used. These can be accessed by clicking the wrench button in the main GNTool menu.
 
 #### ISO Extractor (GameCube)
 
@@ -87,6 +97,8 @@ This allows you to repack an FPK file for any Eighting title on the Wii.
 There is an optional button at the bottom of the window titled **Load Template**. This button will
 allow you to load a .txt file with file paths separated by newlines. This allows quicker repacking
 for FPKs you intend to repack more than once.
+
+### GNT4 Options
 
 #### Audio Fix
 
@@ -126,9 +138,13 @@ Continues playing background music when the game is paused.
 
 Avoids the slowdown when a player is killed in the game.
 
-### Audio
+#### ZTK Damage Taken Multiplier
 
-There are multiple settings related to audio. They can be found under the Audio tab in your workspace. Some of the tools require executables from the Nintendo GameCube SDK. You can find a copy of the SDK by searching online for it.
+By default, Naruto's ZTK transformation takes 1.5x damage. This setting allows you to change this value.
+
+#### Ukon Damage Taken Multiplier
+
+By default, Ukon takes 1.2x damage. This setting allows you to change this value. Sakon is not affected, only Ukon.
 
 #### Sound Effects
 
@@ -144,15 +160,15 @@ Music files are easier to work with than sound effects since they are stored sep
 
 **Replace** will allow you to replace a single music file. In order to use this functionality it will ask you to select dtkmake.exe from the Nintendo GameCube SDK. This file can be found in the SDK under `NINTENDO GameCube SDK 1.0/X86/bin/dtkmake.exe`. The audio you select will first be modified into a 48k frequency .wav file and then into a .trk file.
 
-### Graphics
-
 #### Textures
 
 To replace textures in the game, first extract a specific texture archive or extract all of them. A folder matching the name of the texture archive will be created in the directory of the texture. In the folder will be one or more [.tpl files](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/file_formats/txg.md#tpl-header). These files can be viewed and modified with [BrawlBox](https://github.com/libertyernie/brawltools). When you are finished modifying .tpl files, make sure to import the specific texture in GNTool for it to appear in the game.
 
-### How it Works
+## How it Works
 
-There are multiple steps involved in the execution of this program. First, the contents of the ISO are dumped to the `compressed` folder in the workspace. The contents are then copied to the `uncompressed` folder. In the `uncompressed` folder, each FPK is uncompressed using a PRS uncompression algorithm. The FPKs in the `uncompressed` folder are then deleted. This will leave the `compressed` folder as the compressed version of the game files and the `uncompressed` folder as the uncompressed version of the game files.
+There are multiple steps involved in the execution of this program. First, the contents of the ISO are dumped to the `compressed` folder in the workspace. The contents are then copied to the `uncompressed` folder. In the `uncompressed` folder, each FPK is uncompressed using the Eighting PRS uncompression algorithm. The FPK files in the `uncompressed` folder are then deleted. This will leave the `compressed` folder as the compressed version of the game files and the `uncompressed` folder as the uncompressed version of the game files.
+
+Both of these directories are fully functional copies of the game when run through Dolphin. You can launch either by opening `sys/main.dol` in Dolphin.
 
 When you are ready to rebuild the ISO, only modified files are repacked. This is the benefit of keeping the `compressed` folder, the original FPKs are maintained in the workspace state. GNTool calculates which files have changed by comparing each file to its expected [CRC32 value](https://en.wikipedia.org/wiki/Cyclic_redundancy_check).
 
@@ -166,16 +182,16 @@ If you have enhancement ideas, defect requests, or generally want to contribute 
 
 ## Authors
 
-* **Nicholas Moser**
+- **Nicholas Moser**
 
 ## Special Thanks
 
-* **tpu** - Wrote original PRS uncompression algorithm.
-* **RupertAvery** - Wrote original PRS compression algorithm.
-* **[Luigi Auriemma](https://aluigi.altervista.org/quickbms.htm)** - Ported PRS compression/uncompression algorithms to QuickBMS.
-* **[Nisto](https://github.com/Struggleton)** - For writing musyx-extract for sound file reading and writing.
-* **[Struggleton](https://github.com/Struggleton)** - For writing TXG2TPL for txg file reading and writing.
-* **[The Dueling Potato](https://github.com/mitchellhumphrey)** - For writing seq-kage for seq file reading and writing.
+- **tpu** - Wrote original PRS uncompression algorithm.
+- **RupertAvery** - Wrote original PRS compression algorithm.
+- **[Luigi Auriemma](https://aluigi.altervista.org/quickbms.htm)** - Ported PRS compression/uncompression algorithms to QuickBMS.
+- **[Nisto](https://github.com/Struggleton)** - For writing musyx-extract for sound file reading and writing.
+- **[Struggleton](https://github.com/Struggleton)** - For writing TXG2TPL for txg file reading and writing.
+- **[The Dueling Potato](https://github.com/mitchellhumphrey)** - For writing seq-kage for seq file reading and writing.
 
 ## License
 
