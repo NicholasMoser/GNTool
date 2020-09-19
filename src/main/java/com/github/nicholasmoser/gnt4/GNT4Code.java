@@ -10,8 +10,31 @@ import java.util.Objects;
 public class GNT4Code {
   private final String filePath;
   private final int offset;
+  private final int length;
   private byte[] oldInstruction;
   private byte[] newInstruction;
+
+  /**
+   * Create a new GNT4Code for a data value change.
+   * @param filePath The path to the file.
+   * @param offset The offset to where the change goes.
+   */
+  public GNT4Code(String filePath, int offset) {
+    this.filePath = filePath;
+    this.offset = offset;
+    this.length = 4;
+  }
+
+  /**
+   * Create a new GNT4Code for a data value change with the given length of bytes.
+   * @param filePath The path to the file.
+   * @param offset The offset to where the change goes.
+   */
+  public GNT4Code(String filePath, int offset, int length) {
+    this.filePath = filePath;
+    this.offset = offset;
+    this.length = length;
+  }
 
   /**
    * Create a new GNT4Code for a code change.
@@ -25,16 +48,7 @@ public class GNT4Code {
     this.offset = offset;
     this.oldInstruction = oldInstruction;
     this.newInstruction = newInstruction;
-  }
-
-  /**
-   * Create a new GNT4Code for a data value change.
-   * @param filePath The path to the file.
-   * @param offset The offset to where the change goes.
-   */
-  public GNT4Code(String filePath, int offset) {
-    this.filePath = filePath;
-    this.offset = offset;
+    this.length = newInstruction.length;
   }
 
   /**
@@ -64,6 +78,11 @@ public class GNT4Code {
   public byte[] getNewInstruction() {
     return newInstruction;
   }
+
+  /**
+   * @return The number of bytes for the code.
+   */
+  public int getLength() { return length; }
 
   @Override
   public boolean equals(Object o) {

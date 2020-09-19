@@ -57,6 +57,7 @@ public class MenuController {
   private Workspace workspace;
   private Stage stage;
   private Path uncompressedDirectory;
+  private GNT4Codes codes;
 
   @FXML
   private ListView<String> changedFiles;
@@ -116,14 +117,13 @@ public class MenuController {
   protected void audioFixCode() {
     try {
       boolean selected = audioFixCode.isSelected();
-      GNT4Codes codes = GNT4Codes.getInstance();
       if (selected) {
-        codes.activateAudioFixCode(uncompressedDirectory);
+        codes.activateCode(GNT4Codes.AUDIO_FIX);
       } else {
-        codes.inactivateAudioFixCode(uncompressedDirectory);
+        codes.inactivateCode(GNT4Codes.AUDIO_FIX);
       }
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to trigger the audio fix code.", e);
+      LOGGER.log(Level.SEVERE, "Error Triggering Audio Fix Code", e);
       Message.error("Error Triggering Audio Fix Code", "See the log for more information.");
     }
   }
@@ -135,14 +135,13 @@ public class MenuController {
   protected void playAudioWhilePaused() {
     try {
       boolean selected = playAudioWhilePaused.isSelected();
-      GNT4Codes codes = GNT4Codes.getInstance();
       if (selected) {
-        codes.activateAudioPlaysWhilePaused(uncompressedDirectory);
+        codes.activateCode(GNT4Codes.PLAY_AUDIO_WHILE_PAUSED);
       } else {
-        codes.inactivateAudioPlaysWhilePaused(uncompressedDirectory);
+        codes.inactivateCode(GNT4Codes.PLAY_AUDIO_WHILE_PAUSED);
       }
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to trigger the play audio while paused code.", e);
+      LOGGER.log(Level.SEVERE, "Error Triggering Play Audio While Paused Code", e);
       Message.error("Error Triggering Play Audio While Paused Code",
           "See the log for more information.");
     }
@@ -155,14 +154,13 @@ public class MenuController {
   protected void noSlowDownOnKill() {
     try {
       boolean selected = noSlowDownOnKill.isSelected();
-      GNT4Codes codes = GNT4Codes.getInstance();
       if (selected) {
-        codes.activateNoSlowdownOnKillCode(uncompressedDirectory);
+        codes.activateCode(GNT4Codes.NO_SLOWDOWN_ON_KILL);
       } else {
-        codes.inactivateNoSlowdownOnKillCode(uncompressedDirectory);
+        codes.inactivateCode(GNT4Codes.NO_SLOWDOWN_ON_KILL);
       }
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to trigger the no slowdown on kill code.", e);
+      LOGGER.log(Level.SEVERE, "Error Triggering No Slowdown On Kill Code", e);
       Message
           .error("Error Triggering No Slowdown On Kill Code", "See the log for more information.");
     }
@@ -175,16 +173,14 @@ public class MenuController {
   protected void unlockAll() {
     try {
       boolean selected = unlockAll.isSelected();
-      GNT4Codes codes = GNT4Codes.getInstance();
       if (selected) {
-        codes.activateUnlockAll(uncompressedDirectory);
+        codes.activateCode(GNT4Codes.UNLOCK_ALL_CODES);
       } else {
-        codes.inactivateUnlockAll(uncompressedDirectory);
+        codes.inactivateCode(GNT4Codes.UNLOCK_ALL_CODES);
       }
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to trigger the unlock everything code.", e);
-      Message
-          .error("Error Triggering Unlock Everything Code", "See the log for more information.");
+      LOGGER.log(Level.SEVERE, "Error Triggering Unlock Everything Code", e);
+      Message.error("Error Triggering Unlock Everything Code", "See the log for more information.");
     }
   }
 
@@ -195,14 +191,13 @@ public class MenuController {
   protected void skipCutscenesCode() {
     try {
       boolean selected = skipCutscenesCode.isSelected();
-      GNT4Codes codes = GNT4Codes.getInstance();
       if (selected) {
-        codes.activateSkipCutscenesCode(uncompressedDirectory);
+        codes.activateCode(GNT4Codes.SKIP_CUTSCENES);
       } else {
-        codes.inactivateSkipCutscenesCode(uncompressedDirectory);
+        codes.inactivateCode(GNT4Codes.SKIP_CUTSCENES);
       }
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to trigger the skip cutscenes code.", e);
+      LOGGER.log(Level.SEVERE, "Error Triggering Skip Cutscenes Code", e);
       Message.error("Error Triggering Skip Cutscenes Code", "See the log for more information.");
     }
   }
@@ -211,10 +206,10 @@ public class MenuController {
   protected void setCssInitialSpeed() {
     try {
       int value = cssInitialSpeed.getValue();
-      GNT4Codes codes = GNT4Codes.getInstance();
-      codes.setCssInitialSpeed(uncompressedDirectory, value);
+      codes.setCodeInt(GNT4Codes.INITIAL_SPEEDS_1V1, value);
+      codes.setCodeInt(GNT4Codes.INITIAL_SPEEDS_FFA, value);
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Update the CSS Initial Speed.", e);
+      LOGGER.log(Level.SEVERE, "Failed to Update the CSS Initial Speed", e);
       Message.error("Failed to Update the CSS Initial Speed", "See the log for more information.");
     }
   }
@@ -223,10 +218,10 @@ public class MenuController {
   protected void setCssMaxSpeed() {
     try {
       int value = cssMaxSpeed.getValue();
-      GNT4Codes codes = GNT4Codes.getInstance();
-      codes.setCssMaxSpeed(uncompressedDirectory, value);
+      codes.setCodeInt(GNT4Codes.MAX_SPEEDS_1V1, value);
+      codes.setCodeInt(GNT4Codes.MAX_SPEEDS_FFA, value);
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Update the CSS Max Speed.", e);
+      LOGGER.log(Level.SEVERE, "Failed to Update the CSS Max Speed", e);
       Message.error("Failed to Update the CSS Max Speed", "See the log for more information.");
     }
   }
@@ -234,11 +229,10 @@ public class MenuController {
   @FXML
   protected void setDemoTimeOut() {
     try {
-      int value = demoTimeOut.getValue();
-      GNT4Codes codes = GNT4Codes.getInstance();
-      codes.setTitleDemoTimeout(uncompressedDirectory, value);
+      int frames = secondsToFrames(demoTimeOut.getValue());
+      codes.setCodeInt(GNT4Codes.DEMO_TIME_OUT, frames);
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Update the Title Demo Timeout.", e);
+      LOGGER.log(Level.SEVERE, "Failed to Update the Title Demo Timeout", e);
       Message.error("Failed to Update the Title Demo Timeout", "See the log for more information.");
     }
   }
@@ -259,11 +253,10 @@ public class MenuController {
   public void changeMainMenuCharacter() {
     try {
       String character = mainMenuCharacter.getSelectionModel().getSelectedItem();
-      GNT4Codes codes = GNT4Codes.getInstance();
-      codes.setMainMenuCharacter(uncompressedDirectory, character);
+      codes.setMainMenuCharacter(character);
       Texture1300.mainCharacterFix(uncompressedDirectory, character);
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Update Main Menu Character.", e);
+      LOGGER.log(Level.SEVERE, "Failed to Update Main Menu Character", e);
       Message.error("Failed to Update Main Menu Character", "See the log for more information.");
     }
   }
@@ -273,10 +266,9 @@ public class MenuController {
     String multiplier = ztkDamageMultiplier.getText();
     try {
       byte[] bytes = ByteUtils.floatStringToBytes(multiplier);
-      GNT4Codes codes = GNT4Codes.getInstance();
-      codes.setZTKDamageMultiplier(uncompressedDirectory, bytes);
+      codes.setCodeBytes(GNT4Codes.ZTK_DAMAGE_TAKEN_MULTIPLIER, bytes);
     } catch (NumberFormatException e) {
-      LOGGER.log(Level.SEVERE, "Failed to format number.", e);
+      LOGGER.log(Level.SEVERE, "Failed to Format Number", e);
       Message.error("Invalid Number", multiplier + " is not a valid number.");
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Update ZTK Damage Multiplier", e);
@@ -289,8 +281,7 @@ public class MenuController {
     String multiplier = ukonDamageMultiplier.getText();
     try {
       byte[] bytes = ByteUtils.floatStringToBytes(multiplier);
-      GNT4Codes codes = GNT4Codes.getInstance();
-      codes.setUkonDamageMultiplier(uncompressedDirectory, bytes);
+      codes.setCodeBytes(GNT4Codes.UKON_DAMAGE_TAKEN_MULTIPLIER, bytes);
     } catch (NumberFormatException e) {
       LOGGER.log(Level.SEVERE, "Failed to format number.", e);
       Message.error("Invalid Number", multiplier + " is not a valid number.");
@@ -821,6 +812,7 @@ public class MenuController {
     this.workspace = workspace;
     this.stage = stage;
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
+    this.codes = new GNT4Codes(uncompressedDirectory);
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
@@ -916,64 +908,63 @@ public class MenuController {
    * Refreshes the list of code options.
    */
   private void refreshOptions() {
-    GNT4Codes codes = GNT4Codes.getInstance();
     try {
-      boolean isActive = codes.isAudioFixCodeActivated(uncompressedDirectory);
+      boolean isActive = codes.isCodeActivated(GNT4Codes.AUDIO_FIX);
       audioFixCode.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting Audio Fix Code.", e);
     }
     try {
-      boolean isActive = codes.isSkipCutscenesCodeActivated(uncompressedDirectory);
+      boolean isActive = codes.isCodeActivated(GNT4Codes.SKIP_CUTSCENES);
       skipCutscenesCode.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting Skip Cutscenes Code.", e);
     }
     try {
-      int value = codes.getCssInitialSpeed(uncompressedDirectory);
+      int value = codes.getCodeInt(GNT4Codes.CSS_INITIAL_SPEED_1V1_1P);
       cssInitialSpeed.getValueFactory().setValue(value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting CSS initial speed.", e);
     }
     try {
-      int value = codes.getCssMaxSpeed(uncompressedDirectory);
+      int value = codes.getCodeInt(GNT4Codes.CSS_MAX_SPEED_1V1_1P);
       cssMaxSpeed.getValueFactory().setValue(value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting CSS max speed.", e);
     }
     try {
-      int value = codes.getTitleDemoTimeout(uncompressedDirectory);
-      demoTimeOut.getValueFactory().setValue(value);
+      int seconds = framesToSeconds(codes.getCodeInt(GNT4Codes.DEMO_TIME_OUT));
+      demoTimeOut.getValueFactory().setValue(seconds);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting title demo timeout.", e);
     }
     try {
-      boolean isActive = codes.isAudioPlaysWhilePausedActivated(uncompressedDirectory);
+      boolean isActive = codes.isCodeActivated(GNT4Codes.PLAY_AUDIO_WHILE_PAUSED);
       playAudioWhilePaused.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting Play Audio While Paused Code.", e);
     }
     try {
-      boolean isActive = codes.isNoSlowdownOnKillActivated(uncompressedDirectory);
+      boolean isActive = codes.isCodeActivated(GNT4Codes.NO_SLOWDOWN_ON_KILL);
       noSlowDownOnKill.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting No Slowdown On Kill Code.", e);
     }
     try {
-      boolean isActive = codes.isUnlockAllActivated(uncompressedDirectory);
+      boolean isActive = codes.isCodeActivated(GNT4Codes.UNLOCK_ALL_CODES);
       unlockAll.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting Unlock All Code.", e);
     }
     try {
-      byte[] bytes = codes.getZTKDamageMultiplier(uncompressedDirectory);
+      byte[] bytes = codes.getCodeBytes(GNT4Codes.ZTK_DAMAGE_TAKEN_MULTIPLIER);
       float value = ByteUtils.bytesToFloat(bytes);
       ztkDamageMultiplier.setText(Float.toString(value));
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting ZTK Damage Multiplier.", e);
     }
     try {
-      byte[] bytes = codes.getUkonDamageMultiplier(uncompressedDirectory);
+      byte[] bytes = codes.getCodeBytes(GNT4Codes.UKON_DAMAGE_TAKEN_MULTIPLIER);
       float value = ByteUtils.bytesToFloat(bytes);
       ukonDamageMultiplier.setText(Float.toString(value));
     } catch (Exception e) {
@@ -987,8 +978,8 @@ public class MenuController {
   private void refreshMainMenuCharacter() {
     Platform.runLater(() -> {
       try {
-        GNT4Codes codes = GNT4Codes.getInstance();
-        String character = codes.getMainMenuCharacter(uncompressedDirectory);
+        int characterNumber = codes.getCodeInt(GNT4Codes.MAIN_MENU_CHARACTER);
+        String character = GNT4Characters.INTERNAL_CHAR_ORDER.inverse().get(characterNumber);
         mainMenuCharacter.getSelectionModel().select(character);
       } catch (Exception e) {
         LOGGER.log(Level.SEVERE, "Error Setting Current Main Menu Character", e);
@@ -1033,5 +1024,27 @@ public class MenuController {
     });
     contextMenu.getItems().addAll(openFile, openDirectory, revertChanges);
     return contextMenu;
+  }
+
+  /**
+   * Converts a number of frames to a number of seconds. GNT4 runs at 60 frames per second,
+   * therefore there are 60 frames in a second.
+   *
+   * @param frames The number of frames to convert.
+   * @return The number of seconds.
+   */
+  private int framesToSeconds(int frames) {
+    return frames / 60;
+  }
+
+  /**
+   * Converts a number of seconds to a number of frames. GNT4 runs at 60 frames per second,
+   * therefore there are 60 frames in a second.
+   *
+   * @param seconds The number of seconds to convert.
+   * @return The number of frames.
+   */
+  private int secondsToFrames(int seconds) {
+    return seconds * 60;
   }
 }

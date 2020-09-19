@@ -2,6 +2,8 @@ package com.github.nicholasmoser.gnt4;
 
 import static java.util.Map.entry;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -97,97 +99,52 @@ public class GNT4Characters {
       ZABUZA);
 
   /**
-   * All of the characters in the game except Tayuya, Kankuro, and Kiba in alphabetic order.
-   * Tayuya, Kankuro, and Kiba cannot be main menu characters.
-   * This is due to the fact that they load separate models that cause errors.
+   * A mapping of each character to their internal integer representation. This number is determined
+   * by when they were added to the game.
    */
-  public static final List<String> MAIN_MENU_CHARS = Arrays.asList(
-      AKAMARU,
-      ANKO,
-      CHOJI,
-      GAARA,
-      HAKU,
-      HINATA,
-      HINATA_AWAKENED,
-      INO,
-      IRUKA,
-      ITACHI,
-      JIRAIYA,
-      JIROBO,
-      KABUTO,
-      KAKASHI,
-      KARASU,
-      KIDOMARU,
-      KIMIMARO,
-      KISAME,
-      LEE,
-      MIGHT_GUY,
-      MIZUKI,
-      NARUTO,
-      NARUTO_OTK,
-      NEJI,
-      OBORO,
-      OROCHIMARU,
-      SAKON,
-      SAKURA,
-      SARUTOBI,
-      SASUKE,
-      SASUKE_CS2,
-      SHIKAMARU,
-      SHINO,
-      TAYUYA_DOKI,
-      TEMARI,
-      TENTEN,
-      TSUNADE,
-      ZABUZA);
-
-  /**
-   * A mapping of each character to their internal integer representation.
-   * This number is determined by when they were added to the game.
-   */
-  public static final Map<String, Integer> INTERNAL_CHAR_ORDER = Map.ofEntries(
-      entry(SASUKE, 0x01),
-      entry(HAKU, 0x02),
-      entry(KAKASHI, 0x03),
-      entry(LEE, 0x04),
-      entry(IRUKA, 0x05),
-      entry(ZABUZA, 0x06),
-      entry(SAKURA, 0x07),
-      entry(NARUTO, 0x08),
-      entry(INO, 0x09),
-      entry(SHIKAMARU, 0x0A),
-      entry(NEJI, 0x0B),
-      entry(HINATA, 0x0C),
-      entry(MIGHT_GUY, 0x0D),
-      entry(KANKURO, 0x0E),
-      entry(KARASU, 0x0F),
-      entry(KIBA, 0x10),
-      entry(AKAMARU, 0x11),
-      entry(GAARA, 0x12),
-      entry(OROCHIMARU, 0x13),
-      entry(OBORO, 0x14),
-      entry(MIZUKI, 0x15),
-      entry(ANKO, 0x16),
-      entry(JIRAIYA, 0x17),
-      entry(CHOJI, 0x18),
-      entry(TENTEN, 0x19),
-      entry(TEMARI, 0x1A),
-      entry(SHINO, 0x1B),
-      entry(ITACHI, 0x1C),
-      entry(TSUNADE, 0x1D),
-      entry(SARUTOBI, 0x1E),
-      entry(KIMIMARO, 0x1F),
-      entry(JIROBO, 0x20),
-      entry(KIDOMARU, 0x21),
-      entry(SAKON, 0x22),
-      entry(TAYUYA, 0x23),
-      entry(KISAME, 0x24),
-      entry(SASUKE_CS2, 0x25),
-      entry(NARUTO_OTK, 0x26),
-      entry(KABUTO, 0x27),
-      entry(HINATA_AWAKENED, 0x28),
-      entry(TAYUYA_DOKI, 0x29)
-  );
+  public static final BiMap<String, Integer> INTERNAL_CHAR_ORDER = new ImmutableBiMap.Builder<String, Integer>()
+      .put(SASUKE, 0x01)
+      .put(HAKU, 0x02)
+      .put(KAKASHI, 0x03)
+      .put(LEE, 0x04)
+      .put(IRUKA, 0x05)
+      .put(ZABUZA, 0x06)
+      .put(SAKURA, 0x07)
+      .put(NARUTO, 0x08)
+      .put(INO, 0x09)
+      .put(SHIKAMARU, 0x0A)
+      .put(NEJI, 0x0B)
+      .put(HINATA, 0x0C)
+      .put(MIGHT_GUY, 0x0D)
+      .put(KANKURO, 0x0E)
+      .put(KARASU, 0x0F)
+      .put(KIBA, 0x10)
+      .put(AKAMARU, 0x11)
+      .put(GAARA, 0x12)
+      .put(OROCHIMARU, 0x13)
+      .put(OBORO, 0x14)
+      .put(MIZUKI, 0x15)
+      .put(ANKO, 0x16)
+      .put(JIRAIYA, 0x17)
+      .put(CHOJI, 0x18)
+      .put(TENTEN, 0x19)
+      .put(TEMARI, 0x1A)
+      .put(SHINO, 0x1B)
+      .put(ITACHI, 0x1C)
+      .put(TSUNADE, 0x1D)
+      .put(SARUTOBI, 0x1E)
+      .put(KIMIMARO, 0x1F)
+      .put(JIROBO, 0x20)
+      .put(KIDOMARU, 0x21)
+      .put(SAKON, 0x22)
+      .put(TAYUYA, 0x23)
+      .put(KISAME, 0x24)
+      .put(SASUKE_CS2, 0x25)
+      .put(NARUTO_OTK, 0x26)
+      .put(KABUTO, 0x27)
+      .put(HINATA_AWAKENED, 0x28)
+      .put(TAYUYA_DOKI, 0x29)
+      .build();
 
   /**
    * A mapping of each character to their chr folder name.
@@ -237,6 +194,51 @@ public class GNT4Characters {
   );
 
   /**
+   * All of the characters in the game except Tayuya, Kankuro, and Kiba in alphabetic order. Tayuya,
+   * Kankuro, and Kiba cannot be main menu characters. This is due to the fact that they load
+   * separate models that cause errors.
+   */
+  public static final List<String> MAIN_MENU_CHARS = Arrays.asList(
+      AKAMARU,
+      ANKO,
+      CHOJI,
+      GAARA,
+      HAKU,
+      HINATA,
+      HINATA_AWAKENED,
+      INO,
+      IRUKA,
+      ITACHI,
+      JIRAIYA,
+      JIROBO,
+      KABUTO,
+      KAKASHI,
+      KARASU,
+      KIDOMARU,
+      KIMIMARO,
+      KISAME,
+      LEE,
+      MIGHT_GUY,
+      MIZUKI,
+      NARUTO,
+      NARUTO_OTK,
+      NEJI,
+      OBORO,
+      OROCHIMARU,
+      SAKON,
+      SAKURA,
+      SARUTOBI,
+      SASUKE,
+      SASUKE_CS2,
+      SHIKAMARU,
+      SHINO,
+      TAYUYA_DOKI,
+      TEMARI,
+      TENTEN,
+      TSUNADE,
+      ZABUZA);
+
+  /**
    * A mapping of each character to their best main menu selection sound.
    */
   public static final Map<String, Byte> CHAR_SEL_SOUND = Map.ofEntries(
@@ -284,8 +286,7 @@ public class GNT4Characters {
   );
 
   /**
-   * A map containing the height adjustments for main menu characters.
-   * The default value is 0xE5
+   * A map containing the height adjustments for main menu characters. The default value is 0xE5
    */
   public static final Map<String, Byte> CHAR_HEIGHT_ADJUST = Map.ofEntries(
       entry(SASUKE, (byte) 0xDF),
@@ -329,5 +330,5 @@ public class GNT4Characters {
       entry(KABUTO, (byte) 0xD0),
       entry(HINATA_AWAKENED, (byte) 0xE5),
       entry(TAYUYA_DOKI, (byte) 0x88)
-    );
+  );
 }
