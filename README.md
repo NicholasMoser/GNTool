@@ -138,6 +138,10 @@ Continues playing background music when the game is paused.
 
 Avoids the slowdown when a player is killed in the game.
 
+#### Widescreen 16:9
+
+Changes the aspect ratio from 4:3 to 16:9 (Widescreen).
+
 #### ZTK Damage Taken Multiplier
 
 By default, Naruto's ZTK transformation takes 1.5x damage. This setting allows you to change this value.
