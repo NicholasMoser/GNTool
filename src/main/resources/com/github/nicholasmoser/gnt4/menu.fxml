@@ -90,6 +90,9 @@
               <CheckBox fx:id="unlockAll" layoutX="14.0"
                 layoutY="376.0" mnemonicParsing="false"
                 onAction="#unlockAll" text="Unlock Everything"/>
+              <CheckBox fx:id="enableWidescreen" layoutX="14.0"
+                layoutY="414.0" mnemonicParsing="false"
+                onAction="#enableWidescreen" text="Widescreen 16:9"/>
             </AnchorPane>
           </ScrollPane>
         </AnchorPane>

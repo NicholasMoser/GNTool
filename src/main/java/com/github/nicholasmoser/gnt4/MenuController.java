@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -54,6 +55,7 @@ public class MenuController {
   private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool";
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
+  private static final String SEE_LOG = "See the log for more information.";
   private Workspace workspace;
   private Stage stage;
   private Path uncompressedDirectory;
@@ -79,6 +81,9 @@ public class MenuController {
 
   @FXML
   private CheckBox unlockAll;
+
+  @FXML
+  private CheckBox enableWidescreen;
 
   @FXML
   private Spinner<Integer> cssInitialSpeed;
@@ -124,7 +129,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Audio Fix Code", e);
-      Message.error("Error Triggering Audio Fix Code", "See the log for more information.");
+      Message.error("Error Triggering Audio Fix Code", SEE_LOG);
     }
   }
 
@@ -142,8 +147,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Play Audio While Paused Code", e);
-      Message.error("Error Triggering Play Audio While Paused Code",
-          "See the log for more information.");
+      Message.error("Error Triggering Play Audio While Paused Code", SEE_LOG);
     }
   }
 
@@ -161,8 +165,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering No Slowdown On Kill Code", e);
-      Message
-          .error("Error Triggering No Slowdown On Kill Code", "See the log for more information.");
+      Message.error("Error Triggering No Slowdown On Kill Code", SEE_LOG);
     }
   }
 
@@ -180,7 +183,22 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Unlock Everything Code", e);
-      Message.error("Error Triggering Unlock Everything Code", "See the log for more information.");
+      Message.error("Error Triggering Unlock Everything Code", SEE_LOG);
+    }
+  }
+
+  @FXML
+  protected void enableWidescreen(ActionEvent actionEvent) {
+    try {
+      boolean selected = enableWidescreen.isSelected();
+      if (selected) {
+        codes.activateCode(GNT4Codes.WIDESCREEN_CODES);
+      } else {
+        codes.inactivateCode(GNT4Codes.WIDESCREEN_CODES);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Triggering Widescreen Code", e);
+      Message.error("Error Triggering Widescreen Code", SEE_LOG);
     }
   }
 
@@ -198,7 +216,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Skip Cutscenes Code", e);
-      Message.error("Error Triggering Skip Cutscenes Code", "See the log for more information.");
+      Message.error("Error Triggering Skip Cutscenes Code", SEE_LOG);
     }
   }
 
@@ -210,7 +228,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.INITIAL_SPEEDS_FFA, value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the CSS Initial Speed", e);
-      Message.error("Failed to Update the CSS Initial Speed", "See the log for more information.");
+      Message.error("Failed to Update the CSS Initial Speed", SEE_LOG);
     }
   }
 
@@ -222,7 +240,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.MAX_SPEEDS_FFA, value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the CSS Max Speed", e);
-      Message.error("Failed to Update the CSS Max Speed", "See the log for more information.");
+      Message.error("Failed to Update the CSS Max Speed", SEE_LOG);
     }
   }
 
@@ -233,7 +251,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.DEMO_TIME_OUT, frames);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the Title Demo Timeout", e);
-      Message.error("Failed to Update the Title Demo Timeout", "See the log for more information.");
+      Message.error("Failed to Update the Title Demo Timeout", SEE_LOG);
     }
   }
 
@@ -257,7 +275,7 @@ public class MenuController {
       Texture1300.mainCharacterFix(uncompressedDirectory, character);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Main Menu Character", e);
-      Message.error("Failed to Update Main Menu Character", "See the log for more information.");
+      Message.error("Failed to Update Main Menu Character", SEE_LOG);
     }
   }
 
@@ -272,7 +290,7 @@ public class MenuController {
       Message.error("Invalid Number", multiplier + " is not a valid number.");
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Update ZTK Damage Multiplier", e);
-      Message.error("Failed to Update ZTK Damage Multiplier", "See the log for more information.");
+      Message.error("Failed to Update ZTK Damage Multiplier", SEE_LOG);
     }
   }
 
@@ -287,7 +305,7 @@ public class MenuController {
       Message.error("Invalid Number", multiplier + " is not a valid number.");
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Ukon Damage Multiplier", e);
-      Message.error("Failed to Update Ukon Damage Multiplier", "See the log for more information.");
+      Message.error("Failed to Update Ukon Damage Multiplier", SEE_LOG);
     }
   }
 
@@ -317,7 +335,7 @@ public class MenuController {
       syncRefresh();
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Error Refreshing Workspace", e);
-      Message.error("Error Refreshing Workspace", "See the log for more information.");
+      Message.error("Error Refreshing Workspace", SEE_LOG);
       return;
     }
 
@@ -388,7 +406,7 @@ public class MenuController {
       asyncRefresh();
     });
     task.setOnFailed(event -> {
-      Message.error("ISO Build Failure", "See the log for more information.");
+      Message.error("ISO Build Failure", SEE_LOG);
       loadingWindow.close();
       // Don't save workspace state to make debugging easier
     });
@@ -412,7 +430,7 @@ public class MenuController {
       Desktop.getDesktop().browse(new URI(ABOUT_URL));
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
-      Message.error("Error Opening About Page", "See the log for more information.");
+      Message.error("Error Opening About Page", SEE_LOG);
     }
   }
 
@@ -425,7 +443,7 @@ public class MenuController {
       Desktop.getDesktop().open(uncompressedDirectory.toFile());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
-      Message.error("Error Opening Workspace Directory", "See the log for more information.");
+      Message.error("Error Opening Workspace Directory", SEE_LOG);
     }
   }
 
@@ -870,7 +888,7 @@ public class MenuController {
 
     task.setOnSucceeded(event -> loadingWindow.close());
     task.setOnFailed(event -> {
-      Message.error("Error Refreshing Workspace", "See the log for more information.");
+      Message.error("Error Refreshing Workspace", SEE_LOG);
       loadingWindow.close();
     });
     new Thread(task).start();
@@ -969,6 +987,12 @@ public class MenuController {
       ukonDamageMultiplier.setText(Float.toString(value));
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting Ukon Damage Multiplier.", e);
+    }
+    try {
+      boolean isActive = codes.isCodeActivated(GNT4Codes.WIDESCREEN_CODES);
+      enableWidescreen.setSelected(isActive);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error getting Widescreen Code.", e);
     }
   }
 

@@ -168,6 +168,16 @@ public class GNT4Codes {
   // https://github.com/NicholasMoser/GNTool#Ukon-Damage-Taken-Multiplier
   public static final GNT4Code UKON_DAMAGE_TAKEN_MULTIPLIER = new GNT4Code(MAIN_DOL, 0x220C94);
 
+  // https://github.com/NicholasMoser/GNTool#Widescreen
+  public static final GNT4Code PERSPECTIVE_INSTRUCTION = new GNT4Code(MAIN_DOL, 0x16B15C,
+      new byte[]{(byte)0xff, (byte)0xa0, 0x10, (byte)0x90},
+      new byte[]{(byte)0xc3, (byte)0xa2, (byte)0xa0, 0x24});
+  public static final GNT4Code WIDESCREEN_VALUE = new GNT4Code(MAIN_DOL, 0x2220C4,
+      new byte[]{0x3f, (byte)0xa2, (byte)0x8f, 0x5c},
+      new byte[]{0x3f, (byte)0xe3, (byte)0x8e, 0x39});
+  public static final List<GNT4Code> WIDESCREEN_CODES = Arrays
+      .asList(PERSPECTIVE_INSTRUCTION, WIDESCREEN_VALUE);
+
   private final Path uncompressedDirectory;
 
   public GNT4Codes(Path uncompressedDirectory) {
