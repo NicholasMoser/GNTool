@@ -13,6 +13,8 @@ import com.github.nicholasmoser.audio.DtkMake;
 import com.github.nicholasmoser.audio.FFmpeg;
 import com.github.nicholasmoser.audio.MusyXExtract;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
+import com.github.nicholasmoser.gecko.GeckoCode;
+import com.github.nicholasmoser.gecko.GeckoReader;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.graphics.TXG2TPL;
@@ -43,6 +45,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -114,6 +117,9 @@ public class MenuController {
 
   @FXML
   private TextField ukonDamageMultiplier;
+
+  @FXML
+  private TextArea geckoCodes;
 
   /**
    * Toggles the code for fixing the audio.
@@ -188,7 +194,7 @@ public class MenuController {
   }
 
   @FXML
-  protected void enableWidescreen(ActionEvent actionEvent) {
+  protected void enableWidescreen() {
     try {
       boolean selected = enableWidescreen.isSelected();
       if (selected) {
@@ -818,6 +824,23 @@ public class MenuController {
       LOGGER.log(Level.SEVERE, "Error Running SEQKage", e);
       Message.error("Error Running SEQKage", "See log for more information");
     }
+  }
+
+  @FXML
+  protected void checkCodes() {
+    String text = geckoCodes.getText();
+    GeckoReader reader = new GeckoReader();
+    try {
+      List<GeckoCode> codes = reader.parseCodes(text);
+      Message.info("Valid Codes Found", codes.toString());
+    } catch (IllegalArgumentException e) {
+      LOGGER.log(Level.SEVERE, "Error Parsing Codes", e);
+      Message.error("Error Parsing Codes", e.getMessage());
+    }
+  }
+
+  @FXML
+  protected void applyCodes() {
   }
 
   /**
