@@ -1,8 +1,10 @@
 package com.github.nicholasmoser.gecko;
 
 public interface GeckoCode {
-  // For all code types see https://geckocodes.org/index.php?arsenal=1
-  byte THIRTY_TWO_BITS_WRITE_AND_FILL = 0x04;
+
+  // For all code types see:
+  // https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/general/docs/guides/gecko_codetype_documentation.md
+  byte THIRTY_TWO_BITS_WRITE = 0x04;
   byte INSERT_ASM = (byte) 0xC2;
 
   /**
