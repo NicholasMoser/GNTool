@@ -17,4 +17,5 @@ module com.github.nicholasmoser {
   requires javafx.graphics;
 
   requires org.apache.commons.io;
+  requires org.json;
 }
