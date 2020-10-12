@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.utils;
 
+import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -349,5 +350,15 @@ public class ByteUtils {
    */
   public static String bytesToStringFloat(byte[] bytes) {
     return Float.toString(bytesToFloat(bytes));
+  }
+
+  /**
+   * Converts a byte array to a hex String. The hex returned will be in uppercase.
+   *
+   * @param bytes The bytes to convert.
+   * @return The bytes in hex.
+   */
+  public static String bytesToHexString(byte[] bytes) {
+    return BaseEncoding.base16().upperCase().encode(bytes);
   }
 }

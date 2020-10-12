@@ -487,7 +487,8 @@ public class ByteUtilsTest {
     assertArrayEquals(new byte[]{0x00, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(0.0f));
     assertArrayEquals(new byte[]{0x3F, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(0.5f));
     assertArrayEquals(new byte[]{0x3F, (byte) 0x80, 0x00, 0x00}, ByteUtils.floatToBytes(1.0f));
-    assertArrayEquals(new byte[]{0x3F, (byte) 0x80, 0x00, 0x08}, ByteUtils.floatToBytes(1.0000009f));
+    assertArrayEquals(new byte[]{0x3F, (byte) 0x80, 0x00, 0x08},
+        ByteUtils.floatToBytes(1.0000009f));
     assertArrayEquals(new byte[]{0x3F, (byte) 0xC0, 0x00, 0x00}, ByteUtils.floatToBytes(1.5f));
     assertArrayEquals(new byte[]{0x40, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(2.0f));
     assertArrayEquals(new byte[]{0x40, 0x00, 0x00, 0x00}, ByteUtils.floatToBytes(2f));
@@ -509,46 +510,36 @@ public class ByteUtilsTest {
     assertEquals(2f, ByteUtils.bytesToFloat(new byte[]{0x40, 0x00, 0x00, 0x00}));
     assertEquals(100.56f, ByteUtils.bytesToFloat(new byte[]{0x42, (byte) 0xC9, 0x1E, (byte) 0xB8}));
 
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      ByteUtils.bytesToFloat(new byte[]{0x00, 0x00, 0x00});
-    });
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      ByteUtils.bytesToFloat(new byte[]{0x00, 0x00});
-    });
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      ByteUtils.bytesToFloat(new byte[]{0x00});
-    });
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      ByteUtils.bytesToFloat(new byte[]{});
-    });
+    assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> ByteUtils.bytesToFloat(new byte[]{0x00, 0x00, 0x00}));
+    assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> ByteUtils.bytesToFloat(new byte[]{0x00, 0x00}));
+    assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> ByteUtils.bytesToFloat(new byte[]{0x00}));
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> ByteUtils.bytesToFloat(new byte[]{}));
   }
 
   @Test
   public void testFloatStringToBytes() {
     assertArrayEquals(new byte[]{(byte) 0xC2, (byte) 0xC9, 0x1E, (byte) 0xB8},
         ByteUtils.floatStringToBytes("-100.56"));
-    assertArrayEquals(new byte[]{(byte) 0xC0, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("-2.0"));
+    assertArrayEquals(new byte[]{(byte) 0xC0, 0x00, 0x00, 0x00},
+        ByteUtils.floatStringToBytes("-2.0"));
     assertArrayEquals(new byte[]{0x00, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("0.0"));
     assertArrayEquals(new byte[]{0x3F, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("0.5"));
-    assertArrayEquals(new byte[]{0x3F, (byte) 0x80, 0x00, 0x00}, ByteUtils.floatStringToBytes("1.0"));
-    assertArrayEquals(new byte[]{0x3F, (byte) 0xC0, 0x00, 0x00}, ByteUtils.floatStringToBytes("1.5"));
+    assertArrayEquals(new byte[]{0x3F, (byte) 0x80, 0x00, 0x00},
+        ByteUtils.floatStringToBytes("1.0"));
+    assertArrayEquals(new byte[]{0x3F, (byte) 0xC0, 0x00, 0x00},
+        ByteUtils.floatStringToBytes("1.5"));
     assertArrayEquals(new byte[]{0x40, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("2.0"));
     assertArrayEquals(new byte[]{0x40, 0x00, 0x00, 0x00}, ByteUtils.floatStringToBytes("2"));
     assertArrayEquals(new byte[]{0x42, (byte) 0xC9, 0x1E, (byte) 0xB8},
         ByteUtils.floatStringToBytes("100.56"));
 
-    assertThrows(NumberFormatException.class, () -> {
-      ByteUtils.floatStringToBytes("");
-    });
-    assertThrows(NumberFormatException.class, () -> {
-      ByteUtils.floatStringToBytes("two");
-    });
-    assertThrows(NumberFormatException.class, () -> {
-      ByteUtils.floatStringToBytes("asdf");
-    });
-    assertThrows(NumberFormatException.class, () -> {
-      ByteUtils.floatStringToBytes("1 2");
-    });
+    assertThrows(NumberFormatException.class, () -> ByteUtils.floatStringToBytes(""));
+    assertThrows(NumberFormatException.class, () -> ByteUtils.floatStringToBytes("two"));
+    assertThrows(NumberFormatException.class, () -> ByteUtils.floatStringToBytes("asdf"));
+    assertThrows(NumberFormatException.class, () -> ByteUtils.floatStringToBytes("1 2"));
   }
 
   @Test
@@ -564,17 +555,27 @@ public class ByteUtilsTest {
     assertEquals(2.0f, ByteUtils.bytesToFloat(new byte[]{0x40, 0x00, 0x00, 0x00}));
     assertEquals(100.56f, ByteUtils.bytesToFloat(new byte[]{0x42, (byte) 0xC9, 0x1E, (byte) 0xB8}));
 
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      ByteUtils.bytesToFloat(new byte[]{0x00, 0x00, 0x00});
-    });
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      ByteUtils.bytesToFloat(new byte[]{0x00, 0x00});
-    });
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      ByteUtils.bytesToFloat(new byte[]{0x00});
-    });
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-      ByteUtils.bytesToFloat(new byte[]{});
-    });
+    assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> ByteUtils.bytesToFloat(new byte[]{0x00, 0x00, 0x00}));
+    assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> ByteUtils.bytesToFloat(new byte[]{0x00, 0x00}));
+    assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> ByteUtils.bytesToFloat(new byte[]{0x00}));
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> ByteUtils.bytesToFloat(new byte[]{}));
+  }
+
+  /**
+   * Tests that bytes can be converted to hex Strings.
+   */
+  @Test
+  public void testBytesToHexString() {
+    assertEquals("", ByteUtils.bytesToHexString(new byte[0]));
+    assertEquals("00", ByteUtils.bytesToHexString(new byte[]{0}));
+    assertEquals("0000", ByteUtils.bytesToHexString(new byte[]{0, 0}));
+    assertEquals("000000", ByteUtils.bytesToHexString(new byte[]{0, 0, 0}));
+    assertEquals("00000001", ByteUtils.bytesToHexString(new byte[]{0, 0, 0, 1}));
+    assertEquals("12345678", ByteUtils.bytesToHexString(new byte[]{0x12, 0x34, 0x56, 0x78}));
+    assertEquals("78563412", ByteUtils.bytesToHexString(new byte[]{0x78, 0x56, 0x34, 0x12}));
+    assertEquals("80FF", ByteUtils.bytesToHexString(new byte[]{(byte) 0x80, (byte) 0xFF}));
   }
 }
