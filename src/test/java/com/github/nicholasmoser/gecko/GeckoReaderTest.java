@@ -94,10 +94,10 @@ public class GeckoReaderTest {
     assertEquals(1, codes.size());
     GeckoCode code = codes.get(0);
     assertTrue(code instanceof InsertAsmCode);
-    assertEquals(16, code.getLength());
+    assertEquals(16, code.getCodeLength());
     byte[] expectedBytes = new byte[]{(byte) 0xC2, 0, (byte) 0xCB, 0x14, 0, 0, 0, 0x1, 0x60, 0, 0,
         0, 0, 0, 0, 0};
-    byte[] actualBytes = code.getBytes();
+    byte[] actualBytes = code.getCodeBytes();
     assertArrayEquals(expectedBytes, actualBytes);
   }
 
@@ -135,18 +135,18 @@ public class GeckoReaderTest {
 
     GeckoCode code1 = codes.get(0);
     assertTrue(code1 instanceof InsertAsmCode);
-    assertEquals(16, code1.getLength());
+    assertEquals(16, code1.getCodeLength());
     byte[] expectedBytes = new byte[]{(byte) 0xC2, 0, (byte) 0xCB, 0x14, 0, 0, 0, 0x1, 0x60, 0, 0,
         0, 0, 0, 0, 0};
-    byte[] actualBytes = code1.getBytes();
+    byte[] actualBytes = code1.getCodeBytes();
     assertArrayEquals(expectedBytes, actualBytes);
 
     GeckoCode code2 = codes.get(1);
     assertTrue(code2 instanceof InsertAsmCode);
-    assertEquals(16, code2.getLength());
+    assertEquals(16, code2.getCodeLength());
     byte[] expectedBytes2 = new byte[]{(byte) 0xC2, 0, (byte) 0xCB, 0x18, 0, 0, 0, 0x1, 0x3C,
         (byte) 0x80, 0x01, 0x45, 0, 0, 0, 0};
-    byte[] actualBytes2 = code2.getBytes();
+    byte[] actualBytes2 = code2.getCodeBytes();
     assertArrayEquals(expectedBytes2, actualBytes2);
   }
 
@@ -293,10 +293,10 @@ public class GeckoReaderTest {
     assertEquals(1, codes.size());
     GeckoCode code = codes.get(0);
     assertTrue(code instanceof InsertAsmCode);
-    assertEquals(16, code.getLength());
+    assertEquals(16, code.getCodeLength());
     byte[] expectedBytes = new byte[]{(byte) 0xC2, 0, (byte) 0xCB, 0x14, 0, 0, 0, 0x1, 0x60, 0, 0,
         0, 0, 0, 0, 0};
-    byte[] actualBytes = code.getBytes();
+    byte[] actualBytes = code.getCodeBytes();
     assertArrayEquals(expectedBytes, actualBytes);
   }
 
@@ -310,9 +310,9 @@ public class GeckoReaderTest {
     assertEquals(1, codes.size());
     GeckoCode code = codes.get(0);
     assertTrue(code instanceof Write32BitsCode);
-    assertEquals(8, code.getLength());
+    assertEquals(8, code.getCodeLength());
     byte[] expectedBytes = new byte[]{0x04, 0x03, 0x74, (byte) 0xB8, 0x60, 0, 0, 0};
-    byte[] actualBytes = code.getBytes();
+    byte[] actualBytes = code.getCodeBytes();
     assertArrayEquals(expectedBytes, actualBytes);
   }
 
@@ -339,18 +339,18 @@ public class GeckoReaderTest {
 
     GeckoCode code1 = codes.get(0);
     assertTrue(code1 instanceof Write32BitsCode);
-    assertEquals(8, code1.getLength());
+    assertEquals(8, code1.getCodeLength());
     byte[] expectedBytes = new byte[]{0x04, 0x16, (byte) 0xE1, 0x5C, (byte) 0xC3, (byte) 0xA2,
         (byte) 0xA0, 0x24};
-    byte[] actualBytes = code1.getBytes();
+    byte[] actualBytes = code1.getCodeBytes();
     assertArrayEquals(expectedBytes, actualBytes);
 
     GeckoCode code2 = codes.get(1);
     assertTrue(code2 instanceof Write32BitsCode);
-    assertEquals(8, code2.getLength());
+    assertEquals(8, code2.getCodeLength());
     byte[] expectedBytes2 = new byte[]{0x04, 0x27, (byte) 0x9C, (byte) 0xC4, 0x3F, (byte) 0xE3,
         (byte) 0x8E, 0x39};
-    byte[] actualBytes2 = code2.getBytes();
+    byte[] actualBytes2 = code2.getCodeBytes();
     assertArrayEquals(expectedBytes2, actualBytes2);
   }
 
@@ -388,18 +388,18 @@ public class GeckoReaderTest {
 
     GeckoCode code1 = codes.get(0);
     assertTrue(code1 instanceof InsertAsmCode);
-    assertEquals(16, code1.getLength());
+    assertEquals(16, code1.getCodeLength());
     byte[] expectedBytes = new byte[]{(byte) 0xC2, 0, (byte) 0xCB, 0x14, 0, 0, 0, 0x1, 0x60, 0, 0,
         0, 0, 0, 0, 0};
-    byte[] actualBytes = code1.getBytes();
+    byte[] actualBytes = code1.getCodeBytes();
     assertArrayEquals(expectedBytes, actualBytes);
 
     GeckoCode code2 = codes.get(1);
     assertTrue(code2 instanceof Write32BitsCode);
-    assertEquals(8, code2.getLength());
+    assertEquals(8, code2.getCodeLength());
     byte[] expectedBytes2 = new byte[]{0x04, 0x27, (byte) 0x9C, (byte) 0xC4, 0x3F, (byte) 0xE3,
         (byte) 0x8E, 0x39};
-    byte[] actualBytes2 = code2.getBytes();
+    byte[] actualBytes2 = code2.getCodeBytes();
     assertArrayEquals(expectedBytes2, actualBytes2);
 
     // Validate that the codes are the same even when in a different order

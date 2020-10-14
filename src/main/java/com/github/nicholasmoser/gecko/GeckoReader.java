@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gecko;
 
+import com.github.nicholasmoser.dol.DolUtil;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.io.BaseEncoding;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class GeckoReader {
         throw new IllegalArgumentException("Each code must have a unique target address.");
       }
       codes.add(newCode);
-      i += newCode.getLength();
+      i += newCode.getCodeLength();
     }
     return codes;
   }
@@ -114,30 +115,21 @@ public class GeckoReader {
    * @param targetAddress The target address to check.
    */
   private void assertValidAddress(long targetAddress) {
-    if (targetAddress >= 0x8027C578L) {
-      String message = "Target address of code is outside the bounds of the dol (0x8027C578+): ";
-      throw new IllegalArgumentException(message + String.format("%08x", targetAddress));
-    } else if (targetAddress >= 0x8027C560L) {
-      String message = "Target address of code is within the bounds of the sbss2 (0x8027C560 - 0x8027C578). ";
-      message += "This is a problem since the sbss2 is zero initialized when the game launches: ";
-      throw new IllegalArgumentException(message + String.format("%08x", targetAddress));
-    } else if (targetAddress >= 0x80277CA0L) {
-      // 0x80277CA0 - 0x8027C560 is the sdata2 which is valid
-    } else if (targetAddress >= 0x80276FE0L) {
-      String message = "Target address of code is within the bounds of the sbss (0x80276FE0 - 0x80277CA0). ";
-      message += "This is a problem since the sbss is zero initialized when the game launches: ";
-      throw new IllegalArgumentException(message + String.format("%08x", targetAddress));
-    } else if (targetAddress >= 0x80276920L) {
-      // 0x80276920 - 0x80276FE0 is the sdata which is valid
-    } else if (targetAddress >= 0x802229E0L) {
-      String message = "Target address of code is within the bounds of the bss (0x802229E0 - 0x80276920). ";
-      message += "This is a problem since the bss is zero initialized when the game launches: ";
-      throw new IllegalArgumentException(message + String.format("%08x", targetAddress));
-    } else if (targetAddress >= 0x80003100L) {
-      // 0x80003100 - 0x802229E0 is the init, text, ctors, dtors, rodata, and data which is valid
-    } else {
-      String message = "Target address of code is outside the bounds the of dol (0x80003100-): ";
-      throw new IllegalArgumentException(message + String.format("%08x", targetAddress));
+    switch(DolUtil.getSection(targetAddress)) {
+      case SBSS2:
+        String msg1 = "Target address of code is within the bounds of the sbss2 (0x8027C560 - 0x8027C578). ";
+        msg1 += "This is a problem since the sbss2 is zero initialized when the game launches: ";
+        throw new IllegalArgumentException(msg1 + String.format("%08x", targetAddress));
+      case SBSS:
+        String msg2 = "Target address of code is within the bounds of the sbss (0x80276FE0 - 0x80277CA0). ";
+        msg2 += "This is a problem since the sbss is zero initialized when the game launches: ";
+        throw new IllegalArgumentException(msg2 + String.format("%08x", targetAddress));
+      case BSS:
+        String message = "Target address of code is within the bounds of the bss (0x802229E0 - 0x80276920). ";
+        message += "This is a problem since the bss is zero initialized when the game launches: ";
+        throw new IllegalArgumentException(message + String.format("%08x", targetAddress));
+      default:
+        break;
     }
   }
 }

@@ -361,4 +361,14 @@ public class ByteUtils {
   public static String bytesToHexString(byte[] bytes) {
     return BaseEncoding.base16().upperCase().encode(bytes);
   }
+
+  /**
+   * Converts a hex String to a byte array.
+   *
+   * @param hex The hex String.
+   * @return The bytes.
+   */
+  public static byte[] hexStringToBytes(String hex) {
+    return BaseEncoding.base16().decode(hex);
+  }
 }

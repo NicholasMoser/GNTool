@@ -578,4 +578,19 @@ public class ByteUtilsTest {
     assertEquals("78563412", ByteUtils.bytesToHexString(new byte[]{0x78, 0x56, 0x34, 0x12}));
     assertEquals("80FF", ByteUtils.bytesToHexString(new byte[]{(byte) 0x80, (byte) 0xFF}));
   }
+
+  /**
+   * Tests that hex Strings can be converted to bytes.
+   */
+  @Test
+  public void testHexStringToBytes() {
+    assertArrayEquals(new byte[0], ByteUtils.hexStringToBytes(""));
+    assertArrayEquals(new byte[]{0}, ByteUtils.hexStringToBytes("00"));
+    assertArrayEquals(new byte[]{0, 0}, ByteUtils.hexStringToBytes("0000"));
+    assertArrayEquals(new byte[]{0, 0, 0}, ByteUtils.hexStringToBytes("000000"));
+    assertArrayEquals(new byte[]{0, 0, 0, 1}, ByteUtils.hexStringToBytes("00000001"));
+    assertArrayEquals(new byte[]{0x12, 0x34, 0x56, 0x78}, ByteUtils.hexStringToBytes("12345678"));
+    assertArrayEquals(new byte[]{0x78, 0x56, 0x34, 0x12}, ByteUtils.hexStringToBytes("78563412"));
+    assertArrayEquals(new byte[]{(byte) 0x80, (byte) 0xFF}, ByteUtils.hexStringToBytes("80FF"));
+  }
 }
