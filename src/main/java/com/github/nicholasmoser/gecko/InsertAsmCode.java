@@ -5,40 +5,47 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * An Insert ASM code used for inserting assembly code directly into the dol. For more information
- * see https://geckocodes.org/index.php?arsenal=1
+ * A C2 Insert ASM code used for inserting assembly code directly into the dol. For more information
+ * see https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/general/docs/guides/gecko_codetype_documentation.md
  */
 public class InsertAsmCode implements GeckoCode {
 
-  private final byte[] instructions;
+  private final byte[] bytes;
   private final long targetAddress;
 
-  public InsertAsmCode(byte[] instructions, long targetAddress) {
-    this.instructions = instructions;
+  public InsertAsmCode(byte[] bytes, long targetAddress) {
+    this.bytes = bytes;
     this.targetAddress = targetAddress;
   }
 
-  @Override
-  public int getLength() {
-    return 8 + instructions.length;
+  /**
+   * @return The 4-byte array this code will write to the dol.
+   */
+  public byte[] getBytes() {
+    return bytes;
   }
 
   @Override
-  public byte[] getBytes() {
-    int linesOfInstructions = instructions.length / 8;
+  public int getCodeLength() {
+    return 8 + bytes.length;
+  }
+
+  @Override
+  public byte[] getCodeBytes() {
+    int linesOfInstructions = bytes.length / 8;
     byte[] linesOfInstructionsBytes = ByteUtils.fromInt32(linesOfInstructions);
     byte[] targetAddressBytes = ByteUtils.fromUint32(targetAddress);
-    byte[] bytes = new byte[8 + instructions.length];
-    bytes[0] = (byte) 0xC2;
-    bytes[1] = targetAddressBytes[1];
-    bytes[2] = targetAddressBytes[2];
-    bytes[3] = targetAddressBytes[3];
-    bytes[4] = linesOfInstructionsBytes[0];
-    bytes[5] = linesOfInstructionsBytes[1];
-    bytes[6] = linesOfInstructionsBytes[2];
-    bytes[7] = linesOfInstructionsBytes[3];
-    System.arraycopy(instructions, 0, bytes, 8, instructions.length);
-    return bytes;
+    byte[] fullBytes = new byte[8 + this.bytes.length];
+    fullBytes[0] = (byte) 0xC2;
+    fullBytes[1] = targetAddressBytes[1];
+    fullBytes[2] = targetAddressBytes[2];
+    fullBytes[3] = targetAddressBytes[3];
+    fullBytes[4] = linesOfInstructionsBytes[0];
+    fullBytes[5] = linesOfInstructionsBytes[1];
+    fullBytes[6] = linesOfInstructionsBytes[2];
+    fullBytes[7] = linesOfInstructionsBytes[3];
+    System.arraycopy(this.bytes, 0, fullBytes, 8, this.bytes.length);
+    return fullBytes;
   }
 
   @Override
@@ -47,8 +54,8 @@ public class InsertAsmCode implements GeckoCode {
   }
 
   @Override
-  public String toString() {
-    byte[] bytes = getBytes();
+  public String toGeckoString() {
+    byte[] bytes = getCodeBytes();
     StringBuilder builder = new StringBuilder();
     builder.append("Code bytes:\n");
     for (int i = 0; i < bytes.length; i++) {
@@ -65,6 +72,14 @@ public class InsertAsmCode implements GeckoCode {
   }
 
   @Override
+  public String toString() {
+    return "InsertAsmCode{" +
+        "bytes=" + ByteUtils.bytesToHexString(bytes) +
+        ", targetAddress=" + String.format("%08X", targetAddress) +
+        '}';
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
@@ -74,13 +89,13 @@ public class InsertAsmCode implements GeckoCode {
     }
     InsertAsmCode that = (InsertAsmCode) o;
     return targetAddress == that.targetAddress &&
-        Arrays.equals(instructions, that.instructions);
+        Arrays.equals(bytes, that.bytes);
   }
 
   @Override
   public int hashCode() {
     int result = Objects.hash(targetAddress);
-    result = 31 * result + Arrays.hashCode(instructions);
+    result = 31 * result + Arrays.hashCode(bytes);
     return result;
   }
 }

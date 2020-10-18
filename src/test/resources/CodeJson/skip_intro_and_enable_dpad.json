@@ -1,0 +1,36 @@
+[
+  {
+    "codes": [
+      {
+        "bytes": "60000000",
+        "targetAddress": "8000CB14",
+        "replacedBytes": "12345678",
+        "type": "04"
+      },
+      {
+        "bytes": "60000000",
+        "targetAddress": "8000CB28",
+        "replacedBytes": "22221111",
+        "type": "04"
+      },
+      {
+        "bytes": "60000000",
+        "targetAddress": "8000CB3C",
+        "replacedBytes": "44443333",
+        "type": "04"
+      }
+    ],
+    "name": "Skip Three Intro Videos"
+  },
+  {
+    "codes": [{
+      "hijackedAddress": "80060000",
+      "bytes": "54A007BD4182000864A5000854A007FF4182000864A5000454A0077B4182000864A5000254A007394182000864A5000180030154",
+      "targetAddress": "80042C40",
+      "hijackedBytes": "1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF12345678",
+      "replacedBytes": "12345678",
+      "type": "C2"
+    }],
+    "name": "Enable DPad During Fights"
+  }
+]

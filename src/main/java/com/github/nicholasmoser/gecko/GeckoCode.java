@@ -10,15 +10,20 @@ public interface GeckoCode {
   /**
    * @return The length in bytes of the full code.
    */
-  int getLength();
+  int getCodeLength();
 
   /**
    * @return The original bytes of the full code.
    */
-  byte[] getBytes();
+  byte[] getCodeBytes();
 
   /**
    * @return The target address of the code.
    */
   long getTargetAddress();
+
+  /**
+   * @return The original String of the full Gecko code.
+   */
+  String toGeckoString();
 }

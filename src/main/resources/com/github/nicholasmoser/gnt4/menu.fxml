@@ -131,13 +131,17 @@
              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
                      <Text layoutX="14.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="WARNING: This feature is currently experimental and may break your dol. Use wisely." wrappingWidth="505.13671875" />
-                     <TextArea fx:id="geckoCodes" layoutX="37.0" layoutY="48.0" prefHeight="200.0" prefWidth="200.0">
+                     <TextArea fx:id="geckoCodes" layoutX="37.0" layoutY="48.0" prefHeight="200.0" prefWidth="250.0">
                         <font>
                            <Font name="Consolas" size="12.0" />
                         </font>
                      </TextArea>
-                     <Button layoutX="259.0" layoutY="48.0" mnemonicParsing="false" onMouseClicked="#checkCodes" text="Check Codes" />
-                     <Button layoutX="260.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#applyCodes" text="Apply Codes" />
+                     <Button layoutX="37.0" layoutY="282.0" mnemonicParsing="false" onMouseClicked="#checkCodes" text="Validate Codes" />
+                     <Button layoutX="212.0" layoutY="282.0" mnemonicParsing="false" onMouseClicked="#addCodes" text="Add Codes" />
+                     <Button layoutX="351.0" layoutY="282.0" mnemonicParsing="false" onMouseClicked="#removeCode" text="Remove Code" />
+                     <ListView fx:id="addedCodes" layoutX="351.0" layoutY="48.0" prefHeight="225.0" prefWidth="249.0" />
+                     <Text layoutX="37.0" layoutY="268.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Code Name:" wrappingWidth="71.13671875" />
+                     <TextField fx:id="codeName" layoutX="108.0" layoutY="251.0" prefHeight="25.0" prefWidth="178.0" />
                   </children>
                </AnchorPane>
            </content>

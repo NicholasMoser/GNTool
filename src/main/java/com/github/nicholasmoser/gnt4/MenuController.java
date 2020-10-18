@@ -14,7 +14,11 @@ import com.github.nicholasmoser.audio.FFmpeg;
 import com.github.nicholasmoser.audio.MusyXExtract;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gecko.GeckoCode;
+import com.github.nicholasmoser.gecko.GeckoCodeGroup;
+import com.github.nicholasmoser.gecko.GeckoCodeJSON;
 import com.github.nicholasmoser.gecko.GeckoReader;
+import com.github.nicholasmoser.gecko.GeckoWriter;
+import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.graphics.TXG2TPL;
@@ -27,6 +31,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +40,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -59,10 +63,13 @@ public class MenuController {
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
   private static final String SEE_LOG = "See the log for more information.";
+  private static final String DOL = "sys/main.dol";
   private Workspace workspace;
   private Stage stage;
   private Path uncompressedDirectory;
+  private Path workspaceDirectory;
   private GNT4Codes codes;
+  private List<GeckoCodeGroup> codeGroups;
 
   @FXML
   private ListView<String> changedFiles;
@@ -120,6 +127,12 @@ public class MenuController {
 
   @FXML
   private TextArea geckoCodes;
+
+  @FXML
+  private TextField codeName;
+
+  @FXML
+  private ListView<String> addedCodes;
 
   /**
    * Toggles the code for fixing the audio.
@@ -832,6 +845,12 @@ public class MenuController {
     GeckoReader reader = new GeckoReader();
     try {
       List<GeckoCode> codes = reader.parseCodes(text);
+      if (DolHijack.checkHijackOverflow(codeGroups, codes)) {
+        return;
+      }
+      if (targetAddressOverlap(codes)) {
+        return;
+      }
       Message.info("Valid Codes Found", codes.toString());
     } catch (IllegalArgumentException e) {
       LOGGER.log(Level.SEVERE, "Error Parsing Codes", e);
@@ -840,7 +859,50 @@ public class MenuController {
   }
 
   @FXML
-  protected void applyCodes() {
+  protected void addCodes() {
+    String text = geckoCodes.getText();
+    GeckoReader reader = new GeckoReader();
+    try {
+      List<GeckoCode> codes = reader.parseCodes(text);
+      if (DolHijack.checkHijackOverflow(codeGroups, codes)) {
+        return;
+      }
+      if (targetAddressOverlap(codes)) {
+        return;
+      }
+      String name = codeName.getText();
+      if (!checkNameValid((name))) {
+        return;
+      }
+      long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups);
+      Path dolPath = uncompressedDirectory.resolve(DOL);
+      GeckoWriter writer = new GeckoWriter(dolPath);
+      GeckoCodeGroup group = writer.writeCodes(codes, name, hijackStartAddress);
+      codeGroups.add(group);
+      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      GeckoCodeJSON.writeFile(codeGroups, codeFile);
+      asyncRefresh();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Parsing Codes", e);
+      Message.error("Error Adding Codes", e.getMessage());
+    }
+  }
+
+  @FXML
+  protected void removeCode() {
+    String selected = addedCodes.getSelectionModel().getSelectedItem();
+    if (selected != null) {
+      Optional<GeckoCodeGroup> optionalGroup = codeGroups.stream()
+          .filter(group -> selected.equals(group.getName()))
+          .findFirst();
+      if (optionalGroup.isPresent()) {
+        removeCodeGroup(optionalGroup.get());
+      } else {
+        String message = String.format("Unable to remove code %s, try refreshing?", selected);
+        LOGGER.log(Level.SEVERE, message);
+        Message.error("Unable to Remove Code", message);
+      }
+    }
   }
 
   /**
@@ -852,6 +914,7 @@ public class MenuController {
   public void init(Workspace workspace, Stage stage) {
     this.workspace = workspace;
     this.stage = stage;
+    this.workspaceDirectory = workspace.getWorkspaceDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.codes = new GNT4Codes(uncompressedDirectory);
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
@@ -885,6 +948,7 @@ public class MenuController {
     GNTFiles newFiles = workspace.getNewWorkspaceState();
     refreshMissingFiles(newFiles);
     refreshChangedFiles(newFiles);
+    refreshActiveCodes();
     refreshOptions();
     refreshMainMenuCharacter();
   }
@@ -932,7 +996,7 @@ public class MenuController {
   }
 
   /**
-   * Refreshes the changed files tab from a set of
+   * Refreshes the changed files tab from a set of GNTFiles.
    *
    * @param newFiles The GNTFiles to check against.
    */
@@ -942,6 +1006,28 @@ public class MenuController {
           .map(GNTFile::getFilePath).collect(Collectors.toList());
       changedFiles.getItems().setAll(changedFilenames);
       Collections.sort(changedFiles.getItems());
+    });
+  }
+
+  /**
+   * Refreshes the active codes from the codes.json file if it exists.
+   */
+  private void refreshActiveCodes() {
+    Platform.runLater(() -> {
+      try {
+        addedCodes.getItems().clear();
+        Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+        if (Files.isRegularFile(codeFile)) {
+          codeGroups = GeckoCodeJSON.parseFile(codeFile);
+          for (GeckoCodeGroup codeGroup : codeGroups) {
+            addedCodes.getItems().add(codeGroup.getName());
+          }
+        } else {
+          codeGroups = new ArrayList<>();
+        }
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Error getting list of applied codes.", e);
+      }
     });
   }
 
@@ -1064,6 +1150,9 @@ public class MenuController {
     MenuItem revertChanges = new MenuItem("Revert Changes");
     revertChanges.setOnAction(event -> {
       try {
+        if (DOL.equals(filePath) && dolModded()) {
+          return;
+        }
         workspace.revertFile(filePath);
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Error Reverting File", e);
@@ -1093,5 +1182,96 @@ public class MenuController {
    */
   private int secondsToFrames(int seconds) {
     return seconds * 60;
+  }
+
+  /**
+   * Returns whether or not the given Code Name is valid. Logs and displays a message if not.
+   *
+   * @param name The Code Name.
+   * @return If the Code Name is valid.
+   */
+  private boolean checkNameValid(String name) {
+    if (name == null || name.isBlank()) {
+      String message = "Code Name required for new codes.";
+      LOGGER.log(Level.SEVERE, message);
+      Message.error("Code Error", message);
+      return false;
+    }
+    for (GeckoCodeGroup codeGroup : codeGroups) {
+      if (name.equals(codeGroup.getName())) {
+        String message = "This Code Name already exists.";
+        LOGGER.log(Level.SEVERE, message);
+        Message.error("Code Error", message);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Checks if the target addresses of the given codes overlap with any existing codes. Logs and
+   * displays a message if so.
+   *
+   * @param codes The codes to check.
+   * @return If any of the target addresses of the codes overlap any of the existing codes.
+   */
+  private boolean targetAddressOverlap(List<GeckoCode> codes) {
+    for (GeckoCode code : codes) {
+      long targetAddress = code.getTargetAddress();
+      for (GeckoCodeGroup codeGroup : codeGroups) {
+        for (GeckoCode existingCode : codeGroup.getCodes()) {
+          if (targetAddress == existingCode.getTargetAddress()) {
+            String message = "This code overlaps with: " + codeGroup.getName();
+            LOGGER.log(Level.SEVERE, message);
+            Message.error("Code Error", message);
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the dol has been modded via code injection. Logs and displays a message if so.
+   *
+   * @return If the dol is modded via code injection.
+   */
+  private boolean dolModded() {
+    if (!codeGroups.isEmpty()) {
+      String message = "There are codes injected in the dol, unable to revert changes.";
+      LOGGER.log(Level.SEVERE, message);
+      Message.error("Dol Modded Error", message);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Removes the given GeckoCodeGroup from the dol. This will write the new codes.json file after
+   * removal and will refresh.
+   *
+   * @param group The GeckoCodeGroup to remove.
+   */
+  private void removeCodeGroup(GeckoCodeGroup group) {
+    try {
+      Path dolPath = uncompressedDirectory.resolve(DOL);
+      GeckoWriter writer = new GeckoWriter(dolPath);
+      boolean successful = writer.removeCodes(group);
+      if (!successful) {
+        String msg = "Some code(s) could not be removed, but others could. Your workspace is "
+            + "likely in an invalid state. Please see the log, open an issue on the Github "
+            + "repository, and do not touch your workspace any further.";
+        Message.error("Unable to Remove Code(s)",
+            msg);
+      }
+      codeGroups.remove(group);
+      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      GeckoCodeJSON.writeFile(codeGroups, codeFile);
+      asyncRefresh();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unable to Remove Code", e);
+      Message.error("Unable to Remove Code", "Unable to remove code, see log for more details.");
+    }
   }
 }

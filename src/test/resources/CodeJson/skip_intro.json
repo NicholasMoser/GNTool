@@ -1,0 +1,23 @@
+[{
+  "codes": [
+    {
+      "bytes": "60000000",
+      "targetAddress": "8000CB14",
+      "replacedBytes": "12345678",
+      "type": "04"
+    },
+    {
+      "bytes": "60000000",
+      "targetAddress": "8000CB28",
+      "replacedBytes": "22221111",
+      "type": "04"
+    },
+    {
+      "bytes": "60000000",
+      "targetAddress": "8000CB3C",
+      "replacedBytes": "44443333",
+      "type": "04"
+    }
+  ],
+  "name": "Skip Three Intro Videos"
+}]
