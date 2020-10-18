@@ -4,6 +4,7 @@ public class DolUtil {
 
   /**
    * The sections for the GNT4 dol.
+   * TODO: This is GNT4 code and should be moved under the GNT4 package.
    */
   public enum Section {
     INIT,
@@ -30,30 +31,19 @@ public class DolUtil {
    */
   public static long ram2dol(long ramAddress) {
     String hexAddress = String.format("%08X", ramAddress);
-    switch (getSection(ramAddress)) {
-      case INIT:
-      case TEXT:
-      case CTORS:
-      case DTORS:
-      case RODATA:
-      case DATA:
-        return ramAddress - 0x80003000L;
-      case BSS:
-        throw new IllegalArgumentException(
-            "Addresses in the bss section do not have an offset in the dol: " + hexAddress);
-      case SDATA:
-        return ramAddress - 0x80056F40L;
-      case SBSS:
-        throw new IllegalArgumentException(
-            "Addresses in the bss2 section do not have an offset in the dol: " + hexAddress);
-      case SDATA2:
-        return ramAddress - 0x80057C00L;
-      case SBSS2:
-        throw new IllegalArgumentException(
-            "Addresses in the sbss2 section do not have an offset in the dol: " + hexAddress);
-      default:
-        throw new IllegalArgumentException("Unexpected section for ram address: " + hexAddress);
-    }
+    return switch (getSection(ramAddress)) {
+      case INIT, TEXT, CTORS, DTORS, RODATA, DATA -> ramAddress - 0x80003000L;
+      case BSS -> throw new IllegalArgumentException(
+          "Addresses in the bss section do not have an offset in the dol: " + hexAddress);
+      case SDATA -> ramAddress - 0x80056F40L;
+      case SBSS -> throw new IllegalArgumentException(
+          "Addresses in the bss2 section do not have an offset in the dol: " + hexAddress);
+      case SDATA2 -> ramAddress - 0x80057C00L;
+      case SBSS2 -> throw new IllegalArgumentException(
+          "Addresses in the sbss2 section do not have an offset in the dol: " + hexAddress);
+      default -> throw new IllegalArgumentException(
+          "Unexpected section for ram address: " + hexAddress);
+    };
   }
 
   /**
