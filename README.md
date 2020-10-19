@@ -12,6 +12,7 @@ This program contains tools that allow you to modify the Naruto GNT/Clash of Nin
 - [Features](#Features)
   - [Tools](#Tools)
   - [GNT4 Options](#GNT4-Options)
+- [Code Injection](#Code-Injection)
 - [How it Works](#How-it-Works)
 - [Logging](#Logging)
 - [Contributing](#Contributing)
@@ -167,6 +168,32 @@ Music files are easier to work with than sound effects since they are stored sep
 #### Textures
 
 To replace textures in the game, first extract a specific texture archive or extract all of them. A folder matching the name of the texture archive will be created in the directory of the texture. In the folder will be one or more [.tpl files](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/file_formats/txg.md#tpl-header). These files can be viewed and modified with [BrawlBox](https://github.com/libertyernie/brawltools). When you are finished modifying .tpl files, make sure to import the specific texture in GNTool for it to appear in the game.
+
+### Code Injection
+
+The Code Injection tab allows you to inject Gecko Codes directly into the dol. This behaves similarly to [Melee Mod Manager](https://smashboards.com/threads/melee-code-manager-v4-3-easily-add-mods-to-your-game.416437/).
+
+![Code Injection](/docs/codeinjection.png?raw=true "Code Injection")
+
+Only the following Gecko code types are currently supported:
+
+- [32 bits Write (04)](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/general/docs/guides/gecko_codetype_documentation.md#32-bits-write)
+- [Insert ASM (C2)](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/general/docs/guides/gecko_codetype_documentation.md#insert-asm)
+
+For Insert ASM (C2) codes, the Dolphin emulator inserts the additional assembly between the addresses of `0x80001800` and `0x80003000`. Dolphin then creates a branch from the original instruction to this new code region and branches back when complete.
+
+GNTool cannot add Gecko codes in this region, therefore GNTool will instead overwrite existing code with the inserted assembly. The overwritten code is training mode recording functionality that is unused by the game. The recording code that is overwritten exists between addresses `0x80086F58` and `0x800873FC`, constituting 1188 bytes (297 assembly instructions).
+
+The **Validate Codes** button will tell you whether the Gecko codes you wish to insert are valid.
+
+The **Add Codes** button will attempt to inject your Gecko codes into the dol. A Code Name is required so that the code can be labeled and listed on the right hand list box.
+
+The **Remove Code** button will attempt to undo the selected code in the right hand list box from the dol.
+
+#### Warning
+
+- Please avoid modifying or deleting the `codes.json` file in the workspace directory.
+- Please avoid modifying code in the dol between addresses `0x80086F58` and `0x800873FC`, which are at dol offsets `0x83F58` and `0x843FC` respectively.
 
 ## How it Works
 

@@ -28,13 +28,9 @@ public class DolHijack {
 
   // Inclusive
   public final static long START_RAM_ADDRESS = 0x80086F58L;
-  public final static long START_DOL_OFFSET = 0x83F58;
 
   // Exclusive
   public final static long END_RAM_ADDRESS = 0x800873FCL;
-  public final static long END_DOL_OFFSET = 0x843FC;
-
-  public final static long TOTAL = END_RAM_ADDRESS - START_RAM_ADDRESS;
 
   /**
    * Returns whether or not the given Gecko codes overflow the limit of hijacked code. Logs and
