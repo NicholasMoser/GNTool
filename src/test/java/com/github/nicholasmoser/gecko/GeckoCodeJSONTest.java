@@ -1,17 +1,18 @@
 package com.github.nicholasmoser.gecko;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
 import com.github.nicholasmoser.gecko.active.ActiveWrite32BitsCode;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GeckoCodeJSONTest {
 
@@ -96,9 +97,7 @@ public class GeckoCodeJSONTest {
     try {
       List<GeckoCodeGroup> codeGroups = new ArrayList<>();
       GeckoCodeJSON.writeFile(codeGroups, testFile);
-      byte[] actualBytes = Files.readAllBytes(testFile);
-      byte[] expectedBytes = Files.readAllBytes(expectedFile);
-      assertArrayEquals(expectedBytes, actualBytes);
+      assertFilesEqual(expectedFile, testFile);
     } finally {
       Files.deleteIfExists(testFile);
     }
@@ -117,9 +116,7 @@ public class GeckoCodeJSONTest {
       List<GeckoCodeGroup> codeGroups = new ArrayList<>();
       codeGroups.add(getSkipIntroCodeGroup());
       GeckoCodeJSON.writeFile(codeGroups, testFile);
-      byte[] actualBytes = Files.readAllBytes(testFile);
-      byte[] expectedBytes = Files.readAllBytes(expectedFile);
-      assertArrayEquals(expectedBytes, actualBytes);
+      assertFilesEqual(expectedFile, testFile);
     } finally {
       Files.deleteIfExists(testFile);
     }
@@ -138,9 +135,7 @@ public class GeckoCodeJSONTest {
       List<GeckoCodeGroup> codeGroups = new ArrayList<>();
       codeGroups.add(getEnableDpadCodeGroup());
       GeckoCodeJSON.writeFile(codeGroups, testFile);
-      byte[] actualBytes = Files.readAllBytes(testFile);
-      byte[] expectedBytes = Files.readAllBytes(expectedFile);
-      assertArrayEquals(expectedBytes, actualBytes);
+      assertFilesEqual(expectedFile, testFile);
     } finally {
       Files.deleteIfExists(testFile);
     }
@@ -161,9 +156,7 @@ public class GeckoCodeJSONTest {
       codeGroups.add(getEnableDpadCodeGroup());
       codeGroups.add(getSkipIntroCodeGroup());
       GeckoCodeJSON.writeFile(codeGroups, testFile);
-      byte[] actualBytes = Files.readAllBytes(testFile);
-      byte[] expectedBytes = Files.readAllBytes(expectedFile);
-      assertArrayEquals(expectedBytes, actualBytes);
+      assertFilesEqual(expectedFile, testFile);
     } finally {
       Files.deleteIfExists(testFile);
     }
@@ -184,9 +177,7 @@ public class GeckoCodeJSONTest {
       codeGroups.add(getSkipIntroCodeGroup());
       codeGroups.add(getEnableDpadCodeGroup());
       GeckoCodeJSON.writeFile(codeGroups, testFile);
-      byte[] actualBytes = Files.readAllBytes(testFile);
-      byte[] expectedBytes = Files.readAllBytes(expectedFile);
-      assertArrayEquals(expectedBytes, actualBytes);
+      assertFilesEqual(expectedFile, testFile);
     } finally {
       Files.deleteIfExists(testFile);
     }
@@ -301,5 +292,18 @@ public class GeckoCodeJSONTest {
     assertEquals(0x8000CB3CL, writeCode3.getTargetAddress());
     assertArrayEquals(new byte[]{0x60, 0, 0, 0}, writeCode3.getBytes());
     assertArrayEquals(new byte[]{0x44, 0x44, 0x33, 0x33}, writeCode3.getReplacedBytes());
+  }
+
+  /**
+   * Asserts that the two files are equals, ignoring Windows vs Unix line endings.
+   *
+   * @param expectedPath The expected file.
+   * @param actualPatch The actual file.
+   * @throws IOException if an I/O error occurs
+   */
+  private static void assertFilesEqual(Path expectedPath, Path actualPatch) throws IOException {
+    String actual = Files.readString(actualPatch).replace("\r", "");
+    String expected = Files.readString(expectedPath).replace("\r", "");
+    assertEquals(expected, actual);
   }
 }

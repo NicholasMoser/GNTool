@@ -21,7 +21,7 @@
 
 # These files are binary and should be left untouched
 # (binary is macro for -text -diff)
-*.bin         binary
+*.bin           binary
 *.class         binary
 *.jar           binary
 *.gif           binary
