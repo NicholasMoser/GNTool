@@ -42,15 +42,6 @@ dependencies {
 group = 'com.github.nicholasmoser'
 version = '3.6-SNAPSHOT'
 description = 'GNTool'
-sourceCompatibility = '14'
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
-        }
-    }
-}
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -58,9 +49,6 @@ tasks.withType(JavaCompile) {
 
 test {
 	useJUnitPlatform()
-	testLogging {
-		events "passed", "skipped", "failed"
-	}
 }
 
 javafx {
