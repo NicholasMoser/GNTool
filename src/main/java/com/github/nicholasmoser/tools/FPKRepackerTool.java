@@ -266,12 +266,12 @@ public class FPKRepackerTool {
     };
     Stage loadingWindow = GUIUtils.createLoadingWindow("Repacking FPK", task);
     task.setOnSucceeded(event -> {
-      loadingWindow.close();
       Message.info("FPK Repacked", "FPK repacking complete.");
+      loadingWindow.close();
     });
     task.setOnFailed(event -> {
-      loadingWindow.close();
       Message.error("Failed to Repack FPK", "See log for more information.");
+      loadingWindow.close();
     });
     new Thread(task).start();
   }

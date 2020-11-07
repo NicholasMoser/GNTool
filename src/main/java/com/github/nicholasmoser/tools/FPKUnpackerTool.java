@@ -69,12 +69,12 @@ public class FPKUnpackerTool {
     };
     Stage loadingWindow = GUIUtils.createLoadingWindow("Unpacking FPK", task);
     task.setOnSucceeded(event -> {
-      loadingWindow.close();
       Message.info("FPK Unpacked", "FPK unpacking complete.");
+      loadingWindow.close();
     });
     task.setOnFailed(event -> {
-      loadingWindow.close();
       Message.error("Failed to Unpack FPK", "See log for more information.");
+      loadingWindow.close();
     });
     new Thread(task).start();
   }

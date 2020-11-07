@@ -40,16 +40,16 @@ public class ISOExtractorTool {
    * Extract an ISO to an outputPath asynchronously. Includes a loading screen.
    *
    * @param iso The ISO to extract.
-   * @param outputPath The path to output the ISO contents to.
+   * @param output The path to output the ISO contents to.
    */
-  private static void extract(Path iso, Path outputPath) {
+  private static void extract(Path iso, Path output) {
 
     Task<Object> task = new Task<>() {
       @Override
       public Workspace call() throws Exception {
         try {
           updateMessage("Extracting ISO...");
-          GameCubeISO.exportFiles(iso, outputPath);
+          GameCubeISO.exportFiles(iso, output);
           updateMessage("Complete.");
           updateProgress(1, 1);
         } catch (Exception e) {
@@ -62,6 +62,7 @@ public class ISOExtractorTool {
     Stage loadingWindow = GUIUtils.createLoadingWindow("Extracting ISO", task);
 
     task.setOnSucceeded(event -> {
+      Message.info("Extract Successful", "Successfully Extracted ISO at: " + output);
       loadingWindow.close();
     });
     task.setOnFailed(event -> {
