@@ -3,6 +3,7 @@ package com.github.nicholasmoser;
 import com.github.nicholasmoser.tools.FPKRepackerTool;
 import com.github.nicholasmoser.tools.FPKUnpackerTool;
 import com.github.nicholasmoser.tools.ISOExtractorTool;
+import com.github.nicholasmoser.tools.ISOPatcher;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +22,7 @@ public class ToolController {
 
   private static final Logger LOGGER = Logger.getLogger(ToolController.class.getName());
 
+  private static final String ISO_PATCHER_GC = "ISO Patcher (GameCube)";
   private static final String ISO_EXTRACTOR_GC = "ISO Extractor (GameCube)";
   private static final String FPK_UNPACKER_GC = "FPK Unpacker (GameCube)";
   private static final String FPK_UNPACKER_WII = "FPK Unpacker (Wii)";
@@ -35,6 +37,7 @@ public class ToolController {
    */
   public void init() {
     List<String> items = tools.getItems();
+    items.add(ISO_PATCHER_GC);
     items.add(ISO_EXTRACTOR_GC);
     items.add(FPK_UNPACKER_GC);
     items.add(FPK_UNPACKER_WII);
@@ -66,22 +69,13 @@ public class ToolController {
    */
   private void runTool(String tool) {
     try {
-      switch(tool) {
-        case FPK_REPACKER_GC:
-          FPKRepackerTool.repackGamecubeFPK();
-          break;
-        case FPK_REPACKER_WII:
-          FPKRepackerTool.repackWiiFPK();
-          break;
-        case ISO_EXTRACTOR_GC:
-          ISOExtractorTool.extractGameCubeISO();
-          break;
-        case FPK_UNPACKER_GC:
-          FPKUnpackerTool.unpackGamecubeFPK();
-          break;
-        case FPK_UNPACKER_WII:
-          FPKUnpackerTool.unpackWiiFPK();
-          break;
+      switch (tool) {
+        case FPK_REPACKER_GC -> FPKRepackerTool.repackGamecubeFPK();
+        case FPK_REPACKER_WII -> FPKRepackerTool.repackWiiFPK();
+        case ISO_EXTRACTOR_GC -> ISOExtractorTool.extractGameCubeISO();
+        case FPK_UNPACKER_GC -> FPKUnpackerTool.unpackGamecubeFPK();
+        case FPK_UNPACKER_WII -> FPKUnpackerTool.unpackWiiFPK();
+        case ISO_PATCHER_GC -> ISOPatcher.patchGameCubeISO();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);

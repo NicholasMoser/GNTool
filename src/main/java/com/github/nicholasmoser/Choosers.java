@@ -236,4 +236,20 @@ public class Choosers {
     File selection = fileChooser.showOpenDialog(null);
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
   }
+
+  /**
+   * Asks the user to select a patch zip file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional patch zip file. Empty if none is chosen.
+   */
+  public static Optional<Path> getPatchZip(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Patch Zip File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Patch Zip (*.zip)", "*.zip");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
 }

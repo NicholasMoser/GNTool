@@ -3,9 +3,12 @@ package com.github.nicholasmoser.gamecube;
 import com.github.nicholasmoser.gnt4.GNT4Files;
 import com.github.nicholasmoser.iso.ISOCreator;
 import com.github.nicholasmoser.iso.ISOExtractor;
+import com.github.nicholasmoser.utils.FileUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -48,12 +51,25 @@ public class GameCubeISO {
   }
 
   /**
-   * Prompt the user for an input ISO and output directory. The files contained in the ISO will be
-   * stored in a folder named compressed at the given output directory. This will be accomplished by
-   * using GameCube Rebuilder (gcr.exe) which should be located in the same directory as the jar.
-   * This will only work on Windows, and will return without effect if it is not.
+   * Prompt the user for an input ISO. The files contained in the ISO will be stored in
+   * the temp directory if it exists.
    *
-   * @throws IOException If there is an issue with GameCube Rebuilder.
+   * @return The temp directory this ISO was exported to.
+   * @throws IOException If an I/O error occurs
+   */
+  public static Path exportFiles(Path inputFile) throws IOException {
+    Path tempDir = FileUtils.getTempDirectory();
+    Path exportDir = tempDir.resolve(UUID.randomUUID().toString());
+    Files.createDirectories(exportDir);
+    exportFiles(inputFile, exportDir);
+    return exportDir;
+  }
+
+  /**
+   * Prompt the user for an input ISO and output directory. The files contained in the ISO will be
+   * stored in a folder named compressed at the given output directory.
+   *
+   * @throws IOException If an I/O error occurs
    */
   public static void exportFiles(Path inputFile, Path outputDirectory) throws IOException {
     if (inputFile == null || !Files.isRegularFile(inputFile)) {
@@ -70,11 +86,9 @@ public class GameCubeISO {
 
   /**
    * Prompt the user for an output ISO and input directory. The files contained in the directory
-   * will be imported into the given ISO. This will be accomplished by using GameCube Rebuilder
-   * (gcr.exe) which should be located in the same directory as the jar. This will only work on
-   * Windows, and will return without effect if it is not.
+   * will be imported into the given ISO.
    *
-   * @throws IOException If there is an issue with GameCube Rebuilder.
+   * @throws IOException If an I/O error occurs
    */
   public static void importFiles(Path inputDirectory, Path outputFile) throws IOException {
     LOGGER.info("Importing files...");

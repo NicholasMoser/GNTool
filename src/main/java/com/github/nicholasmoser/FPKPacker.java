@@ -58,7 +58,6 @@ public class FPKPacker {
     Set<String> changedNonFPKs = new HashSet<>();
 
     for (String changedFile : changedFiles) {
-      //String fixedPath = GNT4ModReady.fromModReadyPath(changedFile);
       Optional<GNTFile> parent = workspace.getParentFPK(changedFile);
       // If there is no parent, it does not belong to an FPK
       if (parent.isPresent()) {

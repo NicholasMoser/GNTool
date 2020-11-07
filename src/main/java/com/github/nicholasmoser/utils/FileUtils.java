@@ -8,6 +8,7 @@ import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -40,5 +41,18 @@ public class FileUtils {
         return FileVisitResult.CONTINUE;
       }
     });
+  }
+
+  /**
+   * @return The temp directory.
+   *
+   * @throws IOException IF the temp directory does not exist
+   */
+  public static Path getTempDirectory() throws IOException {
+    Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
+    if (!Files.isDirectory(tempDir)) {
+      throw new IOException("Temp directory does not exist: " + tempDir);
+    }
+    return tempDir;
   }
 }
