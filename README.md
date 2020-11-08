@@ -71,23 +71,23 @@ You can build ISOs by selecting *Build ISO* under the File menu at the top. It i
 
 Even if you have a GameCube or Wii ISO that does not yet have workspace support, there are a number of tools that still may be used. These can be accessed by clicking the wrench button in the main GNTool menu.
 
-#### ISO Patcher (GameCube)
+#### ISO Patcher for GameCube
 
 This allows you to patch a GameCube ISO using a zip file. The contents of the zip file must match the directory of a GameCube ISO, that is, at the root must have two directories: `files` and `sys`. All files must be in the expected directory relative to `files` and `sys`.
 
-#### ISO Extractor (GameCube)
+#### ISO Extractor for GameCube
 
 This allows you to extract the files from any GameCube ISO.
 
-#### FPK Unpacker (GameCube)
+#### FPK Unpacker for GameCube
 
 This allows you to unpack an FPK file for any Eighting title on the GameCube.
 
-#### FPK Unpacker (Wii)
+#### FPK Unpacker for Wii
 
 This allows you to unpack an FPK file for any Eighting title on the Wii.
 
-#### FPK Repacker (GameCube)
+#### FPK Repacker for GameCube
 
 This allows you to repack an FPK file for any Eighting title on the GameCube.
 
@@ -95,7 +95,7 @@ There is an optional button at the bottom of the window titled **Load Template**
 allow you to load a .txt file with file paths separated by newlines. This allows quicker repacking
 for FPKs you intend to repack more than once.
 
-#### FPK Repacker (Wii)
+#### FPK Repacker for Wii
 
 This allows you to repack an FPK file for any Eighting title on the Wii.
 
