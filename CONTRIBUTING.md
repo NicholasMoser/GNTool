@@ -12,6 +12,9 @@ If you would like to contribute code, please open a pull request and I will try 
 
 Here are some recommendations for creating a local development environment for GNTool:
 
+- OpenJDK 14+
+  - I recommend [AdoptOpenJDK](https://adoptopenjdk.net/)
+  - Make sure to set this as your `JAVA_PATH` environment variable.
 - Use the latest version of [Intellij](https://www.jetbrains.com/idea/)
 - Use the [Google Java Style](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml)
   - File → Settings → Editor → Code Style → Select the small gear icon next to "Scheme", select Import Scheme → IntelliJ IDEA code style XML.
