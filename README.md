@@ -71,11 +71,13 @@ You can build ISOs by selecting *Build ISO* under the File menu at the top. It i
 
 Even if you have a GameCube or Wii ISO that does not yet have workspace support, there are a number of tools that still may be used. These can be accessed by clicking the wrench button in the main GNTool menu.
 
+#### ISO Patcher (GameCube)
+
+This allows you to patch a GameCube ISO using a zip file. The contents of the zip file must match the directory of a GameCube ISO, that is, at the root must have two directories: `files` and `sys`. All files must be in the expected directory relative to `files` and `sys`.
+
 #### ISO Extractor (GameCube)
 
 This allows you to extract the files from any GameCube ISO.
-
-In the main menu of GNTool, you can click on the wrench icon to open the list of generic tools. These are tools that can be used across a variety of games.
 
 #### FPK Unpacker (GameCube)
 
