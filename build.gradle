@@ -23,7 +23,6 @@ repositories {
 
 dependencies {
     implementation 'com.google.guava:guava:28.1-jre'
-    implementation 'commons-io:commons-io:2.6'
     implementation 'org.openjfx:javafx-controls:13.0.1'
     implementation 'org.openjfx:javafx-graphics:13.0.1'
     implementation 'org.openjfx:javafx-base:13.0.1'
@@ -33,14 +32,13 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'net.java.dev.jna:jna:5.5.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
     // Force Gradle to load the JUnit Platform Launcher from the module-path, as
     // configured in buildSrc/.../ModulePlugin.java -- see SKARA-69 for details.
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.5.2'
 }
 
 group = 'com.github.nicholasmoser'
-version = '3.6-SNAPSHOT'
+version = '3.7-SNAPSHOT'
 description = 'GNTool'
 
 tasks.withType(JavaCompile) {
@@ -68,21 +66,35 @@ jlink {
 task ffmpeg(type: Copy) {
     from file("ffmpeg.exe")
     into file("$buildDir/image/bin")
+    dependsOn jlinkZip
+    description "Copy over the ffmpeg Windows binary"
 }
 
 task ffmpegLicense(type: Copy) {
     from "licenses/ffmpeg"
     into "$buildDir/image/legal/ffmpeg"
+    dependsOn jlinkZip
+    description "Copy over the ffmpeg license"
 }
 
 task txg2tpl(type: Copy) {
     from file("TXG2TPL.exe")
     into file("$buildDir/image/bin")
+    dependsOn jlinkZip
+    description "Copy over the txg2tpl Windows binary"
 }
 
 task txg2tplLicense(type: Copy) {
     from "licenses/txg2tpl"
     into "$buildDir/image/legal/txg2tpl"
+    dependsOn jlinkZip
+    description "Copy over the txg2tpl license"
 }
 
-task extra (dependsOn: [ffmpeg, ffmpegLicense, txg2tpl, txg2tplLicense])
+task dist(type: Zip) {
+    baseName 'gntool'
+    destinationDirectory = file("$buildDir/dist/")
+    from "$buildDir/image/"
+    dependsOn build, jlinkZip, ffmpeg, ffmpegLicense, txg2tpl, txg2tplLicense
+    description "Generate a distribution for a release"
+}
