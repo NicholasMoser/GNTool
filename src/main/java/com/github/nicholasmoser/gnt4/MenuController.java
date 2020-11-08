@@ -96,6 +96,9 @@ public class MenuController {
   private CheckBox enableWidescreen;
 
   @FXML
+  private CheckBox xDoesNotBreakThrows;
+
+  @FXML
   private Spinner<Integer> cssInitialSpeed;
 
   @FXML
@@ -218,6 +221,21 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Widescreen Code", e);
       Message.error("Error Triggering Widescreen Code", SEE_LOG);
+    }
+  }
+
+  @FXML
+  protected void xDoesNotBreakThrows() {
+    try {
+      boolean selected = xDoesNotBreakThrows.isSelected();
+      if (selected) {
+        codes.activateCode(GNT4Codes.X_DOES_NOT_BREAK_THROWS);
+      } else {
+        codes.inactivateCode(GNT4Codes.X_DOES_NOT_BREAK_THROWS);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Triggering X Does Not Break Throws Code", e);
+      Message.error("Error Triggering X Does Not Break Throws Code", SEE_LOG);
     }
   }
 
@@ -1102,6 +1120,12 @@ public class MenuController {
       enableWidescreen.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting Widescreen Code.", e);
+    }
+    try {
+      boolean isActive = codes.isCodeActivated(GNT4Codes.X_DOES_NOT_BREAK_THROWS);
+      xDoesNotBreakThrows.setSelected(isActive);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error getting X Does Not Break Throws Code.", e);
     }
   }
 

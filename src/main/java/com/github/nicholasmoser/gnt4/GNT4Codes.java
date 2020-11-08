@@ -178,6 +178,11 @@ public class GNT4Codes {
   public static final List<GNT4Code> WIDESCREEN_CODES = Arrays
       .asList(PERSPECTIVE_INSTRUCTION, WIDESCREEN_VALUE);
 
+  // https://github.com/NicholasMoser/GNTool#X-Does-Not-Break-Throws
+  public static final GNT4Code X_DOES_NOT_BREAK_THROWS = new GNT4Code(MAIN_DOL, 0x602F0,
+      new byte[]{0x70, 0x00, 0x22, 0x30},
+      new byte[]{0x70, 0x00, 0x02, 0x30});
+
   private final Path uncompressedDirectory;
 
   public GNT4Codes(Path uncompressedDirectory) {

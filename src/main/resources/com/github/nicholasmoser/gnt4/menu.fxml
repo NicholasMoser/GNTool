@@ -70,6 +70,7 @@
               <CheckBox fx:id="noSlowDownOnKill" layoutX="14.0" layoutY="338.0" mnemonicParsing="false" onAction="#noSlowDownOnKill" text="No Slow Down on Kill" />
               <CheckBox fx:id="unlockAll" layoutX="14.0" layoutY="376.0" mnemonicParsing="false" onAction="#unlockAll" text="Unlock Everything" />
               <CheckBox fx:id="enableWidescreen" layoutX="14.0" layoutY="414.0" mnemonicParsing="false" onAction="#enableWidescreen" text="Widescreen 16:9" />
+              <CheckBox fx:id="xDoesNotBreakThrows" layoutX="14.0" layoutY="452.0" mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" />
             </AnchorPane>
           </ScrollPane>
         </AnchorPane>

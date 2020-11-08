@@ -145,6 +145,10 @@ Avoids the slowdown when a player is killed in the game.
 
 Changes the aspect ratio from 4:3 to 16:9 (Widescreen).
 
+#### X Does Not Break Throws
+
+A, B, Y, and X all can break throws in GNT4. Since X can be used to break throws with no punishment when you have no chakra, this code will entirely disable X as a throw break button.
+
 #### ZTK Damage Taken Multiplier
 
 By default, Naruto's ZTK transformation takes 1.5x damage. This setting allows you to change this value.
