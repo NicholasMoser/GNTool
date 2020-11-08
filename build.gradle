@@ -40,6 +40,7 @@ dependencies {
 group = 'com.github.nicholasmoser'
 version = '3.7-SNAPSHOT'
 description = 'GNTool'
+sourceCompatibility = '14'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
