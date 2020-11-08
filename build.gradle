@@ -92,10 +92,17 @@ task txg2tplLicense(type: Copy) {
     description "Copy over the txg2tpl license"
 }
 
+task topLevelBat(type: Copy) {
+    from "scripts/GNTool.bat"
+    into "$buildDir/image/"
+    dependsOn jlinkZip
+    description "Copy over the top-level start bat file"
+}
+
 task dist(type: Zip) {
     baseName 'gntool'
     destinationDirectory = file("$buildDir/dist/")
     from "$buildDir/image/"
-    dependsOn build, jlinkZip, ffmpeg, ffmpegLicense, txg2tpl, txg2tplLicense
+    dependsOn build, jlinkZip, ffmpeg, ffmpegLicense, txg2tpl, txg2tplLicense, topLevelBat
     description "Generate a distribution for a release"
 }

@@ -31,9 +31,11 @@ Windows is only required for a few specific features. These include:
 - Replacing texture graphics, due to usage of `txg2tpl.exe`
 - Replacing sound effects and music, due to usage of `ffmpeg.exe`
 
+With that being said, only Windows binaries are currently being released. If there is a request for additional operating systems to support please log an issue for it.
+
 ## How to Use
 
-To run the tool, download the latest release zip file from the [GNTool releases](https://github.com/NicholasMoser/GNTool/releases). Then extract the zip file and navigate to the `bin` folder. If on Windows run `GNTool.bat`, otherwise run `GNTool`.
+To run the tool, download the latest release zip file from the [GNTool releases](https://github.com/NicholasMoser/GNTool/releases). Then extract the zip file and run `GNTool.bat`
 
 ![Launch](/docs/launch.png?raw=true "Launch")
 
