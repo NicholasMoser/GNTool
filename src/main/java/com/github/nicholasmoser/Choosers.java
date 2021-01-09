@@ -252,4 +252,21 @@ public class Choosers {
     File selection = fileChooser.showOpenDialog(null);
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
   }
+
+  /**
+   * Asks the user to select an output TXT file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional output TXT. Empty if none is chosen.
+   */
+  public static Optional<Path> getOutputTXT(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Create Output TXT File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("TXT File (*.txt)", "*.txt");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showSaveDialog(null);
+
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
 }

@@ -2,6 +2,7 @@ package com.github.nicholasmoser;
 
 import com.github.nicholasmoser.tools.FPKRepackerTool;
 import com.github.nicholasmoser.tools.FPKUnpackerTool;
+import com.github.nicholasmoser.tools.ISOCompareTool;
 import com.github.nicholasmoser.tools.ISOExtractorTool;
 import com.github.nicholasmoser.tools.ISOPatcher;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ToolController {
 
   private static final String ISO_PATCHER_GC = "ISO Patcher (GameCube)";
   private static final String ISO_EXTRACTOR_GC = "ISO Extractor (GameCube)";
+  private static final String ISO_COMPARE_GC = "ISO Compare (GameCube)";
   private static final String FPK_UNPACKER_GC = "FPK Unpacker (GameCube)";
   private static final String FPK_UNPACKER_WII = "FPK Unpacker (Wii)";
   private static final String FPK_REPACKER_GC = "FPK Repacker (GameCube)";
@@ -39,6 +41,7 @@ public class ToolController {
     List<String> items = tools.getItems();
     items.add(ISO_PATCHER_GC);
     items.add(ISO_EXTRACTOR_GC);
+    items.add(ISO_COMPARE_GC);
     items.add(FPK_UNPACKER_GC);
     items.add(FPK_UNPACKER_WII);
     items.add(FPK_REPACKER_GC);
@@ -76,6 +79,7 @@ public class ToolController {
         case FPK_UNPACKER_GC -> FPKUnpackerTool.unpackGamecubeFPK();
         case FPK_UNPACKER_WII -> FPKUnpackerTool.unpackWiiFPK();
         case ISO_PATCHER_GC -> ISOPatcher.patchGameCubeISO();
+        case ISO_COMPARE_GC -> ISOCompareTool.compareGameCubeISO();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);
