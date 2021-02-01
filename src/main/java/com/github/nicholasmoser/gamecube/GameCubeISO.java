@@ -7,7 +7,6 @@ import com.github.nicholasmoser.utils.FileUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -51,24 +50,25 @@ public class GameCubeISO {
   }
 
   /**
-   * Prompt the user for an input ISO. The files contained in the ISO will be stored in
-   * the temp directory if it exists.
+   * Export the files contained in the given ISO to the temp directory if it exists.
    *
+   * @param inputISO The given input ISO.
    * @return The temp directory this ISO was exported to.
    * @throws IOException If an I/O error occurs
    */
-  public static Path exportFiles(Path inputFile) throws IOException {
+  public static Path exportFiles(Path inputISO) throws IOException {
     Path tempDir = FileUtils.getTempDirectory();
     Path exportDir = tempDir.resolve(UUID.randomUUID().toString());
     Files.createDirectories(exportDir);
-    exportFiles(inputFile, exportDir);
+    exportFiles(inputISO, exportDir);
     return exportDir;
   }
 
   /**
-   * Prompt the user for an input ISO and output directory. The files contained in the ISO will be
-   * stored in a folder named compressed at the given output directory.
+   * Export the files contained in the given ISO to the given output directory.
    *
+   * @param inputFile The given input ISO.
+   * @param outputDirectory The given output directory to export to.
    * @throws IOException If an I/O error occurs
    */
   public static void exportFiles(Path inputFile, Path outputDirectory) throws IOException {
@@ -85,15 +85,17 @@ public class GameCubeISO {
   }
 
   /**
-   * Prompt the user for an output ISO and input directory. The files contained in the directory
-   * will be imported into the given ISO.
+   * Import the files contained in the given directory to the given output ISO file.
    *
+   * @param inputDirectory The directory to import files from.
+   * @param outputISO The output ISO to import files into.
+   * @param pushFilesToEnd If the files should be pushed to the end of the ISO.
    * @throws IOException If an I/O error occurs
    */
-  public static void importFiles(Path inputDirectory, Path outputFile) throws IOException {
+  public static void importFiles(Path inputDirectory, Path outputISO, boolean pushFilesToEnd) throws IOException {
     LOGGER.info("Importing files...");
-    ISOCreator creator = new ISOCreator(inputDirectory, outputFile);
-    creator.create();
+    ISOCreator creator = new ISOCreator(inputDirectory, outputISO);
+    creator.create(pushFilesToEnd);
     LOGGER.info("Finished importing files.");
   }
 }

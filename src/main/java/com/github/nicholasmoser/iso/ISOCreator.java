@@ -33,10 +33,11 @@ public class ISOCreator {
   /**
    * Create an ISO.
    *
+   * @param pushFilesToEnd If the files should be pushed to the end of the ISO.
    * @throws IOException If an I/O error occurs.
    */
-  public void create() throws IOException {
-    DirectoryParser parser = new DirectoryParser(inputPath);
+  public void create(boolean pushFilesToEnd) throws IOException {
+    DirectoryParser parser = new DirectoryParser(inputPath, pushFilesToEnd);
     ISOHeader isoHeader = parser.getISOHeader();
     create(isoHeader);
   }

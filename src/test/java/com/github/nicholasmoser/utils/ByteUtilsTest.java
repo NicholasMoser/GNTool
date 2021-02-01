@@ -593,4 +593,76 @@ public class ByteUtilsTest {
     assertArrayEquals(new byte[]{0x78, 0x56, 0x34, 0x12}, ByteUtils.hexStringToBytes("78563412"));
     assertArrayEquals(new byte[]{(byte) 0x80, (byte) 0xFF}, ByteUtils.hexStringToBytes("80FF"));
   }
+
+  /**
+   * Test getting the next byte aligned position with modulo 4.
+   */
+  @Test
+  public void testNextAlignedPosMod4() {
+    assertEquals(0, ByteUtils.nextAlignedPos(0, 4));
+    assertEquals(4, ByteUtils.nextAlignedPos(1, 4));
+    assertEquals(4, ByteUtils.nextAlignedPos(2, 4));
+    assertEquals(4, ByteUtils.nextAlignedPos(3, 4));
+    assertEquals(4, ByteUtils.nextAlignedPos(4, 4));
+    assertEquals(8, ByteUtils.nextAlignedPos(5, 4));
+    assertEquals(8, ByteUtils.nextAlignedPos(6, 4));
+    assertEquals(8, ByteUtils.nextAlignedPos(7, 4));
+    assertEquals(8, ByteUtils.nextAlignedPos(8, 4));
+    assertEquals(12, ByteUtils.nextAlignedPos(9, 4));
+    assertEquals(12, ByteUtils.nextAlignedPos(10, 4));
+  }
+
+  /**
+   * Test getting the next byte aligned position with modulo 8.
+   */
+  @Test
+  public void testNextAlignedPosMod8() {
+    assertEquals(0, ByteUtils.nextAlignedPos(0, 8));
+    assertEquals(8, ByteUtils.nextAlignedPos(1, 8));
+    assertEquals(8, ByteUtils.nextAlignedPos(2, 8));
+    assertEquals(8, ByteUtils.nextAlignedPos(3, 8));
+    assertEquals(8, ByteUtils.nextAlignedPos(4, 8));
+    assertEquals(8, ByteUtils.nextAlignedPos(5, 8));
+    assertEquals(8, ByteUtils.nextAlignedPos(6, 8));
+    assertEquals(8, ByteUtils.nextAlignedPos(7, 8));
+    assertEquals(8, ByteUtils.nextAlignedPos(8, 8));
+    assertEquals(16, ByteUtils.nextAlignedPos(9, 8));
+    assertEquals(16, ByteUtils.nextAlignedPos(10, 8));
+  }
+
+  /**
+   * Test getting the previous byte aligned position with modulo 4.
+   */
+  @Test
+  public void testPreviousAlignedPosMod4() {
+    assertEquals(0, ByteUtils.previousAlignedPos(0, 4));
+    assertEquals(0, ByteUtils.previousAlignedPos(1, 4));
+    assertEquals(0, ByteUtils.previousAlignedPos(2, 4));
+    assertEquals(0, ByteUtils.previousAlignedPos(3, 4));
+    assertEquals(4, ByteUtils.previousAlignedPos(4, 4));
+    assertEquals(4, ByteUtils.previousAlignedPos(5, 4));
+    assertEquals(4, ByteUtils.previousAlignedPos(6, 4));
+    assertEquals(4, ByteUtils.previousAlignedPos(7, 4));
+    assertEquals(8, ByteUtils.previousAlignedPos(8, 4));
+    assertEquals(8, ByteUtils.previousAlignedPos(9, 4));
+    assertEquals(8, ByteUtils.previousAlignedPos(10, 4));
+  }
+
+  /**
+   * Test getting the previous byte aligned position with modulo 8.
+   */
+  @Test
+  public void testPreviousAlignedPosMod8() {
+    assertEquals(0, ByteUtils.previousAlignedPos(0, 8));
+    assertEquals(0, ByteUtils.previousAlignedPos(1, 8));
+    assertEquals(0, ByteUtils.previousAlignedPos(2, 8));
+    assertEquals(0, ByteUtils.previousAlignedPos(3, 8));
+    assertEquals(0, ByteUtils.previousAlignedPos(4, 8));
+    assertEquals(0, ByteUtils.previousAlignedPos(5, 8));
+    assertEquals(0, ByteUtils.previousAlignedPos(6, 8));
+    assertEquals(0, ByteUtils.previousAlignedPos(7, 8));
+    assertEquals(8, ByteUtils.previousAlignedPos(8, 8));
+    assertEquals(8, ByteUtils.previousAlignedPos(9, 8));
+    assertEquals(8, ByteUtils.previousAlignedPos(10, 8));
+  }
 }

@@ -10,7 +10,7 @@ public class ISOFile implements ISOItem {
 
   private final String parent;
 
-  private final int pos;
+  private int pos;
 
   private final int len;
 
@@ -112,6 +112,16 @@ public class ISOFile implements ISOItem {
         ", name='" + name + '\'' +
         ", gamePath='" + gamePath + '\'' +
         '}';
+  }
+
+  /**
+   * Allows the position of an ISOFile to be updated. This is necessary so that positions
+   * can be updated to push files to the end of an ISO.
+   *
+   * @param pos The updated position.
+   */
+  public void updatePosition(int pos) {
+    this.pos = pos;
   }
 
   /**

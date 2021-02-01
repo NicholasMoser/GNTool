@@ -120,6 +120,9 @@ public class MenuController {
   private CheckMenuItem parallelBuild;
 
   @FXML
+  private CheckMenuItem pushToBackOfISO;
+
+  @FXML
   private ComboBox<String> seqs;
 
   @FXML
@@ -425,7 +428,7 @@ public class MenuController {
             fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");
-          GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get());
+          GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get(), pushToBackOfISO.isSelected());
           updateProgress(1, 1);
           return null;
         } catch (Exception e) {

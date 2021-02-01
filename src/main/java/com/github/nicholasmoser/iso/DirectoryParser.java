@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.iso;
 
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,17 +18,6 @@ public class DirectoryParser {
 
   private int currentPosition;
   private List<String> currentPath;
-
-  /**
-   * Create a new DirectoryParser for parsing ISOItems.
-   *
-   * @param inputDirectory The path to the game file directory.
-   */
-  public DirectoryParser(Path inputDirectory) {
-    this.inputDirectory = inputDirectory;
-    this.filesDirectory = inputDirectory.resolve("files");
-    pushFilesToEnd = false;
-  }
 
   /**
    * Create a new DirectoryParser for parsing ISOItems. Has an added option to push files to the end
@@ -96,7 +86,7 @@ public class DirectoryParser {
         .setName("apploader.img")
         .setGamePath("sys/apploader.img")
         .build();
-    int startDolPosition = getNextByteAlignedPosition(ISO.APPLOADER_POS + apploaderLength, 128);
+    int startDolPosition = ByteUtils.nextAlignedPos(ISO.APPLOADER_POS + apploaderLength, 128);
     ISOFile mainDol = new ISOFile.Builder()
         .setPos(startDolPosition)
         .setLen(mainDolLength)
@@ -104,7 +94,7 @@ public class DirectoryParser {
         .setName("main.dol")
         .setGamePath("sys/main.dol")
         .build();
-    int fileSystemTablePosition = getNextByteAlignedPosition(startDolPosition + mainDolLength, 128);
+    int fileSystemTablePosition = ByteUtils.nextAlignedPos(startDolPosition + mainDolLength, 128);
     ISOFile fstBin = new ISOFile.Builder()
         .setPos(fileSystemTablePosition)
         .setLen(fileSystemTableLength)
@@ -119,19 +109,51 @@ public class DirectoryParser {
     headerBuilder.setMainDol(mainDol);
     headerBuilder.setFstBin(fstBin);
 
-    // Let's get a match with the original ISO first before we be efficient
-    if (pushFilesToEnd) {
-      currentPosition = 0x0C4F8000;
-    } else {
-      // Specified start address must be 32KB aligned in "dvdfs.c" on line 1211
-      int fstEnd = fileSystemTablePosition + fileSystemTableLength;
-      currentPosition = getNextByteAlignedPosition(fstEnd, 32768);
-    }
+    // Specified start address must be 32KB aligned in "dvdfs.c" on line 1211
+    int fstEnd = fileSystemTablePosition + fileSystemTableLength;
+    currentPosition = ByteUtils.nextAlignedPos(fstEnd, 32768);
 
     addFiles(filesDirectory);
     headerBuilder.setFiles(files);
 
+    if (pushFilesToEnd) {
+      pushFilesToEndOfISO();
+    }
+
     return headerBuilder.createISOHeader();
+  }
+
+  /**
+   * Update the position of each file such that they each are pushed towards the end of the ISO.
+   * Most GameCube games do this since files will be read faster on the edges of a GameCube disc.
+   * This is accomplished by iterating over all files backwards and subtracting from the disc size,
+   * while also accounting for byte alignment of each file.
+   */
+  private void pushFilesToEndOfISO() {
+    currentPosition = ISO.DISC_SIZE;
+    for (int i = files.size() - 1; i >= 0; i--) {
+      ISOItem item = files.get(i);
+      if (!item.isDirectory()) {
+        ISOFile isoFile = (ISOFile) item;
+        updateByteAlignedPosition(isoFile);
+      }
+    }
+  }
+
+  /**
+   * Updates the byte-aligned position of a particular ISOFile relative to the current position.
+   * All files must be 4-byte aligned. Music files (.trk) are 0x8000-byte aligned.
+   *
+   * @param isoFile The ISOFile to update the position of.
+   */
+  private void updateByteAlignedPosition(ISOFile isoFile) {
+    currentPosition -= isoFile.getLen();
+    if (isoFile.getName().endsWith(".trk")) {
+      currentPosition = ByteUtils.previousAlignedPos(currentPosition, 0x8000);
+    } else {
+      currentPosition = ByteUtils.previousAlignedPos(currentPosition, 4);
+    }
+    isoFile.updatePosition(currentPosition);
   }
 
   /**
@@ -156,7 +178,7 @@ public class DirectoryParser {
               if (Files.isDirectory(path)) {
                 addDirectory(path, "");
               } else {
-                currentPosition = getNextByteAlignedPosition(currentPosition, 4);
+                currentPosition = ByteUtils.nextAlignedPos(currentPosition, 4);
                 int size = (int) Files.size(path);
                 String fileName = path.getFileName().toString();
                 ISOFile file = new ISOFile.Builder()
@@ -209,7 +231,7 @@ public class DirectoryParser {
                   currentPosition = 0x45532B80;
                 }
 
-                currentPosition = getNextByteAlignedPosition(currentPosition, 4);
+                currentPosition = ByteUtils.nextAlignedPos(currentPosition, 4);
                 int size = (int) Files.size(path);
                 String fileName = path.getFileName().toString();
                 ISOFile fileItem = new ISOFile.Builder()
@@ -265,21 +287,6 @@ public class DirectoryParser {
     builder.append(directoryName);
     builder.append('/');
     return builder.toString();
-  }
-
-  /**
-   * Gets the next byte aligned position using a given modulo.
-   *
-   * @param currentPosition The current position to check against.
-   * @param modulo          The modulo to use.
-   * @return The next byte aligned position.
-   */
-  private int getNextByteAlignedPosition(int currentPosition, int modulo) {
-    int remainder = currentPosition % modulo;
-    if (remainder == 0) {
-      return currentPosition;
-    }
-    return currentPosition + (modulo - remainder);
   }
 
   /**

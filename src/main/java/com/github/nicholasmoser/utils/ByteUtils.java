@@ -371,4 +371,30 @@ public class ByteUtils {
   public static byte[] hexStringToBytes(String hex) {
     return BaseEncoding.base16().decode(hex);
   }
+
+  /**
+   * Gets the next byte aligned position using a given modulo.
+   *
+   * @param currentPosition The current position to check against.
+   * @param modulo          The modulo to use.
+   * @return The next byte aligned position.
+   */
+  public static int nextAlignedPos(int currentPosition, int modulo) {
+    int remainder = currentPosition % modulo;
+    if (remainder == 0) {
+      return currentPosition;
+    }
+    return currentPosition + (modulo - remainder);
+  }
+
+  /**
+   * Gets the previous byte aligned position using a given modulo.
+   *
+   * @param currentPosition The current position to check against.
+   * @param modulo          The modulo to use.
+   * @return The previous byte aligned position.
+   */
+  public static int previousAlignedPos(int currentPosition, int modulo) {
+    return currentPosition - (currentPosition % modulo);
+  }
 }

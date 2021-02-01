@@ -1,22 +1,15 @@
 package com.github.nicholasmoser.tools;
 
 import com.github.nicholasmoser.Choosers;
-import com.github.nicholasmoser.FPKPacker;
-import com.github.nicholasmoser.FPKUnpacker;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
-import com.github.nicholasmoser.fpk.FileNames;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
-import com.github.nicholasmoser.gnt4.GNT4FileNames;
-import com.github.nicholasmoser.utils.FileUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.zip.PatchZip;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
@@ -68,7 +61,10 @@ public class ISOPatcher {
             updateMessage("Patching files...");
             PatchZip.patch(patchZip, exportDir);
             updateMessage("Creating new ISO...");
-            GameCubeISO.importFiles(exportDir, output);
+            // This tool only supports pushing files to the back of the ISO currently.
+            // This is to prevent user confusion when patching SCON4. If you have a need
+            // to patch without pushing to the back of the ISO please log an issue on Github.
+            GameCubeISO.importFiles(exportDir, output, true);
           } finally {
             MoreFiles.deleteRecursively(exportDir, RecursiveDeleteOption.ALLOW_INSECURE);
           }
