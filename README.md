@@ -57,7 +57,7 @@ The **Missing Files** tab contains the list of files that have been removed from
 
 The **Characters**, **Audio**, **Graphics**, and **Seqence** tabs contain tools and options for managing each of their respective files.
 
-You can build ISOs by selecting *Build ISO* under the File menu at the top. It is recommended to also select *Parallel Build* if using a multi-core CPU.
+You can build ISOs by selecting *Build ISO* under the File menu at the top. It is recommended to also select *Parallel Build* if using a multi-core CPU. By default, the build will push non-system files to the back of the ISO such that the ISO is exactly 1,459,978,240 bytes (~1.35 GB). If you wish for non-system files to immediately be placed after system files, disable the **Push Files to Back of ISO** setting under the File menu.
 
 :warning: Please be aware of the following :warning:
 
@@ -78,6 +78,10 @@ This allows you to patch a GameCube ISO using a zip file. The contents of the zi
 #### ISO Extractor for GameCube
 
 This allows you to extract the files from any GameCube ISO.
+
+#### ISO Compare for GameCube
+
+This allows you to compare two ISOs to find differences between them. It will allow you to save a report of files only in each ISO and files that have been changed between the two ISO files.
 
 #### FPK Unpacker for GameCube
 
