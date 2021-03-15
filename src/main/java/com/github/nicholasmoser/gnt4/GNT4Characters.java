@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class GNT4Characters {
 
+    public static final int PLAYABLE_CHARACTERS = 39;
     public static final String AKAMARU = "Akamaru";
     public static final String ANKO = "Anko";
     public static final String CHOJI = "Choji";

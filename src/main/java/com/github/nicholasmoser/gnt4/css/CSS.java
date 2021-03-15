@@ -38,6 +38,9 @@ public class CSS {
     private static final byte[] LIS_R4_8019 = new byte[]{0x3C, (byte) 0x80, (byte) 0x80, 0x19};
     // lis r6, 0x8019
     private static final byte[] LIS_R6_8019 = new byte[]{0x3C, (byte) 0xC0, (byte) 0x80, 0x19};
+    // nop
+    private static final byte[] NOP = new byte[]{0x60, 0x00, 0x00, 0x00};
+
 
     private Path dolPath;
     private boolean isUsingOverride;
@@ -105,9 +108,47 @@ public class CSS {
         length += addPtrChrFolderOrder(dol, length);
         length += addCssChrIds(dol, length);
         length += addCssChrIdOrder(dol, length);
-        length += addActualCssChrIdOrder(dol, length);
+        addActualCssChrIdOrder(dol, length);
+        updateNumberOfCharacters(dol);
+        disableCharacterUnlockChecks(dol);
         Files.write(dolPath, dol);
         isUsingOverride = true;
+    }
+
+    /**
+     * Validates that the CSS data is valid and throws an IllegalStateException if not.
+     */
+    private void verifyValidity() {
+        // Due to the way the code works, characters must be added in batches of three. Validate this is the case.
+        if (chrFolderOrder.size() % 3 != 0) {
+            throw new IllegalStateException("The number of new characters must be added in batches of threes.");
+        }
+        // Validate each of the chr folders it expects to exist do in fact exist.
+        Path chrDirectory = dolPath.getParent().getParent().resolve("files/chr");
+        for (String chrFolder : chrFolderOrder) {
+            Path chrFolderPath = chrDirectory.resolve(chrFolder);
+            if (!Files.isDirectory(chrFolderPath)) {
+                throw new IllegalStateException(chrFolderPath + " does not exist for character.");
+            }
+        }
+        // Validate that there is enough space for the CSS override
+        int totalSize = (chrFolderOrder.size() * 4) + 4;
+        totalSize += (chrFolderOrder.size() * 4) + 4; // Calculate a second time for PTR_CHAR_ORDER
+        totalSize += (cssChrIds.size() * 4) + 4;
+        totalSize += (cssChrIdOrder.size() * 4) + 4;
+        totalSize += (cssChrIdOrder.size() * 4) + 4; // Calculate a second time for ACTUAL_CSS_CHR_ID_ORDER
+        if (totalSize > OVERRIDE_LENGTH) {
+            String message = "CSS override is too large. ";
+            message += String.format("It uses 0x%08x bytes out of a max of 0x%03x", totalSize, OVERRIDE_LENGTH);
+            throw new IllegalStateException(message);
+        }
+        LOGGER.info(String.format("CSS override will use 0x%03x bytes out of 0x%03x", totalSize, OVERRIDE_LENGTH));
+        // Validate each chr folder is 3 ASCII bytes in length
+        for (String chrFolder : chrFolderOrder) {
+            if (chrFolder.getBytes(StandardCharsets.US_ASCII).length != 3) {
+                throw new IllegalStateException(chrFolder + " does not have a length of 3 ASCII characters");
+            }
+        }
     }
 
     /**
@@ -313,39 +354,37 @@ public class CSS {
     }
 
     /**
-     * Validates that the CSS data is valid and throws an IllegalStateException if not.
+     * Updates the number of characters to read into the CSS. The number of characters must be a multiple of three,
+     * as characters are read into the CSS in batches of three.
+     *
+     * @param dol The bytes of the dol.
      */
-    private void verifyValidity() {
-        // Due to the way the code works, characters must be added in batches of three. Validate this is the case.
-        if (chrFolderOrder.size() % 3 != 0) {
-            throw new IllegalStateException("The number of new characters must be added in batches of threes.");
+    private void updateNumberOfCharacters(byte[] dol) {
+        int base = 0xd;
+        int newChars = (cssChrIdOrder.size() - GNT4Characters.PLAYABLE_CHARACTERS) / 3;
+        if (newChars > 0) {
+            LOGGER.info((newChars * 3) + " new characters found.");
+        } else {
+            LOGGER.info("No new characters found.");
         }
-        // Validate each of the chr folders it expects to exist do in fact exist.
-        Path chrDirectory = dolPath.getParent().getParent().resolve("files/chr");
-        for (String chrFolder : chrFolderOrder) {
-            Path chrFolderPath = chrDirectory.resolve(chrFolder);
-            if (!Files.isDirectory(chrFolderPath)) {
-                throw new IllegalStateException(chrFolderPath + " does not exist for character.");
-            }
-        }
-        // Validate that there is enough space for the CSS override
-        int totalSize = (chrFolderOrder.size() * 4) + 4;
-        totalSize += (chrFolderOrder.size() * 4) + 4; // Calculate a second time for PTR_CHAR_ORDER
-        totalSize += (cssChrIds.size() * 4) + 4;
-        totalSize += (cssChrIdOrder.size() * 4) + 4;
-        totalSize += (cssChrIdOrder.size() * 4) + 4; // Calculate a second time for ACTUAL_CSS_CHR_ID_ORDER
-        if (totalSize > OVERRIDE_LENGTH) {
-            String message = "CSS override is too large. ";
-            message += String.format("It uses 0x%08x bytes out of a max of 0x%03x", totalSize, OVERRIDE_LENGTH);
-            throw new IllegalStateException(message);
-        }
-        LOGGER.info(String.format("CSS override will use 0x%03x bytes out of 0x%03x", totalSize, OVERRIDE_LENGTH));
-        // Validate each chr folder is 3 ASCII bytes in length
-        for (String chrFolder : chrFolderOrder) {
-            if (chrFolder.getBytes(StandardCharsets.US_ASCII).length != 3) {
-                throw new IllegalStateException(chrFolder + " does not have a length of 3 ASCII characters");
-            }
-        }
+        byte[] instruction = new byte[]{0x38, 0x00, 0x00, (byte) (base + newChars)};
+        // 8015b820 li	r0, 0xd
+        System.arraycopy(instruction, 0, dol, 0x158820, 4);
+    }
+
+    /**
+     * Disable the checks for whether specific characters are unlocked or not. This is necessary for new characters
+     * to show up in the CSS.
+     *
+     * @param dol The bytes of the dol.
+     */
+    private void disableCharacterUnlockChecks(byte[] dol) {
+        // 8015b864 beq-	 ->0x8015B87C
+        System.arraycopy(NOP, 0, dol, 0x158864, 4);
+        // 8015b8a0 beq-	 ->0x8015B8B8
+        System.arraycopy(NOP, 0, dol, 0x1588A0, 4);
+        // 8015b8dc beq-	 ->0x8015B8F4
+        System.arraycopy(NOP, 0, dol, 0x1588DC, 4);
     }
 
     /**
