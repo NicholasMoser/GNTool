@@ -80,6 +80,16 @@ public class ByteUtils {
   }
 
   /**
+   * Converts an int to a 4-byte big-endian byte array.
+   *
+   * @param value The int.
+   * @return The output bytes.
+   */
+  public static byte[] fromInt(int value) {
+    return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(value).array();
+  }
+
+  /**
    * Converts a float to a 4-byte big-endian byte array.
    *
    * @param value The float.
