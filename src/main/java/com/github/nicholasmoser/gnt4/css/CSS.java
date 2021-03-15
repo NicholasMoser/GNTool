@@ -370,6 +370,20 @@ public class CSS {
         byte[] instruction = new byte[]{0x38, 0x00, 0x00, (byte) (base + newChars)};
         // 8015b820 li	r0, 0xd
         System.arraycopy(instruction, 0, dol, 0x158820, 4);
+        // Change to li r4, {number of playable characters}
+        if (cssChrIdOrder.size() > 255) {
+            throw new IllegalStateException("More than 255 characters is not yet supported.");
+        }
+        instruction = new byte[]{0x38, (byte) 0x80, 0x00, (byte) cssChrIdOrder.size()};
+        // 8015b7e8 lwz	r4, 0x00EC (r3)
+        System.arraycopy(instruction, 0, dol, 0x1587E8, 4);
+        // Change to li r3, {number of playable characters}
+        instruction = new byte[]{0x38, (byte) 0x60, 0x00, (byte) cssChrIdOrder.size()};
+        // 80091ec4 bl     seq_read_val
+        System.arraycopy(instruction, 0, dol, 0x8EEC4, 4);
+        // 80091e44 bl     seq_read_val
+        System.arraycopy(instruction, 0, dol, 0x8EE44, 4);
+
     }
 
     /**
