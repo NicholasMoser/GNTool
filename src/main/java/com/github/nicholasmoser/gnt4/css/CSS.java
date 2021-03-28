@@ -1,6 +1,8 @@
 package com.github.nicholasmoser.gnt4.css;
 
+import com.github.nicholasmoser.dol.DolUtil;
 import com.github.nicholasmoser.gnt4.GNT4Characters;
+import com.github.nicholasmoser.ppc.Branch;
 import com.github.nicholasmoser.utils.ByteUtils;
 
 import java.io.IOException;
@@ -72,6 +74,29 @@ public class CSS {
         this.cssChrIds = new ArrayList<>(GNT4Characters.CSS_CHR_IDS);
         this.cssChrIdOrder = new ArrayList<>(GNT4Characters.CSS_CHR_ID_ORDER);
         this.currentChrIndex = 0x2a;
+        // Remove this
+        cssChrIds.add(2);
+        cssChrIds.add(3);
+        cssChrIds.add(4);
+        cssChrIdOrder.add(0x27);
+        cssChrIdOrder.add(0x28);
+        cssChrIdOrder.add(0x29);
+
+        // Middle one is broken
+        //cssChrIds.add(2);
+        //cssChrIds.add(2);
+        //cssChrIds.add(2);
+        //cssChrIdOrder.add(0x27);
+        //cssChrIdOrder.add(0x28);
+        //cssChrIdOrder.add(0x29);
+
+        // Middle one is broken
+        //cssChrIds.add(2);
+        //cssChrIds.add(3);
+        //cssChrIds.add(4);
+        //cssChrIdOrder.add(0x27);
+        //cssChrIdOrder.add(0x28);
+        //cssChrIdOrder.add(0x29);
     }
 
     /**
@@ -113,6 +138,10 @@ public class CSS {
         disableCharacterUnlockChecks(dol);
         Files.write(dolPath, dol);
         isUsingOverride = true;
+    }
+
+    private void updateReferencesToCssChrIdOrder(byte[] dol, int length) {
+        int cssChrIdOrder = OVERRIDE_BEGIN_ADDRESS + length;
     }
 
     /**
@@ -317,9 +346,11 @@ public class CSS {
         // This chunk in the dol is used as a data section and is therefore not initialized to anything.
         // The game will write to this space while it is running.
         int size = cssChrIdOrder.size() * 4;
-        System.arraycopy(TERMINATOR, 0, dol, startOffset + size, 4);
         updateActualCssChrIdOrderInstructions(dol, startAddress);
-        return size + 4;
+        System.arraycopy(TERMINATOR, 0, dol, startOffset + size, 4);
+        size += 4;
+        size += addCssSeqReadBranch(dol, startAddress, startAddress + size);
+        return size;
     }
 
     /**
@@ -351,6 +382,84 @@ public class CSS {
         System.arraycopy(LIS_R4_8019, 0, dol, 0x1589BC, 4);
         // 8015b9c4 addi	r4, r4, 15456
         System.arraycopy(addi_instruction, 0, dol, 0x1589C4, 4);
+    }
+
+    /**
+     * Adds a branch in the seq reading for char_sel.seq that reads the actual css chr id order, and instead reads
+     * from the overridden section for that data.
+     *
+     * @param dol                     The dol bytes to write to.
+     * @param actualCssChrIdOrderAddr The start address of the actual css chr id order.
+     * @param newBranchAddr           The address of the new branched code.
+     * @return The size of the newly added css seq reach branch instructions.
+     */
+    public int addCssSeqReadBranch(byte[] dol, int actualCssChrIdOrderAddr, int newBranchAddr) {
+        int distance = newBranchAddr - 0x80092148;
+        if (distance > 0xfffff0) {
+            throw new IllegalStateException("Invalid css seq read branch distance: " + distance);
+        }
+        byte[] branchInstruction = ByteUtils.fromInt32(distance);
+        // add branch opcode to beginning of word
+        branchInstruction[0] = 0x48;
+        // 80092148 b {updated css seq read address}
+        System.arraycopy(branchInstruction, 0, dol, 0x8F148, 4);
+        // 80092154 nop
+        System.arraycopy(NOP, 0, dol, 0x8F154, 4);
+
+        // Write new branch code for handling the char_sel.seq css read.
+        // It's effectively a Gecko code to load from the new actualCssChrIdOrder during seq reading.
+        //
+        // loc_0x0:
+        //   lis r3,1
+        //   addi r3,r3,-2928
+        //   cmpw r30, r3
+        //   bne- loc_0x18
+        //   lis r3, 0x8019
+        //   addi r3, r3, {offset from 0x80190000 to actualCssChrIdOrder}
+        //   lwzx r5, r3, r5
+        //   b loc_0x20
+        //
+        // loc_0x18:
+        //   add r5, r30, r5
+        //   lwzx r5, r6, r5
+        //
+        // loc_0x20:
+        //   b {branch back to origin}
+        //
+        // 3C600001 3863F490 7C1E1800 40820014 3C608024
+        // 3863xxxx <- offset from 0x80190000 to actualCssChrIdOrder
+        // 7CA3282E 4800000C 7CBE2A14 7CA6282E
+        // 48xxxxxx <- branch back to origin
+
+        // Reverse direction and account for size of branch instructions. Also make sure to go to next instruction
+        // when you return by adding 0x4.
+        int distanceBack = (distance * -1) - 0x28 + 0x4;
+        // Get final branch instruction
+        byte[] branch = Branch.getBranchInstruction(distanceBack);
+        // Combine it all together
+        byte[] instructions = new byte[]{0x3C, 0x60, 0x00, 0x01,
+                0x38, 0x63, (byte) 0xF4, (byte) 0x90,
+                0x7C, 0x1E, 0x18, 0x00,
+                0x40, (byte) 0x82, 0x00, 0x14,
+                0x3C, 0x60, (byte) 0x80, 0x19,
+                0x38, 0x63, 0x00, 0x00,
+                0x7C, (byte) 0xA3, 0x28, 0x2E,
+                0x48, 0x00, 0x00, 0x0C,
+                0x7C, (byte) 0xBE, 0x2A, 0x14,
+                0x7C, (byte) 0xA6, 0x28, 0x2E,
+                branch[0], branch[1], branch[2], branch[3]};
+        // Get offset from 0x80240000 to actualCssChrIdOrder
+        int orderOffset = actualCssChrIdOrderAddr - 0x80190000;
+        if (orderOffset > Short.MAX_VALUE) {
+            throw new IllegalStateException("Order offset larger than max short: " + orderOffset);
+        }
+        instructions[22] = (byte) ((orderOffset >> 8) & 0xFF);
+        instructions[23] = (byte) (orderOffset & 0xFF);
+        // Update instructions[14] and [15]
+        long dolOffset = DolUtil.ram2dol(Integer.toUnsignedLong(newBranchAddr));
+        System.arraycopy(instructions, 0, dol, (int) dolOffset, instructions.length);
+        // Return size of the new branch code in the override section
+        return 0x2c;
     }
 
     /**
