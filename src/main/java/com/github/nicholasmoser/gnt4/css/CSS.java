@@ -75,28 +75,73 @@ public class CSS {
         this.cssChrIdOrder = new ArrayList<>(GNT4Characters.CSS_CHR_ID_ORDER);
         this.currentChrIndex = 0x2a;
         // Remove this
-        cssChrIds.add(2);
-        cssChrIds.add(3);
-        cssChrIds.add(4);
+        // If you don't move the cursor, fails to load Naruto
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
+        cssChrIds.add(0x18);
         cssChrIdOrder.add(0x27);
         cssChrIdOrder.add(0x28);
         cssChrIdOrder.add(0x29);
-
-        // Middle one is broken
-        //cssChrIds.add(2);
-        //cssChrIds.add(2);
-        //cssChrIds.add(2);
-        //cssChrIdOrder.add(0x27);
-        //cssChrIdOrder.add(0x28);
-        //cssChrIdOrder.add(0x29);
-
-        // Middle one is broken
-        //cssChrIds.add(2);
-        //cssChrIds.add(3);
-        //cssChrIds.add(4);
-        //cssChrIdOrder.add(0x27);
-        //cssChrIdOrder.add(0x28);
-        //cssChrIdOrder.add(0x29);
+        cssChrIdOrder.add(0x2a);
+        cssChrIdOrder.add(0x2b);
+        cssChrIdOrder.add(0x2c);
+        cssChrIdOrder.add(0x2d);
+        cssChrIdOrder.add(0x2e);
+        cssChrIdOrder.add(0x2f);
+        cssChrIdOrder.add(0x30);
+        cssChrIdOrder.add(0x31);
+        cssChrIdOrder.add(0x32);
+        cssChrIdOrder.add(0x33);
+        cssChrIdOrder.add(0x34);
+        cssChrIdOrder.add(0x35);
+        cssChrIdOrder.add(0x36);
+        cssChrIdOrder.add(0x37);
+        cssChrIdOrder.add(0x38);
+        cssChrIdOrder.add(0x39);
+        cssChrIdOrder.add(0x3a);
+        cssChrIdOrder.add(0x3b);
+        cssChrIdOrder.add(0x3c);
+        cssChrIdOrder.add(0x3d);
+        cssChrIdOrder.add(0x3e);
+        cssChrIdOrder.add(0x3f);
+        cssChrIdOrder.add(0x40);
+        cssChrIdOrder.add(0x41);
+        cssChrIdOrder.add(0x42);
+        cssChrIdOrder.add(0x43);
+        cssChrIdOrder.add(0x44);
+        cssChrIdOrder.add(0x45);
+        cssChrIdOrder.add(0x46);
+        cssChrIdOrder.add(0x47);
     }
 
     /**
