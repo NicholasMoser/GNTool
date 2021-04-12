@@ -9,6 +9,7 @@ import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
 import com.github.nicholasmoser.gecko.codes.DebugTraining;
 import com.github.nicholasmoser.gecko.codes.Default2PControl;
 import com.github.nicholasmoser.gecko.codes.DefaultInputsOff;
+import com.github.nicholasmoser.gecko.codes.GeckoInjectionCode;
 import com.github.nicholasmoser.gecko.codes.UnlockEverything;
 import com.github.nicholasmoser.gecko.codes.ZtkSKakDamageMultiplier;
 import java.io.IOException;
@@ -46,6 +47,10 @@ public class DolHijack {
   public final static long END_DOL_OFFSET = 0x843FC;
 
   public final static int SIZE = (int) (END_DOL_OFFSET - START_DOL_OFFSET);
+
+  private final static List<GeckoInjectionCode> CODES = List
+      .of(new DebugTraining(), new Default2PControl(), new DefaultInputsOff(),
+          new UnlockEverything(), new ZtkSKakDamageMultiplier());
 
   /**
    * Returns whether or not the given Gecko codes overflow the limit of hijacked code. Logs and
@@ -122,48 +127,13 @@ public class DolHijack {
     // There are active codes but no code JSON file, let's try and create one.
     int i = 0;
     while (true) {
-      int bytesLeft = currentBytes.length - i;
-      if (bytesLeft >= Default2PControl.CODE.length) {
-        byte[] subsection = Arrays.copyOfRange(currentBytes, i, i + Default2PControl.CODE.length);
-        if (Arrays.equals(subsection, Default2PControl.CODE)) {
-          i += Default2PControl.CODE.length;
-          i += 4; // Skip the ending branch
-          continue;
-        }
+      CodeMatchResult result = findCodeMatch(currentBytes, i);
+      i = result.getNewIndex();
+      if (result.isCodeMatch()) {
+        // Continue finding code matches until we can't find any more
+        continue;
       }
-      if (bytesLeft >= DefaultInputsOff.CODE.length) {
-        byte[] subsection = Arrays.copyOfRange(currentBytes, i, i + DefaultInputsOff.CODE.length);
-        if (Arrays.equals(subsection, DefaultInputsOff.CODE)) {
-          i += DefaultInputsOff.CODE.length;
-          i += 4; // Skip the ending branch
-          continue;
-        }
-      }
-      if (bytesLeft >= ZtkSKakDamageMultiplier.CODE.length) {
-        byte[] subsection = Arrays.copyOfRange(currentBytes, i, i + ZtkSKakDamageMultiplier.CODE.length);
-        if (Arrays.equals(subsection, ZtkSKakDamageMultiplier.CODE)) {
-          i += ZtkSKakDamageMultiplier.CODE.length;
-          i += 4; // Skip the ending branch
-          continue;
-        }
-      }
-      if (bytesLeft >= UnlockEverything.CODE.length) {
-        byte[] subsection = Arrays.copyOfRange(currentBytes, i, i + UnlockEverything.CODE.length);
-        if (Arrays.equals(subsection, UnlockEverything.CODE)) {
-          i += UnlockEverything.CODE.length;
-          i += 4; // Skip the ending branch
-          continue;
-        }
-      }
-      if (bytesLeft >= DebugTraining.CODE.length) {
-        byte[] subsection = Arrays.copyOfRange(currentBytes, i, i + DebugTraining.CODE.length);
-        if (Arrays.equals(subsection, DebugTraining.CODE)) {
-          i += DebugTraining.CODE.length;
-          i += 4; // Skip the ending branch
-          continue;
-        }
-      }
-      // Did not match any bytes, validate the rest of the bytes match the original bytes.
+      // No more code matches, validate the rest of the bytes match the original bytes.
       byte[] subsection1 = Arrays.copyOfRange(originalBytes, i, originalBytes.length);
       byte[] subsection2 = Arrays.copyOfRange(currentBytes, i, originalBytes.length);
       if (!Arrays.equals(subsection1, subsection2)) {
@@ -175,6 +145,28 @@ public class DolHijack {
       break;
     }
     return true;
+  }
+
+  /**
+   *
+   * @param dolBytes
+   * @param i
+   * @return The new index after reading the current code or -1 if no code matched.
+   */
+  private static CodeMatchResult findCodeMatch(byte[] dolBytes, int i) {
+    int bytesLeft = dolBytes.length - i;
+    for (GeckoInjectionCode code : CODES) {
+      byte[] codeBytes = code.getCode();
+      if (bytesLeft >= codeBytes.length) {
+        byte[] subsection = Arrays.copyOfRange(dolBytes, i, i + codeBytes.length);
+        if (Arrays.equals(subsection, codeBytes)) {
+          i += codeBytes.length;
+          i += 4; // Skip the ending branch
+          return new CodeMatchResult(true, i);
+        }
+      }
+    }
+    return new CodeMatchResult(false, i);
   }
 
   /**
