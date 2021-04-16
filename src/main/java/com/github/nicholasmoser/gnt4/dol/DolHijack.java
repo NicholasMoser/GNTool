@@ -5,9 +5,22 @@ import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.InsertAsmCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
+import com.github.nicholasmoser.gecko.codes.DebugTraining;
+import com.github.nicholasmoser.gecko.codes.Default2PControl;
+import com.github.nicholasmoser.gecko.codes.DefaultInputsOff;
+import com.github.nicholasmoser.gecko.codes.GeckoInjectionCode;
+import com.github.nicholasmoser.gecko.codes.UnlockEverything;
+import com.github.nicholasmoser.gecko.codes.ZtkSKakDamageMultiplier;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Class for hijacking code in the dol for GNT4. The code currently hijacked is a space of 297
@@ -28,9 +41,17 @@ public class DolHijack {
 
   // Inclusive
   public final static long START_RAM_ADDRESS = 0x80086F58L;
+  public final static long START_DOL_OFFSET = 0x83F58L;
 
   // Exclusive
   public final static long END_RAM_ADDRESS = 0x800873FCL;
+  public final static long END_DOL_OFFSET = 0x843FC;
+
+  public final static int SIZE = (int) (END_DOL_OFFSET - START_DOL_OFFSET);
+
+  private final static List<GeckoInjectionCode> CODES = List
+      .of(new Default2PControl(), new DefaultInputsOff(), new ZtkSKakDamageMultiplier(),
+          new UnlockEverything(), new DebugTraining());
 
   /**
    * Returns whether or not the given Gecko codes overflow the limit of hijacked code. Logs and
@@ -85,5 +106,111 @@ public class DolHijack {
       }
     }
     return furthestEnd;
+  }
+
+  /**
+   * Check the dol hijack area in the code to see if there are any injected codes. If there aren't,
+   * return false. If there are, create a new codes JSON file and return true. This will only work
+   * with known codes.
+   *
+   * @param dolPath The path to the dol.
+   * @return If codes were found to be injected and a new codes JSON file was created.
+   * @throws IOException if an I/O error occurs
+   */
+  public static boolean handleActiveCodesButNoCodeFile(Path dolPath) throws IOException {
+    byte[] currentBytes = getCurrentBytes(dolPath);
+    byte[] originalBytes = DolHijack.class.getResourceAsStream("hijack_original.bin")
+        .readAllBytes();
+    assertSameSize(originalBytes, currentBytes);
+    if (Arrays.equals(originalBytes, currentBytes)) {
+      return false;
+    }
+    // There are active codes but no code JSON file, let's try and create one.
+    JSONArray codesList = new JSONArray();
+    int i = 0;
+    while (true) {
+      CodeMatchResult result = findCodeMatch(currentBytes, originalBytes, i);
+      i = result.getNewIndex();
+      if (result.isCodeMatch()) {
+        codesList.put(result.getCodeGroup().get());
+        // Continue finding code matches until we can't find any more
+        continue;
+      }
+      // No more code matches, validate the rest of the bytes match the original bytes.
+      byte[] subsection1 = Arrays.copyOfRange(originalBytes, i, originalBytes.length);
+      byte[] subsection2 = Arrays.copyOfRange(currentBytes, i, originalBytes.length);
+      if (!Arrays.equals(subsection1, subsection2)) {
+        // There's a lot of different reasons this could occur, but they all will require manual
+        // inspection of the user's dol. Ask them to just log an issue.
+        LOGGER.log(Level.SEVERE, "A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
+        return false;
+      }
+      // Write the codes list to the codes.json file
+      Path codesJson = dolPath.resolve("../../../codes.json");
+      Files.writeString(codesJson, codesList.toString(2));
+      break;
+    }
+    return true;
+  }
+
+  /**
+   * Attempts to find and return a matching code in the current set of bytes.
+   *
+   * @param currentBytes The current bytes to search for a matching code.
+   * @param originalBytes The original bytes at the same location of the current bytes.
+   * @param i The index in the current and original bytes.
+   * @return The result of trying to find a code match.
+   */
+  private static CodeMatchResult findCodeMatch(byte[] currentBytes, byte[] originalBytes, int i) {
+    int bytesLeft = currentBytes.length - i;
+    for (GeckoInjectionCode code : CODES) {
+      byte[] codeBytes = code.getCode();
+      if (bytesLeft >= codeBytes.length) {
+        byte[] subsection = Arrays.copyOfRange(currentBytes, i, i + codeBytes.length);
+        if (Arrays.equals(subsection, codeBytes)) {
+          // Code match
+          byte[] hijackedBytes = Arrays.copyOfRange(originalBytes, i, i + codeBytes.length + 4);
+          JSONObject codeGroup = code.getJSONObject(START_RAM_ADDRESS + i, hijackedBytes);
+          i += codeBytes.length;
+          i += 4; // Skip the ending branch
+          return new CodeMatchResult(true, i, codeGroup);
+        }
+      }
+    }
+    return new CodeMatchResult(false, i);
+  }
+
+  /**
+   * Gets the current bytes of the dol injection area of the given dol path.
+   *
+   * @param dolPath The path to the dol.
+   * @return The code bytes of the injection area.
+   * @throws IOException if an I/O error occurs
+   */
+  private static byte[] getCurrentBytes(Path dolPath) throws IOException {
+    byte[] currentBytes = new byte[SIZE];
+    try (RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "r")) {
+      raf.seek(START_DOL_OFFSET);
+      if (raf.read(currentBytes) != SIZE) {
+        throw new IOException("Unable to check for active codes with no code file.");
+      }
+    }
+    return currentBytes;
+  }
+
+  /**
+   * Asserts that the original bytes and current bytes are the same size and throws an IOException
+   * if not.
+   *
+   * @param originalBytes The original bytes.
+   * @param currentBytes  The current bytes.
+   * @throws IOException If the original bytes and current bytes are not the same size.
+   */
+  private static void assertSameSize(byte[] originalBytes, byte[] currentBytes) throws IOException {
+    if (originalBytes.length != currentBytes.length) {
+      String msg = "Length of original bytes not equal to current bytes";
+      throw new IOException(
+          String.format("%s: %d vs %d", msg, originalBytes.length, currentBytes.length));
+    }
   }
 }

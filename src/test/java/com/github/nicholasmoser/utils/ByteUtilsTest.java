@@ -665,4 +665,27 @@ public class ByteUtilsTest {
     assertEquals(8, ByteUtils.previousAlignedPos(9, 8));
     assertEquals(8, ByteUtils.previousAlignedPos(10, 8));
   }
+
+  /**
+   * Tests that longs can be converted to hex Strings.
+   */
+  @Test
+  public void testFromLong() {
+    assertEquals("00000000", ByteUtils.fromLong(0L));
+    assertEquals("00000001", ByteUtils.fromLong(1L));
+    assertEquals("00000002", ByteUtils.fromLong(2L));
+    assertEquals("00005656", ByteUtils.fromLong(0x5656L));
+    assertEquals("00111111", ByteUtils.fromLong(0x111111L));
+    assertEquals("12345678", ByteUtils.fromLong(0x12345678L));
+    assertEquals("7FFFFFFF", ByteUtils.fromLong(0x7FFFFFFFL));
+    assertEquals("80000000", ByteUtils.fromLong(0x80000000L));
+    assertEquals("80000001", ByteUtils.fromLong(0x80000001L));
+    assertEquals("FFFFFFFE", ByteUtils.fromLong(0xFFFFFFFEL));
+    assertEquals("FFFFFFFF", ByteUtils.fromLong(0xFFFFFFFFL));
+    assertEquals("00000000", ByteUtils.fromLong(0x100000000L));
+    assertEquals("00000001", ByteUtils.fromLong(0x100000001L));
+    assertEquals("FFFFFFFF", ByteUtils.fromLong(-1L));
+    assertEquals("FFFFFFFE", ByteUtils.fromLong(-2L));
+    assertEquals("FFFFFFC8", ByteUtils.fromLong(-56L));
+  }
 }
