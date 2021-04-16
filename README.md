@@ -202,6 +202,8 @@ The **Add Codes** button will attempt to inject your Gecko codes into the dol. A
 
 The **Remove Code** button will attempt to undo the selected code in the right hand list box from the dol.
 
+If you attempt to load an ISO or workspace with no codes.json file and codes are detected in the dol, GNTool will attempt to recreate a codes.json for you.
+
 #### Warning
 
 - Please avoid modifying or deleting the `codes.json` file in the workspace directory.
