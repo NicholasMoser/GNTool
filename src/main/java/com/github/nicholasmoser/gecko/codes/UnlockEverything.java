@@ -1,6 +1,8 @@
 package com.github.nicholasmoser.gecko.codes;
 
+import com.github.nicholasmoser.utils.ByteUtils;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Unlock Everything
@@ -29,7 +31,19 @@ public class UnlockEverything implements GeckoInjectionCode {
   }
 
   @Override
-  public void writeToJSONArray(JSONArray jsonArray) {
-
+  public JSONObject getJSONObject(long hijackedAddress, byte[] hijackedBytes) {
+    JSONObject codeGroup = new JSONObject();
+    codeGroup.put("name", "Unlock Everything [Nick]");
+    JSONArray codes = new JSONArray();
+    JSONObject code = new JSONObject();
+    code.put("hijackedAddress", ByteUtils.fromLong(hijackedAddress));
+    code.put("bytes", ByteUtils.bytesToHexString(CODE) + "00000000");
+    code.put("targetAddress", "8008956C");
+    code.put("hijackedBytes", ByteUtils.bytesToHexString(hijackedBytes));
+    code.put("replacedBytes", "38600000");
+    code.put("type", "C2");
+    codes.put(code);
+    codeGroup.put("codes", codes);
+    return codeGroup;
   }
 }

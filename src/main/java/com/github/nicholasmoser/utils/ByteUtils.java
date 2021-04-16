@@ -397,4 +397,14 @@ public class ByteUtils {
   public static int previousAlignedPos(int currentPosition, int modulo) {
     return currentPosition - (currentPosition % modulo);
   }
+
+  /**
+   * Converts a long to a String of hex bytes.
+   *
+   * @param value The long to convert.
+   * @return The String of hex bytes.
+   */
+  public static String fromLong(long value) {
+    return ByteUtils.bytesToHexString(ByteUtils.fromUint32(value));
+  }
 }

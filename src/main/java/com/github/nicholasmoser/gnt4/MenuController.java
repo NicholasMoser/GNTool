@@ -428,7 +428,8 @@ public class MenuController {
             fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");
-          GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get(), pushToBackOfISO.isSelected());
+          GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get(),
+              pushToBackOfISO.isSelected());
           updateProgress(1, 1);
           return null;
         } catch (Exception e) {
@@ -1045,12 +1046,14 @@ public class MenuController {
           }
         } else {
           if (DolHijack.handleActiveCodesButNoCodeFile(uncompressedDirectory.resolve(DOL))) {
-            // This ISO has injected codes but no associated JSON code file. The previous method call successfully
-            // created one, so now let's parse it.
+            // This ISO has injected codes but no associated JSON code file. The previous method
+            // call successfully created one, so now let's parse it.
             codeGroups = GeckoCodeJSON.parseFile(codeFile);
             for (GeckoCodeGroup codeGroup : codeGroups) {
               addedCodes.getItems().add(codeGroup.getName());
             }
+            String msg = "Codes were found in the dol but no codes.json file exists.\n";
+            LOGGER.info(msg + "The following codes were found: " + String.join(", ", addedCodes.getItems()));
           } else {
             // There actually were no codes
             codeGroups = new ArrayList<>();

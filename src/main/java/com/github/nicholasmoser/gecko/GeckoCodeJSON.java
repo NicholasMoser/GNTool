@@ -79,7 +79,7 @@ public class GeckoCodeJSON {
    */
   private static JSONObject getJSONFromGeckoCode(GeckoCode code) throws IOException {
     JSONObject codeObject = new JSONObject();
-    codeObject.put("targetAddress", fromLong(code.getTargetAddress()));
+    codeObject.put("targetAddress", ByteUtils.fromLong(code.getTargetAddress()));
     if (code instanceof ActiveWrite32BitsCode) {
       ActiveWrite32BitsCode writeCode = (ActiveWrite32BitsCode) code;
       codeObject.put("type", "04");
@@ -90,7 +90,7 @@ public class GeckoCodeJSON {
       codeObject.put("type", "C2");
       codeObject.put("bytes", ByteUtils.bytesToHexString(insertCode.getBytes()));
       codeObject.put("replacedBytes", ByteUtils.bytesToHexString(insertCode.getReplacedBytes()));
-      codeObject.put("hijackedAddress", fromLong(insertCode.getHijackedAddress()));
+      codeObject.put("hijackedAddress", ByteUtils.fromLong(insertCode.getHijackedAddress()));
       codeObject.put("hijackedBytes", ByteUtils.bytesToHexString(insertCode.getHijackedBytes()));
     } else {
       throw new IOException("Code has invalid code type: " + code);
@@ -142,16 +142,6 @@ public class GeckoCodeJSON {
    */
   private static long getLong(String byteString) {
     return ByteUtils.toUint32(ByteUtils.hexStringToBytes(byteString));
-  }
-
-  /**
-   * Converts a long to a String of hex bytes.
-   *
-   * @param value The long to convert.
-   * @return The String of hex bytes.
-   */
-  private static String fromLong(long value) {
-    return ByteUtils.bytesToHexString(ByteUtils.fromUint32(value));
   }
 
   /**

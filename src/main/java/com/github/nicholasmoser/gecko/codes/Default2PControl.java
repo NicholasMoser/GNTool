@@ -1,6 +1,8 @@
 package com.github.nicholasmoser.gecko.codes;
 
+import com.github.nicholasmoser.utils.ByteUtils;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Training Mode Default 2P Action: 2P Control
@@ -17,7 +19,31 @@ public class Default2PControl implements GeckoInjectionCode {
   }
 
   @Override
-  public void writeToJSONArray(JSONArray jsonArray) {
-
+  public JSONObject getJSONObject(long hijackedAddress, byte[] hijackedBytes) {
+    JSONObject codeGroup = new JSONObject();
+    codeGroup.put("name", "Training Mode Default 2P Action: 2P Control [Nick]");
+    JSONArray codes = new JSONArray();
+    JSONObject code1 = new JSONObject();
+    code1.put("hijackedAddress", ByteUtils.fromLong(hijackedAddress));
+    code1.put("bytes", ByteUtils.bytesToHexString(CODE) + "00000000");
+    code1.put("targetAddress", "80045350");
+    code1.put("hijackedBytes", ByteUtils.bytesToHexString(hijackedBytes));
+    code1.put("replacedBytes", "B0A3002C");
+    code1.put("type", "C2");
+    JSONObject code2 = new JSONObject();
+    code2.put("bytes", "3BC00012");
+    code2.put("targetAddress", "8002E718");
+    code2.put("replacedBytes", "3BC00011");
+    code2.put("type", "04");
+    JSONObject code3 = new JSONObject();
+    code3.put("bytes", "3BC00012");
+    code3.put("targetAddress", "8002E728");
+    code3.put("replacedBytes", "3BC00011");
+    code3.put("type", "04");
+    codes.put(code1);
+    codes.put(code2);
+    codes.put(code3);
+    codeGroup.put("codes", codes);
+    return codeGroup;
   }
 }

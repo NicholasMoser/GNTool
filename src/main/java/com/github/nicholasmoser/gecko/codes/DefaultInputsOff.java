@@ -1,6 +1,8 @@
 package com.github.nicholasmoser.gecko.codes;
 
+import com.github.nicholasmoser.utils.ByteUtils;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Training Mode Default Show Inputs: OFF
@@ -19,7 +21,25 @@ public class DefaultInputsOff implements GeckoInjectionCode {
   }
 
   @Override
-  public void writeToJSONArray(JSONArray jsonArray) {
-
+  public JSONObject getJSONObject(long hijackedAddress, byte[] hijackedBytes) {
+    org.json.JSONObject codeGroup = new JSONObject();
+    codeGroup.put("name", "Training Mode Default Show Inputs: OFF [Nick]");
+    JSONArray codes = new JSONArray();
+    JSONObject code1 = new JSONObject();
+    code1.put("bytes", "B0A30032");
+    code1.put("targetAddress", "80045364");
+    code1.put("replacedBytes", "B0030032");
+    code1.put("type", "04");
+    JSONObject code2 = new JSONObject();
+    code2.put("hijackedAddress", ByteUtils.fromLong(hijackedAddress));
+    code2.put("bytes", ByteUtils.bytesToHexString(CODE) + "00000000");
+    code2.put("targetAddress", "8004CF8C");
+    code2.put("hijackedBytes", ByteUtils.bytesToHexString(hijackedBytes));
+    code2.put("replacedBytes", "80010024");
+    code2.put("type", "C2");
+    codes.put(code1);
+    codes.put(code2);
+    codeGroup.put("codes", codes);
+    return codeGroup;
   }
 }

@@ -5,7 +5,6 @@ import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.InsertAsmCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
-
 import com.github.nicholasmoser.gecko.codes.DebugTraining;
 import com.github.nicholasmoser.gecko.codes.Default2PControl;
 import com.github.nicholasmoser.gecko.codes.DefaultInputsOff;
@@ -20,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Class for hijacking code in the dol for GNT4. The code currently hijacked is a space of 297
@@ -49,8 +50,8 @@ public class DolHijack {
   public final static int SIZE = (int) (END_DOL_OFFSET - START_DOL_OFFSET);
 
   private final static List<GeckoInjectionCode> CODES = List
-      .of(new DebugTraining(), new Default2PControl(), new DefaultInputsOff(),
-          new UnlockEverything(), new ZtkSKakDamageMultiplier());
+      .of(new Default2PControl(), new DefaultInputsOff(), new ZtkSKakDamageMultiplier(),
+          new UnlockEverything(), new DebugTraining());
 
   /**
    * Returns whether or not the given Gecko codes overflow the limit of hijacked code. Logs and
@@ -125,11 +126,13 @@ public class DolHijack {
       return false;
     }
     // There are active codes but no code JSON file, let's try and create one.
+    JSONArray codesList = new JSONArray();
     int i = 0;
     while (true) {
-      CodeMatchResult result = findCodeMatch(currentBytes, i);
+      CodeMatchResult result = findCodeMatch(currentBytes, originalBytes, i);
       i = result.getNewIndex();
       if (result.isCodeMatch()) {
+        codesList.put(result.getCodeGroup().get());
         // Continue finding code matches until we can't find any more
         continue;
       }
@@ -139,30 +142,38 @@ public class DolHijack {
       if (!Arrays.equals(subsection1, subsection2)) {
         // There's a lot of different reasons this could occur, but they all will require manual
         // inspection of the user's dol. Ask them to just log an issue.
-        throw new IOException(
-            "A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
+        LOGGER.log(Level.SEVERE, "A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
+        return false;
       }
+      // Write the codes list to the codes.json file
+      Path codesJson = dolPath.resolve("../../../codes.json");
+      Files.writeString(codesJson, codesList.toString(2));
       break;
     }
     return true;
   }
 
   /**
+   * Attempts to find and return a matching code in the current set of bytes.
    *
-   * @param dolBytes
-   * @param i
-   * @return The new index after reading the current code or -1 if no code matched.
+   * @param currentBytes The current bytes to search for a matching code.
+   * @param originalBytes The original bytes at the same location of the current bytes.
+   * @param i The index in the current and original bytes.
+   * @return The result of trying to find a code match.
    */
-  private static CodeMatchResult findCodeMatch(byte[] dolBytes, int i) {
-    int bytesLeft = dolBytes.length - i;
+  private static CodeMatchResult findCodeMatch(byte[] currentBytes, byte[] originalBytes, int i) {
+    int bytesLeft = currentBytes.length - i;
     for (GeckoInjectionCode code : CODES) {
       byte[] codeBytes = code.getCode();
       if (bytesLeft >= codeBytes.length) {
-        byte[] subsection = Arrays.copyOfRange(dolBytes, i, i + codeBytes.length);
+        byte[] subsection = Arrays.copyOfRange(currentBytes, i, i + codeBytes.length);
         if (Arrays.equals(subsection, codeBytes)) {
+          // Code match
+          byte[] hijackedBytes = Arrays.copyOfRange(originalBytes, i, i + codeBytes.length + 4);
+          JSONObject codeGroup = code.getJSONObject(START_RAM_ADDRESS + i, hijackedBytes);
           i += codeBytes.length;
           i += 4; // Skip the ending branch
-          return new CodeMatchResult(true, i);
+          return new CodeMatchResult(true, i, codeGroup);
         }
       }
     }
