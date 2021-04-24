@@ -967,6 +967,8 @@ public class MenuController {
    * @throws IOException If an I/O error occurs.
    */
   private void syncRefresh() throws IOException {
+    // getNewWorkspaceState() is pretty slow and can take 30 seconds or more on a HDD
+    // TODO: Look into ways to speed it up
     GNTFiles newFiles = workspace.getNewWorkspaceState();
     refreshMissingFiles(newFiles);
     refreshChangedFiles(newFiles);
