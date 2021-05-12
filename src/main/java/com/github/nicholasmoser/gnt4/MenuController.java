@@ -260,6 +260,10 @@ public class MenuController {
     }
   }
 
+  public void translate() {
+
+  }
+
   @FXML
   protected void setCssInitialSpeed() {
     try {
