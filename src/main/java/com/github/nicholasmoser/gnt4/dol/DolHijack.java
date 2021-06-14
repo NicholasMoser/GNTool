@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.InsertAsmCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
+import com.github.nicholasmoser.gecko.codes.BattleModeDefaultMenuOption;
 import com.github.nicholasmoser.gecko.codes.DebugTraining;
 import com.github.nicholasmoser.gecko.codes.Default2PControl;
 import com.github.nicholasmoser.gecko.codes.DefaultInputsOff;
@@ -51,7 +52,7 @@ public class DolHijack {
 
   private final static List<GeckoInjectionCode> CODES = List
       .of(new Default2PControl(), new DefaultInputsOff(), new ZtkSKakDamageMultiplier(),
-          new UnlockEverything(), new DebugTraining());
+          new UnlockEverything(), new DebugTraining(), new BattleModeDefaultMenuOption());
 
   /**
    * Returns whether or not the given Gecko codes overflow the limit of hijacked code. Logs and
