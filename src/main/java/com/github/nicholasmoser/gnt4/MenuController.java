@@ -21,6 +21,8 @@ import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
+import com.github.nicholasmoser.gnt4.trans.TranslationState;
+import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -260,8 +262,25 @@ public class MenuController {
     }
   }
 
+  @FXML
   public void translate() {
-
+    try {
+      TranslationState state = Translator.getTranslationState(uncompressedDirectory);
+      if (state == TranslationState.ENGLISH) {
+        Message.info("Game Already in English", "Unable to translate, the game is already in English.");
+        return;
+      } else if (state == TranslationState.UNKNOWN) {
+        String message = "Unable to determine translation state. Attempting to translate may cause issues. Are you sure you wish to continue?";
+        if (!Message.warnConfirmation("Unknown Translation State", message)) {
+          return;
+        }
+      }
+      Translator.translate(uncompressedDirectory);
+      Message.info("Translation Complete", "Translation to English completed.");
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to translate", e);
+      Message.error("Failed to translate", SEE_LOG);
+    }
   }
 
   @FXML

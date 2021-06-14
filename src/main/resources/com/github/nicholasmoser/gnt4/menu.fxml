@@ -46,7 +46,7 @@
               <CheckBox fx:id="audioFixCode" layoutX="14.0" layoutY="19.0" mnemonicParsing="false" onAction="#audioFixCode" text="Audio Fix" />
               <CheckBox fx:id="skipCutscenesCode" layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#skipCutscenesCode" text="Skip Cutscenes" />
               <Button layoutX="14.0" layoutY="92.0" mnemonicParsing="false" onMouseClicked="#translate" text="Translate" />
-              <Text layoutX="92.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Translate text in the game from Japanese to English (Translations by Kosheh)" />
+              <Text layoutX="92.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Translate text in the game to English (Translations by Kosheh)" />
               <Spinner fx:id="cssInitialSpeed" layoutX="14.0" layoutY="137.0" onKeyReleased="#setCssInitialSpeed" onMouseReleased="#setCssInitialSpeed">
                 <valueFactory>
                   <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
