@@ -107,6 +107,10 @@ There is an optional button at the bottom of the window titled **Load Template**
 allow you to load a .txt file with file paths separated by newlines. This allows quicker repacking
 for FPKs you intend to repack more than once.
 
+#### TXG2TPL
+
+This tool allows you to run [TXG2TPL](https://github.com/Struggleton/TXG2TPL) with a GUI to guide you.
+
 ### GNT4 Options
 
 #### Audio Fix
