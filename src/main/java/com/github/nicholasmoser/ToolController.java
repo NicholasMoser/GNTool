@@ -5,6 +5,7 @@ import com.github.nicholasmoser.tools.FPKUnpackerTool;
 import com.github.nicholasmoser.tools.ISOCompareTool;
 import com.github.nicholasmoser.tools.ISOExtractorTool;
 import com.github.nicholasmoser.tools.ISOPatcher;
+import com.github.nicholasmoser.tools.TXG2TPLTool;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +31,7 @@ public class ToolController {
   private static final String FPK_UNPACKER_WII = "FPK Unpacker (Wii)";
   private static final String FPK_REPACKER_GC = "FPK Repacker (GameCube)";
   private static final String FPK_REPACKER_WII = "FPK Repacker (Wii)";
+  private static final String TXG2TPL = "TXG2TPL";
 
   @FXML
   private ListView<String> tools;
@@ -46,6 +48,7 @@ public class ToolController {
     items.add(FPK_UNPACKER_WII);
     items.add(FPK_REPACKER_GC);
     items.add(FPK_REPACKER_WII);
+    items.add(TXG2TPL);
   }
 
   @FXML
@@ -80,6 +83,7 @@ public class ToolController {
         case FPK_UNPACKER_WII -> FPKUnpackerTool.unpackWiiFPK();
         case ISO_PATCHER_GC -> ISOPatcher.patchGameCubeISO();
         case ISO_COMPARE_GC -> ISOCompareTool.compareGameCubeISO();
+        case TXG2TPL -> TXG2TPLTool.run();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);

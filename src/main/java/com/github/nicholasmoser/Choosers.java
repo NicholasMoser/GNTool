@@ -68,6 +68,20 @@ public class Choosers {
   }
 
   /**
+   * Asks the user to select an output directory.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional output directory. Empty if none is chosen.
+   */
+  public static Optional<Path> getOutputDirectory(File initialDirectory) {
+    DirectoryChooser directoryChooser = new DirectoryChooser();
+    directoryChooser.setTitle("Select Output Directory");
+    directoryChooser.setInitialDirectory(initialDirectory);
+    File selection = directoryChooser.showDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
    * Asks the user to select an input ISO file.
    * 
    * @param initialDirectory The location to set the directory chooser to start at.
@@ -232,6 +246,22 @@ public class Choosers {
     fileChooser.setTitle("Select Input TXT File");
     fileChooser.setInitialDirectory(initialDirectory);
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("TXT File (*.txt)", "*.txt");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an input txg file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input txg file. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputTXG(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Input TXG File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("TXG File (*.txg)", "*.txg");
     fileChooser.getExtensionFilters().add(fileExtensions);
     File selection = fileChooser.showOpenDialog(null);
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
