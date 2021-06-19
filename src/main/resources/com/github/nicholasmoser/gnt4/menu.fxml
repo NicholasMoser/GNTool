@@ -28,7 +28,7 @@
       <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
       <MenuItem accelerator="F6" mnemonicParsing="false" onAction="#toggleDarkMode" text="Toggle Dark Mode" />
       <CheckMenuItem fx:id="parallelBuild" mnemonicParsing="false" text="Parallel Build" />
-      <CheckMenuItem fx:id="pushToBackOfISO" mnemonicParsing="false" text="Push Files to Back of ISO" selected="true" />
+      <CheckMenuItem fx:id="pushToBackOfISO" mnemonicParsing="false" selected="true" text="Push Files to Back of ISO" />
       <MenuItem mnemonicParsing="false" onAction="#build" text="Build ISO" />
       <SeparatorMenuItem mnemonicParsing="false" />
       <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
@@ -73,7 +73,7 @@
               <CheckBox fx:id="noSlowDownOnKill" layoutX="14.0" layoutY="380.0" mnemonicParsing="false" onAction="#noSlowDownOnKill" text="No Slow Down on Kill" />
               <CheckBox fx:id="unlockAll" layoutX="14.0" layoutY="418.0" mnemonicParsing="false" onAction="#unlockAll" text="Unlock Everything" />
               <CheckBox fx:id="enableWidescreen" layoutX="14.0" layoutY="456.0" mnemonicParsing="false" onAction="#enableWidescreen" text="Widescreen 16:9" />
-              <CheckBox fx:id="xDoesNotBreakThrows" layoutX="14.0" layoutY="494.0" mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" />
+              <CheckBox layoutX="14.0" layoutY="494.0" mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" fx:id="xDoesNotBreakThrows" />
             </AnchorPane>
           </ScrollPane>
         </AnchorPane>
@@ -96,6 +96,8 @@
           <Button layoutX="26.0" layoutY="60.0" mnemonicParsing="false" onMouseClicked="#applyUkonDamageMultiplier" text="Apply" />
           <TextField fx:id="ukonDamageMultiplier" layoutX="81.0" layoutY="60.0" prefHeight="25.0" prefWidth="148.0" />
           <Text layoutX="241.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Ukon Damage Taken Multiplier" wrappingWidth="179.13671875" />
+          <Button layoutX="26.0" layoutY="95.0" mnemonicParsing="false" text="Apply" onMouseClicked="#applyKabutoScalingFix" />
+          <Text layoutX="81.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Kabuto 2A Scaling for Player 2" />
         </AnchorPane>
       </Tab>
       <Tab text="Audio">

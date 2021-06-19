@@ -18,6 +18,7 @@ import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.GeckoCodeJSON;
 import com.github.nicholasmoser.gecko.GeckoReader;
 import com.github.nicholasmoser.gecko.GeckoWriter;
+import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
@@ -369,6 +370,30 @@ public class MenuController {
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Ukon Damage Multiplier", e);
       Message.error("Failed to Update Ukon Damage Multiplier", SEE_LOG);
+    }
+  }
+
+  @FXML
+  protected void applyKabutoScalingFix() {
+    try {
+      boolean isModified = KabutoScalingFix.isSeqModified(uncompressedDirectory);
+      if (isModified) {
+        String header = "Applying Kabuto Scaling Fix May Break Kabuto";
+        String message = "Kabuto's 0000.seq has been modified and is no longer vanilla. "
+            + "There is a high likelihood applying this fix will break Kabuto's 0000.seq. "
+            + "Are you sure you wish to continue?";
+        boolean confirm = Message.warnConfirmation(header, message);
+        if (!confirm) {
+          return;
+        }
+      }
+      KabutoScalingFix.apply(uncompressedDirectory);
+      String header = "Kabuto Scaling Fix Applied";
+      String message = "The Kabuto Scaling Fix has been applied to Kabuto's 0000.seq file.";
+      Message.info(header, message);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Apply Kabuto Scaling Fix", e);
+      Message.error("Failed to Apply Kabuto Scaling Fix", SEE_LOG);
     }
   }
 
