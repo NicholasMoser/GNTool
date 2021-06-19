@@ -4,9 +4,13 @@ import com.github.nicholasmoser.utils.CRC32;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * A class to fix the issue where only Kisame only the player 1 side can Phantom Sword. Phantom Sword
+ * is where JA is unblockable if you land with it on a specific frame. The issue is fixed by adding
+ * the unblockable flag for the KF flags on the first flag of landing.
+ */
 public class KisamePhantomSwordFix {
 
   public static final String KISAME_0000_SEQ = "files/chr/kis/0000.seq";
