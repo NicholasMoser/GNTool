@@ -19,7 +19,7 @@ public class KabutoScalingFix {
    * Returns whether or not Kabuto's 0000.seq has been modified in the given uncompressed directory.
    *
    * @param uncompressedDir The uncompressed directory of the GNT4 workspace.
-   * @return The current translation state.
+   * @return If Kabuto's 0000.seq has been modified.
    * @throws IOException If any I/O issues occur
    */
   public static boolean isSeqModified(Path uncompressedDir) throws IOException {
@@ -28,7 +28,7 @@ public class KabutoScalingFix {
 
   /**
    * Applies the fix to Kabuto's 0000.seq in the given uncompressed directory. Will probably break
-   * the seq file if you run it against anything that a vanilla Kabuto 0000.seq. You can comfirm
+   * the seq file if you run it against anything that a vanilla Kabuto 0000.seq. You can confirm
    * this is the case by first calling {@link #isSeqModified(Path)}.
    *
    * @param uncompressedDir The uncompressed directory of the GNT4 workspace.

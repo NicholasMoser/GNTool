@@ -19,6 +19,8 @@ import com.github.nicholasmoser.gecko.GeckoCodeJSON;
 import com.github.nicholasmoser.gecko.GeckoReader;
 import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
+import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
+import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
@@ -394,6 +396,54 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Kabuto Scaling Fix", e);
       Message.error("Failed to Apply Kabuto Scaling Fix", SEE_LOG);
+    }
+  }
+
+  @FXML
+  protected void applyKisamePhantomSwordFix() {
+    try {
+      boolean isModified = KisamePhantomSwordFix.isSeqModified(uncompressedDirectory);
+      if (isModified) {
+        String header = "Applying Kisame Phantom Sword Fix May Break Kisame";
+        String message = "Kisame's 0000.seq has been modified and is no longer vanilla. "
+            + "There is a high likelihood applying this fix will break Kisame's 0000.seq. "
+            + "Are you sure you wish to continue?";
+        boolean confirm = Message.warnConfirmation(header, message);
+        if (!confirm) {
+          return;
+        }
+      }
+      KisamePhantomSwordFix.apply(uncompressedDirectory);
+      String header = "Kisame Phantom Sword Fix Applied";
+      String message = "The Kisame Phantom Sword Fix has been applied to Kisame's 0000.seq file.";
+      Message.info(header, message);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Apply Kisame Phantom Sword Fix", e);
+      Message.error("Failed to Apply Kisame Phantom Sword Fix", SEE_LOG);
+    }
+  }
+
+  @FXML
+  protected void applyZabuzaPhantomSwordFix() {
+    try {
+      boolean isModified = ZabuzaPhantomSwordFix.isSeqModified(uncompressedDirectory);
+      if (isModified) {
+        String header = "Applying Zabuza Phantom Sword Fix May Break Zabuza";
+        String message = "Zabuza's 0000.seq has been modified and is no longer vanilla. "
+            + "There is a high likelihood applying this fix will break Zabuza's 0000.seq. "
+            + "Are you sure you wish to continue?";
+        boolean confirm = Message.warnConfirmation(header, message);
+        if (!confirm) {
+          return;
+        }
+      }
+      ZabuzaPhantomSwordFix.apply(uncompressedDirectory);
+      String header = "Zabuza Phantom Sword Fix Applied";
+      String message = "The Zabuza Phantom Sword Fix has been applied to Zabuza's 0000.seq file.";
+      Message.info(header, message);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Apply Zabuza Phantom Sword Fix", e);
+      Message.error("Failed to Apply Zabuza Phantom Sword Fix", SEE_LOG);
     }
   }
 
