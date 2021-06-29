@@ -63,7 +63,8 @@ public class GNT4Files {
    */
   public void initState() throws IOException {
     loadVanillaState();
-    this.gntFiles = ProtobufUtils.createBinary(uncompressedDirectory, allowedWorkspaceFiles);
+    this.gntFiles = ProtobufUtils
+        .createBinary(uncompressedDirectory, allowedWorkspaceFiles, false, true);
     try (OutputStream os = Files.newOutputStream(workspaceState)) {
       gntFiles.writeTo(os);
     }
@@ -71,11 +72,12 @@ public class GNT4Files {
 
   /**
    * Returns a new GNTFiles object reflecting the current workspace state.
+   *
    * @return A new GNTFiles object reflecting the current workspace state.
    * @throws IOException If an I/O error occurs.
    */
   public GNTFiles getNewWorkspaceState() throws IOException {
-    return ProtobufUtils.createBinary(uncompressedDirectory, allowedWorkspaceFiles);
+    return ProtobufUtils.createBinary(uncompressedDirectory, allowedWorkspaceFiles, false, true);
   }
 
   /**
@@ -247,7 +249,8 @@ public class GNT4Files {
         if (filePath.equals(child.getFilePath())) {
           Path saved = compressedDirectory.resolve(gntFile.getFilePath());
           Path current = uncompressedDirectory.resolve(filePath);
-          byte[] bytes = FPKUtils.getChildBytes(saved, child.getCompressedPath());
+          byte[] bytes = FPKUtils.getChildBytes(saved, child.getCompressedPath(), false,
+              true);
           Files.write(current, bytes);
           return;
         }

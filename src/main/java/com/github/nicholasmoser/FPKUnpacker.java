@@ -24,26 +24,29 @@ public class FPKUnpacker {
 
   private static final Logger LOGGER = Logger.getLogger(FPKUnpacker.class.getName());
 
-  Path inputDirectory;
-  Path filesDirectory;
-  Optional<FileNames> fileNames;
-  boolean isWii;
+  private final Path inputDirectory;
+  private final Path filesDirectory;
+  private final Optional<FileNames> fileNames;
+  private final boolean longPaths;
+  private final boolean bigEndian;
 
   /**
    * Create a new FPKUnpacker object to unpack an entire directory.
    *
    * @param inputDirectory The input directory to unpack.
    * @param fileNames      The optional list of file names to fix for the unpacking.
-   * @param isWii          Whether this fpk file is for the Wii or not (GameCube otherwise).
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    */
-  public FPKUnpacker(Path inputDirectory, Optional<FileNames> fileNames, boolean isWii) {
+  public FPKUnpacker(Path inputDirectory, Optional<FileNames> fileNames, boolean longPaths, boolean bigEndian) {
     if (!Files.isDirectory(inputDirectory)) {
       throw new IllegalArgumentException(inputDirectory + " is not a directory.");
     }
     this.inputDirectory = inputDirectory;
     this.filesDirectory = inputDirectory.resolve("files");
     this.fileNames = fileNames;
-    this.isWii = isWii;
+    this.longPaths = longPaths;
+    this.bigEndian = bigEndian;
   }
 
   /**
@@ -75,7 +78,7 @@ public class FPKUnpacker {
                 extractDirectory(path);
               } else {
                 if (path.toString().toLowerCase().endsWith(".fpk")) {
-                  extractFPK(path, filesDirectory, fileNames, isWii);
+                  extractFPK(path, filesDirectory, fileNames, longPaths, bigEndian);
                 }
               }
             } catch (IOException e) {
@@ -92,26 +95,21 @@ public class FPKUnpacker {
    *
    * @param fpkPath         The path to the fpk file.
    * @param outputDirectory The path to the output directory.
-   * @param fileNames       The file names fixer for the respective game.
-   * @param isWii           If the fpk is a Wii fpk or not (GameCube otherwise).
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    * @throws IOException If there is an I/O related exception.
    */
   public static void extractFPK(Path fpkPath, Path outputDirectory, Optional<FileNames> fileNames,
-      boolean isWii) throws IOException {
+      boolean longPaths, boolean bigEndian) throws IOException {
     int bytesRead = 0;
     try (InputStream is = Files.newInputStream(fpkPath)) {
-      int fileCount = FPKUtils.readFPKHeader(is);
+      int fileCount = FPKUtils.readFPKHeader(is, bigEndian);
       bytesRead += 16;
 
       List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
-        if (isWii) {
-          fpkHeaders.add(FPKUtils.readWiiFPKFileHeader(is));
-          bytesRead += 48;
-        } else {
-          fpkHeaders.add(FPKUtils.readGCFPKFileHeader(is));
-          bytesRead += 32;
-        }
+        fpkHeaders.add(FPKUtils.readFPKFileHeader(is,longPaths, bigEndian));
+        bytesRead += longPaths ? 48 : 32;
       }
 
       for (FPKFileHeader header : fpkHeaders) {

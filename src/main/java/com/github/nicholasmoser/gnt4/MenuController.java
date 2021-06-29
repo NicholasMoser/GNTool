@@ -522,7 +522,7 @@ public class MenuController {
         try {
           if (repack) {
             updateMessage("Repacking FPKs...");
-            FPKPacker fpkPacker = new FPKPacker(workspace);
+            FPKPacker fpkPacker = new FPKPacker(workspace, false, true);
             fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");

@@ -84,6 +84,78 @@ public class ByteUtilsTest {
   }
 
   /**
+   * Edge case testing for {@link ByteUtils#fromUint32LE(long)}
+   */
+  @Test
+  public void testFromUint32LE() {
+    byte[] bytes = ByteUtils.fromUint32LE(-1L);
+    assertEquals((byte) 0xFF, bytes[0]);
+    assertEquals((byte) 0xFF, bytes[1]);
+    assertEquals((byte) 0xFF, bytes[2]);
+    assertEquals((byte) 0xFF, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(0L);
+    assertEquals((byte) 0x00, bytes[0]);
+    assertEquals((byte) 0x00, bytes[1]);
+    assertEquals((byte) 0x00, bytes[2]);
+    assertEquals((byte) 0x00, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(11L);
+    assertEquals((byte) 0x0B, bytes[0]);
+    assertEquals((byte) 0x00, bytes[1]);
+    assertEquals((byte) 0x00, bytes[2]);
+    assertEquals((byte) 0x00, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(0x3C070002L);
+    assertEquals((byte) 0x02, bytes[0]);
+    assertEquals((byte) 0x00, bytes[1]);
+    assertEquals((byte) 0x07, bytes[2]);
+    assertEquals((byte) 0x3C, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(0x81030002L);
+    assertEquals((byte) 0x02, bytes[0]);
+    assertEquals((byte) 0x00, bytes[1]);
+    assertEquals((byte) 0x03, bytes[2]);
+    assertEquals((byte) 0x81, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(Integer.MAX_VALUE - 1L);
+    assertEquals((byte) 0xFE, bytes[0]);
+    assertEquals((byte) 0xFF, bytes[1]);
+    assertEquals((byte) 0xFF, bytes[2]);
+    assertEquals((byte) 0x7F, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(Integer.MAX_VALUE);
+    assertEquals((byte) 0xFF, bytes[0]);
+    assertEquals((byte) 0xFF, bytes[1]);
+    assertEquals((byte) 0xFF, bytes[2]);
+    assertEquals((byte) 0x7F, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(Integer.MAX_VALUE + 1L);
+    assertEquals((byte) 0x00, bytes[0]);
+    assertEquals((byte) 0x00, bytes[1]);
+    assertEquals((byte) 0x00, bytes[2]);
+    assertEquals((byte) 0x80, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(0xFFFFFFFFL - 1L);
+    assertEquals((byte) 0xFE, bytes[0]);
+    assertEquals((byte) 0xFF, bytes[1]);
+    assertEquals((byte) 0xFF, bytes[2]);
+    assertEquals((byte) 0xFF, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(0xFFFFFFFFL);
+    assertEquals((byte) 0xFF, bytes[0]);
+    assertEquals((byte) 0xFF, bytes[1]);
+    assertEquals((byte) 0xFF, bytes[2]);
+    assertEquals((byte) 0xFF, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(0xFFFFFFFFL + 1L);
+    assertEquals((byte) 0x00, bytes[0]);
+    assertEquals((byte) 0x00, bytes[1]);
+    assertEquals((byte) 0x00, bytes[2]);
+    assertEquals((byte) 0x00, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(Long.MAX_VALUE - 1L);
+    assertEquals((byte) 0xFE, bytes[0]);
+    assertEquals((byte) 0xFF, bytes[1]);
+    assertEquals((byte) 0xFF, bytes[2]);
+    assertEquals((byte) 0xFF, bytes[3]);
+    bytes = ByteUtils.fromUint32LE(Long.MAX_VALUE);
+    assertEquals((byte) 0xFF, bytes[0]);
+    assertEquals((byte) 0xFF, bytes[1]);
+    assertEquals((byte) 0xFF, bytes[2]);
+    assertEquals((byte) 0xFF, bytes[3]);
+  }
+
+  /**
    * Edge case testing for {@link ByteUtils#fromInt32(int)}
    */
   @Test

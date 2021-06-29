@@ -27,7 +27,7 @@ public class FPKUnpackerTool {
     if (outputPath.isEmpty()) {
       return;
     }
-    unpack(fpk, outputPath.get(), false);
+    unpack(fpk, outputPath.get(), false, true);
   }
 
   public static void unpackWiiFPK() {
@@ -41,7 +41,21 @@ public class FPKUnpackerTool {
     if (outputPath.isEmpty()) {
       return;
     }
-    unpack(fpk, outputPath.get(), true);
+    unpack(fpk, outputPath.get(), true, true);
+  }
+
+  public static void unpackPS2FPK() {
+
+    Optional<Path> optionalFPK = Choosers.getInputFPK(GNTool.USER_HOME);
+    if (optionalFPK.isEmpty()) {
+      return;
+    }
+    Path fpk = optionalFPK.get();
+    Optional<Path> outputPath = Choosers.getOutputWorkspaceDirectory(fpk.getParent().toFile());
+    if (outputPath.isEmpty()) {
+      return;
+    }
+    unpack(fpk, outputPath.get(), true, false);
   }
 
   /**
@@ -49,15 +63,16 @@ public class FPKUnpackerTool {
    *
    * @param fpkPath The path to the fpk file.
    * @param outputPath The path to the output directory.
-   * @param isWii If the fpk is a Wii fpk or not (GameCube otherwise).
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    */
-  private static void unpack(Path fpkPath, Path outputPath, boolean isWii) {
+  private static void unpack(Path fpkPath, Path outputPath, boolean longPaths, boolean bigEndian) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() {
         updateMessage(String.format("Unpacking %s", fpkPath.getFileName()));
         try {
-          FPKUnpacker.extractFPK(fpkPath, outputPath, Optional.empty(), isWii);
+          FPKUnpacker.extractFPK(fpkPath, outputPath, Optional.empty(), longPaths, bigEndian);
         } catch (IOException ex) {
           LOGGER.log(Level.SEVERE, "Error", ex);
           throw new RuntimeException(ex);

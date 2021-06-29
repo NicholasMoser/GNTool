@@ -29,6 +29,7 @@ public class ToolController {
   private static final String ISO_COMPARE_GC = "ISO Compare (GameCube)";
   private static final String FPK_UNPACKER_GC = "FPK Unpacker (GameCube)";
   private static final String FPK_UNPACKER_WII = "FPK Unpacker (Wii)";
+  private static final String FPK_UNPACKER_PS2 = "FPK Unpacker (PS2/PSP)";
   private static final String FPK_REPACKER_GC = "FPK Repacker (GameCube)";
   private static final String FPK_REPACKER_WII = "FPK Repacker (Wii)";
   private static final String TXG2TPL = "TXG2TPL";
@@ -46,6 +47,7 @@ public class ToolController {
     items.add(ISO_COMPARE_GC);
     items.add(FPK_UNPACKER_GC);
     items.add(FPK_UNPACKER_WII);
+    items.add(FPK_UNPACKER_PS2);
     items.add(FPK_REPACKER_GC);
     items.add(FPK_REPACKER_WII);
     items.add(TXG2TPL);
@@ -81,6 +83,7 @@ public class ToolController {
         case ISO_EXTRACTOR_GC -> ISOExtractorTool.extractGameCubeISO();
         case FPK_UNPACKER_GC -> FPKUnpackerTool.unpackGamecubeFPK();
         case FPK_UNPACKER_WII -> FPKUnpackerTool.unpackWiiFPK();
+        case FPK_UNPACKER_PS2 -> FPKUnpackerTool.unpackPS2FPK();
         case ISO_PATCHER_GC -> ISOPatcher.patchGameCubeISO();
         case ISO_COMPARE_GC -> ISOCompareTool.compareGameCubeISO();
         case TXG2TPL -> TXG2TPLTool.run();

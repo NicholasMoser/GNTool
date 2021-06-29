@@ -31,15 +31,21 @@ public class FPKPacker {
 
   private final Workspace workspace;
 
+  private final boolean longPaths;
+
+  private final boolean bigEndian;
+
   /**
    * Creates a new FPK packer for a workspace.
    *
    * @param workspace The workspace to pack the FPKs for.
    */
-  public FPKPacker(Workspace workspace) {
+  public FPKPacker(Workspace workspace, boolean longPaths, boolean bigEndian) {
     this.workspace = workspace;
     this.compressedDirectory = workspace.getCompressedDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
+    this.longPaths = longPaths;
+    this.bigEndian = bigEndian;
   }
 
   /**
@@ -150,7 +156,7 @@ public class FPKPacker {
     }
 
     // FPK Header
-    byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize);
+    byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize, bigEndian);
     // File headers
     for (FPKFile file : newFPKs) {
       fpkBytes = Bytes.concat(fpkBytes, file.getHeader().getBytes());

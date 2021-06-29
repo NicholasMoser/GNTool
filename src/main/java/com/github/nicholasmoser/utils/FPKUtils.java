@@ -6,6 +6,7 @@ import com.google.common.primitives.Bytes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,11 +18,12 @@ public class FPKUtils {
    * header. Make sure to only call this method on a newly opened FPK file, since the header is
    * first in the file. This method will always read exactly 16 bytes.
    *
-   * @param is The input stream to read it from.
+   * @param is        The input stream to read it from.
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    * @return The number of files in the FPK file.
    * @throws IOException If there is an exception relating to the FPK file input.
    */
-  public static int readFPKHeader(InputStream is) throws IOException {
+  public static int readFPKHeader(InputStream is, boolean bigEndian) throws IOException {
     byte[] fileCountWord = new byte[4];
     if (is.skip(4) != 4) {
       throw new IOException("Unable to read FPK header.");
@@ -32,25 +34,32 @@ public class FPKUtils {
     if (is.skip(8) != 8) {
       throw new IOException("Unable to read FPK header.");
     }
+    if (!bigEndian) {
+      return ByteBuffer.wrap(fileCountWord).order(ByteOrder.LITTLE_ENDIAN).getInt();
+    }
     return ByteBuffer.wrap(fileCountWord).getInt();
   }
 
   /**
-   * Reads an individual file header from a GameCube FPK file. This will return the relevant
-   * FPKFileHeader object. Make sure to only call this method once you have already read the FPK
-   * header (first 16 bytes of the file). You will want to call this equivalent to the number of
-   * files contained in the FPK file. This method will always read exactly 32 bytes.
+   * Reads an individual file header from an FPK file. This will return the relevant FPKFileHeader
+   * object. Make sure to only call this method once you have already read the FPK header. You will
+   * want to call this equivalent to the number of files contained in the FPK file. This method will
+   * always read exactly 32 bytes.
    *
-   * @param is The input stream to read it from.
+   * @param is        The input stream to read it from.
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    * @return The number of files in the FPK file.
    * @throws IOException If there is an exception relating to the FPK file input.
    */
-  public static FPKFileHeader readGCFPKFileHeader(InputStream is) throws IOException {
-    byte[] fileNameWord = new byte[16];
+  public static FPKFileHeader readFPKFileHeader(InputStream is, boolean longPaths,
+      boolean bigEndian) throws IOException {
+    int pathLength = longPaths ? 32 : 16;
+    byte[] fileNameWord = new byte[pathLength];
     byte[] offsetWord = new byte[4];
     byte[] compressedSizeWord = new byte[4];
     byte[] uncompressedSizeWord = new byte[4];
-    if (is.read(fileNameWord) != 16) {
+    if (is.read(fileNameWord) != pathLength) {
       throw new IOException("Unable to read FPK header.");
     }
     if (is.skip(4) != 4) {
@@ -66,63 +75,32 @@ public class FPKUtils {
       throw new IOException("Unable to read FPK header.");
     }
     String fileName = new String(fileNameWord, Charset.forName("Shift_JIS")).trim();
-    int offset = ByteBuffer.wrap(offsetWord).getInt();
-    int compressedSize = ByteBuffer.wrap(compressedSizeWord).getInt();
-    int uncompressedSize = ByteBuffer.wrap(uncompressedSizeWord).getInt();
-    return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize, false);
-  }
-
-  /**
-   * Reads an individual file header from a Wii FPK file. This will return the relevant
-   * FPKFileHeader object. Make sure to only call this method once you have already read the FPK
-   * header (first 16 bytes of the file). You will want to call this equivalent to the number of
-   * files contained in the FPK file. This method will always read exactly 48 bytes.
-   *
-   * @param is The input stream to read it from.
-   * @return The number of files in the FPK file.
-   * @throws IOException If there is an exception relating to the FPK file input.
-   */
-  public static FPKFileHeader readWiiFPKFileHeader(InputStream is) throws IOException {
-    byte[] fileNameWord = new byte[32];
-    byte[] offsetWord = new byte[4];
-    byte[] compressedSizeWord = new byte[4];
-    byte[] uncompressedSizeWord = new byte[4];
-    if (is.read(fileNameWord) != 32) {
-      throw new IOException("Unable to read FPK header.");
-    }
-    if (is.skip(4) != 4) {
-      throw new IOException("Unable to read FPK header.");
-    }
-    if (is.read(offsetWord) != 4) {
-      throw new IOException("Unable to read FPK header.");
-    }
-    if (is.read(compressedSizeWord) != 4) {
-      throw new IOException("Unable to read FPK header.");
-    }
-    if (is.read(uncompressedSizeWord) != 4) {
-      throw new IOException("Unable to read FPK header.");
-    }
-    String fileName = new String(fileNameWord, Charset.forName("Shift_JIS")).trim();
-    int offset = ByteBuffer.wrap(offsetWord).getInt();
-    int compressedSize = ByteBuffer.wrap(compressedSizeWord).getInt();
-    int uncompressedSize = ByteBuffer.wrap(uncompressedSizeWord).getInt();
-    return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize, true);
+    ByteBuffer buf = ByteBuffer.wrap(offsetWord);
+    int offset = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
+    buf = ByteBuffer.wrap(compressedSizeWord);
+    int compressedSize = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
+    buf = ByteBuffer.wrap(uncompressedSizeWord);
+    int uncompressedSize = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
+    return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize, longPaths);
   }
 
   /**
    * Returns the bytes for a child from the given fpk file.
    *
-   * @param fpkPath The fpk file path to extract the child from.
-   * @param child   The child compressed path to retrieve the bytes for.
+   * @param fpkPath   The fpk file path to extract the child from.
+   * @param child     The child compressed path to retrieve the bytes for.
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    * @return The child bytes (compressed).
    * @throws IOException If an I/O error occurs.
    */
-  public static byte[] getChildBytes(Path fpkPath, String child) throws IOException {
+  public static byte[] getChildBytes(Path fpkPath, String child, boolean longPaths,
+      boolean bigEndian) throws IOException {
     try (InputStream is = Files.newInputStream(fpkPath)) {
-      int fileCount = readFPKHeader(is);
+      int fileCount = readFPKHeader(is, bigEndian);
       int bytesRead = 16;
       for (int i = 0; i < fileCount; i++) {
-        FPKFileHeader header = readGCFPKFileHeader(is);
+        FPKFileHeader header = readFPKFileHeader(is, longPaths, bigEndian);
         bytesRead += 32;
         if (child.equals(header.getFileName())) {
           int bytesToSkip = header.getOffset() - bytesRead;
@@ -151,10 +129,16 @@ public class FPKUtils {
    *
    * @param numberOfFiles The number of files being packed.
    * @param outputSize    The total size of the FPK file, including this header.
+   * @param bigEndian     If the FPK is big-endian (instead of little-endian).
    * @return The FPK header.
    */
-  public static byte[] createFPKHeader(int numberOfFiles, int outputSize) {
-    return Bytes.concat(ByteUtils.fromUint32(0), ByteUtils.fromUint32(numberOfFiles),
-        ByteUtils.fromUint32(16), ByteUtils.fromUint32(outputSize));
+  public static byte[] createFPKHeader(int numberOfFiles, int outputSize, boolean bigEndian) {
+    byte[] first = bigEndian ? ByteUtils.fromUint32(0) : ByteUtils.fromUint32LE(0);
+    byte[] second =
+        bigEndian ? ByteUtils.fromUint32(numberOfFiles) : ByteUtils.fromUint32LE(numberOfFiles);
+    byte[] third = bigEndian ? ByteUtils.fromUint32(16) : ByteUtils.fromUint32LE(16);
+    byte[] fourth =
+        bigEndian ? ByteUtils.fromUint32(outputSize) : ByteUtils.fromUint32LE(outputSize);
+    return Bytes.concat(first, second, third, fourth);
   }
 }
