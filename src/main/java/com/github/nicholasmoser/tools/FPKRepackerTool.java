@@ -89,6 +89,7 @@ public class FPKRepackerTool {
    */
   private static void createRepackWindow(Path fpkPath, boolean longPaths, boolean bigEndian)
       throws IOException {
+    currentDirectory = fpkPath.getParent().toFile();
     List<FPKFileHeader> fpkHeaders = getFileHeaders(fpkPath, longPaths, bigEndian);
     int numHeaders = fpkHeaders.size();
     Stage stage = new Stage();
