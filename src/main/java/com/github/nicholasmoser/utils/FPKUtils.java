@@ -81,7 +81,7 @@ public class FPKUtils {
     int compressedSize = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
     buf = ByteBuffer.wrap(uncompressedSizeWord);
     int uncompressedSize = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
-    return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize, longPaths);
+    return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize, longPaths, bigEndian);
   }
 
   /**

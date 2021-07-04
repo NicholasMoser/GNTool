@@ -32,6 +32,7 @@ public class ToolController {
   private static final String FPK_UNPACKER_PS2 = "FPK Unpacker (PS2/PSP)";
   private static final String FPK_REPACKER_GC = "FPK Repacker (GameCube)";
   private static final String FPK_REPACKER_WII = "FPK Repacker (Wii)";
+  private static final String FPK_REPACKER_PS2 = "FPK Repacker (PS2/PSP)";
   private static final String TXG2TPL = "TXG2TPL";
 
   @FXML
@@ -50,6 +51,7 @@ public class ToolController {
     items.add(FPK_UNPACKER_PS2);
     items.add(FPK_REPACKER_GC);
     items.add(FPK_REPACKER_WII);
+    items.add(FPK_REPACKER_PS2);
     items.add(TXG2TPL);
   }
 
@@ -80,6 +82,7 @@ public class ToolController {
       switch (tool) {
         case FPK_REPACKER_GC -> FPKRepackerTool.repackGamecubeFPK();
         case FPK_REPACKER_WII -> FPKRepackerTool.repackWiiFPK();
+        case FPK_REPACKER_PS2 -> FPKRepackerTool.repackPS2FPK();
         case ISO_EXTRACTOR_GC -> ISOExtractorTool.extractGameCubeISO();
         case FPK_UNPACKER_GC -> FPKUnpackerTool.unpackGamecubeFPK();
         case FPK_UNPACKER_WII -> FPKUnpackerTool.unpackWiiFPK();

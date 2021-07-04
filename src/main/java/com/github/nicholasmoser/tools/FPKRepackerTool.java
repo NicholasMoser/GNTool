@@ -233,7 +233,7 @@ public class FPKRepackerTool {
             // Set the offset to -1 for now, we cannot figure it out until we have all of
             // the files
             FPKFileHeader newHeader = new FPKFileHeader(header.getFileName(), output.length,
-                input.length, longPaths);
+                input.length, longPaths, bigEndian);
             newFPKs.add(new FPKFile(newHeader, output));
             LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
                 filePath, input.length, output.length));

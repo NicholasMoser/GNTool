@@ -134,7 +134,8 @@ public class FPKPacker {
       // Set the offset to -1 for now, we cannot figure it out until we have all of
       // the files
       String shiftJisPath = ByteUtils.encodeShiftJis(child.getCompressedPath());
-      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length, false);
+      // TODO: Remove GameCube FPK format assumption (short paths, big endian)
+      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length, false, true);
       newFPKs.add(new FPKFile(header, output));
       LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
           child.getFilePath(), input.length, output.length));
