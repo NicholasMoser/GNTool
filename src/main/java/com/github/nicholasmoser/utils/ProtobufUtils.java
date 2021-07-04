@@ -19,26 +19,32 @@ public class ProtobufUtils {
   /**
    * Create a GNTFiles object containing all GNTFiles and respective hashes. Ignores FPK files.
    *
-   * @param compressed The compressed directory.
+   * @param compressed   The compressed directory.
    * @param allowedFiles The set of files that are allowed to be stored in binary.
+   * @param longPaths    If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian    If the FPK is big-endian (instead of little-endian).
    * @return The GNTFiles mapping of filePaths to hashes.
    * @throws IOException If an I/O error occurs.
    */
-  public static GNTFiles createBinary(Path compressed, Set<String> allowedFiles) throws IOException {
-    return createBinary(compressed, allowedFiles, false);
+  public static GNTFiles createBinary(Path compressed, Set<String> allowedFiles, boolean longPaths,
+      boolean bigEndian) throws IOException {
+    return createBinary(compressed, allowedFiles, false, longPaths, bigEndian);
   }
 
   /**
    * Create a GNTFiles object containing all GNTFiles and respective hashes. Optionally allows
    * consideration for FPK files and logic to handle the relationships to their children.
    *
-   * @param compressed  The compressed directory.
+   * @param compressed   The compressed directory.
    * @param allowedFiles The set of files that are allowed to be stored in binary.
-   * @param checkForFpk Whether or not to check for FPK files and process their children.
+   * @param checkForFpk  Whether or not to check for FPK files and process their children.
+   * @param longPaths    If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian    If the FPK is big-endian (instead of little-endian).
    * @return The GNTFiles mapping of filePaths to hashes.
    * @throws IOException If an I/O error occurs.
    */
-  public static GNTFiles createBinary(Path compressed, Set<String> allowedFiles, boolean checkForFpk) throws IOException {
+  public static GNTFiles createBinary(Path compressed, Set<String> allowedFiles,
+      boolean checkForFpk, boolean longPaths, boolean bigEndian) throws IOException {
     List<Path> files = Files.walk(compressed).filter(Files::isRegularFile)
         .collect(Collectors.toList());
     GNTFiles.Builder filesBuilder = GNTFiles.newBuilder();
@@ -50,7 +56,7 @@ public class ProtobufUtils {
         fileBuilder.setFilePath(relativePath);
         fileBuilder.setHash(hash);
         if (checkForFpk && relativePath.endsWith(".fpk")) {
-          List<GNTFileProtos.GNTChildFile> children = getChildren(filePath);
+          List<GNTFileProtos.GNTChildFile> children = getChildren(filePath, longPaths, bigEndian);
           fileBuilder.addAllGntChildFile(children);
         }
         GNTFileProtos.GNTFile gntFile = fileBuilder.build();
@@ -77,19 +83,22 @@ public class ProtobufUtils {
    * Opens the given FPK file and extracts it contents. This includes uncompressing them from
    * Eighting PRS compression.
    *
-   * @param filePath The FPK file to extract.
+   * @param filePath  The FPK file to extract.
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    * @throws IOException If there is an IO error with the FPK file or its extracted children.
    */
-  private static List<GNTFileProtos.GNTChildFile> getChildren(Path filePath) throws IOException {
+  private static List<GNTFileProtos.GNTChildFile> getChildren(Path filePath, boolean longPaths,
+      boolean bigEndian) throws IOException {
     int bytesRead = 0;
     List<GNTFileProtos.GNTChildFile> children = new ArrayList<>();
     try (InputStream is = Files.newInputStream(filePath)) {
-      int fileCount = FPKUtils.readFPKHeader(is);
+      int fileCount = FPKUtils.readFPKHeader(is, bigEndian);
       bytesRead += 16;
 
       List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
-        fpkHeaders.add(FPKUtils.readGCFPKFileHeader(is));
+        fpkHeaders.add(FPKUtils.readFPKFileHeader(is, longPaths, bigEndian));
         bytesRead += 32;
       }
 

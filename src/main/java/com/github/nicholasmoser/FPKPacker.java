@@ -31,15 +31,21 @@ public class FPKPacker {
 
   private final Workspace workspace;
 
+  private final boolean longPaths;
+
+  private final boolean bigEndian;
+
   /**
    * Creates a new FPK packer for a workspace.
    *
    * @param workspace The workspace to pack the FPKs for.
    */
-  public FPKPacker(Workspace workspace) {
+  public FPKPacker(Workspace workspace, boolean longPaths, boolean bigEndian) {
     this.workspace = workspace;
     this.compressedDirectory = workspace.getCompressedDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
+    this.longPaths = longPaths;
+    this.bigEndian = bigEndian;
   }
 
   /**
@@ -128,7 +134,8 @@ public class FPKPacker {
       // Set the offset to -1 for now, we cannot figure it out until we have all of
       // the files
       String shiftJisPath = ByteUtils.encodeShiftJis(child.getCompressedPath());
-      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length, false);
+      // TODO: Remove GameCube FPK format assumption (short paths, big endian)
+      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length, false, true);
       newFPKs.add(new FPKFile(header, output));
       LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
           child.getFilePath(), input.length, output.length));
@@ -150,7 +157,7 @@ public class FPKPacker {
     }
 
     // FPK Header
-    byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize);
+    byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize, bigEndian);
     // File headers
     for (FPKFile file : newFPKs) {
       fpkBytes = Bytes.concat(fpkBytes, file.getHeader().getBytes());

@@ -44,13 +44,26 @@ public class GUIUtils {
   private static final Path DARK_MODE_DISABLED = Paths.get("DARK_MODE_DISABLED");
 
   /**
-   * Creates a new loading window for a specified task.
+   * Creates a new loading window for a specified task with the default window size.
    * 
    * @param title The title of the window.
    * @param task The task to perform.
    * @return The loading window.
    */
   public static Stage createLoadingWindow(String title, Task<?> task) {
+    return createLoadingWindow(title, task, 450, 200);
+  }
+
+  /**
+   * Creates a new loading window for a specified task with the given size.
+   *
+   * @param title The title of the window.
+   * @param task The task to perform.
+   * @param width The width of the window.
+   * @param height The height of the window.
+   * @return The loading window.
+   */
+  public static Stage createLoadingWindow(String title, Task<?> task, double width, double height) {
     Stage loadingWindow = new Stage();
     loadingWindow.initModality(Modality.APPLICATION_MODAL);
     loadingWindow.initStyle(StageStyle.UNDECORATED);
@@ -72,7 +85,7 @@ public class GUIUtils {
     flow.add(progressIndicator, 0, 1);
     flow.setStyle(BORDER);
 
-    Scene dialogScene = new Scene(flow, 450, 200);
+    Scene dialogScene = new Scene(flow, width, height);
     loadingWindow.setScene(dialogScene);
     loadingWindow.show();
 

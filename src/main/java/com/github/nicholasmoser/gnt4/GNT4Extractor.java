@@ -63,7 +63,7 @@ public class GNT4Extractor implements Extractor {
       LOGGER.info(String.format("Copying %s to %s", compressed, uncompressed));
       FileUtils.copyFolder(compressed, uncompressed);
       Optional<FileNames> gnt4FileNames = Optional.of(new GNT4FileNames());
-      FPKUnpacker unpacker = new FPKUnpacker(uncompressed, gnt4FileNames, false);
+      FPKUnpacker unpacker = new FPKUnpacker(uncompressed, gnt4FileNames, false, true);
       unpacker.unpackDirectory();
       unpacked = true;
     }

@@ -51,8 +51,7 @@ public class FPKRepackerTool {
     if (optionalFPK.isEmpty()) {
       return;
     }
-    List<FPKFileHeader> fpkHeaders = getGCFileHeaders(optionalFPK.get());
-    createRepackWindow(fpkHeaders, false);
+    createRepackWindow(optionalFPK.get(), false, true);
   }
 
   /**
@@ -65,17 +64,33 @@ public class FPKRepackerTool {
     if (optionalFPK.isEmpty()) {
       return;
     }
-    List<FPKFileHeader> fpkHeaders = getWiiFileHeaders(optionalFPK.get());
-    createRepackWindow(fpkHeaders, true);
+    createRepackWindow(optionalFPK.get(), true, true);
+  }
+
+  /**
+   * Repack an FPK file on the PS2/PSP.
+   *
+   * @throws IOException If there is an I/O related exception.
+   */
+  public static void repackPS2FPK() throws IOException {
+    Optional<Path> optionalFPK = Choosers.getInputFPK(GNTool.USER_HOME);
+    if (optionalFPK.isEmpty()) {
+      return;
+    }
+    createRepackWindow(optionalFPK.get(), true, false);
   }
 
   /**
    * Creates an FPK repack window with each FPK file entry.
    *
-   * @param fpkHeaders The list of FPK file entry headers.
-   * @param isWii      Whether the FPK is Wii or not (GameCube otherwise).
+   * @param fpkPath   The path to the FPK file.
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    */
-  private static void createRepackWindow(List<FPKFileHeader> fpkHeaders, boolean isWii) {
+  private static void createRepackWindow(Path fpkPath, boolean longPaths, boolean bigEndian)
+      throws IOException {
+    currentDirectory = fpkPath.getParent().toFile();
+    List<FPKFileHeader> fpkHeaders = getFileHeaders(fpkPath, longPaths, bigEndian);
     int numHeaders = fpkHeaders.size();
     Stage stage = new Stage();
     GUIUtils.setIcons(stage);
@@ -131,7 +146,7 @@ public class FPKRepackerTool {
       if (outputFPK.isEmpty()) {
         return;
       }
-      repackFPK(fpkHeaders, filePaths, outputFPK.get(), isWii);
+      repackFPK(fpkHeaders, filePaths, outputFPK.get(), longPaths, bigEndian);
     });
 
     // Load template button and accompanying logic
@@ -192,10 +207,11 @@ public class FPKRepackerTool {
    *
    * @param fpkHeaders The list of existing FPK headers.
    * @param filePaths  The list of new file paths for the FPK.
-   * @param outputFPK  The output FPK.
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    */
   private static void repackFPK(List<FPKFileHeader> fpkHeaders, List<String> filePaths,
-      Path outputFPK, boolean isWii) {
+      Path outputFPK, boolean longPaths, boolean bigEndian) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() {
@@ -218,7 +234,7 @@ public class FPKRepackerTool {
             // Set the offset to -1 for now, we cannot figure it out until we have all of
             // the files
             FPKFileHeader newHeader = new FPKFileHeader(header.getFileName(), output.length,
-                input.length, isWii);
+                input.length, longPaths, bigEndian);
             newFPKs.add(new FPKFile(newHeader, output));
             LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
                 filePath, input.length, output.length));
@@ -226,7 +242,7 @@ public class FPKRepackerTool {
           updateMessage("Writing FPK...");
 
           int outputSize = 16; // FPK header is 16 bytes so start with that.
-          if (isWii) {
+          if (longPaths) {
             outputSize += newFPKs.size() * 48; // Each Wii FPK file header is 48 bytes
           } else {
             outputSize += newFPKs.size() * 32; // Each GameCube FPK file header is 32 bytes
@@ -245,7 +261,7 @@ public class FPKRepackerTool {
           }
 
           // FPK Header
-          byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize);
+          byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize, bigEndian);
           // File headers
           for (FPKFile file : newFPKs) {
             fpkBytes = Bytes.concat(fpkBytes, file.getHeader().getBytes());
@@ -264,7 +280,9 @@ public class FPKRepackerTool {
         return null;
       }
     };
-    Stage loadingWindow = GUIUtils.createLoadingWindow("Repacking FPK", task);
+    double width = longPaths ? 600 : 450;
+    double height = 200;
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Repacking FPK", task, width, height);
     task.setOnSucceeded(event -> {
       Message.info("FPK Repacked", "FPK repacking complete.");
       loadingWindow.close();
@@ -279,34 +297,19 @@ public class FPKRepackerTool {
   /**
    * Get the list of file headers from a GameCube FPK at the given path.
    *
-   * @param fpkPath The path to the FPK.
+   * @param fpkPath   The path to the FPK.
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    * @return The FPK file headers.
    * @throws IOException If there is an exception relating to the FPK file input.
    */
-  private static List<FPKFileHeader> getGCFileHeaders(Path fpkPath) throws IOException {
+  private static List<FPKFileHeader> getFileHeaders(Path fpkPath, boolean longPaths,
+      boolean bigEndian) throws IOException {
     try (InputStream is = Files.newInputStream(fpkPath)) {
-      int fileCount = FPKUtils.readFPKHeader(is);
+      int fileCount = FPKUtils.readFPKHeader(is, bigEndian);
       List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
-        fpkHeaders.add(FPKUtils.readGCFPKFileHeader(is));
-      }
-      return fpkHeaders;
-    }
-  }
-
-  /**
-   * Get the list of file headers from a Wii FPK at the given path.
-   *
-   * @param fpkPath The path to the FPK.
-   * @return The FPK file headers.
-   * @throws IOException If there is an exception relating to the FPK file input.
-   */
-  private static List<FPKFileHeader> getWiiFileHeaders(Path fpkPath) throws IOException {
-    try (InputStream is = Files.newInputStream(fpkPath)) {
-      int fileCount = FPKUtils.readFPKHeader(is);
-      List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
-      for (int i = 0; i < fileCount; i++) {
-        fpkHeaders.add(FPKUtils.readWiiFPKFileHeader(is));
+        fpkHeaders.add(FPKUtils.readFPKFileHeader(is, longPaths, bigEndian));
       }
       return fpkHeaders;
     }

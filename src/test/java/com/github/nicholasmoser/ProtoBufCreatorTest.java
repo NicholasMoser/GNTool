@@ -21,7 +21,7 @@ public class ProtoBufCreatorTest {
   public void testCreateDiffBinary() throws Exception {
     Path compressed = Paths.get("D:/GNT/aaa/uncompressed");
     Path output = Paths.get("D:/GNT/aaa/testCreateDiffBinary.bin");
-    GNTFiles gntFiles = ProtobufUtils.createBinary(compressed, null);
+    GNTFiles gntFiles = ProtobufUtils.createBinary(compressed, null, false, true);
     try (OutputStream os = Files.newOutputStream(output)) {
       gntFiles.writeTo(os);
     }
@@ -38,7 +38,7 @@ public class ProtoBufCreatorTest {
     Path compressed = Paths.get("D:/GNT/bbb/compressed");
     Path output = Paths
         .get("./src/main/resources/com/github/nicholasmoser/gnt4/vanilla_with_fpks.bin");
-    GNTFiles gntFiles = ProtobufUtils.createBinary(compressed, null, true);
+    GNTFiles gntFiles = ProtobufUtils.createBinary(compressed, null, true, false, true);
     try (OutputStream os = Files.newOutputStream(output)) {
       gntFiles.writeTo(os);
     }
