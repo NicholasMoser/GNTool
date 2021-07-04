@@ -279,7 +279,9 @@ public class FPKRepackerTool {
         return null;
       }
     };
-    Stage loadingWindow = GUIUtils.createLoadingWindow("Repacking FPK", task);
+    double width = longPaths ? 600 : 450;
+    double height = 200;
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Repacking FPK", task, width, height);
     task.setOnSucceeded(event -> {
       Message.info("FPK Repacked", "FPK repacking complete.");
       loadingWindow.close();
