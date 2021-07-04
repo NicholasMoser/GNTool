@@ -35,10 +35,11 @@ public class FPKUnpacker {
    *
    * @param inputDirectory The input directory to unpack.
    * @param fileNames      The optional list of file names to fix for the unpacking.
-   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
-   * @param bigEndian If the FPK is big-endian (instead of little-endian).
+   * @param longPaths      If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian      If the FPK is big-endian (instead of little-endian).
    */
-  public FPKUnpacker(Path inputDirectory, Optional<FileNames> fileNames, boolean longPaths, boolean bigEndian) {
+  public FPKUnpacker(Path inputDirectory, Optional<FileNames> fileNames, boolean longPaths,
+      boolean bigEndian) {
     if (!Files.isDirectory(inputDirectory)) {
       throw new IllegalArgumentException(inputDirectory + " is not a directory.");
     }
@@ -95,8 +96,9 @@ public class FPKUnpacker {
    *
    * @param fpkPath         The path to the fpk file.
    * @param outputDirectory The path to the output directory.
-   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
-   * @param bigEndian If the FPK is big-endian (instead of little-endian).
+   * @param fileNames       Optional full file names to fix truncation.
+   * @param longPaths       If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian       If the FPK is big-endian (instead of little-endian).
    * @throws IOException If there is an I/O related exception.
    */
   public static void extractFPK(Path fpkPath, Path outputDirectory, Optional<FileNames> fileNames,
@@ -108,7 +110,7 @@ public class FPKUnpacker {
 
       List<FPKFileHeader> fpkHeaders = new ArrayList<>(fileCount);
       for (int i = 0; i < fileCount; i++) {
-        fpkHeaders.add(FPKUtils.readFPKFileHeader(is,longPaths, bigEndian));
+        fpkHeaders.add(FPKUtils.readFPKFileHeader(is, longPaths, bigEndian));
         bytesRead += longPaths ? 48 : 32;
       }
 

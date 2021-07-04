@@ -101,7 +101,7 @@ public class FPKUtils {
       int bytesRead = 16;
       for (int i = 0; i < fileCount; i++) {
         FPKFileHeader header = readFPKFileHeader(is, longPaths, bigEndian);
-        bytesRead += 32;
+        bytesRead += longPaths ? 48 : 32;
         if (child.equals(header.getFileName())) {
           int bytesToSkip = header.getOffset() - bytesRead;
           if (is.skip(bytesToSkip) != bytesToSkip) {
