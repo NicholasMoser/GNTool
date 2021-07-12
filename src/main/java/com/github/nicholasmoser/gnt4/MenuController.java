@@ -22,6 +22,7 @@ import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
+import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.gnt4.trans.TranslationState;
@@ -45,6 +46,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -270,7 +272,8 @@ public class MenuController {
     try {
       TranslationState state = Translator.getTranslationState(uncompressedDirectory);
       if (state == TranslationState.ENGLISH) {
-        Message.info("Game Already in English", "Unable to translate, the game is already in English.");
+        Message.info("Game Already in English",
+            "Unable to translate, the game is already in English.");
         return;
       } else if (state == TranslationState.UNKNOWN) {
         String message = "Unable to determine translation state. Attempting to translate may cause issues. Are you sure you wish to continue?";
@@ -283,6 +286,17 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to translate", e);
       Message.error("Failed to translate", SEE_LOG);
+    }
+  }
+
+  @FXML
+  public void allow4pDupeChrs() {
+    try {
+      Dupe4pCharsPatch.apply(uncompressedDirectory);
+      Message.info("Patch Applied", "Duplicate characters are now allowed in 4-player mode.");
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Allow Duplicate Characters in 4-Player Mode", e);
+      Message.error("Failed to apply patch.", SEE_LOG);
     }
   }
 
@@ -1153,7 +1167,8 @@ public class MenuController {
               addedCodes.getItems().add(codeGroup.getName());
             }
             String msg = "Codes were found in the dol but no codes.json file exists.\n";
-            LOGGER.info(msg + "The following codes were found: " + String.join(", ", addedCodes.getItems()));
+            LOGGER.info(msg + "The following codes were found: " + String
+                .join(", ", addedCodes.getItems()));
           } else {
             // There actually were no codes
             codeGroups = new ArrayList<>();
