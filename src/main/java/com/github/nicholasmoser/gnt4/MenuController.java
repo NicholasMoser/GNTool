@@ -46,7 +46,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -69,6 +68,8 @@ public class MenuController {
   private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool";
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
+  private static final int DEFAULT_CSS_MODEL_LOAD_FRAMES = 60;
+  private static final int MAX_CSS_MODEL_LOAD_FRAMES = Integer.MAX_VALUE;
   private static final String SEE_LOG = "See the log for more information.";
   private static final String DOL = "sys/main.dol";
   private Workspace workspace;
@@ -113,6 +114,9 @@ public class MenuController {
 
   @FXML
   private Spinner<Integer> demoTimeOut;
+
+  @FXML
+  private Spinner<Integer> cssModelLoad;
 
   @FXML
   private ComboBox<String> musyxSamFile;
@@ -336,6 +340,18 @@ public class MenuController {
   }
 
   @FXML
+  protected void setCssModelLoad() {
+    try {
+      int frames = cssModelLoad.getValue();
+      codes.setCodeInt(GNT4Codes.CSS_LOAD_CHR_MODELS, frames);
+      codes.setCodeInt(GNT4Codes.CSS_FFA_LOAD_CHR_MODELS, frames);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Update the Frames Until CSS Model Load", e);
+      Message.error("Failed to Update the Frames Until CSS Model Load", SEE_LOG);
+    }
+  }
+
+  @FXML
   protected void defaultTimeOut() {
     demoTimeOut.getValueFactory().setValue(DEFAULT_DEMO_TIME_OUT_SECONDS);
     setDemoTimeOut();
@@ -345,6 +361,18 @@ public class MenuController {
   protected void maxTimeOut() {
     demoTimeOut.getValueFactory().setValue(MAX_DEMO_TIME_OUT_SECONDS);
     setDemoTimeOut();
+  }
+
+  @FXML
+  public void defaultCSSModelLoad() {
+    cssModelLoad.getValueFactory().setValue(DEFAULT_CSS_MODEL_LOAD_FRAMES);
+    setCssModelLoad();
+  }
+
+  @FXML
+  public void maxCSSModelLoad() {
+    cssModelLoad.getValueFactory().setValue(MAX_CSS_MODEL_LOAD_FRAMES);
+    setCssModelLoad();
   }
 
   @FXML
@@ -1257,6 +1285,12 @@ public class MenuController {
       xDoesNotBreakThrows.setSelected(isActive);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting X Does Not Break Throws Code.", e);
+    }
+    try {
+      int value = codes.getCodeInt(GNT4Codes.CSS_LOAD_CHR_MODELS_P1);
+      cssModelLoad.getValueFactory().setValue(value);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error getting Frames Until CSS Model Load.", e);
     }
   }
 
