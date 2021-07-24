@@ -170,11 +170,11 @@ public class GNT4Codes {
 
   // https://github.com/NicholasMoser/GNTool#Widescreen
   public static final GNT4Code PERSPECTIVE_INSTRUCTION = new GNT4Code(MAIN_DOL, 0x16B15C,
-      new byte[]{(byte)0xff, (byte)0xa0, 0x10, (byte)0x90},
-      new byte[]{(byte)0xc3, (byte)0xa2, (byte)0xa0, 0x24});
+      new byte[]{(byte) 0xff, (byte) 0xa0, 0x10, (byte) 0x90},
+      new byte[]{(byte) 0xc3, (byte) 0xa2, (byte) 0xa0, 0x24});
   public static final GNT4Code WIDESCREEN_VALUE = new GNT4Code(MAIN_DOL, 0x2220C4,
-      new byte[]{0x3f, (byte)0xa2, (byte)0x8f, 0x5c},
-      new byte[]{0x3f, (byte)0xe3, (byte)0x8e, 0x39});
+      new byte[]{0x3f, (byte) 0xa2, (byte) 0x8f, 0x5c},
+      new byte[]{0x3f, (byte) 0xe3, (byte) 0x8e, 0x39});
   public static final List<GNT4Code> WIDESCREEN_CODES = Arrays
       .asList(PERSPECTIVE_INSTRUCTION, WIDESCREEN_VALUE);
 
@@ -182,6 +182,16 @@ public class GNT4Codes {
   public static final GNT4Code X_DOES_NOT_BREAK_THROWS = new GNT4Code(MAIN_DOL, 0x602F0,
       new byte[]{0x70, 0x00, 0x22, 0x30},
       new byte[]{0x70, 0x00, 0x02, 0x30});
+
+  // https://github.com/NicholasMoser/GNTool#Load-Character-Models-in-Character-Select-Screen
+  public static final GNT4Code CSS_LOAD_CHR_MODELS_P1 = new GNT4Code(CSS_SEQ, 0x4DC8);
+  public static final GNT4Code CSS_LOAD_CHR_MODELS_P2 = new GNT4Code(CSS_SEQ, 0x8B4C);
+  public static final GNT4Code CSS_FFA_LOAD_CHR_MODELS_P1 = new GNT4Code(CSS_4P_SEQ, 0x54C8);
+  public static final GNT4Code CSS_FFA_LOAD_CHR_MODELS_P2 = new GNT4Code(CSS_4P_SEQ, 0x5CE4);
+  public static final GNT4Code CSS_FFA_LOAD_CHR_MODELS_P3 = new GNT4Code(CSS_4P_SEQ, 0x65FC);
+  public static final GNT4Code CSS_FFA_LOAD_CHR_MODELS_P4 = new GNT4Code(CSS_4P_SEQ, 0x70D4);
+  public static final List<GNT4Code> CSS_LOAD_CHR_MODELS = Arrays.asList(CSS_LOAD_CHR_MODELS_P1, CSS_LOAD_CHR_MODELS_P2);
+  public static final List<GNT4Code> CSS_FFA_LOAD_CHR_MODELS = Arrays.asList(CSS_FFA_LOAD_CHR_MODELS_P1, CSS_FFA_LOAD_CHR_MODELS_P2, CSS_FFA_LOAD_CHR_MODELS_P3, CSS_FFA_LOAD_CHR_MODELS_P4);
 
   private final Path uncompressedDirectory;
 

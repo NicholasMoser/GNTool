@@ -42,7 +42,7 @@
       <Tab text="Menu">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
           <ScrollPane prefHeight="346.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="573.0" prefWidth="644.0">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="704.0" prefWidth="644.0">
               <CheckBox fx:id="audioFixCode" layoutX="14.0" layoutY="19.0" mnemonicParsing="false" onAction="#audioFixCode" text="Audio Fix" />
               <CheckBox fx:id="skipCutscenesCode" layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#skipCutscenesCode" text="Skip Cutscenes" />
               <Button layoutX="14.0" layoutY="92.0" mnemonicParsing="false" onMouseClicked="#translate" text="Translate" />
@@ -74,8 +74,16 @@
               <CheckBox fx:id="unlockAll" layoutX="14.0" layoutY="418.0" mnemonicParsing="false" onAction="#unlockAll" text="Unlock Everything" />
               <CheckBox fx:id="enableWidescreen" layoutX="14.0" layoutY="456.0" mnemonicParsing="false" onAction="#enableWidescreen" text="Widescreen 16:9" />
               <CheckBox layoutX="14.0" layoutY="494.0" mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" fx:id="xDoesNotBreakThrows" />
-              <Button layoutX="12.0" layoutY="529.0" mnemonicParsing="false" text="Apply" onAction="#allow4pDupeChrs" />
+              <Button layoutX="12.0" layoutY="529.0" mnemonicParsing="false" onAction="#allow4pDupeChrs" text="Apply" />
               <Text layoutX="69.0" layoutY="546.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Allow duplicate characters in 4-player battles" />
+              <Spinner fx:id="cssModelLoad" layoutX="11.0" layoutY="568.0" onKeyReleased="#setCssModelLoad" onMouseReleased="#setCssModelLoad" prefHeight="25.0" prefWidth="157.0">
+                <valueFactory>
+                  <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="2147483647" min="0" />
+                </valueFactory>
+              </Spinner>
+              <Text layoutX="183.0" layoutY="585.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Frames Until Model is Loaded in Character Select Screen" />
+              <Button layoutX="14.0" layoutY="603.0" mnemonicParsing="false" onMouseClicked="#defaultCSSModelLoad" text="Default" />
+              <Button layoutX="78.0" layoutY="603.0" mnemonicParsing="false" onMouseClicked="#maxCSSModelLoad" text="Max" />
             </AnchorPane>
           </ScrollPane>
         </AnchorPane>
