@@ -175,6 +175,19 @@ A, B, Y, and X all can break throws in GNT4. Since X can be used to break throws
 
 This patch allows you to select multiples of the same character in 4-player battle mode.
 
+#### Frames Until Model is Loaded in Character Select Screen
+
+This allows you to change the number of frames before a model is loaded in the character select
+screen (CSS). In vanilla GNT4 the model for a character will be loaded 60 frames after hovering
+over the character. The game runs in 60 frames per second, so the default is approximately 1 second.
+
+Loading the model causes the game to freeze for a quick moment, especially so when the game is
+loaded from your local file system instead of via an ISO/disc. This freeze can resort in a worse
+quality of life while playing the game. By raising the number of frames, you can make the game wait
+longer (or basically forever) before it tries to load the model.
+
+The maximum is 2147483647 frames, which would require waiting 13.6 months.
+
 #### ZTK Damage Taken Multiplier
 
 By default, Naruto's ZTK transformation takes 1.5x damage. This setting allows you to change this value.
