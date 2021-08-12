@@ -1,22 +1,30 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.io.CountingInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Class that mimics the functionality of the function in GNT4 at address 0x800c95e4, seq_get_op.
+ */
 public class SeqOp {
 
-  private final int opcode;
-  private final CountingInputStream cis;
+  private final ByteStream bs;
+  private final ByteArrayOutputStream bytes;
+  private boolean parsed;
   private String description;
+  private int opcode;
 
-  private SeqOp(int opcode, CountingInputStream cis) {
-    this.opcode = opcode;
-    this.cis = cis;
+  private SeqOp(ByteStream bs) {
+    this.bs = bs;
+    this.bytes = new ByteArrayOutputStream();
+    this.parsed = false;
   }
 
-  public SeqOp get(int opcode, CountingInputStream cis) throws IOException {
-    SeqOp seqOp = new SeqOp(opcode, cis);
+  public static SeqOp get(ByteStream bs) throws IOException {
+    SeqOp seqOp = new SeqOp(bs);
     seqOp.parse();
     return seqOp;
   }
@@ -25,144 +33,191 @@ public class SeqOp {
     return opcode;
   }
 
-  private void parse() throws IOException
-  {
-    byte opcode_last_byte = (byte) (opcode & 0xff);
-    if ((opcode & 0x40) == 0) {
-      if ((opcode & 0x80) == 0) {
-        if (opcode_last_byte < 0x18) {
-          skipWord();
-          description = "Get pointer r" + opcode_last_byte;
-        }
-        else {
-          if (opcode_last_byte < 0x30) {
-            skipWord();
-            description = "Get stored pointer r" + opcode_last_byte;
-          }
-          else {
-            zz_800c978c_(true);
-            skipWord();
-          }
-        }
-      }
-      else {
-        byte lastSixBits = (byte) (opcode & 0x3f);
-        if (lastSixBits < 0x18) {
-          description = "Get value in r" + opcode_last_byte;
-        }
-        else {
-          if (lastSixBits < 0x30) {
-            description = "Get value in stored r" + opcode_last_byte;
-          }
-          else {
-            zz_800c978c_(false);
-          }
-        }
-        int second = ByteUtils.readInt32(cis);
-        int secondHalf = second & 0xffff;
-        if (secondHalf < 0x18) {
-          description += " + value in r" + secondHalf + " + " + (second >> 0x10);
-        }
-        else {
-          description += " + value in stored r" + secondHalf + " + " + (second >> 0x10);
-        }
-        skipWord();
-      }
-    }
-    else {
-      byte lastSixBits = (byte) (opcode & 0x3f);
-      if (lastSixBits < 0x18) {
-        description = "Get value at register " + opcode_last_byte;
-      }
-      else {
-        if (lastSixBits < 0x30) {
-          description = "Get value at stored register " + opcode_last_byte;
-        }
-        else {
-          zz_800c978c_(lastSixBits,return_val,(int *)(pc + 1));
-        }
-      }
-      description += " + " + ByteUtils.readInt32(cis);
-    }
-    return new_pc;
+  /**
+   * @return The bytes after the opcode. Returns an empty byte array if there are none.
+   */
+  public byte[] getBytes() {
+    return bytes.toByteArray();
   }
 
-  private void skipWord() throws IOException {
-    if (cis.skip(4) != 4) {
-      throw new IOException("Failed to skip 4 bytes.");
+  public String getDescription() {
+    return description;
+  }
+
+  private void pushWord(int word) throws IOException {
+    bytes.write(ByteUtils.fromInt32(word));
+  }
+
+  private void parse() throws IOException {
+    if (parsed) {
+      throw new IllegalStateException("Opcode has already been parsed.");
     }
+    this.opcode = bs.peekWord();
+    // Get last 8 bits (1111_1111)
+    byte opcode_last_byte = (byte) (opcode & 0xff);
+    // If second bit set (0100_0000) of last byte
+    if ((opcode & 0x40) == 0) {
+      // If first bit set (1000_0000) of last byte
+      if ((opcode & 0x80) == 0) {
+        // This block of code returns a pointer.
+        if (opcode_last_byte < 0x18) {
+          bs.skipWord();
+          description = String.format("Get pointer of gpr%02x", opcode_last_byte);
+        } else if (opcode_last_byte < 0x30) {
+          bs.skipWord();
+          description = String.format("Get pointer of seq_p_sp->field_0x%02x",
+              opcode_last_byte - 0x18);
+        } else {
+          zz_800c978c_(true, opcode_last_byte);
+          bs.skipWord();
+        }
+      } else {
+        // This block of code updates and returns a memory value.
+        // Doesn't appear to be used much by GNT4 (if at all)
+        byte lastSixBits = (byte) (opcode & 0x3f);
+        if (lastSixBits < 0x18) {
+          description = String.format("Get value of gpr%02x", opcode_last_byte);
+        } else if (lastSixBits < 0x30) {
+          description = String.format("Get value of seq_p_sp->field_0x%02x",
+              opcode_last_byte - 0x18);
+        } else {
+          zz_800c978c_(false, lastSixBits);
+        }
+        int second = bs.readWord();
+        int secondHalf = second & 0xffff;
+        if (secondHalf < 0x18) {
+          description += String.format(" + value in gpr%02x + %x", secondHalf, (second >> 0x10));
+        } else {
+          description += " + value in stored r" + secondHalf + " + " + (second >> 0x10);
+        }
+        bs.skipWord();
+      }
+    } else {
+      // This block of code updates and returns a memory value.
+      byte lastSixBits = (byte) (opcode & 0x3f);
+      if (lastSixBits < 0x18) {
+        description = String.format("Get value of gpr%02x", opcode_last_byte);
+      } else if (lastSixBits < 0x30) {
+        description = String.format("Get value of seq_p_sp->field_0x%02x", lastSixBits * 4);
+      } else {
+        zz_800c978c_(false, lastSixBits);
+      }
+      bs.skipWord();
+      int word = bs.readWord();
+      description += String.format(" and add %08x", word);
+      pushWord(word);
+    }
+    parsed = true;
   }
 
   /**
+   * This function behaves differently based on whether it is called to store a pointer or called to
+   * store a value.
+   * If called to store a pointer it will:
+   * <ul>
+   *   <li>Not increment the program counter passed in</li>
+   *   <li>Return and use the new program counter</li>
+   * </ul>
+   * If called to store a value it will:
+   * <ul>
+   *   <li>Increment the program counter passed in by 4 bytes.</li>
+   *   <li>Not return and use the new program counter.</li>
+   * </ul>
    *
-   * @param pcAtOpcode If the program counter is currently pointing to the opcode. Otherwise it is
-   *                   pointing to the word after the opcode.
+   * @param storePointer If a pointer should be returned, otherwise a value is returned.
    * @throws IOException
    */
-  private void zz_800c978c_(boolean pcAtOpcode) throws IOException
-  {
-    byte opcode_last_byte = (byte) (opcode & 0xff);
-    switch(opcode_last_byte) {
+  private void zz_800c978c_(boolean storePointer, byte opcode_last_byte) throws IOException {
+    String noun = storePointer ? "pointer" : "value";
+    switch (opcode_last_byte) {
       case 0x30:
-        description = "Get value at DAT_8022342c";
+        // Appears to be a matrix identity used for matrix multiplication of attacking hitbox
+        // Address: 80223428
+        description = String.format("Get %s of HITBOX_IDENTITY_MATRIX", noun);
         break;
       case 0x32:
-        description = "Get value at DAT_80222eb0";
+        // Pointer to structs of controllers.
+        // Address: 80222eb0
+        description = String.format("Get %s of CONTROLLERS", noun);
         break;
       case 0x33:
-        description = "Get value at DAT_80222e70";
+        // Pointer to struct of primary controller information. This is the controller being used
+        // to navigate menus, stages, etc.
+        // Address: 80222e70
+        description = String.format("Get %s of PRIMARY_CONTROLLER", noun);
         break;
       case 0x34:
-        description = "Get value at DAT_802231a8";
+        // Pointer to display information, such as resolution, buffer, gamma, z list, z sort, and
+        // snapshot. This information is viewable from the debug menu under screen_menu.
+        // Address: 802231a8
+        description = String.format("Get %s of DISPLAY", noun);
         break;
       case 0x39:
-        description = "Get value at DAT_802231e8";
+        // Pointer to save data.
+        // Address: 802231e8
+        description = String.format("Get %s of SAVE_DATA", noun);
         break;
       case 0x3a:
-        description = "Get value at DAT_802233a8";
+        // 0x2 is debug mode, 0x0 is normal mode
+        // Address: 802233a8
+        description = String.format("Get %s of DEBUG_MODE", noun);
         break;
       case 0x3b:
-        description = "Get value at DAT_80222fb0";
+        // 0xF is paused, 0x0 is un-paused
+        // Address: 80222fb0
+        description = String.format("Get %s of PAUSE_GAME", noun);
         break;
       case 0x3c:
-        description = "Get value at DAT_802261d8";
+        // Pointer to game info, such as the current battle mode, scene, and game ticks.
+        // Address: 802261d8
+        description = String.format("Get %s of GAME_INFO", noun);
         break;
       case 0x3d:
-        description = "Get value at DAT_80222e64";
+        // Unknown pointer, appears to be unused.
+        // Address: 80222e64
+        description = String.format("Get %s of UNUSED", noun);
         break;
       case 0x3e:
-        long offset = cis.getCount();
-        if (pcAtOpcode) {
-          offset -= 4;
+        // Skip a word and read a word
+        // Doesn't appear to be used much by GNT4 (if at all)
+        int word;
+        int offset;
+        if (storePointer) {
+          bs.skipWord();
+          offset = bs.offset();
+          word = bs.readWord();
+          pushWord(word);
+          pushWord(bs.peekWord());
+        } else {
+          bs.mark(0xc);
+          bs.skipWord();
+          bs.skipWord();
+          offset = bs.offset();
+          word = bs.readWord();
+          bs.reset();
+          pushWord(word);
         }
-        description = "Get pointer of offset " + offset;
-        skipWord();
+        description = String.format("Get %s at opcode offset 0x%x: 0x%08x", noun, offset, word);
         break;
       case 0x3f:
-        long offset2 = cis.getCount();
-        if (pcAtOpcode) {
-          offset2 -= 4;
+        // Skip a word and peek a word
+        int word2;
+        int offset2;
+        if (storePointer) {
+          bs.skipWord();
+          offset2 = bs.offset();
+          word2 = bs.peekWord();
+        } else {
+          bs.mark(0xc);
+          bs.skipWord();
+          bs.skipWord();
+          offset2 = bs.offset();
+          word2 = bs.readWord();
+          bs.reset();
         }
-        description = "Get pointer of offset " + offset2;
-    }
-  }
-
-  public static class Op {
-
-    private final int distance;
-    private final String description;
-
-    public Op(int distance, String description) {
-      this.distance = distance;
-      this.description = description;
-    }
-
-    public int getDistance() {
-      return distance;
-    }
-
-    public String getDescription() {
-      return description;
+        pushWord(word2);
+        description = String.format("Get %s at opcode offset 0x%x: 0x%08x", noun, offset2, word2);
+        break;
     }
   }
 }
