@@ -80,4 +80,15 @@ public class ByteStream extends ByteArrayInputStream {
     }
     return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getInt();
   }
+
+  /**
+   * Skips the current 4-byte word.
+   *
+   * @throws IOException If 4 bytes are not skipped.
+   */
+  public void skipWord() throws IOException {
+    if (skip(4) != 4) {
+      throw new IOException("Failed to skip 4 bytes at offset " + pos);
+    }
+  }
 }

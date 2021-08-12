@@ -27,6 +27,7 @@ public class ByteStreamTest {
     assertThrows(IOException.class, bs::peekWord);
     assertEquals(-1, bs.read());
     assertEquals(-1, bs.read(new byte[4]));
+    assertThrows(IOException.class, bs::skipWord);
   }
 
   @Test
@@ -42,7 +43,7 @@ public class ByteStreamTest {
     // Test that you can't readWord with only one byte
     ByteStream bs2 = new ByteStream(bytes);
     assertThrows(IOException.class, bs2::readWord);
-    assertEquals(1, bs.offset());
+    assertEquals(1, bs2.offset());
 
     // Test that you can still mark, read, and reset with a one byte array
     ByteStream bs3 = new ByteStream(bytes);
@@ -52,6 +53,10 @@ public class ByteStreamTest {
     assertEquals(1, bs3.offset());
     bs3.reset();
     assertEquals(0, bs3.offset());
+
+    // Test skipWord
+    ByteStream bs4 = new ByteStream(bytes);
+    assertThrows(IOException.class, bs4::skipWord);
   }
 
   @Test
@@ -73,10 +78,18 @@ public class ByteStreamTest {
     assertEquals(0x80, bs2.read());
     assertEquals(1, bs2.offset());
     assertThrows(IOException.class, bs2::peekWord);
+
     ByteStream bs3 = new ByteStream(bytes);
     assertEquals(0x80, bs3.read());
     assertEquals(1, bs3.offset());
     assertThrows(IOException.class, bs3::readWord);
+
+    // Test skipWord
+    ByteStream bs4 = new ByteStream(bytes);
+    assertEquals(0, bs4.offset());
+    bs4.skipWord();
+    assertEquals(4, bs4.offset());
+    assertThrows(IOException.class, bs4::skipWord);
   }
 
   @Test
@@ -96,5 +109,14 @@ public class ByteStreamTest {
     assertEquals(8, bs.offset());
     assertThrows(IOException.class, bs::peekWord);
     assertThrows(IOException.class, bs::readWord);
+
+    // Test skipWord
+    ByteStream bs2 = new ByteStream(bytes);
+    assertEquals(0, bs2.offset());
+    bs2.skipWord();
+    assertEquals(4, bs2.offset());
+    bs2.skipWord();
+    assertEquals(8, bs2.offset());
+    assertThrows(IOException.class, bs2::skipWord);
   }
 }
