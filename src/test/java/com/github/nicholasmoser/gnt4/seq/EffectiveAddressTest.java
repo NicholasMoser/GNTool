@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.github.nicholasmoser.utils.ByteStream;
 import org.junit.jupiter.api.Test;
 
-public class SeqOpTest {
+public class EffectiveAddressTest {
 
   /**
    * Tests calling opcode 13040013. This will load a general purpose register value.
@@ -17,10 +17,10 @@ public class SeqOpTest {
   public void testLoadGpr_1() throws Exception {
     byte[] bytes = new byte[]{0x13, 0x04, 0x00, 0x13};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x4, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -32,10 +32,10 @@ public class SeqOpTest {
   public void testLoadGpr_2() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x03};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x4, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -47,10 +47,10 @@ public class SeqOpTest {
   public void testLoadSeq_1() throws Exception {
     byte[] bytes = new byte[]{0x13, 0x06, 0x00, 0x22};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x4, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -63,10 +63,10 @@ public class SeqOpTest {
   public void testLoadSeq_2() throws Exception {
     byte[] bytes = new byte[]{0x21, 0x06, 0x00, 0x26};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x4, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -78,10 +78,10 @@ public class SeqOpTest {
   public void testLoadGlobal_1() throws Exception {
     byte[] bytes = new byte[]{0x06, 0x06, 0x00, 0x32};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x4, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -93,10 +93,10 @@ public class SeqOpTest {
   public void testLoadGlobal_2() throws Exception {
     byte[] bytes = new byte[]{0x06, 0x06, 0x00, 0x39};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x4, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -109,10 +109,10 @@ public class SeqOpTest {
     byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3e, 0x00, 0x00, 0x01, 0x00, 0x7f, 0x7f,
         0x7f, 0x7f};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0xc, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -124,10 +124,10 @@ public class SeqOpTest {
   public void testPeekImmediate() throws Exception {
     byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3f, 0x00, 0x00, 0x01, 0x00};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -139,10 +139,10 @@ public class SeqOpTest {
   public void testLoadGprWithOffset_1() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x42, 0x00, 0x00, 0x00, 0x00};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -154,10 +154,10 @@ public class SeqOpTest {
   public void testLoadGprWithOffset_2() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x53, 0x00, 0x00, 0x00, 0x04};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -169,10 +169,10 @@ public class SeqOpTest {
   public void testLoadSeqWithOffset_1() throws Exception {
     byte[] bytes = new byte[]{0x01, 0x50, 0x00, 0x68, 0x00, 0x00, 0x00, 0x5c};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -184,10 +184,10 @@ public class SeqOpTest {
   public void testLoadSeqWithOffset_2() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x66, 0x00, 0x00, 0x00, 0x20};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -199,10 +199,10 @@ public class SeqOpTest {
   public void testLoadGlobalWithOffset_1() throws Exception {
     byte[] bytes = new byte[]{0x01, 0x50, 0x00, 0x70, 0x00, 0x00, 0x00, 0x60};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -214,10 +214,10 @@ public class SeqOpTest {
   public void testLoadGlobalWithOffset_2() throws Exception {
     byte[] bytes = new byte[]{0x3e, 0x02, 0x00, 0x79, 0x00, 0x00, 0x01, (byte) 0xb6};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(bytes, seqOp.getBytes());
+    assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
@@ -230,10 +230,10 @@ public class SeqOpTest {
     byte[] bytes = new byte[]{0x0f, 0x0d, 0x00, 0x7e, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00,
         0x00};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7e, 0x00, 0x00, 0x10, 0x00}, seqOp.getBytes());
+    assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7e, 0x00, 0x00, 0x10, 0x00}, ea.getBytes());
   }
 
   /**
@@ -246,11 +246,11 @@ public class SeqOpTest {
     byte[] bytes = new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89, 0x0f, 0x0e,
         0x00, 0x3f};
     ByteStream bs = new ByteStream(bytes);
-    SeqOp seqOp = SeqOp.get(bs);
-    System.out.println(seqOp.getDescription());
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    System.out.println(ea.getDescription());
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89},
-        seqOp.getBytes());
+        ea.getBytes());
   }
 }
 

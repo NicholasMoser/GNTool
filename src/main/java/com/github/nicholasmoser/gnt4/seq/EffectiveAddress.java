@@ -6,9 +6,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Class that mimics the functionality of the function in GNT4 at address 0x800c95e4, seq_get_op.
+ * Class that mimics the functionality of the function in GNT4 at address 0x800c95e4, get_effective_address.
  */
-public class SeqOp {
+public class EffectiveAddress {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
@@ -16,28 +16,28 @@ public class SeqOp {
   private int opcode;
 
   /**
-   * Private constructor of SeqOp. To create one you must call {@link #get(ByteStream)}.
+   * Private constructor of EffectiveAddress. To create one you must call {@link #get(ByteStream)}.
    *
    * @param bs The byte stream of the seq.
    */
-  private SeqOp(ByteStream bs) {
+  private EffectiveAddress(ByteStream bs) {
     this.bs = bs;
     this.bytes = new ByteArrayOutputStream();
   }
 
   /**
-   * Parses the current opcode in a seq byte stream and calls <code>seq_get_op</code>. This will
-   * iterate the byte stream and return an object with the results of calling
-   * <code>seq_get_op</code>. This will not close the byte stream.
+   * Parses the current opcode in a seq byte stream and calls <code>get_effective_address</code>.
+   * This will iterate the byte stream and return an object with the results of calling
+   * <code>get_effective_address</code>. This will not close the byte stream.
    *
    * @param bs The seq byte stream to read from.
-   * @return The seq_get_op result.
+   * @return The get_effective_address result.
    * @throws IOException If an I/O error occurs.
    */
-  public static SeqOp get(ByteStream bs) throws IOException {
-    SeqOp seqOp = new SeqOp(bs);
-    seqOp.parse();
-    return seqOp;
+  public static EffectiveAddress get(ByteStream bs) throws IOException {
+    EffectiveAddress ea = new EffectiveAddress(bs);
+    ea.parse();
+    return ea;
   }
 
   /**
@@ -48,14 +48,14 @@ public class SeqOp {
   }
 
   /**
-   * @return The opcode bytes plus any bytes read by seq_get_op.
+   * @return The opcode bytes plus any bytes read by get_effective_address.
    */
   public byte[] getBytes() {
     return bytes.toByteArray();
   }
 
   /**
-   * @return A description of the result of seq_get_op.
+   * @return A description of the result of get_effective_address.
    */
   public String getDescription() {
     return description;
@@ -63,7 +63,7 @@ public class SeqOp {
 
   /**
    * Pushes the given word to bytes array. This keeps track of what bytes have been read by
-   * <code>seq_get_op</code>.
+   * <code>get_effective_address</code>.
    *
    * @param word The word to push.
    * @throws IOException If an I/O error occurs.
@@ -73,7 +73,8 @@ public class SeqOp {
   }
 
   /**
-   * Parses an opcode that calls <code>seq_get_op</code> and returns the result of that method.
+   * Parses an opcode that calls <code>get_effective_address</code> and returns the result of that
+   * method.
    *
    * @throws IOException If an I/O error occurs.
    */
