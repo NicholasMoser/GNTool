@@ -30,20 +30,6 @@ public class ByteStream extends ByteArrayInputStream {
   }
 
   /**
-   * Creates <code>ByteStream</code> that uses <code>buf</code> as its buffer array. The initial
-   * value of <code>pos</code> is <code>offset</code> and the initial value of <code>count</code> is
-   * the minimum of <code>offset+length</code> and <code>buf.length</code>. The buffer array is not
-   * copied. The buffer's mark is set to the specified offset.
-   *
-   * @param buf    the input buffer.
-   * @param offset the offset in the buffer of the first byte to read.
-   * @param length the maximum number of bytes to read from the buffer.
-   */
-  public ByteStream(byte[] buf, int offset, int length) {
-    super(buf, offset, length);
-  }
-
-  /**
    * @return The current offset this stream is in the byte array.
    */
   public int offset() {
@@ -52,7 +38,7 @@ public class ByteStream extends ByteArrayInputStream {
 
   /**
    * Read the next big-endian 4-byte word and return it. Then move the position of the stream back
-   * prior to having read the word.
+   * prior to having read the word. Do not call this method if you have already called mark.
    *
    * @return The big-endian 4-byte word.
    * @throws IOException If an I/O error occurs.
@@ -90,5 +76,13 @@ public class ByteStream extends ByteArrayInputStream {
     if (skip(4) != 4) {
       throw new IOException("Failed to skip 4 bytes at offset " + pos);
     }
+  }
+
+  /**
+   * Calls {@link #mark(int)} with a value of zero, since ByteArrayInputStream doesn't care about
+   * the readAheadLimit.
+   */
+  public void mark() {
+    this.mark(0);
   }
 }
