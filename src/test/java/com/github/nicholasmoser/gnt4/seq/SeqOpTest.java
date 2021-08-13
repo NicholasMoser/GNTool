@@ -54,8 +54,8 @@ public class SeqOpTest {
   }
 
   /**
-   * Tests calling opcode 21060026. This will load an seq stored value. This is called for
-   * getting this seq's chr_p +4 bytes appears to be the opponent chr_p TODO: Is that true?
+   * Tests calling opcode 21060026. This will load an seq stored value. This is called for getting
+   * this seq's chr_p +4 bytes appears to be the opponent chr_p TODO: Is that true?
    *
    * @throws Exception If any Exception occurs
    */
@@ -243,12 +243,14 @@ public class SeqOpTest {
    */
   @Test
   public void testPeekImmediateWithOffset() throws Exception {
-    byte[] bytes = new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89, 0x0f, 0x0e, 0x00, 0x3f };
+    byte[] bytes = new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89, 0x0f, 0x0e,
+        0x00, 0x3f};
     ByteStream bs = new ByteStream(bytes);
     SeqOp seqOp = SeqOp.get(bs);
     System.out.println(seqOp.getDescription());
     assertEquals(0x8, bs.offset());
-    assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89}, seqOp.getBytes());
+    assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89},
+        seqOp.getBytes());
   }
 }
 

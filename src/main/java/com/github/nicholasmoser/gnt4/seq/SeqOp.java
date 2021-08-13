@@ -27,8 +27,8 @@ public class SeqOp {
 
   /**
    * Parses the current opcode in a seq byte stream and calls <code>seq_get_op</code>. This will
-   * iterate the byte stream and return an object with the results of calling <code>seq_get_op</code>.
-   * This will not close the byte stream.
+   * iterate the byte stream and return an object with the results of calling
+   * <code>seq_get_op</code>. This will not close the byte stream.
    *
    * @param bs The seq byte stream to read from.
    * @return The seq_get_op result.
@@ -74,6 +74,7 @@ public class SeqOp {
 
   /**
    * Parses an opcode that calls <code>seq_get_op</code> and returns the result of that method.
+   *
    * @throws IOException If an I/O error occurs.
    */
   private void parse() throws IOException {
@@ -119,8 +120,7 @@ public class SeqOp {
   }
 
   /**
-   *
-   * @param bitFlag The bits to check for what to return.
+   * @param bitFlag  The bits to check for what to return.
    * @param returnPc If the program counter should be returned.
    * @throws IOException If an I/O error occurs.
    */
