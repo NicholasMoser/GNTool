@@ -90,10 +90,10 @@ public class EffectiveAddress {
       if ((opcode & 0x80) == 0) {
         if (opcode_last_byte < 0x18) {
           pushWord(bs.readWord());
-          description.append(String.format("Get pointer of gpr%02x", opcode_last_byte));
+          description.append(String.format("EA: gpr%02x", opcode_last_byte));
         } else if (opcode_last_byte < 0x30) {
           pushWord(bs.readWord());
-          description.append(String.format("Get pointer of seq_p_sp->field_0x%02x",
+          description.append(String.format("EA: seq_p_sp->field_0x%02x",
               opcode_last_byte - 0x18));
         } else {
           load_value(opcode_last_byte, true);
@@ -106,15 +106,15 @@ public class EffectiveAddress {
     } else {
       byte lastSixBits = (byte) (opcode & 0x3f);
       if (lastSixBits < 0x18) {
-        description.append(String.format("Get value of gpr%02x", lastSixBits));
+        description.append(String.format("EA: gpr%02x", lastSixBits));
       } else if (lastSixBits < 0x30) {
-        description.append(String.format("Get value of seq_p_sp->field_0x%02x", lastSixBits * 4));
+        description.append(String.format("EA: seq_p_sp->field_0x%02x", lastSixBits * 4));
       } else {
         load_value(lastSixBits, false);
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      description.append(String.format(" and add %08x", word));
+      description.append(String.format(" + offset %08x", word));
       pushWord(word);
     }
   }
@@ -129,41 +129,41 @@ public class EffectiveAddress {
       case 0x30 ->
           // Appears to be a matrix identity used for matrix multiplication of attacking hitbox
           // Address: 80223428
-          description.append("Get pointer of HITBOX_IDENTITY_MATRIX");
+          description.append("EA: HITBOX_IDENTITY_MATRIX");
       case 0x32 ->
           // Pointer to structs of controllers.
           // Address: 80222eb0
-          description.append("Get pointer of CONTROLLERS");
+          description.append("EA: CONTROLLERS");
       case 0x33 ->
           // Pointer to struct of primary controller information. This is the controller being used
           // to navigate menus, stages, etc.
           // Address: 80222e70
-          description.append("Get pointer of PRIMARY_CONTROLLER");
+          description.append("EA: PRIMARY_CONTROLLER");
       case 0x34 ->
           // Pointer to display information, such as resolution, buffer, gamma, z list, z sort, and
           // snapshot. This information is viewable from the debug menu under screen_menu.
           // Address: 802231a8
-          description.append("Get pointer of DISPLAY");
+          description.append("EA: DISPLAY");
       case 0x39 ->
           // Pointer to save data.
           // Address: 802231e8
-          description.append("Get pointer of SAVE_DATA");
+          description.append("EA: SAVE_DATA");
       case 0x3a ->
           // 0x2 is debug mode, 0x0 is normal mode
           // Address: 802233a8
-          description.append("Get pointer of DEBUG_MODE");
+          description.append("EA: DEBUG_MODE");
       case 0x3b ->
           // 0xF is paused, 0x0 is un-paused
           // Address: 80222fb0
-          description.append("Get pointer of PAUSE_GAME");
+          description.append("EA: PAUSE_GAME");
       case 0x3c ->
           // Pointer to game info, such as the current battle mode, scene, and game ticks.
           // Address: 802261d8
-          description.append("Get pointer of GAME_INFO");
+          description.append("EA: GAME_INFO");
       case 0x3d ->
           // Unknown pointer, appears to be unused.
           // Address: 80222e64
-          description.append("Get pointer of UNUSED");
+          description.append("EA: UNUSED");
       case 0x3e -> {
         // Read immediate value
         // Doesn't appear to be used much by GNT4 (if at all)
@@ -183,7 +183,7 @@ public class EffectiveAddress {
           bs.reset();
         }
         description.append(
-            String.format("Get pointer at opcode offset 0x%x: 0x%08x", offset, word));
+            String.format("EA: opcode offset 0x%x: 0x%08x", offset, word));
       }
       case 0x3f -> {
         // Peek immediate value
@@ -202,7 +202,7 @@ public class EffectiveAddress {
           bs.reset();
         }
         description.append(
-            String.format("Get pointer at opcode offset 0x%x: 0x%08x", offset2, word2));
+            String.format("EA: opcode offset 0x%x: 0x%08x", offset2, word2));
       }
       default -> throw new IllegalStateException(
           String.format("Unknown lookup value: %02x", bitFlag));
