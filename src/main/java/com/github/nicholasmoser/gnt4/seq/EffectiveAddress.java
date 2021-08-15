@@ -88,6 +88,7 @@ public class EffectiveAddress {
     if ((opcode & 0x40) == 0) {
       // If first bit set (1000_0000) of last byte
       if ((opcode & 0x80) == 0) {
+        // Load affective address
         if (opcode_last_byte < 0x18) {
           pushWord(bs.readWord());
           description.append(String.format("EA: gpr%02x", opcode_last_byte));
@@ -100,10 +101,30 @@ public class EffectiveAddress {
           pushWord(bs.readWord());
         }
       } else {
+        // Load effective address sum with offset
         // Doesn't appear to be used much by GNT4 (if at all)
-        throw new IllegalStateException("This mode is not yet supported.");
+        byte lastSixBits = (byte) (opcode & 0x3f);
+        if (lastSixBits < 0x18) {
+          description.append(String.format("EA: gpr%02x", lastSixBits));
+        } else if (lastSixBits < 0x30) {
+          description.append(String.format("EA: seq_p_sp->field_0x%02x", lastSixBits * 4));
+        } else {
+          load_value(lastSixBits, false);
+        }
+        pushWord(bs.readWord());
+        int word = bs.readWord();
+        pushWord(word);
+        int bottomTwoBytes = word & 0xffff;
+        int topTwoBytes = word >> 0x10;
+        if (bottomTwoBytes < 0x18) {
+          description.append(String.format(" + gpr%02x", bottomTwoBytes));
+        } else {
+          description.append(String.format(" + seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+        }
+        description.append(String.format(" + %04x", topTwoBytes));
       }
     } else {
+      // Load affective address with offset
       byte lastSixBits = (byte) (opcode & 0x3f);
       if (lastSixBits < 0x18) {
         description.append(String.format("EA: gpr%02x", lastSixBits));

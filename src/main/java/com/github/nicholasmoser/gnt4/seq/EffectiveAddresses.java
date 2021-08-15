@@ -59,6 +59,7 @@ public class EffectiveAddresses {
     if ((first_address_byte & 0x40) == 0) {
       // If first bit set (1000_0000) of third byte
       if ((first_address_byte & 0x80) == 0) {
+        // Load affective address
         if (first_address_byte < 0x18) {
           description.append(String.format("EA: gpr%02x", first_address_byte));
           second_address_byte = (byte) (opcode & 0xff);
@@ -72,10 +73,12 @@ public class EffectiveAddresses {
           second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
         }
       } else {
+        // Load effective address sum with offset
         // Doesn't appear to be used much by GNT4 (if at all)
         throw new IllegalStateException("This mode is not yet supported.");
       }
     } else {
+      // Load affective address with offset
       byte lastSixBits = (byte) (first_address_byte & 0x3f);
       if (lastSixBits < 0x18) {
         description.append(String.format("EA: gpr%02x", lastSixBits));
@@ -97,6 +100,7 @@ public class EffectiveAddresses {
     if ((second_address_byte & 0x40) == 0) {
       // If first bit set (1000_0000) of last byte
       if ((second_address_byte & 0x80) == 0) {
+        // Load effective address
         if (second_address_byte < 0x18) {
           pushWord(bs.readWord());
           description.append(String.format("EA: gpr%02x", second_address_byte));
@@ -109,10 +113,29 @@ public class EffectiveAddresses {
           pushWord(bs.readWord());
         }
       } else {
-        // Doesn't appear to be used much by GNT4 (if at all)
-        throw new IllegalStateException("This mode is not yet supported.");
+        // Load effective address sum with offset
+        byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
+        if (lastSixBits2 < 0x18) {
+          description.append(String.format("EA: gpr%02x", lastSixBits2));
+        } else if (lastSixBits2 < 0x30) {
+          description.append(String.format("EA: seq_p_sp->field_0x%02x", lastSixBits2 * 4));
+        } else {
+          load_value(lastSixBits2, false);
+        }
+        pushWord(bs.readWord());
+        int word = bs.readWord();
+        pushWord(word);
+        int bottomTwoBytes = word & 0xffff;
+        int topTwoBytes = word >> 0x10;
+        if (bottomTwoBytes < 0x18) {
+          description.append(String.format(" + gpr%02x", bottomTwoBytes));
+        } else {
+          description.append(String.format(" + seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+        }
+        description.append(String.format(" + %04x", topTwoBytes));
       }
     } else {
+      // Load affective address with offset
       byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
       if (lastSixBits2 < 0x18) {
         description.append(String.format("EA: gpr%02x", lastSixBits2));
