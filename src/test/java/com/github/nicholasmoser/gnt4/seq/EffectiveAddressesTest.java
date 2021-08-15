@@ -12,8 +12,8 @@ public class EffectiveAddressesTest {
    * Tests calling opcode 04020213.
    *
    * <ul>
-   *   <li>First effective address is a general purpose register value.</li>
-   *   <li>Second effective address is a general purpose register value.</li>
+   *   <li>First effective address is a general purpose register pointer.</li>
+   *   <li>Second effective address is a general purpose register pointer.</li>
    * </ul>
    *
    * @throws Exception If any Exception occurs
@@ -32,8 +32,8 @@ public class EffectiveAddressesTest {
    * Tests calling opcode 0402132f.
    *
    * <ul>
-   *   <li>First effective address is a general purpose register value.</li>
-   *   <li>Second effective address is a general purpose register value.</li>
+   *   <li>First effective address is a general purpose register pointer.</li>
+   *   <li>Second effective address is a seq stored pointer.</li>
    * </ul>
    *
    * @throws Exception If any Exception occurs
@@ -52,14 +52,14 @@ public class EffectiveAddressesTest {
    * Tests calling opcode 0616157b.
    *
    * <ul>
-   *   <li>First effective address is a general purpose register value.</li>
-   *   <li>Second effective address is a global value plus offset.</li>
+   *   <li>First effective address is a general purpose register pointer.</li>
+   *   <li>Second effective address is a global pointer plus offset.</li>
    * </ul>
    *
    * @throws Exception If any Exception occurs
    */
   @Test
-  public void testGprGlobal() throws Exception {
+  public void testGprGlobalPlusOffset() throws Exception {
     byte[] bytes = new byte[]{0x06, 0x16, 0x15, 0x7b, 0x00, 0x00, 0x00, 0x00};
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
@@ -72,8 +72,8 @@ public class EffectiveAddressesTest {
    * Tests calling opcode 04022602.
    *
    * <ul>
-   *   <li>First effective address is a seq stored value.</li>
-   *   <li>Second effective address is a general purpose register value.</li>
+   *   <li>First effective address is a seq stored pointer.</li>
+   *   <li>Second effective address is a general purpose register pointer.</li>
    * </ul>
    *
    * @throws Exception If any Exception occurs
@@ -92,8 +92,8 @@ public class EffectiveAddressesTest {
    * Tests calling opcode 22052620.
    *
    * <ul>
-   *   <li>First effective address is a seq stored value.</li>
-   *   <li>Second effective address is a seq stored value.</li>
+   *   <li>First effective address is a seq stored pointer.</li>
+   *   <li>Second effective address is a seq stored pointer.</li>
    * </ul>
    *
    * @throws Exception If any Exception occurs
@@ -112,7 +112,7 @@ public class EffectiveAddressesTest {
    * Tests calling opcode 04021a3f.
    *
    * <ul>
-   *   <li>First effective address is a seq stored value.</li>
+   *   <li>First effective address is a seq stored pointer.</li>
    *   <li>Second effective address is an immediate value offset.</li>
    * </ul>
    *
@@ -132,7 +132,7 @@ public class EffectiveAddressesTest {
    * Tests calling opcode 09081d3f.
    *
    * <ul>
-   *   <li>First effective address is a seq stored value.</li>
+   *   <li>First effective address is a seq stored pointer.</li>
    *   <li>Second effective address is an immediate value offset.</li>
    * </ul>
    *
@@ -278,10 +278,16 @@ public class EffectiveAddressesTest {
   /**
    * Tests calling opcode 09010293.
    *
+   * <ul>
+   *   <li>First effective address is a general purpose register address.</li>
+   *   <li>Second effective address is a general purpose register value summed with a general
+   *   purpose register value plus offset.</li>
+   * </ul>
+   *
    * @throws Exception If any Exception occurs
    */
   @Test
-  public void test12() throws Exception {
+  public void testGprGprSumPlusOffset() throws Exception {
     byte[] bytes = new byte[]{0x09, 0x01, 0x02, (byte) 0x93, 0x00, 0x00, 0x00, 0x02};
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
