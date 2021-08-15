@@ -108,12 +108,11 @@ public class EffectiveAddress {
         }
       } else {
         // Load effective address sum with offset
-        // Doesn't appear to be used much by GNT4 (if at all)
         byte lastSixBits = (byte) (opcode & 0x3f);
         if (lastSixBits < 0x18) {
-          description.append(String.format("EA: gpr%02x", lastSixBits));
+          description.append(String.format("EA: *gpr%02x", lastSixBits));
         } else if (lastSixBits < 0x30) {
-          description.append(String.format("EA: seq_p_sp->field_0x%02x", lastSixBits * 4));
+          description.append(String.format("EA: *seq_p_sp->field_0x%02x", lastSixBits * 4));
         } else {
           load_value(lastSixBits, false);
         }
@@ -123,19 +122,19 @@ public class EffectiveAddress {
         int bottomTwoBytes = word & 0xffff;
         int topTwoBytes = word >> 0x10;
         if (bottomTwoBytes < 0x18) {
-          description.append(String.format(" + gpr%02x", bottomTwoBytes));
+          description.append(String.format(" + *gpr%02x", bottomTwoBytes));
         } else {
-          description.append(String.format(" + seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+          description.append(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
         }
         description.append(String.format(" + %04x", topTwoBytes));
       }
     } else {
-      // Load affective address with offset
+      // Load effective address with offset
       byte lastSixBits = (byte) (opcode & 0x3f);
       if (lastSixBits < 0x18) {
-        description.append(String.format("EA: gpr%02x", lastSixBits));
+        description.append(String.format("EA: *gpr%02x", lastSixBits));
       } else if (lastSixBits < 0x30) {
-        description.append(String.format("EA: seq_p_sp->field_0x%02x", lastSixBits * 4));
+        description.append(String.format("EA: *seq_p_sp->field_0x%02x", lastSixBits * 4));
       } else {
         load_value(lastSixBits, false);
       }
@@ -193,7 +192,6 @@ public class EffectiveAddress {
           description.append("EA: UNUSED");
       case 0x3e -> {
         // Read immediate value
-        // Doesn't appear to be used much by GNT4 (if at all)
         int offset;
         int word;
         if (returnPc) {
