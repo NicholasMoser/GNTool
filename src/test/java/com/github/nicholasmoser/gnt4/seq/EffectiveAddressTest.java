@@ -22,7 +22,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -39,7 +39,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -56,7 +56,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -76,7 +76,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -93,7 +93,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -110,7 +110,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -128,7 +128,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0xc, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -145,81 +145,76 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x8, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
-   * Tests calling opcode
+   * Tests calling opcode 03030080.
    *
    * Effective address is a general purpose register value plus general purpose register value
    *
    * @throws Exception If any Exception occurs
    */
   @Test
-  @Disabled
   public void testGprSumGpr() throws Exception {
-    byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x03};
+    byte[] bytes = new byte[]{0x03, 0x03, 0x00, (byte) 0x80, 0x00, 0x00, 0x00, 0x17};
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
-   * Tests calling opcode
+   * Tests calling opcode 210600af.
    *
    * Effective address is a seq stored value plus general purpose register value.
    *
    * @throws Exception If any Exception occurs
    */
   @Test
-  @Disabled
   public void testSeqSumGpr() throws Exception {
-    byte[] bytes = new byte[]{0x21, 0x06, 0x00, 0x26};
+    byte[] bytes = new byte[]{0x21, 0x06, 0x00, (byte) 0xaf, 0x00, 0x00, 0x00, 0x17};
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
-   * Tests calling opcode
+   * Tests calling opcode 060600b4.
    *
    * Effective address is a global value plus seq stored value.
    *
    * @throws Exception If any Exception occurs
    */
   @Test
-  @Disabled
   public void testGlobalSumSeq() throws Exception {
-    byte[] bytes = new byte[]{0x06, 0x06, 0x00, 0x39};
+    byte[] bytes = new byte[]{0x06, 0x06, 0x00, (byte) 0xb4, 0x00, 0x00, 0x00, (byte) 0x24};
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x4, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
   /**
-   * Tests calling opcode
+   * Tests calling opcode 020600be.
    *
    * Effective address is a read immediate value plus seq stored value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
   @Test
-  @Disabled
   public void testReadImmediateSumSeqPlusOffset() throws Exception {
-    byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3e, 0x00, 0x00, 0x01, 0x00, 0x7f, 0x7f,
-        0x7f, 0x7f};
+    byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbe, 0x12, 0x34, 0x00, 0x04, 0x00, 0x00, 0x30, 0x00};
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0xc, bs.offset());
-    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals(0x8, bs.offset());
+    assertArrayEquals(new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbe, 0x12, 0x34, 0x00, 0x04}, ea.getBytes());
   }
 
   /**
@@ -235,8 +230,8 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0xc, bs.offset());
-    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals(0x8, bs.offset());
+    assertArrayEquals(new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbf, 0x12, 0x34, 0x00, 0x04}, ea.getBytes());
   }
 
   /**
@@ -252,7 +247,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x8, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -269,7 +264,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x8, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -286,7 +281,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x8, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -303,7 +298,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x8, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -320,7 +315,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x8, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 
@@ -337,7 +332,7 @@ public class EffectiveAddressTest {
     ByteStream bs = new ByteStream(bytes);
     EffectiveAddress ea = EffectiveAddress.get(bs);
     System.out.println(ea.getDescription());
-    assertEquals(0x8, bs.offset());
+    assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
   }
 

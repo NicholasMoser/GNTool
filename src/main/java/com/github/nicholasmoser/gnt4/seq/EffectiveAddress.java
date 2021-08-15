@@ -7,7 +7,13 @@ import java.io.IOException;
 
 /**
  * Class that mimics the functionality of the function in GNT4 at address 0x800c95e4,
- * get_effective_address.
+ * get_effective_address. There are four types of effective addresses:
+ * <ul>
+ *   <li>General purpose register addresses and values</li>
+ *   <li>Seq stored addresses and values</li>
+ *   <li>Global addresses</li>
+ *   <li>Immediate values</li>
+ * </ul>
  */
 public class EffectiveAddress {
 
@@ -204,7 +210,7 @@ public class EffectiveAddress {
           bs.reset();
         }
         description.append(
-            String.format("EA: opcode offset 0x%x: 0x%08x", offset, word));
+            String.format("EA: Immediate value offset 0x%x (0x%08x)", offset, word));
       }
       case 0x3f -> {
         // Peek immediate value
@@ -223,7 +229,7 @@ public class EffectiveAddress {
           bs.reset();
         }
         description.append(
-            String.format("EA: opcode offset 0x%x: 0x%08x", offset2, word2));
+            String.format("EA: Immediate value offset 0x%x (0x%08x)", offset2, word2));
       }
       default -> throw new IllegalStateException(
           String.format("Unknown lookup value: %02x", bitFlag));
