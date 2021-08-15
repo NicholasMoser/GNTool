@@ -1,0 +1,249 @@
+package com.github.nicholasmoser.gnt4.seq;
+
+import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+/**
+ * Class that mimics the functionality of the function in GNT4 at address 0x800c92e8,
+ * get_effective_addresses.
+ */
+public class EffectiveAddresses {
+
+  private final ByteStream bs;
+  private final ByteArrayOutputStream bytes;
+  private StringBuilder description;
+  private int opcode;
+
+  /**
+   * Private constructor of EffectiveAddresses. To create one you must call {@link
+   * #get(ByteStream)}.
+   *
+   * @param bs The byte stream of the seq.
+   */
+  private EffectiveAddresses(ByteStream bs) {
+    this.bs = bs;
+    this.bytes = new ByteArrayOutputStream();
+    this.description = new StringBuilder();
+  }
+
+  /**
+   * Parses the current opcode in a seq byte stream and calls <code>get_effective_addresses</code>.
+   * This will iterate the byte stream and return an object with the results of calling
+   * <code>get_effective_addresses</code>. This will not close the byte stream.
+   *
+   * @param bs The seq byte stream to read from.
+   * @return The get_effective_addresses result.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static EffectiveAddresses get(ByteStream bs) throws IOException {
+    EffectiveAddresses ea = new EffectiveAddresses(bs);
+    ea.parse();
+    return ea;
+  }
+
+  /**
+   * Parses an opcode that calls <code>get_effective_addresses</code> and returns the result of that
+   * method.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
+  private void parse() throws IOException {
+    //
+    this.opcode = bs.peekWord();
+    // Get third 8 bits (1111_1111)
+    byte first_address_byte = (byte) ((opcode >> 0x8) & 0xff);
+    byte second_address_byte;
+    // If second bit set (0100_0000) of third byte
+    if ((first_address_byte & 0x40) == 0) {
+      // If first bit set (1000_0000) of third byte
+      if ((first_address_byte & 0x80) == 0) {
+        if (first_address_byte < 0x18) {
+          description.append(String.format("EA: gpr%02x", first_address_byte));
+          second_address_byte = (byte) (opcode & 0xff);
+        } else if (first_address_byte < 0x30) {
+          description.append(String.format("EA: seq_p_sp->field_0x%02x",
+              first_address_byte - 0x18));
+          second_address_byte = (byte) (opcode & 0xff);
+        } else {
+          load_value(first_address_byte, true);
+          pushWord(bs.readWord());
+          second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
+        }
+      } else {
+        // Doesn't appear to be used much by GNT4 (if at all)
+        throw new IllegalStateException("This mode is not yet supported.");
+      }
+    } else {
+      byte lastSixBits = (byte) (first_address_byte & 0x3f);
+      if (lastSixBits < 0x18) {
+        description.append(String.format("EA: gpr%02x", lastSixBits));
+      } else if (lastSixBits < 0x30) {
+        description.append(String.format("EA: seq_p_sp->field_0x%02x", lastSixBits * 4));
+      } else {
+        load_value(lastSixBits, false);
+      }
+      pushWord(bs.readWord());
+      int word = bs.readWord();
+      description.append(String.format(" + offset %08x", word));
+      pushWord(word);
+      second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
+    }
+
+    // Part 2
+    description.append('\n');
+    // If second bit set (0100_0000) of last byte
+    if ((second_address_byte & 0x40) == 0) {
+      // If first bit set (1000_0000) of last byte
+      if ((second_address_byte & 0x80) == 0) {
+        if (second_address_byte < 0x18) {
+          pushWord(bs.readWord());
+          description.append(String.format("EA: gpr%02x", second_address_byte));
+        } else if (second_address_byte < 0x30) {
+          pushWord(bs.readWord());
+          description.append(String.format("EA: seq_p_sp->field_0x%02x",
+              second_address_byte - 0x18));
+        } else {
+          load_value(second_address_byte, true);
+          pushWord(bs.readWord());
+        }
+      } else {
+        // Doesn't appear to be used much by GNT4 (if at all)
+        throw new IllegalStateException("This mode is not yet supported.");
+      }
+    } else {
+      byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
+      if (lastSixBits2 < 0x18) {
+        description.append(String.format("EA: gpr%02x", lastSixBits2));
+      } else if (lastSixBits2 < 0x30) {
+        description.append(String.format("EA: seq_p_sp->field_0x%02x", lastSixBits2 * 4));
+      } else {
+        load_value(lastSixBits2, false);
+      }
+      pushWord(bs.readWord());
+      int word2 = bs.readWord();
+      description.append(String.format(" + offset %08x", word2));
+      pushWord(word2);
+    }
+  }
+
+  /**
+   * @return The opcode.
+   */
+  public int getOpcode() {
+    return opcode;
+  }
+
+  /**
+   * @return The opcode bytes plus any bytes read by get_effective_addresses.
+   */
+  public byte[] getBytes() {
+    return bytes.toByteArray();
+  }
+
+  /**
+   * @return A description of the result of get_effective_addresses.
+   */
+  public String getDescription() {
+    return description.toString();
+  }
+
+  /**
+   * Pushes the given word to bytes array. This keeps track of what bytes have been read by
+   * <code>get_effective_addresses</code>.
+   *
+   * @param word The word to push.
+   * @throws IOException If an I/O error occurs.
+   */
+  private void pushWord(int word) throws IOException {
+    bytes.write(ByteUtils.fromInt32(word));
+  }
+
+  /**
+   * @param bitFlag  The bits to check for what to return.
+   * @param returnPc If the program counter should be returned.
+   * @throws IOException If an I/O error occurs.
+   */
+  private void load_value(byte bitFlag, boolean returnPc) throws IOException {
+    switch (bitFlag) {
+      case 0x30 ->
+          // Appears to be a matrix identity used for matrix multiplication of attacking hitbox
+          // Address: 80223428
+          description.append("EA: HITBOX_IDENTITY_MATRIX");
+      case 0x32 ->
+          // Pointer to structs of controllers.
+          // Address: 80222eb0
+          description.append("EA: CONTROLLERS");
+      case 0x33 ->
+          // Pointer to struct of primary controller information. This is the controller being used
+          // to navigate menus, stages, etc.
+          // Address: 80222e70
+          description.append("EA: PRIMARY_CONTROLLER");
+      case 0x34 ->
+          // Pointer to display information, such as resolution, buffer, gamma, z list, z sort, and
+          // snapshot. This information is viewable from the debug menu under screen_menu.
+          // Address: 802231a8
+          description.append("EA: DISPLAY");
+      case 0x39 ->
+          // Pointer to save data.
+          // Address: 802231e8
+          description.append("EA: SAVE_DATA");
+      case 0x3a ->
+          // 0x2 is debug mode, 0x0 is normal mode
+          // Address: 802233a8
+          description.append("EA: DEBUG_MODE");
+      case 0x3b ->
+          // 0xF is paused, 0x0 is un-paused
+          // Address: 80222fb0
+          description.append("EA: PAUSE_GAME");
+      case 0x3c ->
+          // Pointer to game info, such as the current battle mode, scene, and game ticks.
+          // Address: 802261d8
+          description.append("EA: GAME_INFO");
+      case 0x3d ->
+          // Unknown pointer, appears to be unused.
+          // Address: 80222e64
+          description.append("EA: UNUSED");
+      case 0x3e -> {
+        // Read immediate value
+        // Doesn't appear to be used much by GNT4 (if at all)
+        int offset;
+        int word;
+        if (returnPc) {
+          pushWord(bs.readWord());
+          offset = bs.offset();
+          word = bs.readWord();
+          pushWord(word);
+        } else {
+          bs.mark();
+          bs.skipWord();
+          bs.skipWord();
+          offset = bs.offset();
+          word = bs.readWord();
+          bs.reset();
+        }
+        description.append(String.format("EA: opcode offset 0x%x: 0x%08x", offset, word));
+      }
+      case 0x3f -> {
+        // Peek immediate value
+        int offset2;
+        int word2;
+        if (returnPc) {
+          pushWord(bs.readWord());
+          offset2 = bs.offset();
+          word2 = bs.peekWord();
+        } else {
+          bs.mark();
+          bs.skipWord();
+          bs.skipWord();
+          offset2 = bs.offset();
+          word2 = bs.readWord();
+          bs.reset();
+        }
+        description.append(String.format("EA: opcode offset 0x%x: 0x%08x", offset2, word2));
+      }
+      default -> throw new IllegalStateException(String.format("Unknown lookup value: %02x", bitFlag));
+    }
+  }
+}
