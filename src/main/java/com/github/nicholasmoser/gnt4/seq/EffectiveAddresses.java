@@ -243,7 +243,8 @@ public class EffectiveAddresses {
         }
         description.append(String.format("EA: opcode offset 0x%x: 0x%08x", offset2, word2));
       }
-      default -> throw new IllegalStateException(String.format("Unknown lookup value: %02x", bitFlag));
+      default -> throw new IllegalStateException(
+          String.format("Unknown lookup value: %02x", bitFlag));
     }
   }
 }
