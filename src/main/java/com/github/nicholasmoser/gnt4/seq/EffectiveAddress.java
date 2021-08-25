@@ -140,7 +140,7 @@ public class EffectiveAddress {
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      description.append(String.format(" + offset %08x", word));
+      description.append(String.format(" + offset 0x%08X", word));
       pushWord(word);
     }
   }

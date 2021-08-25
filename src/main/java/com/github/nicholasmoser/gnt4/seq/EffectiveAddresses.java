@@ -94,7 +94,7 @@ public class EffectiveAddresses {
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      description.append(String.format(" + offset %08x", word));
+      description.append(String.format(" + offset 0x%08X", word));
       pushWord(word);
       second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
     }
@@ -151,7 +151,7 @@ public class EffectiveAddresses {
       }
       pushWord(bs.readWord());
       int word2 = bs.readWord();
-      description.append(String.format(" + offset %08x", word2));
+      description.append(String.format(" + offset 0x%08X", word2));
       pushWord(word2);
     }
   }
