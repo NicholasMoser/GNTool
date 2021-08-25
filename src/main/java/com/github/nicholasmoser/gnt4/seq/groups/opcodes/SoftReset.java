@@ -1,10 +1,10 @@
 package com.github.nicholasmoser.gnt4.seq.groups.opcodes;
 
-public class End implements Opcode {
+public class SoftReset implements Opcode {
 
   private final int offset;
 
-  public End(int offset) {
+  public SoftReset(int offset) {
     this.offset = offset;
   }
 
@@ -20,6 +20,6 @@ public class End implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | end {00000000}", offset);
+    return String.format("%05X | soft_reset {00000000}", offset);
   }
 }

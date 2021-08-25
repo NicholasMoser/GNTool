@@ -1,41 +1,54 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Branch;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Op_0102;
+import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchEqualToZero;
+import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
-import com.github.nicholasmoser.utils.ByteUtils;
-import com.google.common.io.CountingInputStream;
 import java.io.IOException;
 
 public class OpcodeGroup01 {
-  public static Opcode parse(ByteStream bs) throws IOException {
-    int opcodeByte = bs.read();
+  public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     switch(opcodeByte) {
       case 0x02:
-        return op_0102(bs);
+        return UnknownOpcode.of(0x01, 0x02, 8, bs);
+      case 0x04:
+        return UnknownOpcode.of(0x01, 0x04, 8, bs);
       case 0x32:
         return branch(bs);
+      case 0x33:
+        return branchEqualToZero(bs);
+      case 0x45:
+        return branchLinkReturn(bs);
       default:
         throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     }
   }
 
-  public static Opcode op_0102(ByteStream bs) throws IOException {
-    byte[] bytes = new byte[8];
-    if (bs.read(bytes, 2, 6) != 6) {
-      throw new IOException("Failed to read bytes for opcode 0102");
-    }
-    bytes[0] = 0x01;
-    bytes[1] = 0x02;
-    return new Op_0102(bs.offset() - 8, bytes);
-  }
-
   public static Opcode branch(ByteStream bs) throws IOException {
-    if (bs.skip(2) != 2) {
-      throw new IOException("Failed to parse two bytes after opcode at " + bs.offset());
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse two bytes after opcode at " + offset);
     }
     int destination = bs.readWord();
-    return new Branch(bs.offset() - 8, destination);
+    return new Branch(offset, destination);
+  }
+
+  public static Opcode branchEqualToZero(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse two bytes after opcode at " + offset);
+    }
+    int destination = bs.readWord();
+    return new BranchEqualToZero(offset, destination);
+  }
+
+  public static Opcode branchLinkReturn(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse two bytes after opcode at " + offset);
+    }
+    return new BranchLinkReturn(offset);
   }
 }
