@@ -50,6 +50,6 @@ public class UnknownOpcode implements Opcode {
   public String toString() {
     int opcode = bytes[0] << 8;
     opcode |= bytes[1];
-    return String.format("%05X | op_%04x %s%s", offset, opcode, formatRawBytes(bytes), info);
+    return String.format("%05X | op_%04X %s%s", offset, opcode, formatRawBytes(bytes), info);
   }
 }

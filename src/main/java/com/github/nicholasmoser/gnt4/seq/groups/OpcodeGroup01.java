@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Branch;
+import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchAndLink;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchEqualToZero;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
@@ -19,6 +20,8 @@ public class OpcodeGroup01 {
         return branch(bs);
       case 0x33:
         return branchEqualToZero(bs);
+      case 0x3c:
+        return branchAndLink(bs);
       case 0x45:
         return branchLinkReturn(bs);
       default:
@@ -42,6 +45,15 @@ public class OpcodeGroup01 {
     }
     int destination = bs.readWord();
     return new BranchEqualToZero(offset, destination);
+  }
+
+  private static Opcode branchAndLink(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse two bytes after opcode at " + offset);
+    }
+    int destination = bs.readWord();
+    return new BranchAndLink(offset, destination);
   }
 
   public static Opcode branchLinkReturn(ByteStream bs) throws IOException {
