@@ -100,7 +100,7 @@ public class EffectiveAddresses {
     }
 
     // Part 2
-    description.append('\n');
+    description.append("; ");
     // If second bit set (0100_0000) of last byte
     if ((second_address_byte & 0x40) == 0) {
       // If first bit set (1000_0000) of last byte

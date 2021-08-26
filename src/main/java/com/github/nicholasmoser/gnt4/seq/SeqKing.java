@@ -1,9 +1,12 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup04;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup09;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup16;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup37;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup39;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3A;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3B;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
@@ -42,8 +45,14 @@ public class SeqKing {
         case 0x01:
           opcodes.add(OpcodeGroup01.parse(bs, opcode));
           break;
+        case 0x04:
+          opcodes.add(OpcodeGroup04.parse(bs, opcode));
+          break;
         case 0x09:
           opcodes.add(OpcodeGroup09.parse(bs, opcode));
+          break;
+        case 0x16:
+          opcodes.add(OpcodeGroup16.parse(bs, opcode));
           break;
         case 0x37:
           opcodes.add(OpcodeGroup37.parse(bs, opcode));
@@ -53,6 +62,9 @@ public class SeqKing {
           break;
         case 0x3a:
           opcodes.add(OpcodeGroup3A.parse(bs, opcode));
+          break;
+        case 0x3b:
+          opcodes.add(OpcodeGroup3B.parse(bs, opcode));
           break;
         case 0x3c:
           opcodes.add(OpcodeGroup3C.parse(bs, opcode));
