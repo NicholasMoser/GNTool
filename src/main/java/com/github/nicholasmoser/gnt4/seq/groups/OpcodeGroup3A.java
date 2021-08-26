@@ -8,6 +8,8 @@ import java.io.IOException;
 public class OpcodeGroup3A {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     switch(opcodeByte) {
+      case 0x00:
+        return UnknownOpcode.of(0x3A, 0x00, 0x18, bs);
       case 0x01:
         return UnknownOpcode.of(0x3A, 0x01, 0x0c, bs);
       case 0x02:

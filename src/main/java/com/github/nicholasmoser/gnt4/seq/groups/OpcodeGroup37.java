@@ -24,6 +24,10 @@ public class OpcodeGroup37 {
         return UnknownOpcode.of(0x37, 0x0e, 0xc, bs);
       case 0x11:
         return UnknownOpcode.of(0x37, 0x11, 0xc, bs);
+      case 0x12:
+        return UnknownOpcode.of(0x37, 0x12, 0xc, bs);
+      case 0x13:
+        return UnknownOpcode.of(0x37, 0x13, 0xc, bs);
       case 0x15:
         return UnknownOpcode.of(0x37, 0x15, 0xc, bs);
       default:

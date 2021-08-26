@@ -1,7 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq.groups.opcodes;
 
 import com.github.nicholasmoser.utils.ByteStream;
-import com.google.common.primitives.Bytes;
 import java.io.IOException;
 
 public class UnknownOpcode implements Opcode {
@@ -9,12 +8,6 @@ public class UnknownOpcode implements Opcode {
   private final int offset;
   private final byte[] bytes;
   private final String info;
-
-  public UnknownOpcode(int offset, byte[] bytes) {
-    this.offset = offset;
-    this.bytes = bytes;
-    this.info = "";
-  }
 
   public UnknownOpcode(int offset, byte[] bytes, String info) {
     this.offset = offset;
