@@ -12,26 +12,18 @@ import java.io.IOException;
 
 public class OpcodeGroup01 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
-    switch(opcodeByte) {
-      case 0x00:
-        return UnknownOpcode.of(0x01, 0x00, 4, bs);
-      case 0x02:
-        return UnknownOpcode.of(0x01, 0x02, 8, bs);
-      case 0x04:
-        return UnknownOpcode.of(0x01, 0x04, 4, bs);
-      case 0x32:
-        return branch(bs);
-      case 0x33:
-        return branchEqualToZero(bs);
-      case 0x34:
-        return branchNotEqualToZero(bs);
-      case 0x3c:
-        return branchAndLink(bs);
-      case 0x45:
-        return branchLinkReturn(bs);
-      default:
-        throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
-    }
+    return switch (opcodeByte) {
+      case 0x00 -> UnknownOpcode.of(0x01, 0x00, 4, bs);
+      case 0x02 -> UnknownOpcode.of(0x01, 0x02, 8, bs);
+      case 0x04 -> UnknownOpcode.of(0x01, 0x04, 4, bs);
+      case 0x08 -> UnknownOpcode.of(0x01, 0x08, 4, bs);
+      case 0x32 -> branch(bs);
+      case 0x33 -> branchEqualToZero(bs);
+      case 0x34 -> branchNotEqualToZero(bs);
+      case 0x3c -> branchAndLink(bs);
+      case 0x45 -> branchLinkReturn(bs);
+      default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
+    };
   }
 
   public static Opcode branch(ByteStream bs) throws IOException {

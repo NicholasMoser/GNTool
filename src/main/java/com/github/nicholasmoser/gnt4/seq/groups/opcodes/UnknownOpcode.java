@@ -41,8 +41,6 @@ public class UnknownOpcode implements Opcode {
 
   @Override
   public String toString() {
-    int opcode = bytes[0] << 8;
-    opcode |= bytes[1];
-    return String.format("%05X | op_%04X %s%s", offset, opcode, formatRawBytes(bytes), info);
+    return String.format("%05X | op_%02X%02X %s%s", offset, bytes[0], bytes[1], formatRawBytes(bytes), info);
   }
 }
