@@ -30,7 +30,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup44;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3C;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.OpcodeGroup40;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup40;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 import java.nio.file.Files;
