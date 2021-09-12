@@ -1,6 +1,10 @@
 package com.github.nicholasmoser.gnt4.seq.groups.opcodes;
 
+import static j2html.TagCreator.attrs;
+import static j2html.TagCreator.div;
+
 import com.github.nicholasmoser.utils.ByteStream;
+import j2html.tags.ContainerTag;
 import java.io.IOException;
 
 public class UnknownOpcode implements Opcode {
@@ -42,5 +46,11 @@ public class UnknownOpcode implements Opcode {
   @Override
   public String toString() {
     return String.format("%05X | op_%02X%02X %s%s", offset, bytes[0], bytes[1], formatRawBytes(bytes), info);
+  }
+
+  @Override
+  public ContainerTag toHTML() {
+    String id = String.format("#%X", offset);
+    return div(attrs(id)).withText(toString());
   }
 }
