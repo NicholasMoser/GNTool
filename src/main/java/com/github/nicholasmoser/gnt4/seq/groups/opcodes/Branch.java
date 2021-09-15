@@ -8,6 +8,7 @@ import static j2html.TagCreator.span;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import j2html.tags.ContainerTag;
+import java.util.Optional;
 
 public class Branch implements Opcode {
 
@@ -39,8 +40,13 @@ public class Branch implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);
     return div(attrs(id))
-        .with(span(String.format("%05X | b ", offset)))
+        .with(span(String.format("%05X | b ", offset)).attr("class=\"b\""))
         .with(a(String.format("0x%X", destination)).withHref(dest))
         .with(span(String.format(" {01320000 %08X}", destination)));
+  }
+
+  @Override
+  public Optional<String> description() {
+    return Optional.of("Unconditional branch to offset.");
   }
 }

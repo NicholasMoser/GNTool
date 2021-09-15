@@ -54,12 +54,43 @@ public class ByteStream extends ByteArrayInputStream {
   }
 
   /**
+   * Read the next 4 bytes and return them. Then move the position of the stream back
+   * prior to having read the bytes. Do not call this method if you have already called mark.
+   *
+   * @return The 4 bytes.
+   * @throws IOException If an I/O error occurs.
+   */
+  public byte[] peekWordBytes() throws IOException {
+    mark(4);
+    byte[] bytes = new byte[4];
+    if (read(bytes) != 4) {
+      throw new IOException("Failed to peek word at offset " + pos);
+    }
+    reset();
+    return bytes;
+  }
+
+  /**
    * Read the next big-endian 4-byte word and return it.
    *
    * @return The big-endian 4-byte word.
    * @throws IOException If an I/O error occurs.
    */
   public int readWord() throws IOException {
+    byte[] bytes = new byte[4];
+    if (read(bytes) != 4) {
+      throw new IOException("Failed to read word at offset " + pos);
+    }
+    return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getInt();
+  }
+
+  /**
+   * Read the next 4 bytes and return them.
+   *
+   * @return The next 4 bytes.
+   * @throws IOException If an I/O error occurs.
+   */
+  public int readWordBytes() throws IOException {
     byte[] bytes = new byte[4];
     if (read(bytes) != 4) {
       throw new IOException("Failed to read word at offset " + pos);

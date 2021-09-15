@@ -1,19 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq;
 
-import static j2html.TagCreator.attrs;
-import static j2html.TagCreator.body;
-import static j2html.TagCreator.div;
-import static j2html.TagCreator.each;
-import static j2html.TagCreator.h1;
-import static j2html.TagCreator.h2;
-import static j2html.TagCreator.head;
-import static j2html.TagCreator.html;
-import static j2html.TagCreator.p;
-import static j2html.TagCreator.span;
-import static j2html.TagCreator.style;
-import static j2html.TagCreator.text;
-import static j2html.TagCreator.title;
-
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup02;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup03;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup04;
@@ -26,6 +14,8 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup15;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup16;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1D;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1E;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup21;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup24;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup34;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup36;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup37;
@@ -33,28 +23,21 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup38;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup39;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3A;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3B;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3C;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3D;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3E;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup40;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup42;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup44;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup46;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BinaryData;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
-import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
-import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup44;
-import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3C;
-import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup40;
 import com.github.nicholasmoser.utils.ByteStream;
-import com.github.nicholasmoser.utils.ByteUtils;
-import j2html.tags.ContainerTag;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +46,7 @@ public class SeqKing {
 
   public static void generate(Path seqPath, Path outputPath) throws IOException {
     List<Opcode> opcodes = getOpcodes(seqPath);
-    generate(seqPath.getFileName().toString(), opcodes, outputPath);
+    SeqKingHtml.generate(seqPath.getFileName().toString(), opcodes, outputPath);
   }
 
   private static List<Opcode> getOpcodes(Path seqPath) throws IOException {
@@ -82,8 +65,7 @@ public class SeqKing {
 
     // Process the opcodes
     List<Opcode> opcodes = new ArrayList<>();
-    boolean done = false;
-    while (!done) {
+    while (true) {
       bs.mark();
       byte opcodeGroup = (byte) bs.read();
       byte opcode = (byte) bs.read();
@@ -106,6 +88,17 @@ public class SeqKing {
         continue;
       }
 
+      // Check if this is an seq section
+      if (SeqSection.isSeqSectionTitle(bs)) {
+        List<Opcode> section = SeqSection.handleSeqSection(bs);
+        for (Opcode sectionPart : section) {
+          System.out.println(sectionPart);
+        }
+        opcodes.addAll(section);
+        continue;
+      }
+
+      // Otherwise, parse the seq opcode
       switch (opcodeGroup) {
         case 0x00 -> opcodes.add(OpcodeGroup00.parse(bs, opcode));
         case 0x01 -> opcodes.add(OpcodeGroup01.parse(bs, opcode));
@@ -121,6 +114,8 @@ public class SeqKing {
         case 0x16 -> opcodes.add(OpcodeGroup16.parse(bs, opcode));
         case 0x1D -> opcodes.add(OpcodeGroup1D.parse(bs, opcode));
         case 0x1E -> opcodes.add(OpcodeGroup1E.parse(bs, opcode));
+        case 0x21 -> opcodes.add(OpcodeGroup21.parse(bs, opcode));
+        case 0x24 -> opcodes.add(OpcodeGroup24.parse(bs, opcode));
         case 0x34 -> opcodes.add(OpcodeGroup34.parse(bs, opcode));
         case 0x36 -> opcodes.add(OpcodeGroup36.parse(bs, opcode));
         case 0x37 -> opcodes.add(OpcodeGroup37.parse(bs, opcode));
@@ -168,65 +163,5 @@ public class SeqKing {
         break;
     }
     return binaryOffsetToSize;
-  }
-
-  public static void generate(String fileName, List<Opcode> opcodes, Path outputPath) throws IOException {
-    String html = html(
-        getHead(),
-        body(
-            h1(fileName),
-            getBody(opcodes)
-        )
-    ).withLang("en").render();
-    Files.writeString(outputPath, html);
-  }
-
-  private static ContainerTag getBody(List<Opcode> opcodes) {
-    ContainerTag body = div();
-    ContainerTag subroutine = p();
-    for (Opcode opcode : opcodes) {
-      subroutine.with(opcode.toHTML());
-      if (opcode instanceof BranchLinkReturn) {
-        body.with(subroutine);
-        subroutine = p();
-      }
-    }
-    body.with(subroutine);
-    return body;
-  }
-
-  /**
-   * @return The HTML head of the document.
-   */
-  private static ContainerTag getHead() {
-    return head(
-        title("SEQ Report"),
-        style(getCSS())
-    );
-  }
-
-  /**
-   * @return The CSS for the entire document.
-   */
-  private static String getCSS() {
-    return "body {\n"
-        + "background-color: #1E1E1E;\n"
-        + "color: #D4D4D4;\n"
-        + "font-family: Lucida Console;\n"
-        + "padding-left: 10%;\n"
-        + "}\n"
-        + "h1 {\n"
-        + "text-align: center;\n"
-        + "padding-left: 0;\n"
-        + "}\n"
-        + ".focus {\n"
-        + "background-color: #264F78;\n"
-        + "}\n"
-        + "a:link {"
-        + "color: #4E94C3;"
-        + "}"
-        + "a:visited {"
-        + "color: #4E94C3;"
-        + "}";
   }
 }

@@ -1,11 +1,16 @@
 package com.github.nicholasmoser.gnt4.seq.groups.opcodes;
 
 import j2html.tags.ContainerTag;
+import java.util.Optional;
 
 public interface Opcode {
+
   int getOffset();
+
   byte[] getBytes();
+
   ContainerTag toHTML();
+
   default String formatRawBytes(byte[] bytes) {
     StringBuilder sb = new StringBuilder();
     sb.append('{');
@@ -17,5 +22,9 @@ public interface Opcode {
     }
     sb.append('}');
     return sb.toString();
+  }
+
+  default Optional<String> description() {
+    return Optional.empty();
   }
 }

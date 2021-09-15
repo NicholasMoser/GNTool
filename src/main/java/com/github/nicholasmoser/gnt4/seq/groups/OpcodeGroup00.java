@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.HardReset;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.SoftReset;
+import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
@@ -13,6 +14,7 @@ public class OpcodeGroup00 {
     return switch (opcodeByte) {
       case 0x00 -> softReset(bs);
       case 0x01 -> hardReset(bs);
+      case 0x07 -> UnknownOpcode.of(0x00, 0x07, 0x4, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
