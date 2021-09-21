@@ -7,32 +7,29 @@ import com.github.nicholasmoser.utils.ByteStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class OpcodeGroup24 {
+public class OpcodeGroup19 {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x09 -> UnknownOpcode.of(0x24, 0x09, 0x8, bs);
-      case 0x0A -> op_240A(bs);
-      case 0x0E -> UnknownOpcode.of(0x24, 0x0E, 0x8, bs);
-      case 0x14 -> UnknownOpcode.of(0x24, 0x14, 0x8, bs);
-      case 0x1A -> UnknownOpcode.of(0x24, 0x1A, 0x8, bs);
+      case 0x00 -> op_1900(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
 
-  //  >> 8 & 0xff
-
-  private static Opcode op_240A(ByteStream bs) throws IOException {
+  private static Opcode op_1900(ByteStream bs) throws IOException {
     int offset = bs.offset();
     int word = bs.peekWord();
     byte flag = (byte) (word >> 8 & 0xff);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    if (flag == 0x11) {
-      byte[] bytes = bs.readBytes(8);
-      baos.write(bytes);
+    if (flag == 1) {
+      if ((word & 0xff) == 0) {
+        baos.write(bs.readBytes(8));
+      } else {
+        baos.write(bs.readBytes(4));
+      }
+    } else if (flag == 0) {
+      baos.write(bs.readBytes(8));
     }
-    byte[] bytes = bs.readBytes(8);
-    baos.write(bytes);
     return new UnknownOpcode(offset, baos.toByteArray());
   }
 }

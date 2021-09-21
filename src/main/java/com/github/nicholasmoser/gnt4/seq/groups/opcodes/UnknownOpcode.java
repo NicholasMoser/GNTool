@@ -13,6 +13,12 @@ public class UnknownOpcode implements Opcode {
   private final byte[] bytes;
   private final String info;
 
+  public UnknownOpcode(int offset, byte[] bytes) {
+    this.offset = offset;
+    this.bytes = bytes;
+    this.info = "";
+  }
+
   public UnknownOpcode(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;

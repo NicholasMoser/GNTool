@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SeqSection {
+
   public static boolean isSeqSectionTitle(ByteStream bs) throws IOException {
     byte[] word = bs.peekWordBytes();
     String startOfTitle = new String(word, Charsets.US_ASCII);
@@ -56,10 +57,16 @@ public class SeqSection {
       baos.write(chr);
     }
     SectionTitle sectionTitle = new SectionTitle(offset, baos.toByteArray(), title);
-    switch(title) {
-      case(Seq.CHR_TBL) :
+    switch (title) {
+      case (Seq.CHR_TBL):
         return parseChrTbl(bs, sectionTitle);
-      case(Seq.CHR_ACT) :
+      case (Seq.CHR_ACT):
+      case (Seq.CHR_CAM):
+      case (Seq.CHR_SUB02):
+      case (Seq.CHR_MODEL):
+      case (Seq.CHR_MOT):
+      case (Seq.CHR_HIRA):
+      case (Seq.CHR_SEL):
         return Collections.singletonList(sectionTitle);
       default:
         throw new IOException("Unknown seq section: " + title);

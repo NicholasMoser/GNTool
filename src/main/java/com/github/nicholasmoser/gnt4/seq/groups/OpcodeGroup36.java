@@ -22,14 +22,8 @@ public class OpcodeGroup36 {
 
   private static Opcode loadTexture(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    byte[] opcode = new byte[4];
-    if (bs.read(opcode) != 4) {
-      throw new IOException("Failed to read opcode bytes of opcode 3605");
-    }
-    byte[] firstWord = new byte[4];
-    if (bs.read(firstWord) != 4) {
-      throw new IOException("Failed to read first word of opcode 3605");
-    }
+    byte[] opcode = bs.readWordBytes();
+    byte[] firstWord = bs.readWordBytes();
     StringBuilder info = new StringBuilder(String.format(" Use index 0x%x", ByteUtils.toInt32(firstWord)));
     // Get filename
     StringBuilder fileNameBuilder = new StringBuilder();

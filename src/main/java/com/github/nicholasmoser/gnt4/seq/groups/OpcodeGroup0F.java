@@ -6,6 +6,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.google.common.primitives.Bytes;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class OpcodeGroup0F {
@@ -14,7 +15,9 @@ public class OpcodeGroup0F {
     return switch (opcodeByte) {
       case 0x0D -> op_0F0D(bs);
       case 0x0E -> op_0F0E(bs);
+      case 0x0F -> op_0F0F(bs);
       case 0x10 -> op_0F10(bs);
+      case 0x11 -> op_0F11(bs);
       case 0x12 -> UnknownOpcode.of(0x0F, 0x12, 0x4, bs);
       case 0x13 -> UnknownOpcode.of(0x0F, 0x13, 0x4, bs);
       case 0x14 -> op_0F14(bs);
@@ -50,7 +53,21 @@ public class OpcodeGroup0F {
     return new UnknownOpcode(offset, fullBytes, info.toString());
   }
 
+  private static Opcode op_0F0F(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
   private static Opcode op_0F10(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_0F11(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());

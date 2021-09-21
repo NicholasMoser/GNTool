@@ -5,53 +5,54 @@ import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
+import com.google.common.primitives.Bytes;
 import java.io.IOException;
 
-public class OpcodeGroup12 {
+public class OpcodeGroup1A {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x01 -> op_1201(bs);
-      case 0x19 -> op_1219(bs);
-      case 0x1D -> op_121D(bs);
-      case 0x1E -> op_121E(bs);
-      case 0x20 -> UnknownOpcode.of(0x12, 0x20, 0x4, bs);
-      case 0x22 -> op_1222(bs);
+      case 0x19 -> op_1A19(bs);
+      case 0x1B -> op_1A1B(bs);
+      case 0x1D -> op_1A1D(bs);
+      case 0x28 -> op_1A28(bs);
+      case 0x2A -> op_1A2A(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
 
-  private static Opcode op_1201(ByteStream bs) throws IOException {
+  private static Opcode op_1A19(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
-  private static Opcode op_1219(ByteStream bs) throws IOException {
+  private static Opcode op_1A1B(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
-  private static Opcode op_121D(ByteStream bs) throws IOException {
-    int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
-  }
-
-  private static Opcode op_121E(ByteStream bs) throws IOException {
-    int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
-  }
-
-  private static Opcode op_1222(ByteStream bs) throws IOException {
+  private static Opcode op_1A1D(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_1A28(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_1A2A(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }

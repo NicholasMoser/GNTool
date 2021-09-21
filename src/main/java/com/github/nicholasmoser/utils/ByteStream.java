@@ -90,12 +90,21 @@ public class ByteStream extends ByteArrayInputStream {
    * @return The next 4 bytes.
    * @throws IOException If an I/O error occurs.
    */
-  public int readWordBytes() throws IOException {
+  public byte[] readWordBytes() throws IOException {
     byte[] bytes = new byte[4];
     if (read(bytes) != 4) {
-      throw new IOException("Failed to read word at offset " + pos);
+      throw new IOException("Failed to read word bytes at offset " + pos);
     }
-    return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getInt();
+    return bytes;
+  }
+
+  public byte[] readBytes(int num) throws IOException {
+    int startingOffset = pos;
+    byte[] bytes = new byte[num];
+    if (read(bytes) != num) {
+      throw new IOException(String.format("Failed to read %d bytes at offset %d", num, startingOffset));
+    }
+    return bytes;
   }
 
   /**

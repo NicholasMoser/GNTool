@@ -22,10 +22,7 @@ public class OpcodeGroup3E {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
-    byte[] lastWord = new byte[4];
-    if (bs.read(lastWord) != 4) {
-      throw new IOException("Failed to read last word of opcode 3E01");
-    }
+    byte[] lastWord = bs.readWordBytes();
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
     return new UnknownOpcode(offset, fullBytes, info);
   }
@@ -34,10 +31,7 @@ public class OpcodeGroup3E {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
-    byte[] lastWord = new byte[4];
-    if (bs.read(lastWord) != 4) {
-      throw new IOException("Failed to read last word of opcode 3E01");
-    }
+    byte[] lastWord = bs.readWordBytes();
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
     return new UnknownOpcode(offset, fullBytes, info);
   }
@@ -46,10 +40,7 @@ public class OpcodeGroup3E {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
-    byte[] lastWord = new byte[4];
-    if (bs.read(lastWord) != 4) {
-      throw new IOException("Failed to read last word of opcode 3E03");
-    }
+    byte[] lastWord = bs.readWordBytes();
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
     return new UnknownOpcode(offset, fullBytes, info);
   }
