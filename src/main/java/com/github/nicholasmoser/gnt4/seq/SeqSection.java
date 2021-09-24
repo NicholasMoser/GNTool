@@ -67,6 +67,10 @@ public class SeqSection {
       case (Seq.CHR_MOT):
       case (Seq.CHR_HIRA):
       case (Seq.CHR_SEL):
+      case (Seq.CHR_SHOT):
+      case (Seq.CHR_FACE):
+      case (Seq.CHR_DATA):
+      case (Seq.CHR_VISUAL2D):
         return Collections.singletonList(sectionTitle);
       default:
         throw new IOException("Unknown seq section: " + title);

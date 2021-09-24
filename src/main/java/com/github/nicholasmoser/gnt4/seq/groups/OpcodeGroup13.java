@@ -14,6 +14,7 @@ public class OpcodeGroup13 {
     return switch (opcodeByte) {
       case 0x00 -> op_1300(bs);
       case 0x03 -> op_1303(bs);
+      case 0x04 -> op_1304(bs);
       case 0x05 -> op_1305(bs);
       case 0x06 -> op_1306(bs);
       case 0x07 -> op_1307(bs);
@@ -39,6 +40,13 @@ public class OpcodeGroup13 {
   private static Opcode op_1303(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_1304(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }

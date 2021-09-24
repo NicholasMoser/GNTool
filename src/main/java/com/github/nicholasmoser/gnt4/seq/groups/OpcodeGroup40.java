@@ -9,18 +9,14 @@ import java.io.IOException;
 public class OpcodeGroup40 {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
-    switch (opcodeByte) {
-      case 0x01:
-        return UnknownOpcode.of(0x40, 0x01, 0x1C, bs);
-      case 0x02:
-        return UnknownOpcode.of(0x40, 0x02, 0x20, bs);
-      case 0x0D:
-        return op_400D(bs);
-      case 0x0E:
-        return UnknownOpcode.of(0x40, 0x0E, 0x4, bs);
-      default:
-        throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
-    }
+    return switch (opcodeByte) {
+      case 0x01 -> UnknownOpcode.of(0x40, 0x01, 0x1C, bs);
+      case 0x02 -> UnknownOpcode.of(0x40, 0x02, 0x20, bs);
+      case 0x0D -> op_400D(bs);
+      case 0x0E -> UnknownOpcode.of(0x40, 0x0E, 0x4, bs);
+      case 0x24 -> UnknownOpcode.of(0x40, 0x24, 0x4, bs);
+      default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
+    };
   }
 
   private static Opcode op_400D(ByteStream bs) throws IOException {

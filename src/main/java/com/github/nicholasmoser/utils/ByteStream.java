@@ -125,4 +125,6 @@ public class ByteStream extends ByteArrayInputStream {
   public void mark() {
     this.mark(0);
   }
+
+  public void seek(int pos) { this.pos = pos; }
 }

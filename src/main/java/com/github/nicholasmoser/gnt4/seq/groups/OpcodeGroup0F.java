@@ -13,6 +13,7 @@ public class OpcodeGroup0F {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
+      case 0x0A -> op_0F0A(bs);
       case 0x0D -> op_0F0D(bs);
       case 0x0E -> op_0F0E(bs);
       case 0x0F -> op_0F0F(bs);
@@ -23,6 +24,13 @@ public class OpcodeGroup0F {
       case 0x14 -> op_0F14(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
+  }
+
+  private static Opcode op_0F0A(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   private static Opcode op_0F0D(ByteStream bs) throws IOException {

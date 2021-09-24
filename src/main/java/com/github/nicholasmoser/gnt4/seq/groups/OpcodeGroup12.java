@@ -12,6 +12,8 @@ public class OpcodeGroup12 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
       case 0x01 -> op_1201(bs);
+      case 0x09 -> op_1209(bs);
+      case 0x0A -> op_120A(bs);
       case 0x19 -> op_1219(bs);
       case 0x1D -> op_121D(bs);
       case 0x1E -> op_121E(bs);
@@ -22,6 +24,20 @@ public class OpcodeGroup12 {
   }
 
   private static Opcode op_1201(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_1209(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_120A(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
