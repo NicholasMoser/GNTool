@@ -1,25 +1,33 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
+import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
+import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
+import com.github.nicholasmoser.gnt4.seq.operands.Operand;
+import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class that mimics the functionality of the function in GNT4 at address 0x800c92e8,
  * get_effective_addresses. There are four types of effective addresses:
- *  * <ul>
- *  *   <li>General purpose register addresses and values</li>
- *  *   <li>Seq stored addresses and values</li>
- *  *   <li>Global addresses</li>
- *  *   <li>Immediate values</li>
- *  * </ul>
+ * * <ul>
+ * *   <li>General purpose register addresses and values</li>
+ * *   <li>Seq stored addresses and values</li>
+ * *   <li>Global addresses</li>
+ * *   <li>Immediate values</li>
+ * * </ul>
  */
 public class EffectiveAddresses {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
-  private StringBuilder description;
+  private final List<Operand> operands;
   private int opcode;
 
   /**
@@ -31,7 +39,7 @@ public class EffectiveAddresses {
   private EffectiveAddresses(ByteStream bs) {
     this.bs = bs;
     this.bytes = new ByteArrayOutputStream();
-    this.description = new StringBuilder();
+    this.operands = new ArrayList<>(2);
   }
 
   /**
@@ -56,7 +64,7 @@ public class EffectiveAddresses {
    * @throws IOException If an I/O error occurs.
    */
   private void parse() throws IOException {
-    //
+    Operand operand;
     this.opcode = bs.peekWord();
     // Get third 8 bits (1111_1111)
     byte first_address_byte = (byte) ((opcode >> 0x8) & 0xff);
@@ -67,14 +75,13 @@ public class EffectiveAddresses {
       if ((first_address_byte & 0x80) == 0) {
         // Load affective address
         if (first_address_byte < 0x18) {
-          description.append(String.format("EA: gpr%02x", first_address_byte));
+          operands.add(new GPROperand(first_address_byte));
           second_address_byte = (byte) (opcode & 0xff);
         } else if (first_address_byte < 0x30) {
-          description.append(String.format("EA: seq_p_sp->field_0x%02x",
-              first_address_byte - 0x18));
+          operands.add(new SeqOperand((byte) (first_address_byte - 0x18)));
           second_address_byte = (byte) (opcode & 0xff);
         } else {
-          load_value(first_address_byte, true);
+          operands.add(loadOperand(first_address_byte, true));
           pushWord(bs.readWord());
           second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
         }
@@ -86,21 +93,21 @@ public class EffectiveAddresses {
       // Load effective address with offset
       byte lastSixBits = (byte) (first_address_byte & 0x3f);
       if (lastSixBits < 0x18) {
-        description.append(String.format("EA: *gpr%02x", lastSixBits));
+        operand = new GPROperand(lastSixBits);
       } else if (lastSixBits < 0x30) {
-        description.append(String.format("EA: *seq_p_sp->field_0x%02x", lastSixBits * 4));
+        operand = new SeqOperand((byte) (lastSixBits * 4));
       } else {
-        load_value(lastSixBits, false);
+        operand = loadOperand(lastSixBits, false);
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      description.append(String.format(" + offset 0x%08X", word));
+      operand.addInfo(String.format(" + offset 0x%08X", word));
+      operands.add(operand);
       pushWord(word);
       second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
     }
 
     // Part 2
-    description.append("; ");
     // If second bit set (0100_0000) of last byte
     if ((second_address_byte & 0x40) == 0) {
       // If first bit set (1000_0000) of last byte
@@ -108,24 +115,23 @@ public class EffectiveAddresses {
         // Load effective address
         if (second_address_byte < 0x18) {
           pushWord(bs.readWord());
-          description.append(String.format("EA: gpr%02x", second_address_byte));
+          operands.add(new GPROperand(second_address_byte));
         } else if (second_address_byte < 0x30) {
           pushWord(bs.readWord());
-          description.append(String.format("EA: seq_p_sp->field_0x%02x",
-              second_address_byte - 0x18));
+          operands.add(new SeqOperand((byte) (second_address_byte - 0x18)));
         } else {
-          load_value(second_address_byte, true);
+          operands.add(loadOperand(second_address_byte, true));
           pushWord(bs.readWord());
         }
       } else {
         // Load effective address sum with offset
         byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
         if (lastSixBits2 < 0x18) {
-          description.append(String.format("EA: *gpr%02x", lastSixBits2));
+          operand = new GPROperand(lastSixBits2);
         } else if (lastSixBits2 < 0x30) {
-          description.append(String.format("EA: *seq_p_sp->field_0x%02x", lastSixBits2 * 4));
+          operand = new SeqOperand((byte) (lastSixBits2 * 4));
         } else {
-          load_value(lastSixBits2, false);
+          operand = loadOperand(lastSixBits2, false);
         }
         pushWord(bs.readWord());
         int word = bs.readWord();
@@ -133,25 +139,27 @@ public class EffectiveAddresses {
         int bottomTwoBytes = word & 0xffff;
         int topTwoBytes = word >> 0x10;
         if (bottomTwoBytes < 0x18) {
-          description.append(String.format(" + *gpr%02x", bottomTwoBytes));
+          operand.addInfo(String.format(" + *gpr%02x", bottomTwoBytes));
         } else {
-          description.append(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+          operand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
         }
-        description.append(String.format(" + %04x", topTwoBytes));
+        operand.addInfo(String.format(" + %04x", topTwoBytes));
+        operands.add(operand);
       }
     } else {
       // Load effective address with offset
       byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
       if (lastSixBits2 < 0x18) {
-        description.append(String.format("EA: *gpr%02x", lastSixBits2));
+        operand = new GPROperand(lastSixBits2);
       } else if (lastSixBits2 < 0x30) {
-        description.append(String.format("EA: *seq_p_sp->field_0x%02x", lastSixBits2 * 4));
+        operand = new SeqOperand((byte) (lastSixBits2 * 4));
       } else {
-        load_value(lastSixBits2, false);
+        operand = loadOperand(lastSixBits2, false);
       }
       pushWord(bs.readWord());
       int word2 = bs.readWord();
-      description.append(String.format(" + offset 0x%08X", word2));
+      operand.addInfo(String.format(" + offset 0x%08X", word2));
+      operands.add(operand);
       pushWord(word2);
     }
   }
@@ -174,7 +182,13 @@ public class EffectiveAddresses {
    * @return A description of the result of get_effective_addresses.
    */
   public String getDescription() {
-    return description.toString();
+    return operands.stream()
+        .map(Object::toString)
+        .collect(Collectors.joining("; "));
+  }
+
+  public List<Operand> getOperands() {
+    return List.copyOf(operands);
   }
 
   /**
@@ -193,85 +207,87 @@ public class EffectiveAddresses {
    * @param returnPc If the program counter should be returned.
    * @throws IOException If an I/O error occurs.
    */
-  private void load_value(byte bitFlag, boolean returnPc) throws IOException {
-    switch (bitFlag) {
+  private Operand loadOperand(byte bitFlag, boolean returnPc) throws IOException {
+    return switch (bitFlag) {
       case 0x30 ->
           // Appears to be a matrix identity used for matrix multiplication of attacking hitbox
           // Address: 80223428
-          description.append("EA: HITBOX_IDENTITY_MATRIX");
+          new GlobalOperand(GlobalOperand.Value.HITBOX_IDENTITY_MATRIX);
       case 0x32 ->
           // Pointer to structs of controllers.
           // Address: 80222eb0
-          description.append("EA: CONTROLLERS");
+          new GlobalOperand(GlobalOperand.Value.CONTROLLERS);
       case 0x33 ->
           // Pointer to struct of primary controller information. This is the controller being used
           // to navigate menus, stages, etc.
           // Address: 80222e70
-          description.append("EA: PRIMARY_CONTROLLER");
+          new GlobalOperand(GlobalOperand.Value.PRIMARY_CONTROLLER);
       case 0x34 ->
           // Pointer to display information, such as resolution, buffer, gamma, z list, z sort, and
           // snapshot. This information is viewable from the debug menu under screen_menu.
           // Address: 802231a8
-          description.append("EA: DISPLAY");
+          new GlobalOperand(GlobalOperand.Value.DISPLAY);
       case 0x39 ->
           // Pointer to save data.
           // Address: 802231e8
-          description.append("EA: SAVE_DATA");
+          new GlobalOperand(GlobalOperand.Value.SAVE_DATA);
       case 0x3a ->
           // 0x2 is debug mode, 0x0 is normal mode
           // Address: 802233a8
-          description.append("EA: DEBUG_MODE");
+          new GlobalOperand(GlobalOperand.Value.DEBUG_MODE);
       case 0x3b ->
           // 0xF is paused, 0x0 is un-paused
           // Address: 80222fb0
-          description.append("EA: PAUSE_GAME");
+          new GlobalOperand(GlobalOperand.Value.PAUSE_GAME);
       case 0x3c ->
           // Pointer to game info, such as the current battle mode, scene, and game ticks.
           // Address: 802261d8
-          description.append("EA: GAME_INFO");
+          new GlobalOperand(GlobalOperand.Value.GAME_INFO);
       case 0x3d ->
           // Unknown pointer, appears to be unused.
           // Address: 80222e64
-          description.append("EA: UNUSED");
-      case 0x3e -> {
-        // Read immediate value
-        int offset;
-        int word;
-        if (returnPc) {
-          pushWord(bs.readWord());
-          offset = bs.offset();
-          word = bs.readWord();
-          pushWord(word);
-        } else {
-          bs.mark();
-          bs.skipWord();
-          bs.skipWord();
-          offset = bs.offset();
-          word = bs.readWord();
-          bs.reset();
-        }
-        description.append(String.format("EA: Immediate value offset 0x%x (0x%08x)", offset, word));
-      }
-      case 0x3f -> {
-        // Peek immediate value
-        int offset2;
-        int word2;
-        if (returnPc) {
-          pushWord(bs.readWord());
-          offset2 = bs.offset();
-          word2 = bs.peekWord();
-        } else {
-          bs.mark();
-          bs.skipWord();
-          bs.skipWord();
-          offset2 = bs.offset();
-          word2 = bs.readWord();
-          bs.reset();
-        }
-        description.append(String.format("EA: Immediate value offset 0x%x (0x%08x)", offset2, word2));
-      }
+          new GlobalOperand(GlobalOperand.Value.UNUSED);
+      case 0x3e -> readImmediate(returnPc);
+      case 0x3f -> peekImmediate(returnPc);
       default -> throw new IllegalStateException(
           String.format("Unknown lookup value: %02x", bitFlag));
+    };
+  }
+
+  private Operand readImmediate(boolean returnPc) throws IOException {
+    int offset;
+    int word;
+    if (returnPc) {
+      pushWord(bs.readWord());
+      offset = bs.offset();
+      word = bs.readWord();
+      pushWord(word);
+    } else {
+      bs.mark();
+      bs.skipWord();
+      bs.skipWord();
+      offset = bs.offset();
+      word = bs.readWord();
+      bs.reset();
     }
+    return new ImmediateOperand(offset, word);
+  }
+
+  private Operand peekImmediate(boolean returnPc) throws IOException {
+    int offset;
+    int word;
+    if (returnPc) {
+      pushWord(bs.readWord());
+      offset = bs.offset();
+      word = bs.peekWord();
+    } else {
+      bs.mark();
+      bs.skipWord();
+      bs.skipWord();
+      offset = bs.offset();
+      word = bs.readWord();
+      bs.reset();
+    }
+    return new ImmediateOperand(offset, word);
   }
 }
