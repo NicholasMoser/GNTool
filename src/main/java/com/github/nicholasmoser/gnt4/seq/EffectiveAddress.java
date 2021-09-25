@@ -101,10 +101,10 @@ public class EffectiveAddress {
         // Load affective address
         if (opcode_last_byte < 0x18) {
           pushWord(bs.readWord());
-          operand = new GPROperand(opcode_last_byte);
+          operand = new GPROperand(opcode_last_byte, true);
         } else if (opcode_last_byte < 0x30) {
           pushWord(bs.readWord());
-          operand = new SeqOperand((byte) (opcode_last_byte - 0x18));
+          operand = new SeqOperand((byte) (opcode_last_byte - 0x18), true);
         } else {
           operand = loadOperand(opcode_last_byte, true);
           pushWord(bs.readWord());
@@ -113,9 +113,9 @@ public class EffectiveAddress {
         // Load effective address sum with offset
         byte lastSixBits = (byte) (opcode & 0x3f);
         if (lastSixBits < 0x18) {
-          operand = new GPROperand(lastSixBits);
+          operand = new GPROperand(lastSixBits, false);
         } else if (lastSixBits < 0x30) {
-          operand = new SeqOperand((byte) (lastSixBits * 4));
+          operand = new SeqOperand((byte) (lastSixBits * 4), false);
         } else {
           operand = loadOperand(lastSixBits, false);
         }
@@ -135,9 +135,9 @@ public class EffectiveAddress {
       // Load effective address with offset
       byte lastSixBits = (byte) (opcode & 0x3f);
       if (lastSixBits < 0x18) {
-        operand = new GPROperand(lastSixBits);
+        operand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        operand = new SeqOperand((byte) (lastSixBits * 4));
+        operand = new SeqOperand((byte) (lastSixBits * 4), false);
       } else {
         operand = loadOperand(lastSixBits, false);
       }

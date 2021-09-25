@@ -75,10 +75,10 @@ public class EffectiveAddresses {
       if ((first_address_byte & 0x80) == 0) {
         // Load affective address
         if (first_address_byte < 0x18) {
-          operands.add(new GPROperand(first_address_byte));
+          operands.add(new GPROperand(first_address_byte, true));
           second_address_byte = (byte) (opcode & 0xff);
         } else if (first_address_byte < 0x30) {
-          operands.add(new SeqOperand((byte) (first_address_byte - 0x18)));
+          operands.add(new SeqOperand((byte) (first_address_byte - 0x18), true));
           second_address_byte = (byte) (opcode & 0xff);
         } else {
           operands.add(loadOperand(first_address_byte, true));
@@ -93,9 +93,9 @@ public class EffectiveAddresses {
       // Load effective address with offset
       byte lastSixBits = (byte) (first_address_byte & 0x3f);
       if (lastSixBits < 0x18) {
-        operand = new GPROperand(lastSixBits);
+        operand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        operand = new SeqOperand((byte) (lastSixBits * 4));
+        operand = new SeqOperand((byte) (lastSixBits * 4), false);
       } else {
         operand = loadOperand(lastSixBits, false);
       }
@@ -115,10 +115,10 @@ public class EffectiveAddresses {
         // Load effective address
         if (second_address_byte < 0x18) {
           pushWord(bs.readWord());
-          operands.add(new GPROperand(second_address_byte));
+          operands.add(new GPROperand(second_address_byte, true));
         } else if (second_address_byte < 0x30) {
           pushWord(bs.readWord());
-          operands.add(new SeqOperand((byte) (second_address_byte - 0x18)));
+          operands.add(new SeqOperand((byte) (second_address_byte - 0x18), true));
         } else {
           operands.add(loadOperand(second_address_byte, true));
           pushWord(bs.readWord());
@@ -127,9 +127,9 @@ public class EffectiveAddresses {
         // Load effective address sum with offset
         byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
         if (lastSixBits2 < 0x18) {
-          operand = new GPROperand(lastSixBits2);
+          operand = new GPROperand(lastSixBits2, false);
         } else if (lastSixBits2 < 0x30) {
-          operand = new SeqOperand((byte) (lastSixBits2 * 4));
+          operand = new SeqOperand((byte) (lastSixBits2 * 4), false);
         } else {
           operand = loadOperand(lastSixBits2, false);
         }
@@ -150,9 +150,9 @@ public class EffectiveAddresses {
       // Load effective address with offset
       byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
       if (lastSixBits2 < 0x18) {
-        operand = new GPROperand(lastSixBits2);
+        operand = new GPROperand(lastSixBits2, false);
       } else if (lastSixBits2 < 0x30) {
-        operand = new SeqOperand((byte) (lastSixBits2 * 4));
+        operand = new SeqOperand((byte) (lastSixBits2 * 4), false);
       } else {
         operand = loadOperand(lastSixBits2, false);
       }
