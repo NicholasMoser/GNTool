@@ -2,7 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.operands;
 
 public class GPROperand implements Operand {
 
-  private final byte index;
+  private final int index;
   private final boolean pointer;
   private final StringBuilder infoBuilder;
 
@@ -10,12 +10,20 @@ public class GPROperand implements Operand {
    * Creates a new general purpose register operand.
    *
    * @param index The general purpose register index.
-   * @param pointer If this operand is a pointer; otherwise it is the value of a pointer.
+   * @param isPointer If this operand is a pointer; otherwise it is the value of a pointer.
    */
-  public GPROperand(byte index, boolean pointer) {
+  public GPROperand(int index, boolean isPointer) {
     this.index = index;
-    this.pointer = pointer;
+    this.pointer = isPointer;
     this.infoBuilder = new StringBuilder();
+  }
+
+  public int getIndex() {
+    return index;
+  }
+
+  public boolean isPointer() {
+    return pointer;
   }
 
   @Override

@@ -78,7 +78,7 @@ public class EffectiveAddresses {
           operands.add(new GPROperand(first_address_byte, true));
           second_address_byte = (byte) (opcode & 0xff);
         } else if (first_address_byte < 0x30) {
-          operands.add(new SeqOperand((byte) (first_address_byte - 0x18), true));
+          operands.add(new SeqOperand(first_address_byte - 0x18, true));
           second_address_byte = (byte) (opcode & 0xff);
         } else {
           operands.add(loadOperand(first_address_byte, true));
@@ -95,7 +95,7 @@ public class EffectiveAddresses {
       if (lastSixBits < 0x18) {
         operand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        operand = new SeqOperand((byte) (lastSixBits * 4), false);
+        operand = new SeqOperand(lastSixBits * 4, false);
       } else {
         operand = loadOperand(lastSixBits, false);
       }
@@ -118,7 +118,7 @@ public class EffectiveAddresses {
           operands.add(new GPROperand(second_address_byte, true));
         } else if (second_address_byte < 0x30) {
           pushWord(bs.readWord());
-          operands.add(new SeqOperand((byte) (second_address_byte - 0x18), true));
+          operands.add(new SeqOperand(second_address_byte - 0x18, true));
         } else {
           operands.add(loadOperand(second_address_byte, true));
           pushWord(bs.readWord());
@@ -129,7 +129,7 @@ public class EffectiveAddresses {
         if (lastSixBits2 < 0x18) {
           operand = new GPROperand(lastSixBits2, false);
         } else if (lastSixBits2 < 0x30) {
-          operand = new SeqOperand((byte) (lastSixBits2 * 4), false);
+          operand = new SeqOperand(lastSixBits2 * 4, false);
         } else {
           operand = loadOperand(lastSixBits2, false);
         }
@@ -152,7 +152,7 @@ public class EffectiveAddresses {
       if (lastSixBits2 < 0x18) {
         operand = new GPROperand(lastSixBits2, false);
       } else if (lastSixBits2 < 0x30) {
-        operand = new SeqOperand((byte) (lastSixBits2 * 4), false);
+        operand = new SeqOperand(lastSixBits2 * 4, false);
       } else {
         operand = loadOperand(lastSixBits2, false);
       }
@@ -161,6 +161,9 @@ public class EffectiveAddresses {
       operand.addInfo(String.format(" + offset 0x%08X", word2));
       operands.add(operand);
       pushWord(word2);
+    }
+    if (operands.size() != 2) {
+      throw new IllegalStateException("Failed to parse operands, only found " + operands.size());
     }
   }
 
@@ -189,6 +192,14 @@ public class EffectiveAddresses {
 
   public List<Operand> getOperands() {
     return List.copyOf(operands);
+  }
+
+  public Operand getFirstOperand() {
+    return operands.get(0);
+  }
+
+  public Operand getSecondOperand() {
+    return operands.get(1);
   }
 
   /**

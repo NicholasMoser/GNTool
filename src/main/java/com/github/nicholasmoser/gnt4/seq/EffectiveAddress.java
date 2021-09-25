@@ -73,6 +73,10 @@ public class EffectiveAddress {
     return operand.toString();
   }
 
+  public Operand getOperand() {
+    return operand;
+  }
+
   /**
    * Pushes the given word to bytes array. This keeps track of what bytes have been read by
    * <code>get_effective_address</code>.
@@ -104,7 +108,7 @@ public class EffectiveAddress {
           operand = new GPROperand(opcode_last_byte, true);
         } else if (opcode_last_byte < 0x30) {
           pushWord(bs.readWord());
-          operand = new SeqOperand((byte) (opcode_last_byte - 0x18), true);
+          operand = new SeqOperand(opcode_last_byte - 0x18, true);
         } else {
           operand = loadOperand(opcode_last_byte, true);
           pushWord(bs.readWord());
@@ -115,7 +119,7 @@ public class EffectiveAddress {
         if (lastSixBits < 0x18) {
           operand = new GPROperand(lastSixBits, false);
         } else if (lastSixBits < 0x30) {
-          operand = new SeqOperand((byte) (lastSixBits * 4), false);
+          operand = new SeqOperand(lastSixBits * 4, false);
         } else {
           operand = loadOperand(lastSixBits, false);
         }
@@ -137,7 +141,7 @@ public class EffectiveAddress {
       if (lastSixBits < 0x18) {
         operand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        operand = new SeqOperand((byte) (lastSixBits * 4), false);
+        operand = new SeqOperand(lastSixBits * 4, false);
       } else {
         operand = loadOperand(lastSixBits, false);
       }

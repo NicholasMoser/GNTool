@@ -12,6 +12,10 @@ public class ImmediateOperand implements Operand {
     this.infoBuilder = new StringBuilder();
   }
 
+  public int getOffset() {
+    return offset;
+  }
+
   public int getImmediateValue() {
     return word;
   }
