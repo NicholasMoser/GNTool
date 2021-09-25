@@ -33,16 +33,16 @@ public class EffectiveAddressesTest {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     assertEquals(0x4, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr02; EA: gpr13", ea.getDescription());
+    assertEquals("EA: gpr2; EA: gpr19", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
-    assertEquals(0x02, gprOperand.getIndex());
+    assertEquals(2, gprOperand.getIndex());
     assertTrue(gprOperand.isPointer());
     Operand operand2 = ea.getSecondOperand();
     assertTrue(operand2 instanceof GPROperand);
     GPROperand gprOperand2 = (GPROperand) operand2;
-    assertEquals(0x13, gprOperand2.getIndex());
+    assertEquals(19, gprOperand2.getIndex());
     assertTrue(gprOperand2.isPointer());
   }
 
@@ -63,11 +63,11 @@ public class EffectiveAddressesTest {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     assertEquals(0x4, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr13; EA: seq_p_sp->field_0x17", ea.getDescription());
+    assertEquals("EA: gpr19; EA: seq_p_sp->field_0x17", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
-    assertEquals(0x13, gprOperand.getIndex());
+    assertEquals(19, gprOperand.getIndex());
     assertTrue(gprOperand.isPointer());
     Operand operand2 = ea.getSecondOperand();
     assertTrue(operand2 instanceof SeqOperand);
@@ -93,11 +93,11 @@ public class EffectiveAddressesTest {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr15; EA: PAUSE_GAME + offset 0x00000000", ea.getDescription());
+    assertEquals("EA: gpr21; EA: PAUSE_GAME + offset 0x00000000", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
-    assertEquals(0x15, gprOperand.getIndex());
+    assertEquals(21, gprOperand.getIndex());
     assertTrue(gprOperand.isPointer());
     Operand operand2 = ea.getSecondOperand();
     assertTrue(operand2 instanceof GlobalOperand);
@@ -124,7 +124,7 @@ public class EffectiveAddressesTest {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     assertEquals(0x4, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: seq_p_sp->field_0x0e; EA: gpr02", ea.getDescription());
+    assertEquals("EA: seq_p_sp->field_0x0e; EA: gpr2", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -133,7 +133,7 @@ public class EffectiveAddressesTest {
     Operand operand2 = ea.getSecondOperand();
     assertTrue(operand2 instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand2;
-    assertEquals(0x02, gprOperand.getIndex());
+    assertEquals(2, gprOperand.getIndex());
     assertTrue(gprOperand.isPointer());
   }
 
@@ -277,11 +277,11 @@ public class EffectiveAddressesTest {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     assertEquals(0x10, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *gpr04 + offset 0x00000024; EA: Immediate value offset 0xc (0x00020004)", ea.getDescription());
+    assertEquals("EA: *gpr4 + offset 0x00000024; EA: Immediate value offset 0xc (0x00020004)", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
-    assertEquals(0x04, gprOperand.getIndex());
+    assertEquals(4, gprOperand.getIndex());
     assertFalse(gprOperand.isPointer());
     Operand operand2 = ea.getSecondOperand();
     assertTrue(operand2 instanceof ImmediateOperand);
@@ -308,11 +308,11 @@ public class EffectiveAddressesTest {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     assertEquals(0x10, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *gpr13 + offset 0x00000068; EA: GAME_INFO + offset 0x0000221C", ea.getDescription());
+    assertEquals("EA: *gpr19 + offset 0x00000068; EA: GAME_INFO + offset 0x0000221C", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
-    assertEquals(0x13, gprOperand.getIndex());
+    assertEquals(19, gprOperand.getIndex());
     assertFalse(gprOperand.isPointer());
     Operand operand2 = ea.getSecondOperand();
     assertTrue(operand2 instanceof GlobalOperand);
@@ -434,16 +434,16 @@ public class EffectiveAddressesTest {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr02; EA: *gpr13 + *gpr02 + 0000", ea.getDescription());
+    assertEquals("EA: gpr2; EA: *gpr19 + *gpr2 + 0000", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
-    assertEquals(0x2, gprOperand.getIndex());
+    assertEquals(2, gprOperand.getIndex());
     assertTrue(gprOperand.isPointer());
     Operand operand2 = ea.getSecondOperand();
     assertTrue(operand2 instanceof GPROperand);
     GPROperand gprOperand2 = (GPROperand) operand2;
-    assertEquals(0x13, gprOperand2.getIndex());
+    assertEquals(19, gprOperand2.getIndex());
     assertFalse(gprOperand2.isPointer());
   }
 }

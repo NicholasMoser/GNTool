@@ -139,7 +139,7 @@ public class EffectiveAddresses {
         int bottomTwoBytes = word & 0xffff;
         int topTwoBytes = word >> 0x10;
         if (bottomTwoBytes < 0x18) {
-          operand.addInfo(String.format(" + *gpr%02x", bottomTwoBytes));
+          operand.addInfo(String.format(" + *gpr%d", bottomTwoBytes));
         } else {
           operand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
         }

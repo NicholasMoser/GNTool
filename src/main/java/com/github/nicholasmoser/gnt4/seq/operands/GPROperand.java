@@ -34,6 +34,6 @@ public class GPROperand implements Operand {
   @Override
   public String toString() {
     String prefix = pointer ? "" : "*";
-    return String.format("EA: %sgpr%02x%s", prefix, index, infoBuilder);
+    return String.format("EA: %sgpr%d%s", prefix, index, infoBuilder);
   }
 }
