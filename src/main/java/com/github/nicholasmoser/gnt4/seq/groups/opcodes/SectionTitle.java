@@ -18,6 +18,10 @@ public class SectionTitle implements Opcode {
     this.title = title;
   }
 
+  public String getTitle() {
+    return title;
+  }
+
   @Override
   public int getOffset() {
     return offset;

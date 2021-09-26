@@ -1,7 +1,9 @@
 package com.github.nicholasmoser.gnt4.seq.groups.opcodes;
 
+import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
+import static j2html.TagCreator.span;
 
 import com.github.nicholasmoser.utils.ByteUtils;
 import j2html.tags.ContainerTag;
@@ -38,6 +40,10 @@ public class ActionID implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    String dest = String.format("#%X", actionOffset);
+    return div(attrs(id))
+        .with(span(String.format("%05X | Action ID 0x%X at offset ", offset, actionId)).attr("class=\"b\""))
+        .with(a(String.format("0x%X", actionOffset)).withHref(dest))
+        .with(span(String.format(" %s", formatRawBytes(bytes))));
   }
 }

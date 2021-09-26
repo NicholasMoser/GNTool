@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import static j2html.TagCreator.a;
 import static j2html.TagCreator.body;
 import static j2html.TagCreator.div;
 import static j2html.TagCreator.h1;
@@ -9,15 +10,19 @@ import static j2html.TagCreator.p;
 import static j2html.TagCreator.script;
 import static j2html.TagCreator.style;
 import static j2html.TagCreator.title;
+import static j2html.TagCreator.ul;
+import static j2html.TagCreator.li;
 
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.groups.opcodes.SectionTitle;
 import j2html.Config;
 import j2html.tags.ContainerTag;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * HTML utilities for SeqKing.
@@ -53,6 +58,10 @@ public class SeqKingHtml {
    */
   private static ContainerTag getBody(List<Opcode> opcodes) {
     ContainerTag body = div();
+    Optional<ContainerTag> toc = getTableOfContents(opcodes);
+    if (toc.isPresent()) {
+      body.with(toc.get());
+    }
     ContainerTag subroutine = p();
     for (Opcode opcode : opcodes) {
       subroutine.with(opcode.toHTML());
@@ -75,6 +84,33 @@ public class SeqKingHtml {
         style(css),
         script(getTooltipJavascript("b", "Unconditional branch to an offset."))
     );
+  }
+
+  /**
+   * Returns a table of contents if there are any sections. Otherwise returns an empty optional.
+   *
+   * @param opcodes The opcodes to parse for sections.
+   * @return A table or contents or empty optional.
+   */
+  private static Optional<ContainerTag> getTableOfContents(List<Opcode> opcodes) {
+    boolean hasSection = opcodes.stream()
+        .filter(SectionTitle.class::isInstance)
+        .findAny()
+        .isPresent();
+    if (!hasSection) {
+      return Optional.empty();
+    }
+    ContainerTag list = ul();
+    for (Opcode opcode : opcodes) {
+      if (opcode instanceof SectionTitle) {
+        SectionTitle sectionTitle = (SectionTitle) opcode;
+        String text = String.format("0x%05X %s", sectionTitle.getOffset(), sectionTitle.getTitle());
+        String dest = String.format("#%X", sectionTitle.getOffset());
+        ContainerTag entry = a(text).withHref(dest);
+        list.with(li(entry));
+      }
+    }
+    return Optional.of(list);
   }
 
   /**
