@@ -51,6 +51,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup49;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4A;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4B;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4C;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4D;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup50;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
@@ -73,7 +74,6 @@ public class SeqKing {
   }
 
   private static List<Opcode> getOpcodes(Path seqPath) throws IOException {
-
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(seqPath);
 
@@ -174,6 +174,7 @@ public class SeqKing {
         case 0x4A -> opcodes.add(OpcodeGroup4A.parse(bs, opcode));
         case 0x4B -> opcodes.add(OpcodeGroup4B.parse(bs, opcode));
         case 0x4C -> opcodes.add(OpcodeGroup4C.parse(bs, opcode));
+        case 0x4D -> opcodes.add(OpcodeGroup4D.parse(bs, opcode));
         case 0x50 -> opcodes.add(OpcodeGroup50.parse(bs, opcode));
         case 0x55 -> opcodes.add(OpcodeGroup55.parse(bs, opcode));
         case 0x61 -> opcodes.add(OpcodeGroup61.parse(bs, opcode));
@@ -232,6 +233,24 @@ public class SeqKing {
       binaryOffsetToSize.put(0xB46C, 0xC);
       binaryOffsetToSize.put(0xB618, 0xC);
       binaryOffsetToSize.put(0x12894, 0x10);
+      binaryOffsetToSize.put(0x148E0, 0x10);
+      binaryOffsetToSize.put(0x14920, 0x10);
+      binaryOffsetToSize.put(0x14960, 0x10);
+      binaryOffsetToSize.put(0x149A0, 0x10);
+      binaryOffsetToSize.put(0x14C10, 0xC);
+      binaryOffsetToSize.put(0x14C30, 0x10);
+      binaryOffsetToSize.put(0x15098, 0x14);
+      binaryOffsetToSize.put(0x15180, 0x10);
+      binaryOffsetToSize.put(0x151C0, 0x10);
+      binaryOffsetToSize.put(0x15270, 0x10);
+      binaryOffsetToSize.put(0x15364, 0x2C);
+      binaryOffsetToSize.put(0x19178, 0xC);
+      binaryOffsetToSize.put(0x1A774, 0xC);
+      binaryOffsetToSize.put(0x1CE08, 0x24);
+      binaryOffsetToSize.put(0x1F5D0, 0x36AC);
+      binaryOffsetToSize.put(0x22C88, 0x14);
+      binaryOffsetToSize.put(0x22D0C, 0x4D8);
+      binaryOffsetToSize.put(0x23700, 0x364);
     }
     return binaryOffsetToSize;
   }

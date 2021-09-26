@@ -4,7 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
-import com.google.common.primitives.Bytes;
+import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -12,6 +12,7 @@ public class OpcodeGroup2A {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
       case 0x00 -> op_2A00(bs);
+      case 0x01 -> op_2A01(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -100,5 +101,41 @@ public class OpcodeGroup2A {
         throw new IllegalStateException("This flag is not yet supported for op_2A00: " + param3 + "\nLook at offset from 80212868");
     }
     return new UnknownOpcode(offset, baos.toByteArray(), info);
+  }
+
+  private static Opcode op_2A01(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(ea.getBytes());
+    String info = String.format(" %s", ea.getDescription());
+    byte[] flagBytes = bs.readBytes(4);
+    baos.write(flagBytes);
+    int flags = ByteUtils.toInt32(flagBytes);
+    int pointerOffset = flags >> 0xe & 0x3fffc;
+    int flag = flags & 0xFFFF;
+    switch(pointerOffset) {
+      case 0x14:
+        if (flag == 1) {
+          baos.write(bs.readBytes(0x28));
+        } else if (flag == 0) {
+          baos.write(bs.readBytes(0x1C));
+        }
+        break;
+      case 0x18:
+        if (flag == 1) {
+          baos.write(bs.readBytes(0x10));
+        } else if (flag == 0) {
+          baos.write(bs.readBytes(0x4));
+        }
+        break;
+      case 0x34:
+        baos.write(bs.readBytes(0x18));
+        break;
+      default:
+        throw new IllegalStateException("This flag is not yet supported for op_2A01: " + pointerOffset + "\nLook at offset from 80212bb0");
+    }
+    return new UnknownOpcode(offset, baos.toByteArray(), info);
+
   }
 }

@@ -43,6 +43,8 @@ public class OpcodeGroup0F {
   private static Opcode op_0F0E(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(ea.getBytes());
     StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
     // Get filename
     StringBuilder fileNameBuilder = new StringBuilder();
@@ -51,14 +53,14 @@ public class OpcodeGroup0F {
       if (bs.read(buffer) != 4) {
         throw new IOException("Failed to parse bytes of opcode at " + offset);
       }
+      baos.write(buffer);
       fileNameBuilder.append(new String(buffer, "shift-jis"));
     } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
     String fileName = fileNameBuilder.toString().replace("\0", "");
     info.append(" with file name \"");
     info.append(fileName);
     info.append('"');
-    byte[] fullBytes = Bytes.concat(ea.getBytes(), fileNameBuilder.toString().getBytes("shift-jis"));
-    return new UnknownOpcode(offset, fullBytes, info.toString());
+    return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
   }
 
   private static Opcode op_0F0F(ByteStream bs) throws IOException {
@@ -85,6 +87,8 @@ public class OpcodeGroup0F {
   private static Opcode op_0F14(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(ea.getBytes());
     StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
     // Get filename
     StringBuilder fileNameBuilder = new StringBuilder();
@@ -93,13 +97,13 @@ public class OpcodeGroup0F {
       if (bs.read(buffer) != 4) {
         throw new IOException("Failed to parse bytes of opcode at " + offset);
       }
+      baos.write(buffer);
       fileNameBuilder.append(new String(buffer, "shift-jis"));
     } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
     String fileName = fileNameBuilder.toString().replace("\0", "");
     info.append(" with file name \"");
     info.append(fileName);
     info.append('"');
-    byte[] fullBytes = Bytes.concat(ea.getBytes(), fileNameBuilder.toString().getBytes("shift-jis"));
-    return new UnknownOpcode(offset, fullBytes, info.toString());
+    return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
   }
 }

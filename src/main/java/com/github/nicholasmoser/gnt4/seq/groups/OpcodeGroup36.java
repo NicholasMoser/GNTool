@@ -26,8 +26,10 @@ public class OpcodeGroup36 {
 
   private static Opcode loadTexture(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    byte[] opcode = bs.readWordBytes();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bs.readWordBytes());
     byte[] firstWord = bs.readWordBytes();
+    baos.write(firstWord);
     StringBuilder info = new StringBuilder(String.format(" Use index 0x%x", ByteUtils.toInt32(firstWord)));
     // Get filename
     StringBuilder fileNameBuilder = new StringBuilder();
@@ -36,14 +38,14 @@ public class OpcodeGroup36 {
       if (bs.read(buffer) != 4) {
         throw new IOException("Failed to parse bytes of opcode at " + offset);
       }
+      baos.write(buffer);
       fileNameBuilder.append(new String(buffer, "shift-jis"));
     } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
     String fileName = fileNameBuilder.toString().replace("\0", "");
     info.append(" for texture file \"");
     info.append(fileName);
     info.append('"');
-    byte[] fullBytes = Bytes.concat(opcode, firstWord, fileNameBuilder.toString().getBytes("shift-jis"));
-    return new UnknownOpcode(offset, fullBytes, info.toString());
+    return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
   }
 
   public static Opcode op_3607(ByteStream bs) throws IOException {

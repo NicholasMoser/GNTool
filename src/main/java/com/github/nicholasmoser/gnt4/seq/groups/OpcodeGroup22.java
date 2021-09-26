@@ -22,7 +22,10 @@ public class OpcodeGroup22 {
       case 0x10 -> op_2210(bs);
       case 0x11 -> op_2211(bs);
       case 0x12 -> op_2212(bs);
+      case 0x14 -> op_2214(bs);
       case 0x15 -> op_2215(bs);
+      case 0x24 -> op_2224(bs);
+      case 0x28 -> op_2228(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -98,6 +101,13 @@ public class OpcodeGroup22 {
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 
+  private static Opcode op_2214(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
   private static Opcode op_2215(ByteStream bs) throws IOException {
     int offset = bs.offset();
     int opcode = bs.peekWord();
@@ -111,5 +121,21 @@ public class OpcodeGroup22 {
       baos.write(bs.readBytes(12));
     }
     return new UnknownOpcode(offset, baos.toByteArray(), info);
+  }
+
+  private static Opcode op_2224(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_2228(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(0x10);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 }

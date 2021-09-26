@@ -23,6 +23,7 @@ public class OpcodeGroup20 {
       case 0x09 -> op_2009(bs);
       case 0x0B -> op_200B(bs);
       case 0x0C -> op_200C(bs);
+      case 0x10 -> op_2010(bs);
       case 0x11 -> op_2011(bs);
       case 0x12 -> op_2012(bs);
       case 0x13 -> op_2013(bs);
@@ -30,6 +31,10 @@ public class OpcodeGroup20 {
       case 0x15 -> op_2015(bs);
       case 0x16 -> op_2016(bs);
       case 0x17 -> op_2017(bs);
+      case 0x18 -> op_2018(bs);
+      case 0x19 -> op_2019(bs);
+      case 0x1A -> op_201A(bs);
+      case 0x1B -> op_201B(bs);
       case 0x20 -> op_2020(bs);
       case 0x21 -> op_2021(bs);
       case 0x23 -> op_2023(bs);
@@ -38,11 +43,13 @@ public class OpcodeGroup20 {
       case 0x28 -> op_2028(bs);
       case 0x29 -> op_2029(bs);
       case 0x2F -> op_202F(bs);
+      case 0x37 -> op_2037(bs);
       case 0x38 -> op_2038(bs);
       case 0x39 -> op_2039(bs);
       case 0x3B -> op_203B(bs);
       case 0x3F -> op_203F(bs);
       case 0x40 -> op_2040(bs);
+      case 0x41 -> op_2041(bs);
       case 0x42 -> op_2042(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
@@ -125,6 +132,14 @@ public class OpcodeGroup20 {
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
+  private static Opcode op_2010(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
   private static Opcode op_2011(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
@@ -170,6 +185,34 @@ public class OpcodeGroup20 {
   private static Opcode op_2017(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_2018(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_2019(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_201A(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_201B(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
@@ -223,6 +266,13 @@ public class OpcodeGroup20 {
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
+  private static Opcode op_2037(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
   private static Opcode op_2038(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
@@ -254,6 +304,13 @@ public class OpcodeGroup20 {
   }
 
   private static Opcode op_2040(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_2041(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
