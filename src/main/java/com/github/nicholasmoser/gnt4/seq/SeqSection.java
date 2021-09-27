@@ -1,8 +1,8 @@
 package com.github.nicholasmoser.gnt4.seq;
 
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.ActionID;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.SectionTitle;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.base.Charsets;

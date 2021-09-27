@@ -1,9 +1,9 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.HardReset;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.SoftReset;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.HardReset;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SoftReset;
+import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;

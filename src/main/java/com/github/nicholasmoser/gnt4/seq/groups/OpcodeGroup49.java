@@ -1,8 +1,8 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
 import com.github.nicholasmoser.utils.ByteStream;

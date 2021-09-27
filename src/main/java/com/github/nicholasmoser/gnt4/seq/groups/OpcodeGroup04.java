@@ -1,21 +1,20 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Add;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.And;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Andws;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Divide;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Increment;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Movc;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Multiply;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Nimply;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Or;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Sub;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Subws;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Xor;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Add;
+import com.github.nicholasmoser.gnt4.seq.opcodes.And;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Andws;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Divide;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Increment;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Movc;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Multiply;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Nimply;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Or;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Sub;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Subws;
+import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Xor;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 

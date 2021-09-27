@@ -1,21 +1,21 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Branch;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLink;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchDecrementNotZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchEqualToZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchGreaterThanOrEqualToZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchGreaterThanZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLessThanOrEqualToZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLessThanZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLinkReturn;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLinkReturnEqualZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchLinkReturnNotEqualZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchNotEqualToZero;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.BranchNotEqualZeroLink;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.groups.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchDecrementNotZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchGreaterThanOrEqualToZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchGreaterThanZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLessThanOrEqualToZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLessThanZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnEqualZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnNotEqualZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualToZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualZeroLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 
