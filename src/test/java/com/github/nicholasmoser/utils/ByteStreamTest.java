@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.utils;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -118,5 +119,25 @@ public class ByteStreamTest {
     bs2.skipWord();
     assertEquals(8, bs2.offset());
     assertThrows(IOException.class, bs2::skipWord);
+  }
+
+  /**
+   * Tests that reading an arbitrary number of bytes via readBytes works as expected.
+   *
+   * @throws Exception If any Exception occurs.
+   */
+  @Test
+  public void testReadBytes() throws Exception {
+    byte[] bytes = new byte[] { 0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04 };
+    ByteStream bs = new ByteStream(bytes);
+    assertEquals(0, bs.offset());
+    assertArrayEquals(new byte[] {0x11, 0x22, 0x33, 0x44}, bs.readBytes(4));
+    assertEquals(4, bs.offset());
+    assertArrayEquals(new byte[] {0x01, 0x02}, bs.readBytes(2));
+    assertEquals(6, bs.offset());
+    assertArrayEquals(new byte[] {0x03}, bs.readBytes(1));
+    assertEquals(7, bs.offset());
+    assertArrayEquals(new byte[] {}, bs.readBytes(0));
+    assertEquals(7, bs.offset());
   }
 }

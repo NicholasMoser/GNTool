@@ -84,6 +84,13 @@ public class ByteStream extends ByteArrayInputStream {
     return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getInt();
   }
 
+  /**
+   * Reads a number of bytes from the ByteStream.
+   *
+   * @param num The number of bytes to read.
+   * @return The bytes read in an array.
+   * @throws IOException If an I/O error occurs.
+   */
   public byte[] readBytes(int num) throws IOException {
     int startingOffset = pos;
     byte[] bytes = new byte[num];
@@ -111,6 +118,4 @@ public class ByteStream extends ByteArrayInputStream {
   public void mark() {
     this.mark(0);
   }
-
-  public void seek(int pos) { this.pos = pos; }
 }
