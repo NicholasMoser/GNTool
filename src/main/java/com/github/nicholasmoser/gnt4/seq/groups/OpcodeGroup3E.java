@@ -22,7 +22,7 @@ public class OpcodeGroup3E {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
-    byte[] lastWord = bs.readWordBytes();
+    byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
     return new UnknownOpcode(offset, fullBytes, info);
   }
@@ -31,7 +31,7 @@ public class OpcodeGroup3E {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
-    byte[] lastWord = bs.readWordBytes();
+    byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
     return new UnknownOpcode(offset, fullBytes, info);
   }
@@ -40,7 +40,7 @@ public class OpcodeGroup3E {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
-    byte[] lastWord = bs.readWordBytes();
+    byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
     return new UnknownOpcode(offset, fullBytes, info);
   }

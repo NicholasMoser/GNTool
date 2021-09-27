@@ -27,8 +27,8 @@ public class OpcodeGroup36 {
   private static Opcode loadTexture(ByteStream bs) throws IOException {
     int offset = bs.offset();
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(bs.readWordBytes());
-    byte[] firstWord = bs.readWordBytes();
+    baos.write(bs.readBytes(4));
+    byte[] firstWord = bs.readBytes(4);
     baos.write(firstWord);
     StringBuilder info = new StringBuilder(String.format(" Use index 0x%x", ByteUtils.toInt32(firstWord)));
     // Get filename

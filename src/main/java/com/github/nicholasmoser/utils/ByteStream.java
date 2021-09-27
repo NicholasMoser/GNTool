@@ -84,20 +84,6 @@ public class ByteStream extends ByteArrayInputStream {
     return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getInt();
   }
 
-  /**
-   * Read the next 4 bytes and return them.
-   *
-   * @return The next 4 bytes.
-   * @throws IOException If an I/O error occurs.
-   */
-  public byte[] readWordBytes() throws IOException {
-    byte[] bytes = new byte[4];
-    if (read(bytes) != 4) {
-      throw new IOException("Failed to read word bytes at offset " + pos);
-    }
-    return bytes;
-  }
-
   public byte[] readBytes(int num) throws IOException {
     int startingOffset = pos;
     byte[] bytes = new byte[num];

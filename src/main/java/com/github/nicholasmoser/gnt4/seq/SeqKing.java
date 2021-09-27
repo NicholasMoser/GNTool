@@ -205,7 +205,7 @@ public class SeqKing {
       binaryOffsetToSize.put(0xF3E0, 0x43C);
       binaryOffsetToSize.put(0xFAA0, 0x14B4);
     } else if (path.endsWith("chr/iru/0000.seq")) {
-      binaryOffsetToSize.put(0x1CD4, 0x14);
+      //binaryOffsetToSize.put(0x1CD4, 0x14);
       binaryOffsetToSize.put(0x239C, 0x14);
       binaryOffsetToSize.put(0x401C, 0x24);
       binaryOffsetToSize.put(0x40C4, 0x44);

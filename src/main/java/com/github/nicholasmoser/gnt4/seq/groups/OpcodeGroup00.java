@@ -22,7 +22,7 @@ public class OpcodeGroup00 {
 
   public static Opcode softReset(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    byte[] bytes = bs.readWordBytes();
+    byte[] bytes = bs.readBytes(4);
     int opcode = ByteUtils.toInt32(bytes);
     if ((opcode & 0xFFFF) != 0x0000) {
       throw new IllegalStateException("Soft reset should have 0 for third and fourth byte: " + Arrays.toString(bytes));
@@ -32,7 +32,7 @@ public class OpcodeGroup00 {
 
   public static Opcode hardReset(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    byte[] bytes = bs.readWordBytes();
+    byte[] bytes = bs.readBytes(4);
     int opcode = ByteUtils.toInt32(bytes);
     if ((opcode & 0xFFFF) != 0x0000) {
       throw new IllegalStateException("Hard reset should have 0 for third and fourth byte: " + Arrays.toString(bytes));
