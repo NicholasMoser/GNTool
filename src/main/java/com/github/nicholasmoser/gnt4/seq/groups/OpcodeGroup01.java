@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
+import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchDecrementNotZero;
@@ -17,6 +18,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualZeroLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class OpcodeGroup01 {
@@ -167,9 +169,19 @@ public class OpcodeGroup01 {
   }
 
   private static Opcode op_0150(ByteStream bs) throws IOException {
+    // Likely some kind of switch-case
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(ea.getBytes());
+    int word = bs.peekWord();
+    // After opcode 0150 is an array of SEQ offsets. Almost every opcode is larger than Seq.MAX_SIZE
+    // so this should almost always be fine.
+    while (word < Seq.MAX_SIZE) {
+      baos.write(bs.readBytes(4));
+      word = bs.peekWord();
+    }
     String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, baos.toByteArray(), info);
   }
 }

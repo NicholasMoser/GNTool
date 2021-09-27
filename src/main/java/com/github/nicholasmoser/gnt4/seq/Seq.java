@@ -4,6 +4,10 @@ import java.util.AbstractMap;
 import java.util.Map;
 
 public class Seq {
+
+  // The size of the largest SEQ file, m_title.seq
+  public static final int MAX_SIZE = 0x492A0;
+
   // SEQ File Sections
   public static final String CHR_TBL = "chr_tbl";
   public static final String CHR_ACT = "chr_act";
