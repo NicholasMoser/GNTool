@@ -229,4 +229,7 @@ public class SeqKing {
     }
     return binaryOffsetToSize;
   }
+
+  // TODO: Add notes
+  // 0xB30 For Iruka, this is where the Action ID offset is read from the Action ID table
 }

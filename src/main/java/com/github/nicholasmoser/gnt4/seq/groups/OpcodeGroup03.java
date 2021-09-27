@@ -4,7 +4,6 @@ import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Push;
-import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 
