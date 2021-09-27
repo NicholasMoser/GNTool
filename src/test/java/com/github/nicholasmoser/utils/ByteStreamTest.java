@@ -33,7 +33,7 @@ public class ByteStreamTest {
 
   @Test
   public void testOneByteArray() {
-    byte[] bytes = new byte[] { 0x56 };
+    byte[] bytes = new byte[]{0x56};
 
     // Test that you can't peekWord with only one byte
     ByteStream bs = new ByteStream(bytes);
@@ -62,7 +62,7 @@ public class ByteStreamTest {
 
   @Test
   public void testFourByteArray() throws Exception {
-    byte[] bytes = new byte[] {(byte) 0x80, 0x00, 0x52, 0x24 };
+    byte[] bytes = new byte[]{(byte) 0x80, 0x00, 0x52, 0x24};
 
     // Test that you can peekWord and readWord with a four-byte array
     ByteStream bs = new ByteStream(bytes);
@@ -95,7 +95,7 @@ public class ByteStreamTest {
 
   @Test
   public void testEightByteArray() throws Exception {
-    byte[] bytes = new byte[] { 0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04 };
+    byte[] bytes = new byte[]{0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04};
 
     // Test that you can peekWord and readWord twice with a four-byte array
     ByteStream bs = new ByteStream(bytes);
@@ -128,16 +128,34 @@ public class ByteStreamTest {
    */
   @Test
   public void testReadBytes() throws Exception {
-    byte[] bytes = new byte[] { 0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04 };
+    byte[] bytes = new byte[]{0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04};
     ByteStream bs = new ByteStream(bytes);
     assertEquals(0, bs.offset());
-    assertArrayEquals(new byte[] {0x11, 0x22, 0x33, 0x44}, bs.readBytes(4));
+    assertArrayEquals(new byte[]{0x11, 0x22, 0x33, 0x44}, bs.readBytes(4));
     assertEquals(4, bs.offset());
-    assertArrayEquals(new byte[] {0x01, 0x02}, bs.readBytes(2));
+    assertArrayEquals(new byte[]{0x01, 0x02}, bs.readBytes(2));
     assertEquals(6, bs.offset());
-    assertArrayEquals(new byte[] {0x03}, bs.readBytes(1));
+    assertArrayEquals(new byte[]{0x03}, bs.readBytes(1));
     assertEquals(7, bs.offset());
-    assertArrayEquals(new byte[] {}, bs.readBytes(0));
+    assertArrayEquals(new byte[]{}, bs.readBytes(0));
     assertEquals(7, bs.offset());
+  }
+
+  /**
+   * Test the length function of ByteStream and that is works as expected.
+   *
+   * @throws Exception If any Exception occurs.
+   */
+  @Test
+  public void testLength() throws Exception {
+    byte[] bytes = new byte[]{0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04};
+    ByteStream bs = new ByteStream(bytes);
+    assertEquals(8, bs.length());
+    bs.readBytes(4);
+    assertEquals(8, bs.length());
+    bs = new ByteStream(new byte[0]);
+    assertEquals(0, bs.length());
+    bs = new ByteStream(new byte[]{0x11});
+    assertEquals(1, bs.length());
   }
 }

@@ -118,4 +118,11 @@ public class ByteStream extends ByteArrayInputStream {
   public void mark() {
     this.mark(0);
   }
+
+  /**
+   * @return The length of the byte buffer.
+   */
+  public int length() {
+    return buf.length;
+  }
 }
