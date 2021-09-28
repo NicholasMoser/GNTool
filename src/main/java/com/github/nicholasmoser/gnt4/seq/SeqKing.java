@@ -68,11 +68,25 @@ import java.util.Map;
 
 public class SeqKing {
 
+  /**
+   * Parse the given seq file and create an HTML report at the given output path.
+   *
+   * @param seqPath The seq file path.
+   * @param outputPath The output HTML report file path.
+   * @throws IOException If an I/O error occurs.
+   */
   public static void generate(Path seqPath, Path outputPath) throws IOException {
     List<Opcode> opcodes = getOpcodes(seqPath);
     SeqKingHtml.generate(seqPath.getFileName().toString(), opcodes, outputPath);
   }
 
+  /**
+   * Get the list of opcodes for the given seq file.
+   *
+   * @param seqPath The path to the seq file.
+   * @return The list of opcodes.
+   * @throws IOException If an I/O error occurs.
+   */
   private static List<Opcode> getOpcodes(Path seqPath) throws IOException {
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(seqPath);
@@ -211,7 +225,6 @@ public class SeqKing {
       binaryOffsetToSize.put(0x7200, 0x10);
       binaryOffsetToSize.put(0x73C0, 0x10);
       binaryOffsetToSize.put(0x7450, 0x10);
-      binaryOffsetToSize.put(0x7740, 0x170);
       binaryOffsetToSize.put(0x7940, 0x1E0);
       binaryOffsetToSize.put(0x9650, 0x10);
       binaryOffsetToSize.put(0x148E0, 0x10);

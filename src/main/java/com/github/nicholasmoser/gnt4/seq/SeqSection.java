@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -15,6 +16,13 @@ import java.util.List;
 
 public class SeqSection {
 
+  /**
+   * Returns if the next 4-byte word is the start of a new seq section.
+   *
+   * @param bs The seq ByteStream.
+   * @return If the next 4-byte word is the start of a new seq section.
+   * @throws IOException
+   */
   public static boolean isSeqSectionTitle(ByteStream bs) throws IOException {
     byte[] word = bs.peekWordBytes();
     String startOfTitle = new String(word, Charsets.US_ASCII);
@@ -25,8 +33,8 @@ public class SeqSection {
    * Handles the current SEQ section. First reads the section title, which ends with 0x0A and is
    * 16-byte aligned.
    *
-   * @param bs
-   * @throws IOException
+   * @param bs The seq ByteStream.
+   * @throws IOException If an I/O error occurs.
    */
   public static List<Opcode> handleSeqSection(ByteStream bs) throws IOException {
     int offset = bs.offset();
@@ -60,6 +68,8 @@ public class SeqSection {
     switch (title) {
       case (Seq.CHR_TBL):
         return parseChrTbl(bs, sectionTitle);
+      case (Seq.CHR_DATA):
+        return parseChrData(bs, sectionTitle);
       case (Seq.CHR_ACT):
       case (Seq.CHR_CAM):
       case (Seq.CHR_SUB02):
@@ -69,7 +79,6 @@ public class SeqSection {
       case (Seq.CHR_SEL):
       case (Seq.CHR_SHOT):
       case (Seq.CHR_FACE):
-      case (Seq.CHR_DATA):
       case (Seq.CHR_VISUAL2D):
         return Collections.singletonList(sectionTitle);
       default:
@@ -77,6 +86,15 @@ public class SeqSection {
     }
   }
 
+  /**
+   * Parse and return the opcodes associated with the chr_tbl section. This section is composed of
+   * action IDs and their associated offsets. It ends with 0xFFFFFFFF.
+   *
+   * @param bs The seq ByteStream.
+   * @param title The chr_tbl title.
+   * @return The list of opcodes associated with chr_tbl.
+   * @throws IOException If an I/O error occurs.
+   */
   private static List<Opcode> parseChrTbl(ByteStream bs, SectionTitle title) throws IOException {
     List<Opcode> section = new ArrayList<>();
     section.add(title);
@@ -87,6 +105,24 @@ public class SeqSection {
       word = bs.readWord();
     }
     return section;
+  }
+
+  /**
+   * Parse and return the opcodes associated with the  chr_data section. This section is composed of
+   * binary data, that ends with the definition of the next section.
+   *
+   * @param bs The seq ByteStream.
+   * @param title The chr_data title.
+   * @return The list of opcodes associated with chr_data.
+   * @throws IOException If an I/O error occurs.
+   */
+  private static List<Opcode> parseChrData(ByteStream bs, SectionTitle title) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    while (!isSeqSectionTitle(bs)) {
+      baos.write(bs.readBytes(4));
+    }
+    return List.of(title, new BinaryData(offset, baos.toByteArray()));
   }
 
 }
