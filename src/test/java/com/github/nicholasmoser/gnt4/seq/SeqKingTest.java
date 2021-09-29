@@ -17,4 +17,10 @@ public class SeqKingTest {
     Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/iru/0000.html");
     SeqKing.generate(seqPath, outputPath);
   }
+  @Test
+  public void test3() throws Exception {
+    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/miz/0000.seq");
+    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/miz/0000.html");
+    SeqKing.generate(seqPath, outputPath);
+  }
 }

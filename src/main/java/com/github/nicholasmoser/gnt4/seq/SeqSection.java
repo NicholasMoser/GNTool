@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,6 +71,8 @@ public class SeqSection {
         return parseChrTbl(bs, sectionTitle);
       case (Seq.CHR_DATA):
         return parseChrData(bs, sectionTitle);
+      case (Seq.CHR_SHOT):
+        return parseChrShot(bs, sectionTitle);
       case (Seq.CHR_ACT):
       case (Seq.CHR_CAM):
       case (Seq.CHR_SUB02):
@@ -77,7 +80,6 @@ public class SeqSection {
       case (Seq.CHR_MOT):
       case (Seq.CHR_HIRA):
       case (Seq.CHR_SEL):
-      case (Seq.CHR_SHOT):
       case (Seq.CHR_FACE):
       case (Seq.CHR_VISUAL2D):
         return Collections.singletonList(sectionTitle);
@@ -108,7 +110,7 @@ public class SeqSection {
   }
 
   /**
-   * Parse and return the opcodes associated with the  chr_data section. This section is composed of
+   * Parse and return the opcodes associated with the chr_data section. This section is composed of
    * binary data, that ends with the definition of the next section.
    *
    * @param bs The seq ByteStream.
@@ -125,4 +127,39 @@ public class SeqSection {
     return List.of(title, new BinaryData(offset, baos.toByteArray()));
   }
 
+  /**
+   * Parse and return the opcodes associated with the chr_shot section. This section is composed of
+   * 4 bytes of binary data followed by seq opcodes. The binary will be 0x00000004 0x0000000A
+   * 0x0000000A and 0x00000000.
+   *
+   * @param bs The seq ByteStream.
+   * @param title The chr_shot title.
+   * @return The chr_shot title and 4-bytes of binary data.
+   * @throws IOException If an I/O error occurs.
+   */
+  private static List<Opcode> parseChrShot(ByteStream bs, SectionTitle title) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte[] bytes = bs.readBytes(4);
+    if (!Arrays.equals(new byte[]{0, 0, 0, 0x4}, bytes)) {
+      throw new IOException("chr_shot binary not 00000004: " + Arrays.toString(bytes));
+    }
+    baos.write(bytes);
+    bytes = bs.readBytes(4);
+    if (!Arrays.equals(new byte[]{0, 0, 0, 0xA}, bytes)) {
+      throw new IOException("chr_shot binary not 0000000A: " + Arrays.toString(bytes));
+    }
+    baos.write(bytes);
+    bytes = bs.readBytes(4);
+    if (!Arrays.equals(new byte[]{0, 0, 0, 0xA}, bytes)) {
+      throw new IOException("chr_shot binary not 0000000A: " + Arrays.toString(bytes));
+    }
+    baos.write(bytes);
+    bytes = bs.readBytes(4);
+    if (!Arrays.equals(new byte[]{0, 0, 0, 0}, bytes)) {
+      throw new IOException("chr_shot binary not 00000000: " + Arrays.toString(bytes));
+    }
+    baos.write(bytes);
+    return List.of(title, new BinaryData(offset, baos.toByteArray()));
+  }
 }

@@ -71,6 +71,24 @@ public class ByteStream extends ByteArrayInputStream {
   }
 
   /**
+   * Read the next requested number of bytes and return them. Then move the position of the stream
+   * back prior to having read the bytes. Do not call this method if you have already called mark.
+   *
+   * @param num The number of bytes to peek.
+   * @return The bytes.
+   * @throws IOException If an I/O error occurs.
+   */
+  public byte[] peekBytes(int num) throws IOException {
+    mark(num);
+    byte[] bytes = new byte[num];
+    if (read(bytes) != num) {
+      throw new IOException("Failed to peek bytes at offset " + pos);
+    }
+    reset();
+    return bytes;
+  }
+
+  /**
    * Read the next big-endian 4-byte word and return it.
    *
    * @return The big-endian 4-byte word.

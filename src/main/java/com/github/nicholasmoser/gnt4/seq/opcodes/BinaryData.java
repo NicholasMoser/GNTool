@@ -9,10 +9,18 @@ public class BinaryData implements Opcode {
 
   private final int offset;
   private final byte[] bytes;
+  private final String info;
 
   public BinaryData(int offset, byte[] bytes) {
     this.offset = offset;
     this.bytes = bytes;
+    this.info = "";
+  }
+
+  public BinaryData(int offset, byte[] bytes, String info) {
+    this.offset = offset;
+    this.bytes = bytes;
+    this.info = info;
   }
 
   @Override
@@ -27,7 +35,7 @@ public class BinaryData implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | binary data, 0x%x bytes %s", offset, bytes.length, formatRawBytes(bytes));
+    return String.format("%05X | binary data, 0x%x bytes %s%s", offset, bytes.length, formatRawBytes(bytes), info);
   }
 
   @Override
