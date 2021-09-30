@@ -17,6 +17,8 @@ public class OpcodeGroup27 {
       case 0x02 -> op_2702(bs);
       case 0x03 -> op_2703(bs);
       case 0x04 -> op_2704(bs);
+      case 0x08 -> op_2708(bs);
+      case 0x09 -> op_2709(bs);
       case 0x0A -> op_270A(bs);
       case 0x0B -> op_270B(bs);
       case 0x0C -> op_270C(bs);
@@ -24,7 +26,9 @@ public class OpcodeGroup27 {
       case 0x0F -> op_270F(bs);
       case 0x11 -> op_2711(bs);
       case 0x14 -> op_2714(bs);
+      case 0x15 -> op_2715(bs);
       case 0x16 -> op_2716(bs);
+      case 0x17 -> op_2717(bs);
       case 0x18 -> op_2718(bs);
       case 0x1A -> op_271A(bs);
       case (byte) 0x80 -> op_2780(bs);
@@ -59,6 +63,22 @@ public class OpcodeGroup27 {
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_2708(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_2709(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 
   private static Opcode op_270A(ByteStream bs) throws IOException {
@@ -127,11 +147,27 @@ public class OpcodeGroup27 {
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 
+  private static Opcode op_2715(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
   private static Opcode op_2716(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_2717(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 
   private static Opcode op_2718(ByteStream bs) throws IOException {

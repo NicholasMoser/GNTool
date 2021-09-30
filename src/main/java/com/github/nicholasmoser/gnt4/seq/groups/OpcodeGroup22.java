@@ -24,7 +24,11 @@ public class OpcodeGroup22 {
       case 0x12 -> op_2212(bs);
       case 0x14 -> op_2214(bs);
       case 0x15 -> op_2215(bs);
+      case 0x1E -> op_221E(bs);
+      case 0x1F -> op_221F(bs);
+      case 0x20 -> op_2220(bs);
       case 0x24 -> op_2224(bs);
+      case 0x27 -> op_2227(bs);
       case 0x28 -> op_2228(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
@@ -123,11 +127,43 @@ public class OpcodeGroup22 {
     return new UnknownOpcode(offset, baos.toByteArray(), info);
   }
 
+  private static Opcode op_221E(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_221F(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_2220(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
   private static Opcode op_2224(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_2227(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(0x8);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 

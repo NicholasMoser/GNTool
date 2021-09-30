@@ -1,18 +1,24 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
+import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
+import com.google.common.primitives.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class OpcodeGroup2A {
+
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
       case 0x00 -> op_2A00(bs);
       case 0x01 -> op_2A01(bs);
+      case 0x19 -> op_2A19(bs);
+      case 0x1A -> op_2A1A(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -25,8 +31,11 @@ public class OpcodeGroup2A {
     baos.write(ea.getBytes());
     byte[] flags = bs.readBytes(4);
     baos.write(flags);
-    int param3 = flags[2] << 8 | flags[3];
-    switch(param3) {
+    ByteBuffer bb = ByteBuffer.allocate(2);
+    bb.put(flags[2]);
+    bb.put(flags[3]);
+    short pointerIndex = bb.getShort(0);
+    switch (pointerIndex) {
       case 0:
       case 4:
       case 16:
@@ -39,6 +48,10 @@ public class OpcodeGroup2A {
       case 41:
       case 43:
       case 48:
+      case 52:
+      case 70:
+      case 79:
+      case 200:
         break;
       case 8:
       case 10:
@@ -52,6 +65,8 @@ public class OpcodeGroup2A {
       case 44:
       case 49:
       case 50:
+      case 201:
+      case 324:
         baos.write(bs.readBytes(0x4));
         break;
       case 2:
@@ -89,6 +104,7 @@ public class OpcodeGroup2A {
       case 5:
       case 17:
       case 26:
+      case 145:
         baos.write(bs.readBytes(0x1C));
         break;
       case 25:
@@ -98,7 +114,11 @@ public class OpcodeGroup2A {
         baos.write(bs.readBytes(0x24));
         break;
       default:
-        throw new IllegalStateException("This flag is not yet supported for op_2A00: " + param3 + "\nLook at offset from 80212868");
+        int flagOffset = pointerIndex * 4;
+        String message = "This flag is not yet supported for op_2A00: " + pointerIndex;
+        message = String.format("%s\nLook at address 0x80212868 + 0x%X = 0x%X", message, flagOffset,
+            0x80212868 + flagOffset);
+        throw new IllegalStateException(message);
     }
     return new UnknownOpcode(offset, baos.toByteArray(), info);
   }
@@ -114,7 +134,34 @@ public class OpcodeGroup2A {
     int flags = ByteUtils.toInt32(flagBytes);
     int pointerOffset = flags >> 0xe & 0x3fffc;
     int flag = flags & 0xFFFF;
-    switch(pointerOffset) {
+    switch (pointerOffset) {
+      case 0x4:
+        if (flag == 1) {
+          baos.write(bs.readBytes(0x14));
+        } else if (flag == 0) {
+          baos.write(bs.readBytes(0x8));
+        }
+        break;
+      case 0x8:
+        if (flag == 1) {
+          baos.write(bs.readBytes(0x4));
+        } else if (flag == 0) {
+          baos.write(bs.readBytes(0x4));
+        } else if (flag < 3) {
+          baos.write(bs.readBytes(0x4));
+        }
+        break;
+      case 0xC:
+        if (flag == 0) {
+          baos.write(bs.readBytes(0x14));
+        } else if (flag == 1) {
+          baos.write(bs.readBytes(0x18));
+        } else if (flag == 3) {
+          baos.write(bs.readBytes(0x1C));
+        } else if (flag == 4) {
+          baos.write(bs.readBytes(0x20));
+        }
+        break;
       case 0x14:
         if (flag == 1) {
           baos.write(bs.readBytes(0x28));
@@ -129,13 +176,41 @@ public class OpcodeGroup2A {
           baos.write(bs.readBytes(0x4));
         }
         break;
+      case 0x20:
+        if (flag == 1) {
+          baos.write(bs.readBytes(0x10));
+        } else {
+          baos.write(bs.readBytes(0x4));
+        }
+        break;
+      case 0x24:
+        baos.write(bs.readBytes(0x14));
+        break;
       case 0x34:
         baos.write(bs.readBytes(0x18));
         break;
       default:
-        throw new IllegalStateException("This flag is not yet supported for op_2A01: " + pointerOffset + "\nLook at offset from 80212bb0");
+        String message = "This flag is not yet supported for op_2A01: " + pointerOffset;
+        message += String.format("\nLook at offset from 0x80212BB0 + 0x%X = 0x%X", pointerOffset,
+            0x80212bb0 + pointerOffset);
+        throw new IllegalStateException(message);
     }
     return new UnknownOpcode(offset, baos.toByteArray(), info);
+  }
 
+  private static Opcode op_2A19(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_2A1A(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(0xC);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 }

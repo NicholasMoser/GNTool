@@ -226,7 +226,7 @@ public class SeqKing {
       binaryOffsetToSize.put(0x15364, 0x2C);
       binaryOffsetToSize.put(0x1F5D0, 0x36AC);
       binaryOffsetToSize.put(0x22D0C, 0x4D8);
-      binaryOffsetToSize.put(0x23700, 0x364);
+      binaryOffsetToSize.put(0x23854, 0x210);
     } else if (path.endsWith("chr/miz/0000.seq")) {
       binaryOffsetToSize.put(0x4CD4, 0x7B0);
       binaryOffsetToSize.put(0x5EFC, 0x3C0);
@@ -235,7 +235,16 @@ public class SeqKing {
       binaryOffsetToSize.put(0x15718, 0x2C);
       binaryOffsetToSize.put(0x1F620, 0x37FC);
       binaryOffsetToSize.put(0x22EAC, 0x4B4);
-      binaryOffsetToSize.put(0x23880, 0x334);
+      binaryOffsetToSize.put(0x239D4, 0x1E0);
+    } else if (path.endsWith("chr/sas/0000.seq")) {
+      binaryOffsetToSize.put(0x4D44, 0x7B0);
+      binaryOffsetToSize.put(0x5F6C, 0x3C0);
+      binaryOffsetToSize.put(0x79B0, 0x1E0);
+      binaryOffsetToSize.put(0x96C0, 0x10);
+      binaryOffsetToSize.put(0x15628, 0x2C);
+      binaryOffsetToSize.put(0x24BC0, 0x44CC);
+      binaryOffsetToSize.put(0x291A4, 0x618);
+      binaryOffsetToSize.put(0x29F44, 0x580);
     }
     return binaryOffsetToSize;
   }

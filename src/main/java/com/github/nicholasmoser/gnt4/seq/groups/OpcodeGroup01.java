@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
 import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZeroLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchDecrementNotZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZero;
@@ -38,6 +39,7 @@ public class OpcodeGroup01 {
       case 0x38 -> branchLessThanOrEqualToZero(bs);
       case 0x3B -> branchDecrementNotZero(bs);
       case 0x3C -> branchLink(bs);
+      case 0x3D -> branchEqualToZeroLink(bs);
       case 0x3E -> branchNotEqualZeroLink(bs);
       case 0x45 -> branchLinkReturn(bs);
       case 0x46 -> branchLinkReturnEqualZero(bs);
@@ -133,6 +135,15 @@ public class OpcodeGroup01 {
     }
     int destination = bs.readWord();
     return new BranchLink(offset, destination);
+  }
+
+  private static Opcode branchEqualToZeroLink(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse bytes of opcode at " + offset);
+    }
+    int destination = bs.readWord();
+    return new BranchEqualToZeroLink(offset, destination);
   }
 
   private static Opcode branchNotEqualZeroLink(ByteStream bs) throws IOException {
