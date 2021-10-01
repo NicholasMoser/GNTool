@@ -56,8 +56,10 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup50;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -123,6 +125,17 @@ public class SeqKing {
           break; // EOF
         }
         continue;
+      }
+      if (!opcodes.isEmpty()) {
+        Opcode lastOpcode = opcodes.get(opcodes.size() - 1);
+        if (lastOpcode instanceof ComboList) {
+          // Make sure this is the last combo list
+          if (!SeqHelper.atComboList(bs)) {
+            // There is binary data after the combo list that leads to the last set of opcodes
+            opcodes.add(SeqHelper.getBinaryUntilBranchAndLink(bs));
+            continue;
+          }
+        }
       }
 
       // Check if this is an seq section
@@ -226,7 +239,6 @@ public class SeqKing {
       binaryOffsetToSize.put(0x15364, 0x2C);
       binaryOffsetToSize.put(0x1F5D0, 0x36AC);
       binaryOffsetToSize.put(0x22D0C, 0x4D8);
-      binaryOffsetToSize.put(0x23854, 0x210);
     } else if (path.endsWith("chr/miz/0000.seq")) {
       binaryOffsetToSize.put(0x4CD4, 0x7B0);
       binaryOffsetToSize.put(0x5EFC, 0x3C0);
@@ -235,7 +247,6 @@ public class SeqKing {
       binaryOffsetToSize.put(0x15718, 0x2C);
       binaryOffsetToSize.put(0x1F620, 0x37FC);
       binaryOffsetToSize.put(0x22EAC, 0x4B4);
-      binaryOffsetToSize.put(0x239D4, 0x1E0);
     } else if (path.endsWith("chr/sas/0000.seq")) {
       binaryOffsetToSize.put(0x4D44, 0x7B0);
       binaryOffsetToSize.put(0x5F6C, 0x3C0);
@@ -244,7 +255,6 @@ public class SeqKing {
       binaryOffsetToSize.put(0x15628, 0x2C);
       binaryOffsetToSize.put(0x24BC0, 0x44CC);
       binaryOffsetToSize.put(0x291A4, 0x618);
-      binaryOffsetToSize.put(0x29F44, 0x580);
     }
     return binaryOffsetToSize;
   }
