@@ -2,20 +2,14 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Combo;
-import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.HardReset;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SoftReset;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class OpcodeGroup00 {
@@ -26,6 +20,7 @@ public class OpcodeGroup00 {
       case 0x01 -> hardReset(bs);
       case 0x02 -> UnknownOpcode.of(0x00, 0x02, 0x4, bs);
       case 0x07 -> UnknownOpcode.of(0x00, 0x07, 0x4, bs);
+      case 0x20 -> parseMaybeBinaryData(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -55,9 +50,8 @@ public class OpcodeGroup00 {
     if (SeqHelper.atOp04700Binary(bs)) {
       byte[] bytes = bs.readBytes(0x10);
       return Optional.of(new BinaryData(offset, bytes, "; Binary data referenced by op_4700"));
-    }
-    if (SeqHelper.atComboList(bs)) {
-      return Optional.of(SeqHelper.getComboList(bs));
+    } else if (SeqHelper.atComboList(bs)) {
+      return Optional.of(SeqHelper.readComboList(bs));
     }
     return Optional.empty();
   }
@@ -71,5 +65,13 @@ public class OpcodeGroup00 {
           "Hard reset should have 0 for third and fourth byte: " + Arrays.toString(bytes));
     }
     return new HardReset(offset);
+  }
+
+  private static Opcode parseMaybeBinaryData(ByteStream bs) throws IOException {
+    if (SeqHelper.isUnknownBinary1(bs)) {
+      return SeqHelper.readUnknownBinary1(bs);
+    }
+    byte opcodeByte = bs.readBytes(2)[1];
+    throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
   }
 }

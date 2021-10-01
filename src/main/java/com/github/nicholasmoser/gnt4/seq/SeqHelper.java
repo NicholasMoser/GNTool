@@ -29,6 +29,21 @@ public class SeqHelper {
     return new BinaryData(offset, baos.toByteArray());
   }
 
+  public static boolean isUnknownBinary1(ByteStream bs) throws IOException {
+    byte[] expected = new byte[] { 0x00, 0x20, 0x56, (byte) 0x80, 0x00, (byte) 0xF0, 0x00, 0x04 };
+    byte[] bytes = bs.peekBytes(0x8);
+    return Arrays.equals(expected, bytes);
+  }
+
+  public static Opcode readUnknownBinary1(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    while (bs.peekWord() != 0x04026B00) {
+      baos.write(bs.readBytes(4));
+    }
+    return new BinaryData(offset, baos.toByteArray());
+  }
+
   public static boolean atOp04700Binary(ByteStream bs) throws IOException {
     byte[] op_4700 = new byte[]{0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x0, 0xA, 0x0, 0x0, 0x0, 0xA, 0x0,
         0x0, 0x0, 0x0};
@@ -42,7 +57,7 @@ public class SeqHelper {
     return Arrays.equals(combo, Arrays.copyOfRange(bytes, 4, 9));
   }
 
-  public static Opcode getComboList(ByteStream bs) throws IOException {
+  public static Opcode readComboList(ByteStream bs) throws IOException {
     int numberOfCombos = bs.readWord();
     List<Combo> combos = new ArrayList<>(numberOfCombos);
     byte[] end = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
