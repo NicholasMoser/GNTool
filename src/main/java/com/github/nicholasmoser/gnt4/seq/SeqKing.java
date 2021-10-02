@@ -59,7 +59,6 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -126,11 +125,20 @@ public class SeqKing {
         }
         continue;
       }
+
+      // Check for known binary data in the seq
+      List<Opcode> binaries = SeqHelper.getBinaries(bs);
+      if (!binaries.isEmpty()) {
+        opcodes.addAll(binaries);
+        continue;
+      }
+
+      // Check for opcodes that are always after previous opcodes
       if (!opcodes.isEmpty()) {
         Opcode lastOpcode = opcodes.get(opcodes.size() - 1);
         if (lastOpcode instanceof ComboList) {
           // Make sure this is the last combo list
-          if (!SeqHelper.atComboList(bs)) {
+          if (!SeqHelper.isComboList(bs)) {
             // There is binary data after the combo list that leads to the last set of opcodes
             opcodes.add(SeqHelper.getBinaryUntilBranchAndLink(bs));
             continue;
