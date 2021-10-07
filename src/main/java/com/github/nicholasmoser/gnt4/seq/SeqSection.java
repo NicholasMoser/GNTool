@@ -103,10 +103,19 @@ public class SeqSection {
     int id = 0;
     int word = bs.readWord();
     while (word != -1) {
-      section.add(new ActionID(bs.offset() - 4, ByteUtils.fromInt32(word), id++));
+      boolean unused = isActionUnused(bs, word);
+      section.add(new ActionID(bs.offset() - 4, ByteUtils.fromInt32(word), id++, unused));
       word = bs.readWord();
     }
     return section;
+  }
+
+  private static boolean isActionUnused(ByteStream bs, int offset) throws IOException {
+    int currentOffset = bs.offset();
+    bs.seek(offset);
+    int actionCode = bs.readWord();
+    bs.seek(currentOffset);
+    return actionCode == 0;
   }
 
   /**
