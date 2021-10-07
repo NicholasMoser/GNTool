@@ -4,6 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SynchronousTimer;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SynchronousTimerRun;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.google.common.primitives.Bytes;
@@ -154,8 +155,12 @@ public class OpcodeGroup20 {
 
   private static Opcode op_2012(ByteStream bs) throws IOException {
     int offset = bs.offset();
+    int word = bs.peekWord();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
+    if (word == 0x20120026) {
+      return new SynchronousTimerRun(offset, ea.getBytes(), info);
+    }
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
