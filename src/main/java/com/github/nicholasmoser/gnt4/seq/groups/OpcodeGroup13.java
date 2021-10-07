@@ -6,6 +6,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.google.common.primitives.Bytes;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class OpcodeGroup13 {
@@ -13,6 +14,8 @@ public class OpcodeGroup13 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
       case 0x00 -> op_1300(bs);
+      case 0x01 -> op_1301(bs);
+      case 0x02 -> op_1302(bs);
       case 0x03 -> op_1303(bs);
       case 0x04 -> op_1304(bs);
       case 0x05 -> op_1305(bs);
@@ -35,6 +38,36 @@ public class OpcodeGroup13 {
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_1301(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_1302(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(ea.getBytes());
+    StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
+    // Get filename
+    StringBuilder fileNameBuilder = new StringBuilder();
+    byte[] buffer = new byte[4];
+    do {
+      if (bs.read(buffer) != 4) {
+        throw new IOException("Failed to parse bytes of opcode at " + offset);
+      }
+      baos.write(buffer);
+      fileNameBuilder.append(new String(buffer, "shift-jis"));
+    } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
+    String fileName = fileNameBuilder.toString().replace("\0", "");
+    info.append(" with file name \"");
+    info.append(fileName);
+    info.append('"');
+    return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
   }
 
   private static Opcode op_1303(ByteStream bs) throws IOException {

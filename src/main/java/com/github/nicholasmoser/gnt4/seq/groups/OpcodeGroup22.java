@@ -24,6 +24,7 @@ public class OpcodeGroup22 {
       case 0x12 -> op_2212(bs);
       case 0x14 -> op_2214(bs);
       case 0x15 -> op_2215(bs);
+      case 0x16 -> op_2216(bs);
       case 0x1E -> op_221E(bs);
       case 0x1F -> op_221F(bs);
       case 0x20 -> op_2220(bs);
@@ -113,6 +114,21 @@ public class OpcodeGroup22 {
   }
 
   private static Opcode op_2215(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    int opcode = bs.peekWord();
+    int num = opcode >> 8 & 0xff;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    baos.write(ea.getBytes());
+    String info = String.format(" %s", ea.getDescription());
+    baos.write(bs.readBytes(8));
+    for (int i = 0; i < num; i++) {
+      baos.write(bs.readBytes(12));
+    }
+    return new UnknownOpcode(offset, baos.toByteArray(), info);
+  }
+
+  private static Opcode op_2216(ByteStream bs) throws IOException {
     int offset = bs.offset();
     int opcode = bs.peekWord();
     int num = opcode >> 8 & 0xff;

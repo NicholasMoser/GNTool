@@ -73,12 +73,20 @@ public class OpcodeGroup2A {
       case 6:
       case 18:
       case 24:
+      case 126:
+      case 127:
+      case 128:
+      case 137:
         baos.write(bs.readBytes(0x8));
         break;
       case 3:
       case 19:
       case 32:
       case 45:
+      case 132:
+      case 134:
+      case 136:
+      case 138:
         baos.write(bs.readBytes(0xc));
         break;
       case 12:
@@ -88,6 +96,8 @@ public class OpcodeGroup2A {
       case 42:
       case 46:
       case 47:
+      case 133:
+      case 204:
         baos.write(bs.readBytes(0x10));
         break;
       case 7:
@@ -104,13 +114,17 @@ public class OpcodeGroup2A {
       case 5:
       case 17:
       case 26:
+      case 130:
       case 145:
         baos.write(bs.readBytes(0x1C));
         break;
       case 25:
+      case 129:
         baos.write(bs.readBytes(0x20));
         break;
       case 23:
+      case 131:
+      case 135:
         baos.write(bs.readBytes(0x24));
         break;
       default:
@@ -136,6 +150,7 @@ public class OpcodeGroup2A {
     int flag = flags & 0xFFFF;
     switch (pointerOffset) {
       case 0x4:
+      case 0x1C:
         if (flag == 1) {
           baos.write(bs.readBytes(0x14));
         } else if (flag == 0) {

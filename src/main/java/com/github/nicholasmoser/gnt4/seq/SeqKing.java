@@ -20,6 +20,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup15;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup16;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup19;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1A;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1C;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1D;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1E;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup20;
@@ -72,7 +73,7 @@ public class SeqKing {
   /**
    * Parse the given seq file and create an HTML report at the given output path.
    *
-   * @param seqPath The seq file path.
+   * @param seqPath    The seq file path.
    * @param outputPath The output HTML report file path.
    * @throws IOException If an I/O error occurs.
    */
@@ -129,6 +130,9 @@ public class SeqKing {
       // Check for known binary data in the seq
       List<Opcode> binaries = SeqHelper.getBinaries(bs);
       if (!binaries.isEmpty()) {
+        for (Opcode binary : binaries) {
+          System.out.println(binary);
+        }
         opcodes.addAll(binaries);
         continue;
       }
@@ -140,7 +144,9 @@ public class SeqKing {
           // Make sure this is the last combo list
           if (!SeqHelper.isComboList(bs)) {
             // There is binary data after the combo list that leads to the last set of opcodes
-            opcodes.add(SeqHelper.getBinaryUntilBranchAndLink(bs));
+            Opcode binary = SeqHelper.getBinaryUntilBranchAndLink(bs);
+            System.out.println(binary);
+            opcodes.add(binary);
             continue;
           }
         }
@@ -178,6 +184,7 @@ public class SeqKing {
         case 0x16 -> opcodes.add(OpcodeGroup16.parse(bs, opcode));
         case 0x19 -> opcodes.add(OpcodeGroup19.parse(bs, opcode));
         case 0x1A -> opcodes.add(OpcodeGroup1A.parse(bs, opcode));
+        case 0x1C -> opcodes.add(OpcodeGroup1C.parse(bs, opcode));
         case 0x1D -> opcodes.add(OpcodeGroup1D.parse(bs, opcode));
         case 0x1E -> opcodes.add(OpcodeGroup1E.parse(bs, opcode));
         case 0x20 -> opcodes.add(OpcodeGroup20.parse(bs, opcode));
@@ -259,7 +266,16 @@ public class SeqKing {
       binaryOffsetToSize.put(0x79B0, 0x1E0);
       binaryOffsetToSize.put(0x96C0, 0x10);
       binaryOffsetToSize.put(0x15628, 0x2C);
-      binaryOffsetToSize.put(0x24BC0, 0x44CC);
+      binaryOffsetToSize.put(0x24BB4, 0x44D8);
+    } else if (path.endsWith("chr/nar/0000.seq")) {
+      binaryOffsetToSize.put(0x4EC4, 0x7B0);
+      binaryOffsetToSize.put(0x60EC, 0x3C0);
+      binaryOffsetToSize.put(0x7B30, 0x1E0);
+      binaryOffsetToSize.put(0x9840, 0x10);
+      binaryOffsetToSize.put(0x15754, 0x2C);
+      binaryOffsetToSize.put(0x2AC08, 0x4738);
+      binaryOffsetToSize.put(0x30C48, 0x14);
+      binaryOffsetToSize.put(0x319B0, 0x10);
     }
     return binaryOffsetToSize;
   }

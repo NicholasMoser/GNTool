@@ -34,6 +34,7 @@ public class OpcodeGroup04 {
       case 0x0F -> xor(bs);
       case 0x11 -> subws(bs);
       case 0x15 -> op_0415(bs);
+      case 0x17 -> op_0417(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -123,6 +124,13 @@ public class OpcodeGroup04 {
   }
 
   private static Opcode op_0415(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_0417(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());

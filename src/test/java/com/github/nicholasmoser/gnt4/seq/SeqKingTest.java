@@ -32,4 +32,11 @@ public class SeqKingTest {
     Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/sas/0000.html");
     SeqKing.generate(seqPath, outputPath);
   }
+
+  @Test
+  public void parseNaruto() throws Exception {
+    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/nar/0000.seq");
+    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/nar/0000.html");
+    SeqKing.generate(seqPath, outputPath);
+  }
 }
