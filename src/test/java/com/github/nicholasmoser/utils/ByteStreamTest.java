@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -12,11 +13,21 @@ import org.junit.jupiter.api.Test;
  */
 public class ByteStreamTest {
 
+  /**
+   * Tests a ByteStream with a null byte array.
+   *
+   * @throws Exception If any Exception occurs.
+   */
   @Test
   public void testNull() {
     assertThrows(NullPointerException.class, () -> new ByteStream(null));
   }
 
+  /**
+   * Tests a ByteStream with an empty byte array.
+   *
+   * @throws Exception If any Exception occurs.
+   */
   @Test
   public void testZeroByteArray() throws Exception {
     byte[] bytes = new byte[0];
@@ -31,6 +42,11 @@ public class ByteStreamTest {
     assertThrows(IOException.class, bs::skipWord);
   }
 
+  /**
+   * Tests a ByteStream with a one byte array.
+   *
+   * @throws Exception If any Exception occurs.
+   */
   @Test
   public void testOneByteArray() {
     byte[] bytes = new byte[]{0x56};
@@ -60,6 +76,11 @@ public class ByteStreamTest {
     assertThrows(IOException.class, bs4::skipWord);
   }
 
+  /**
+   * Tests a ByteStream with a four byte array.
+   *
+   * @throws Exception If any Exception occurs.
+   */
   @Test
   public void testFourByteArray() throws Exception {
     byte[] bytes = new byte[]{(byte) 0x80, 0x00, 0x52, 0x24};
@@ -93,6 +114,11 @@ public class ByteStreamTest {
     assertThrows(IOException.class, bs4::skipWord);
   }
 
+  /**
+   * Tests a ByteStream with an eight byte array.
+   *
+   * @throws Exception If any Exception occurs.
+   */
   @Test
   public void testEightByteArray() throws Exception {
     byte[] bytes = new byte[]{0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04};
@@ -142,7 +168,7 @@ public class ByteStreamTest {
   }
 
   /**
-   * Test the length function of ByteStream and that is works as expected.
+   * Test the length function of ByteStream.
    *
    * @throws Exception If any Exception occurs.
    */
@@ -157,5 +183,41 @@ public class ByteStreamTest {
     assertEquals(0, bs.length());
     bs = new ByteStream(new byte[]{0x11});
     assertEquals(1, bs.length());
+  }
+
+  /**
+   * Test the seek function of ByteStream.
+   */
+  @Test
+  public void testSeek() {
+    byte[] bytes = new byte[]{0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04};
+    ByteStream bs = new ByteStream(bytes);
+    assertEquals(0, bs.offset());
+    bs.seek(0);
+    assertEquals(0, bs.offset());
+    bs.seek(1);
+    assertEquals(1, bs.offset());
+    bs.seek(2);
+    assertEquals(2, bs.offset());
+    bs.seek(3);
+    assertEquals(3, bs.offset());
+    bs.seek(4);
+    assertEquals(4, bs.offset());
+    bs.seek(5);
+    assertEquals(5, bs.offset());
+    bs.seek(6);
+    assertEquals(6, bs.offset());
+    bs.seek(7);
+    assertEquals(7, bs.offset());
+    Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(8));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(44444));
+    bs.seek(4);
+    assertEquals(4, bs.offset());
+    bs.seek(0);
+    assertEquals(0, bs.offset());
+    bs.seek(3);
+    assertEquals(3, bs.offset());
+    Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(-1));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(-55555));
   }
 }

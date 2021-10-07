@@ -143,4 +143,19 @@ public class ByteStream extends ByteArrayInputStream {
   public int length() {
     return buf.length;
   }
+
+  /**
+   * Seeks the ByteStream to a specific position. The position must be greater than or equal to 0
+   * and less than the size of the byte array, or it will throw IllegalArgumentException.
+   *
+   * @param pos The position in the byte array to seek to.
+   */
+  public void seek(int pos) {
+    if (pos >= count) {
+      throw new IllegalArgumentException("ByteStream new pos " + pos + " >= count " + count);
+    } else if (pos < 0) {
+      throw new IllegalArgumentException("ByteStream new pos " + pos + " < 0");
+    }
+    this.pos = pos;
+  }
 }
