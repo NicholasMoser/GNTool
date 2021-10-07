@@ -13,7 +13,7 @@ public class ComboList implements Opcode {
 
   private final List<Combo> combos;
 
-  public ComboList(byte[] header, List<Combo> combos) {
+  public ComboList(List<Combo> combos) {
     this.combos = combos;
   }
 

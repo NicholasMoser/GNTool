@@ -160,7 +160,7 @@ public class SeqHelper {
     int word;
     do {
       word = bs.readWord();
-      // baos.write(ByteUtils.fromInt32(word)); UNCOMMENT THIS
+      baos.write(ByteUtils.fromInt32(word));
     } while (word == 0);
     int numberOfCombos = word;
     List<Combo> combos = new ArrayList<>(numberOfCombos);
@@ -186,7 +186,7 @@ public class SeqHelper {
       }
       bytes = bs.readBytes(4);
     }
-    return new ComboList(null, combos);
+    return new ComboList(combos);
   }
 
   /**
