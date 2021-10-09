@@ -6,12 +6,14 @@ import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.InsertAsmCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
 import com.github.nicholasmoser.gecko.codes.BattleModeDefaultMenuOption;
+import com.github.nicholasmoser.gecko.codes.CounterHitPlaysSound;
 import com.github.nicholasmoser.gecko.codes.DebugTraining;
 import com.github.nicholasmoser.gecko.codes.Default2PControl;
 import com.github.nicholasmoser.gecko.codes.DefaultInputsOff;
 import com.github.nicholasmoser.gecko.codes.GeckoInjectionCode;
 import com.github.nicholasmoser.gecko.codes.UnlockEverything;
 import com.github.nicholasmoser.gecko.codes.ZtkSKakDamageMultiplier;
+import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
@@ -52,7 +54,8 @@ public class DolHijack {
 
   private final static List<GeckoInjectionCode> CODES = List
       .of(new Default2PControl(), new DefaultInputsOff(), new ZtkSKakDamageMultiplier(),
-          new UnlockEverything(), new DebugTraining(), new BattleModeDefaultMenuOption());
+          new UnlockEverything(), new DebugTraining(), new BattleModeDefaultMenuOption(),
+          new CounterHitPlaysSound());
 
   /**
    * Returns whether or not the given Gecko codes overflow the limit of hijacked code. Logs and
@@ -141,6 +144,14 @@ public class DolHijack {
       byte[] subsection1 = Arrays.copyOfRange(originalBytes, i, originalBytes.length);
       byte[] subsection2 = Arrays.copyOfRange(currentBytes, i, originalBytes.length);
       if (!Arrays.equals(subsection1, subsection2)) {
+        if (isAtMatchingWord(subsection1, subsection2)) {
+          // Check for empty space between codes
+          // TODO: Be smart and remove empty space
+          while(originalBytes[i] == currentBytes[i]) {
+            i++;
+          }
+          continue;
+        }
         // There's a lot of different reasons this could occur, but they all will require manual
         // inspection of the user's dol. Ask them to just log an issue.
         LOGGER.log(Level.SEVERE, "A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
@@ -152,6 +163,16 @@ public class DolHijack {
       break;
     }
     return true;
+  }
+
+  private static boolean isAtMatchingWord(byte[] bytes1, byte[] bytes2) {
+    if (bytes1.length < 4) {
+      // Less than a word less in the byte arrays
+      return false;
+    }
+    int word1 = ByteUtils.toInt32(Arrays.copyOfRange(bytes1, 0, 4));
+    int word2 = ByteUtils.toInt32(Arrays.copyOfRange(bytes2, 0, 4));
+    return word1 == word2;
   }
 
   /**
