@@ -53,7 +53,7 @@ The **Changed Files** tab contains the list of files you or GNTool have modified
 
 ![Right Click Example](/docs/rightclick.png?raw=true "Right Click Example")
 
-The **Missing Files** tab contains the list of files that have been removed from the `uncompressed` directory. These must be added back or you will not be able to build an ISO.
+The **Missing Files** tab contains the list of files that have been removed from the `uncompressed` directory. You will only be allowed to build with missing files if you allow GNTool to create 1 KB empty files as a replacement for them.
 
 The **Characters**, **Audio**, **Graphics**, and **Seqence** tabs contain tools and options for managing each of their respective files.
 
