@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -521,9 +522,14 @@ public class MenuController {
 
     // Prevent build if files are missing
     if (!missingFiles.getItems().isEmpty()) {
-      Message.error("Missing Files",
-          "You cannot build the ISO while files are missing.\nSee the Missing Files tab.");
-      return;
+      String message = "You cannot build the ISO while files are missing.\n";
+      message += "Allow GNTool to replace these missing files with 1 KB filler files?";
+      boolean yes = Message.warnConfirmation("Missing Files", message);
+      if (yes) {
+        createMissingFiles();
+      } else {
+        return;
+      }
     }
 
     // Warn user if audio fix not selected
@@ -1461,6 +1467,27 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Remove Code", e);
       Message.error("Unable to Remove Code", "Unable to remove code, see log for more details.");
+    }
+  }
+
+  /**
+   * Iterates over the missing files and replaces them with 1 KB empty files. These files will then
+   * be removed from the list of missing files and added to the list of changed files.
+   */
+  private void createMissingFiles() {
+    Iterator<String> files = missingFiles.getItems().iterator();
+    byte [] bytes = new byte[1024];
+    while (files.hasNext()) {
+      String file = files.next();
+      Path filePath = uncompressedDirectory.resolve(file);
+      try {
+        Files.write(filePath, bytes);
+        LOGGER.log(Level.INFO, "Created empty file for " + filePath);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      files.remove();
+      changedFiles.getItems().add(file);
     }
   }
 }
