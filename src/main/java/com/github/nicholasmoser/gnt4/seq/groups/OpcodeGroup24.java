@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class OpcodeGroup24 {
@@ -60,146 +61,113 @@ public class OpcodeGroup24 {
     byte[] opcode = bs.readBytes(4);
     byte[] flagBytes = bs.readBytes(4);
     int flag = ByteUtils.toInt32(flagBytes);
-    String description;
+    String text;
     switch (opcode[2]) {
-      case 0x0 -> description = String.format("set_af_flags \"%s\"", getAFFlags(flag));
-      case 0x1 -> description = String.format("remove_af_flags \"%s\"", getAFFlags(flag));
-      case 0x2 -> description = String.format("and_af_flags \"%s\"", getAFFlags(flag));
-      case 0x3 -> description = String.format("add_af_flags \"%s\"", getAFFlags(flag));
-      case 0x4 -> description = String.format("xor_af_flags \"%s\"", getAFFlags(flag));
-      case 0x5 -> description = String.format("get_af_flags \"%s\"", getAFFlags(flag));
-      case 0x6 -> description = String.format("set_nf_flags \"%s\"", getNFFlags(flag));
-      case 0x7 -> description = String.format("remove_nf_flags \"%s\"", getNFFlags(flag));
-      case 0x8 -> description = String.format("and_nf_flags \"%s\"", getNFFlags(flag));
-      case 0x9 -> description = String.format("add_nf_flags \"%s\"", getNFFlags(flag));
-      case 0xa -> description = String.format("xor_nf_flags \"%s\"", getNFFlags(flag));
-      case 0xb -> description = String.format("get_nf_flags \"%s\"", getNFFlags(flag));
-      case 0xc -> description = String.format("set_pf_flags \"%s\"", getPFFlags(flag));
-      case 0xd -> description = String.format("remove_pf_flags \"%s\"", getPFFlags(flag));
-      case 0xe -> description = String.format("and_pf_flags \"%s\"", getPFFlags(flag));
-      case 0xf -> description = String.format("add_pf_flags \"%s\"", getPFFlags(flag));
-      case 0x10 -> description = String.format("xor_pf_flags \"%s\"", getPFFlags(flag));
-      case 0x11 -> description = String.format("get_pf_flags \"%s\"", getPFFlags(flag));
-      case 0x12 -> description = String.format("set_kf_flags \"%s\"", getKFFlags(flag));
-      case 0x13 -> description = String.format("remove_kf_flags \"%s\"", getKFFlags(flag));
-      case 0x14 -> description = String.format("and_kf_flags \"%s\"", getKFFlags(flag));
-      case 0x15 -> description = String.format("add_kf_flags \"%s\"", getKFFlags(flag));
-      case 0x16 -> description = String.format("xor_kf_flags \"%s\"", getKFFlags(flag));
-      case 0x17 -> description = String.format("get_kf_flags \"%s\"", getKFFlags(flag));
-      case 0x18 -> description = String.format("set_df_flags \"%s\"", getDFFlags(flag));
-      case 0x19 -> description = String.format("remove_df_flags \"%s\"", getDFFlags(flag));
-      case 0x1a -> description = String.format("and_df_flags \"%s\"", getDFFlags(flag));
-      case 0x1b -> description = String.format("add_df_flags \"%s\"", getDFFlags(flag));
-      case 0x1c -> description = String.format("xor_df_flags \"%s\"", getDFFlags(flag));
-      case 0x1d -> description = String.format("get_df_flags \"%s\"", getDFFlags(flag));
-      case 0x1e -> description = "0x1e";
-      case 0x1f -> description = "0x1f";
-      case 0x20 -> description = "0x20";
-      case 0x21 -> description = "0x21";
-      case 0x22 -> description = "0x22";
-      case 0x23 -> description = "0x23";
-      case 0x24 -> description = "0x24";
-      case 0x25 -> description = "0x25";
-      case 0x26 -> description = "0x26";
-      case 0x27 -> description = "0x27";
-      case 0x28 -> description = "0x28";
-      case 0x29 -> description = "0x29";
-      case 0x2a -> description = "0x2a";
-      case 0x2b -> description = "0x2b";
-      case 0x2c -> description = "0x2c";
-      case 0x2d -> description = "0x2d";
-      case 0x2e -> description = "0x2e";
-      case 0x2f -> description = "0x2f";
-      case 0x30 -> description = "0x30";
-      case 0x31 -> description = "0x31";
-      case 0x32 -> description = "0x32";
-      case 0x33 -> description = "0x33";
-      case 0x34 -> description = "0x34";
-      case 0x35 -> description = "0x35";
-      case 0x36 -> description = "0x36";
-      case 0x37 -> description = "0x37";
-      case 0x38 -> description = "0x38";
-      case 0x39 -> description = "0x39";
-      case 0x3a -> description = "0x3a";
-      case 0x3b -> description = "0x3b";
-      case 0x3c -> description = "0x3c";
-      case 0x3d -> description = "0x3d";
-      case 0x3e -> description = "0x3e";
-      case 0x3f -> description = "0x3f";
-      case 0x40 -> description = "0x40";
-      case 0x41 -> description = "0x41";
-      case 0x42 -> description = "0x42";
-      case 0x43 -> description = "0x43";
-      case 0x44 -> description = "0x44";
-      case 0x45 -> description = "0x45";
-      case 0x46 -> description = "0x46";
-      case 0x47 -> description = "0x47";
-      case 0x48 -> description = "0x48";
-      case 0x49 -> description = "0x49";
-      case 0x4a -> description = "0x4a";
-      case 0x4b -> description = "0x4b";
-      case 0x4c -> description = "0x4c";
-      case 0x4d -> description = "0x4d";
-      case 0x4e -> description = "0x4e";
-      case 0x4f -> description = "0x4f";
-      case 0x50 -> description = "0x50";
-      case 0x51 -> description = "0x51";
-      case 0x52 -> description = "0x52";
-      case 0x53 -> description = "0x53";
-      case 0x54 -> description = "0x54";
-      case 0x55 -> description = "0x55";
-      case 0x56 -> description = "0x56";
-      case 0x57 -> description = "0x57";
-      case 0x58 -> description = "0x58";
-      case 0x59 -> description = "0x59";
-      default -> throw new IOException("Opcode parameter not supported: " + Arrays.toString(opcode));
+      case 0x0 -> text = String.format("set_af_flags \"%s\"", getFlags(flag, Seq.AF_FLAGS));
+      case 0x1 -> text = String.format("remove_af_flags \"%s\"", getFlags(flag, Seq.AF_FLAGS));
+      case 0x2 -> text = String.format("and_af_flags \"%s\"", getFlags(flag, Seq.AF_FLAGS));
+      case 0x3 -> text = String.format("add_af_flags \"%s\"", getFlags(flag, Seq.AF_FLAGS));
+      case 0x4 -> text = String.format("xor_af_flags \"%s\"", getFlags(flag, Seq.AF_FLAGS));
+      case 0x5 -> text = String.format("get_af_flags \"%s\"", getFlags(flag, Seq.AF_FLAGS));
+      case 0x6 -> text = String.format("set_nf_flags \"%s\"", getFlags(flag, Seq.NF_FLAGS));
+      case 0x7 -> text = String.format("remove_nf_flags \"%s\"", getFlags(flag, Seq.NF_FLAGS));
+      case 0x8 -> text = String.format("and_nf_flags \"%s\"", getFlags(flag, Seq.NF_FLAGS));
+      case 0x9 -> text = String.format("add_nf_flags \"%s\"", getFlags(flag, Seq.NF_FLAGS));
+      case 0xa -> text = String.format("xor_nf_flags \"%s\"", getFlags(flag, Seq.NF_FLAGS));
+      case 0xb -> text = String.format("get_nf_flags \"%s\"", getFlags(flag, Seq.NF_FLAGS));
+      case 0xc -> text = String.format("set_pf_flags \"%s\"", getFlags(flag, Seq.PF_FLAGS));
+      case 0xd -> text = String.format("remove_pf_flags \"%s\"", getFlags(flag, Seq.PF_FLAGS));
+      case 0xe -> text = String.format("and_pf_flags \"%s\"", getFlags(flag, Seq.PF_FLAGS));
+      case 0xf -> text = String.format("add_pf_flags \"%s\"", getFlags(flag, Seq.PF_FLAGS));
+      case 0x10 -> text = String.format("xor_pf_flags \"%s\"", getFlags(flag, Seq.PF_FLAGS));
+      case 0x11 -> text = String.format("get_pf_flags \"%s\"", getFlags(flag, Seq.PF_FLAGS));
+      case 0x12 -> text = String.format("set_kf_flags \"%s\"", getFlags(flag, Seq.KF_FLAGS));
+      case 0x13 -> text = String.format("remove_kf_flags \"%s\"", getFlags(flag, Seq.KF_FLAGS));
+      case 0x14 -> text = String.format("and_kf_flags \"%s\"", getFlags(flag, Seq.KF_FLAGS));
+      case 0x15 -> text = String.format("add_kf_flags \"%s\"", getFlags(flag, Seq.KF_FLAGS));
+      case 0x16 -> text = String.format("xor_kf_flags \"%s\"", getFlags(flag, Seq.KF_FLAGS));
+      case 0x17 -> text = String.format("get_kf_flags \"%s\"", getFlags(flag, Seq.KF_FLAGS));
+      case 0x18 -> text = String.format("set_df_flags \"%s\"", getFlags(flag, Seq.DF_FLAGS));
+      case 0x19 -> text = String.format("remove_df_flags \"%s\"", getFlags(flag, Seq.DF_FLAGS));
+      case 0x1a -> text = String.format("and_df_flags \"%s\"", getFlags(flag, Seq.DF_FLAGS));
+      case 0x1b -> text = String.format("add_df_flags \"%s\"", getFlags(flag, Seq.DF_FLAGS));
+      case 0x1c -> text = String.format("xor_df_flags \"%s\"", getFlags(flag, Seq.DF_FLAGS));
+      case 0x1d -> text = String.format("get_df_flags \"%s\"", getFlags(flag, Seq.DF_FLAGS));
+      case 0x1e -> text = String.format("set_ef_flags \"%s\"", getFlags(flag, Seq.EF_FLAGS));
+      case 0x1f -> text = String.format("remove_ef_flags \"%s\"", getFlags(flag, Seq.EF_FLAGS));
+      case 0x20 -> text = String.format("and_ef_flags \"%s\"", getFlags(flag, Seq.EF_FLAGS));
+      case 0x21 -> text = String.format("add_ef_flags \"%s\"", getFlags(flag, Seq.EF_FLAGS));
+      case 0x22 -> text = String.format("xor_ef_flags \"%s\"", getFlags(flag, Seq.EF_FLAGS));
+      case 0x23 -> text = String.format("get_ef_flags \"%s\"", getFlags(flag, Seq.EF_FLAGS));
+      case 0x24 -> text = String.format("set_mf_flags \"%s\"", getFlags(flag, Seq.MF_FLAGS));
+      case 0x25 -> text = String.format("remove_mf_flags \"%s\"", getFlags(flag, Seq.MF_FLAGS));
+      case 0x26 -> text = String.format("and_mf_flags \"%s\"", getFlags(flag, Seq.MF_FLAGS));
+      case 0x27 -> text = String.format("add_mf_flags \"%s\"", getFlags(flag, Seq.MF_FLAGS));
+      case 0x28 -> text = String.format("xor_mf_flags \"%s\"", getFlags(flag, Seq.MF_FLAGS));
+      case 0x29 -> text = String.format("get_mf_flags \"%s\"", getFlags(flag, Seq.MF_FLAGS));
+      case 0x2a -> text = String.format("set_rf_flags \"%s\"", getFlags(flag, Seq.RF_FLAGS));
+      case 0x2b -> text = String.format("remove_rf_flags \"%s\"", getFlags(flag, Seq.RF_FLAGS));
+      case 0x2c -> text = String.format("and_rf_flags \"%s\"", getFlags(flag, Seq.RF_FLAGS));
+      case 0x2d -> text = String.format("add_rf_flags \"%s\"", getFlags(flag, Seq.RF_FLAGS));
+      case 0x2e -> text = String.format("xor_rf_flags \"%s\"", getFlags(flag, Seq.RF_FLAGS));
+      case 0x2f -> text = String.format("get_rf_flags \"%s\"", getFlags(flag, Seq.RF_FLAGS));
+      case 0x30 -> text = String.format("set_sf_flags \"%s\"", getFlags(flag, Seq.SF_FLAGS));
+      case 0x31 -> text = String.format("remove_sf_flags \"%s\"", getFlags(flag, Seq.SF_FLAGS));
+      case 0x32 -> text = String.format("and_sf_flags \"%s\"", getFlags(flag, Seq.SF_FLAGS));
+      case 0x33 -> text = String.format("add_sf_flags \"%s\"", getFlags(flag, Seq.SF_FLAGS));
+      case 0x34 -> text = String.format("xor_sf_flags \"%s\"", getFlags(flag, Seq.SF_FLAGS));
+      case 0x35 -> text = String.format("get_sf_flags \"%s\"", getFlags(flag, Seq.SF_FLAGS));
+      case 0x36 -> text = String.format("set_unknown_flags 0x%08X", flag);
+      case 0x37 -> text = String.format("remove_unknown_flags 0x%08X", flag);
+      case 0x38 -> text = String.format("and_unknown_flags 0x%08X", flag);
+      case 0x39 -> text = String.format("add_unknown_flags 0x%08X", flag);
+      case 0x3a -> text = String.format("xor_unknown_flags 0x%08X", flag);
+      case 0x3b -> text = String.format("get_unknown_flags 0x%08X", flag);
+      case 0x3c -> text = String.format("set_cf_flags \"%s\"", getFlags(flag, Seq.CF_FLAGS));
+      case 0x3d -> text = String.format("remove_cf_flags \"%s\"", getFlags(flag, Seq.CF_FLAGS));
+      case 0x3e -> text = String.format("and_cf_flags \"%s\"", getFlags(flag, Seq.CF_FLAGS));
+      case 0x3f -> text = String.format("add_cf_flags \"%s\"", getFlags(flag, Seq.CF_FLAGS));
+      case 0x40 -> text = String.format("xor_cf_flags \"%s\"", getFlags(flag, Seq.CF_FLAGS));
+      case 0x41 -> text = String.format("get_cf_flags \"%s\"", getFlags(flag, Seq.CF_FLAGS));
+      case 0x42 -> text = String.format("set_chr_mod_flags \"%s\"",
+          getFlags(flag, Seq.CHR_MOD_FLAGS));
+      case 0x43 -> text = String.format("remove_chr_mod_flags \"%s\"",
+          getFlags(flag, Seq.CHR_MOD_FLAGS));
+      case 0x44 -> text = String.format("and_chr_mod_flags \"%s\"",
+          getFlags(flag, Seq.CHR_MOD_FLAGS));
+      case 0x45 -> text = String.format("add_chr_mod_flags \"%s\"",
+          getFlags(flag, Seq.CHR_MOD_FLAGS));
+      case 0x46 -> text = String.format("xor_chr_mod_flags \"%s\"",
+          getFlags(flag, Seq.CHR_MOD_FLAGS));
+      case 0x47 -> text = String.format("get_chr_mod_flags \"%s\"",
+          getFlags(flag, Seq.CHR_MOD_FLAGS));
+      case 0x48 -> text = String.format("set_k2f_flags \"%s\"", getFlags(flag, Seq.K2F_FLAGS));
+      case 0x49 -> text = String.format("remove_k2f_flags \"%s\"", getFlags(flag, Seq.K2F_FLAGS));
+      case 0x4a -> text = String.format("and_k2f_flags \"%s\"", getFlags(flag, Seq.K2F_FLAGS));
+      case 0x4b -> text = String.format("add_k2f_flags \"%s\"", getFlags(flag, Seq.K2F_FLAGS));
+      case 0x4c -> text = String.format("xor_k2f_flags \"%s\"", getFlags(flag, Seq.K2F_FLAGS));
+      case 0x4d -> text = String.format("get_k2f_flags \"%s\"", getFlags(flag, Seq.K2F_FLAGS));
+      case 0x4e -> text = String.format("set_d2f_flags \"%s\"", getFlags(flag, Seq.D2F_FLAGS));
+      case 0x4f -> text = String.format("remove_d2f_flags \"%s\"", getFlags(flag, Seq.D2F_FLAGS));
+      case 0x50 -> text = String.format("and_d2f_flags \"%s\"", getFlags(flag, Seq.D2F_FLAGS));
+      case 0x51 -> text = String.format("add_d2f_flags \"%s\"", getFlags(flag, Seq.D2F_FLAGS));
+      case 0x52 -> text = String.format("xor_d2f_flags \"%s\"", getFlags(flag, Seq.D2F_FLAGS));
+      case 0x53 -> text = String.format("get_d2f_flags \"%s\"", getFlags(flag, Seq.D2F_FLAGS));
+      case 0x54 -> text = String.format("set_n2f_flags \"%s\"", getFlags(flag, Seq.N2F_FLAGS));
+      case 0x55 -> text = String.format("remove_n2f_flags \"%s\"", getFlags(flag, Seq.N2F_FLAGS));
+      case 0x56 -> text = String.format("and_n2f_flags \"%s\"", getFlags(flag, Seq.N2F_FLAGS));
+      case 0x57 -> text = String.format("add_n2f_flags \"%s\"", getFlags(flag, Seq.N2F_FLAGS));
+      case 0x58 -> text = String.format("xor_n2f_flags \"%s\"", getFlags(flag, Seq.N2F_FLAGS));
+      case 0x59 -> text = String.format("get_n2f_flags \"%s\"", getFlags(flag, Seq.N2F_FLAGS));
+      default -> throw new IOException(
+          "Opcode parameter not supported: " + Arrays.toString(opcode));
     }
-    return new FlagOperation(offset, Bytes.concat(opcode, flagBytes), description);
+    return new FlagOperation(offset, Bytes.concat(opcode, flagBytes), text);
   }
 
-  private static String getAFFlags(int flag) {
+  private static String getFlags(int flag, Map<Integer, String> flagValues) {
     List<String> flags = new ArrayList<>();
-    for (Entry<Integer, String> entry : Seq.AF_FLAGS.entrySet()) {
-      if ((entry.getKey() & flag) != 0) {
-        flags.add(entry.getValue());
-      }
-    }
-    return String.join(", ", flags);
-  }
-
-  private static String getNFFlags(int flag) {
-    List<String> flags = new ArrayList<>();
-    for (Entry<Integer, String> entry : Seq.NF_FLAGS.entrySet()) {
-      if ((entry.getKey() & flag) != 0) {
-        flags.add(entry.getValue());
-      }
-    }
-    return String.join(", ", flags);
-  }
-
-  private static String getPFFlags(int flag) {
-    List<String> flags = new ArrayList<>();
-    for (Entry<Integer, String> entry : Seq.PF_FLAGS.entrySet()) {
-      if ((entry.getKey() & flag) != 0) {
-        flags.add(entry.getValue());
-      }
-    }
-    return String.join(", ", flags);
-  }
-
-  private static String getKFFlags(int flag) {
-    List<String> flags = new ArrayList<>();
-    for (Entry<Integer, String> entry : Seq.KF_FLAGS.entrySet()) {
-      if ((entry.getKey() & flag) != 0) {
-        flags.add(entry.getValue());
-      }
-    }
-    return String.join(", ", flags);
-  }
-
-  private static String getDFFlags(int flag) {
-    List<String> flags = new ArrayList<>();
-    for (Entry<Integer, String> entry : Seq.DF_FLAGS.entrySet()) {
+    for (Entry<Integer, String> entry : flagValues.entrySet()) {
       if ((entry.getKey() & flag) != 0) {
         flags.add(entry.getValue());
       }
