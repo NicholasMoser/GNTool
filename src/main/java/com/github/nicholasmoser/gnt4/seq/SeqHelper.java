@@ -50,6 +50,9 @@ public class SeqHelper {
       opcodes.add(SeqHelper.readComboList(bs));
     } else if (SeqHelper.isUnknownBinary1(bs)) {
       opcodes.add(SeqHelper.readUnknownBinary1(bs));
+    } else if (SeqHelper.isUnknownBinary2(bs)) {
+      byte[] bytes = bs.readBytes(0x10);
+      opcodes.add(new BinaryData(offset, bytes));
     }
     return Collections.unmodifiableList(opcodes);
   }
@@ -95,6 +98,23 @@ public class SeqHelper {
       baos.write(bs.readBytes(4));
     }
     return new BinaryData(offset, baos.toByteArray());
+  }
+
+  /**
+   * Returns if the ByteStream is currently at unknown binary 2.
+   *
+   * @param bs The ByteStream to read from.
+   * @return If the ByteStream is at unknown binary 2.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static boolean isUnknownBinary2(ByteStream bs) throws IOException {
+    if (bs.length() - bs.offset() < 0x10) {
+      return false;
+    }
+    byte[] expected = new byte[]{0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00,
+        0x10, 0x00, 0x00, 0x00, 0x00};
+    byte[] bytes = bs.peekBytes(0x10);
+    return Arrays.equals(expected, bytes);
   }
 
   /**

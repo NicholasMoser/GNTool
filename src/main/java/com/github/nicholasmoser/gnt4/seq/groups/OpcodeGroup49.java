@@ -18,6 +18,7 @@ public class OpcodeGroup49 {
       case 0x02 -> UnknownOpcode.of(0x49, 0x02, 0x8, bs);
       case 0x03 -> UnknownOpcode.of(0x49, 0x03, 0x10, bs);
       case 0x09 -> op_4909(bs);
+      case 0x0A -> UnknownOpcode.of(0x49, 0x0A, 0xC, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

@@ -97,6 +97,7 @@ public class OpcodeGroup2A {
       case 46:
       case 47:
       case 133:
+      case 155:
       case 204:
         baos.write(bs.readBytes(0x10));
         break;
