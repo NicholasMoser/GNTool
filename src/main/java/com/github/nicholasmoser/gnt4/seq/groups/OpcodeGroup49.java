@@ -5,9 +5,11 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
+import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 public class OpcodeGroup49 {
 
@@ -29,24 +31,30 @@ public class OpcodeGroup49 {
     String info = String.format(" %s", ea.getDescription());
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
-    Operand operand = ea.getSecondOperand();
-    boolean isImmediate = operand instanceof ImmediateOperand;
-    if (!isImmediate) {
-      throw new IllegalStateException(operand.getClass() + " is not supported for op_4909 currently.");
-    }
-    ImmediateOperand immediate = (ImmediateOperand) operand;
-    int value = immediate.getImmediateValue();
-    switch (value) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 6:
-      case 7:
-        baos.write(bs.readBytes(4));
-        break;
-      default:
-        break;
+    Operand operandOne = ea.getFirstOperand();
+    if (operandOne instanceof ImmediateOperand) {
+      Operand operandTwo = ea.getSecondOperand();
+      boolean immediate = operandTwo instanceof ImmediateOperand;
+      if (!immediate) {
+        throw new IllegalStateException("Operand type not yet supported: " + operandTwo);
+      }
+      ImmediateOperand immediateTwo = (ImmediateOperand) operandTwo;
+      switch (immediateTwo.getImmediateValue()) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 6:
+        case 7:
+          baos.write(bs.readBytes(4));
+          break;
+        default:
+          break;
+      }
+    } else if (operandOne instanceof SeqOperand) {
+      // Do nothing
+    } else {
+      throw new IllegalStateException("This operand is not yet supported: " + operandOne);
     }
     return new UnknownOpcode(offset, baos.toByteArray(), info);
   }

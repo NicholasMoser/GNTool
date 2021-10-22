@@ -278,6 +278,12 @@ public class SeqKing {
       binaryOffsetToSize.put(0x79A0, 0x1E0);
       binaryOffsetToSize.put(0x152BC, 0x2C);
       binaryOffsetToSize.put(0x21420, 0x3BE4);
+    } else if (path.endsWith("chr/bou/0000.seq")) {
+      binaryOffsetToSize.put(0x4E44, 0x7B0);
+      binaryOffsetToSize.put(0x606C, 0x3C0);
+      binaryOffsetToSize.put(0x7AAC, 0x1E0);
+      binaryOffsetToSize.put(0x15838, 0x2C);
+      binaryOffsetToSize.put(0x24154, 0x3968);
     }
     return binaryOffsetToSize;
   }

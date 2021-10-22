@@ -35,6 +35,7 @@ public class OpcodeGroup47 {
       case 0x1A -> UnknownOpcode.of(0x47, 0x1A, 0x8, bs);
       case 0x1B -> UnknownOpcode.of(0x47, 0x1B, 0x8, bs);
       case 0x1C -> UnknownOpcode.of(0x47, 0x1C, 0x8, bs);
+      case 0x20 -> UnknownOpcode.of(0x47, 0x20, 0x18, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
