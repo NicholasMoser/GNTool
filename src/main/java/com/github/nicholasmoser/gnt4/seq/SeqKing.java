@@ -30,6 +30,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup24;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup27;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup28;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup2A;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup2B;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup34;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup36;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup37;
@@ -194,6 +195,7 @@ public class SeqKing {
         case 0x27 -> opcodes.add(OpcodeGroup27.parse(bs, opcode));
         case 0x28 -> opcodes.add(OpcodeGroup28.parse(bs, opcode));
         case 0x2A -> opcodes.add(OpcodeGroup2A.parse(bs, opcode));
+        case 0x2B -> opcodes.add(OpcodeGroup2B.parse(bs, opcode));
         case 0x34 -> opcodes.add(OpcodeGroup34.parse(bs, opcode));
         case 0x36 -> opcodes.add(OpcodeGroup36.parse(bs, opcode));
         case 0x37 -> opcodes.add(OpcodeGroup37.parse(bs, opcode));
@@ -284,6 +286,12 @@ public class SeqKing {
       binaryOffsetToSize.put(0x7AAC, 0x1E0);
       binaryOffsetToSize.put(0x15838, 0x2C);
       binaryOffsetToSize.put(0x24154, 0x3968);
+    } else if (path.endsWith("chr/cho/0000.seq")) {
+      binaryOffsetToSize.put(0x4ED4, 0x7B0);
+      binaryOffsetToSize.put(0x60FC, 0x3C0);
+      binaryOffsetToSize.put(0x7B3C, 0x1E0);
+      binaryOffsetToSize.put(0x14A38, 0x2C);
+      binaryOffsetToSize.put(0x22F24, 0x3864);
     }
     return binaryOffsetToSize;
   }

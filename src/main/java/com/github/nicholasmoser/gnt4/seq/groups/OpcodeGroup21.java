@@ -29,6 +29,7 @@ public class OpcodeGroup21 {
       case 0x1A -> op_211A(bs);
       case 0x1D -> op_211D(bs);
       case 0x1E -> op_211E(bs);
+      case 0x20 -> op_2120(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -155,5 +156,13 @@ public class OpcodeGroup21 {
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_2120(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 }
