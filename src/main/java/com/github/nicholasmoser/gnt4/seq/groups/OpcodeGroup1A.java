@@ -15,6 +15,8 @@ public class OpcodeGroup1A {
       case 0x19 -> op_1A19(bs);
       case 0x1B -> op_1A1B(bs);
       case 0x1D -> op_1A1D(bs);
+      case 0x1F -> op_1A1F(bs);
+      case 0x20 -> op_1A20(bs);
       case 0x28 -> op_1A28(bs);
       case 0x29 -> op_1A29(bs);
       case 0x2A -> op_1A2A(bs);
@@ -43,6 +45,20 @@ public class OpcodeGroup1A {
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(8);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_1A1F(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_1A20(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   private static Opcode op_1A28(ByteStream bs) throws IOException {

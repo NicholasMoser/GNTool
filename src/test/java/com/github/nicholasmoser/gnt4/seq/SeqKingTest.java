@@ -62,6 +62,16 @@ public class SeqKingTest {
   }
 
   @Test
+  public void parseGai() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/gai/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
   public void parseIruka() throws Exception {
     String seq = "D:/GNT/aaa/uncompressed/files/chr/iru/0000.seq";
     if (COMPARE_MODE) {
