@@ -9,51 +9,11 @@ import org.junit.jupiter.api.Test;
 
 public class SeqKingTest {
 
-  private static final boolean COMPARE_MODE = true;
+  private static final boolean COMPARE_MODE = false;
 
   @Test
   public void parseCharSel() throws Exception {
     String seq = "D:/GNT/aaa/uncompressed/files/maki/char_sel.seq";
-    if (COMPARE_MODE) {
-      compare(seq);
-    } else {
-      generate(seq);
-    }
-  }
-
-  @Test
-  public void parseIruka() throws Exception {
-    String seq = "D:/GNT/aaa/uncompressed/files/chr/iru/0000.seq";
-    if (COMPARE_MODE) {
-      compare(seq);
-    } else {
-      generate(seq);
-    }
-  }
-
-  @Test
-  public void parseMizuki() throws Exception {
-    String seq = "D:/GNT/aaa/uncompressed/files/chr/miz/0000.seq";
-    if (COMPARE_MODE) {
-      compare(seq);
-    } else {
-      generate(seq);
-    }
-  }
-
-  @Test
-  public void parseSasuke() throws Exception {
-    String seq = "D:/GNT/aaa/uncompressed/files/chr/sas/0000.seq";
-    if (COMPARE_MODE) {
-      compare(seq);
-    } else {
-      generate(seq);
-    }
-  }
-
-  @Test
-  public void parseNaruto() throws Exception {
-    String seq = "D:/GNT/aaa/uncompressed/files/chr/nar/0000.seq";
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -94,6 +54,56 @@ public class SeqKingTest {
   @Test
   public void parseAkamaru() throws Exception {
     String seq = "D:/GNT/aaa/uncompressed/files/chr/dog/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseIruka() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/iru/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseKankuro() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/kan/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMizuki() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/miz/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseNaruto() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/nar/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseSasuke() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/sas/0000.seq";
     if (COMPARE_MODE) {
       compare(seq);
     } else {
