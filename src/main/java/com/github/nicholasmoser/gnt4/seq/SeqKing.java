@@ -58,7 +58,6 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup50;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
@@ -72,6 +71,11 @@ import java.util.List;
 import java.util.Map;
 
 public class SeqKing {
+
+  enum SeqType {
+    CHR_0000,
+    OTHER
+  }
 
   /**
    * Parse the given seq file and create an HTML report at the given output path.
@@ -95,6 +99,7 @@ public class SeqKing {
   private static List<Opcode> getOpcodes(Path seqPath) throws IOException {
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(seqPath);
+    SeqType seqType = getSeqType(seqPath);
     boolean foundChrLongBinary = false;
 
     byte[] bytes = Files.readAllBytes(seqPath);
@@ -154,7 +159,7 @@ public class SeqKing {
             continue;
           }
         } else if (lastOpcode instanceof BranchLinkReturn) {
-          if (SeqHelper.isChrLongBinary(opcodes)) {
+          if (seqType == SeqType.CHR_0000 && SeqHelper.isChrLongBinary(opcodes)) {
             if (foundChrLongBinary) {
               throw new IllegalStateException("There should only be one chr long binary.");
             }
@@ -247,6 +252,14 @@ public class SeqKing {
     return opcodes;
   }
 
+  private static SeqType getSeqType(Path seqPath) {
+    String path = seqPath.toString();
+    if (path.endsWith("0000.seq") && (path.contains("files/chr") || path.contains("files\\chr"))) {
+      return SeqType.CHR_0000;
+    }
+    return SeqType.OTHER;
+  }
+
   /**
    * Returns known binary offsets and sizes in seq files.
    *
@@ -263,44 +276,36 @@ public class SeqKing {
       binaryOffsetToSize.put(0xF3E0, 0x43C);
       binaryOffsetToSize.put(0xFAA0, 0x14B4);
     } else if (path.endsWith("chr/iru/0000.seq")) {
-      binaryOffsetToSize.put(0x4CD4, 0x7B0);
       binaryOffsetToSize.put(0x5EFC, 0x3C0);
       binaryOffsetToSize.put(0x7940, 0x1E0);
       binaryOffsetToSize.put(0x15364, 0x2C);
     } else if (path.endsWith("chr/miz/0000.seq")) {
-      binaryOffsetToSize.put(0x4CD4, 0x7B0);
       binaryOffsetToSize.put(0x5EFC, 0x3C0);
       binaryOffsetToSize.put(0x7940, 0x1E0);
       binaryOffsetToSize.put(0x15718, 0x2C);
     } else if (path.endsWith("chr/sas/0000.seq")) {
-      binaryOffsetToSize.put(0x4D44, 0x7B0);
       binaryOffsetToSize.put(0x5F6C, 0x3C0);
       binaryOffsetToSize.put(0x79B0, 0x1E0);
       binaryOffsetToSize.put(0x15628, 0x2C);
     } else if (path.endsWith("chr/nar/0000.seq")) {
-      binaryOffsetToSize.put(0x4EC4, 0x7B0);
       binaryOffsetToSize.put(0x60EC, 0x3C0);
       binaryOffsetToSize.put(0x7B30, 0x1E0);
       binaryOffsetToSize.put(0x15754, 0x2C);
       binaryOffsetToSize.put(0x30C4C, 0x14);
       binaryOffsetToSize.put(0x319B0, 0x10);
     } else if (path.endsWith("chr/ank/0000.seq")) {
-      binaryOffsetToSize.put(0x4D34, 0x7B0);
       binaryOffsetToSize.put(0x5F5C, 0x3C0);
       binaryOffsetToSize.put(0x79A0, 0x1E0);
       binaryOffsetToSize.put(0x152BC, 0x2C);
     } else if (path.endsWith("chr/bou/0000.seq")) {
-      binaryOffsetToSize.put(0x4E44, 0x7B0);
       binaryOffsetToSize.put(0x606C, 0x3C0);
       binaryOffsetToSize.put(0x7AAC, 0x1E0);
       binaryOffsetToSize.put(0x15838, 0x2C);
     } else if (path.endsWith("chr/cho/0000.seq")) {
-      binaryOffsetToSize.put(0x4ED4, 0x7B0);
       binaryOffsetToSize.put(0x60FC, 0x3C0);
       binaryOffsetToSize.put(0x7B3C, 0x1E0);
       binaryOffsetToSize.put(0x14A38, 0x2C);
     } else if (path.endsWith("chr/dog/0000.seq")) {
-      binaryOffsetToSize.put(0x4D14, 0x7B0);
       binaryOffsetToSize.put(0x5F3C, 0x3C0);
       binaryOffsetToSize.put(0x795C, 0x1E0);
       binaryOffsetToSize.put(0x131B0, 0x2C);

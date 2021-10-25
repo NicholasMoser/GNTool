@@ -57,6 +57,8 @@ public class SeqHelper {
     } else if (SeqHelper.isUnknownBinary2(bs)) {
       byte[] bytes = bs.readBytes(0x10);
       opcodes.add(new BinaryData(offset, bytes));
+    } else if (SeqHelper.isUnknownBinary3(bs)) {
+      opcodes.add(SeqHelper.readUnknownBinary3(bs));
     }
     return Collections.unmodifiableList(opcodes);
   }
@@ -119,6 +121,33 @@ public class SeqHelper {
         0x10, 0x00, 0x00, 0x00, 0x00};
     byte[] bytes = bs.peekBytes(0x10);
     return Arrays.equals(expected, bytes);
+  }
+
+  /**
+   * Returns if the ByteStream is currently at unknown binary 3.
+   *
+   * @param bs The ByteStream to read from.
+   * @return If the ByteStream is at unknown binary 3.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static boolean isUnknownBinary3(ByteStream bs) throws IOException {
+    if (bs.length() - bs.offset() < 0x7B0) {
+      return false;
+    }
+    byte[] expected = new byte[]{0x00, 0x5A, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02};
+    byte[] bytes = bs.peekBytes(0x8);
+    return Arrays.equals(expected, bytes);
+  }
+
+  public static Opcode readUnknownBinary3(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    byte[] bytes = new byte[0x7B0];
+    if (bs.read(bytes) != 0x7B0) {
+      throw new IllegalStateException("Failed to read 0x7B0 bytes");
+    } else if (bytes[0x7AD] != 0x7E) {
+      throw new IllegalStateException("Third last byte should be 0x7E");
+    }
+    return new BinaryData(offset, bytes);
   }
 
   /**
