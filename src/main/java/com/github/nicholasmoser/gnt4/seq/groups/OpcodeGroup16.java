@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
+import com.google.common.primitives.Bytes;
 import java.io.IOException;
 
 public class OpcodeGroup16 {
@@ -15,6 +16,7 @@ public class OpcodeGroup16 {
       case 0x05 -> op_1605(bs);
       case 0x08 -> op_1608(bs);
       case 0x0E -> UnknownOpcode.of(0x16, 0x0E, 0x4, bs);
+      case 0x0F -> op_160F(bs);
       case 0x10 -> op_1610(bs);
       case 0x12 -> op_1612(bs);
       case 0x13 -> op_1613(bs);
@@ -41,6 +43,14 @@ public class OpcodeGroup16 {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_160F(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 
   private static Opcode op_1610(ByteStream bs) throws IOException {
