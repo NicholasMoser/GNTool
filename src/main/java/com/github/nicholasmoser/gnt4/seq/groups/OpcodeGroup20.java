@@ -44,6 +44,7 @@ public class OpcodeGroup20 {
       case 0x26 -> UnknownOpcode.of(0x20, 0x26, 0x4, bs);
       case 0x28 -> op_2028(bs);
       case 0x29 -> op_2029(bs);
+      case 0x2D -> op_202D(bs);
       case 0x2F -> op_202F(bs);
       case 0x33 -> op_2033(bs);
       case 0x37 -> op_2037(bs);
@@ -264,6 +265,13 @@ public class OpcodeGroup20 {
   }
 
   private static Opcode op_2029(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_202D(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());

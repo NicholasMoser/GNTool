@@ -4,6 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Add;
 import com.github.nicholasmoser.gnt4.seq.opcodes.And;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Andws;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Decrement;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Divide;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Increment;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Movc;
@@ -25,6 +26,7 @@ public class OpcodeGroup04 {
       case 0x03 -> andws(bs);
       case 0x04 -> nimply(bs);
       case 0x05 -> inc(bs);
+      case 0x06 -> dec(bs);
       case 0x07 -> add(bs);
       case 0x08 -> sub(bs);
       case 0x09 -> mul(bs);
@@ -65,6 +67,13 @@ public class OpcodeGroup04 {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new Increment(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode dec(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new Decrement(offset, ea.getBytes(), info);
   }
 
   private static Opcode add(ByteStream bs) throws IOException {

@@ -17,6 +17,8 @@ public class OpcodeGroup27 {
       case 0x02 -> op_2702(bs);
       case 0x03 -> op_2703(bs);
       case 0x04 -> op_2704(bs);
+      case 0x06 -> op_2706(bs);
+      case 0x07 -> op_2707(bs);
       case 0x08 -> op_2708(bs);
       case 0x09 -> op_2709(bs);
       case 0x0A -> op_270A(bs);
@@ -67,6 +69,22 @@ public class OpcodeGroup27 {
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_2706(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_2707(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 
   private static Opcode op_2708(ByteStream bs) throws IOException {

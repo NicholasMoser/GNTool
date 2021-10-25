@@ -80,6 +80,7 @@ public class OpcodeGroup2A {
       case 6:
       case 18:
       case 24:
+      case 65:
       case 111:
       case 126:
       case 127:
@@ -133,6 +134,7 @@ public class OpcodeGroup2A {
       case 26:
       case 56:
       case 130:
+      case 140:
       case 145:
         baos.write(bs.readBytes(0x1C));
         break;
