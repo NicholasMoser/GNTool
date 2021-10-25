@@ -17,6 +17,7 @@ public class OpcodeGroup48 {
       case 0x0E -> UnknownOpcode.of(0x48, 0x0E, 0x8, bs);
       case 0x10 -> UnknownOpcode.of(0x48, 0x10, 0xC, bs);
       case 0x11 -> UnknownOpcode.of(0x48, 0x11, 0x8, bs);
+      case 0x12 -> UnknownOpcode.of(0x48, 0x12, 0x10, bs);
       case 0x15 -> UnknownOpcode.of(0x48, 0x15, 0x8, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };

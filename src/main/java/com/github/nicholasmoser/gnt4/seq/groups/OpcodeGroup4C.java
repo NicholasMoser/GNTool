@@ -23,6 +23,7 @@ public class OpcodeGroup4C {
       case 0x14 -> op_4C14(bs);
       case 0x1F -> UnknownOpcode.of(0x4C, 0x1F, 0xC, bs);
       case 0x20 -> UnknownOpcode.of(0x4C, 0x20, 0x4, bs);
+      case 0x2B -> UnknownOpcode.of(0x4C, 0x2B, 0x14, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
