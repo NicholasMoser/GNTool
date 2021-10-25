@@ -58,6 +58,8 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup50;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -93,6 +95,7 @@ public class SeqKing {
   private static List<Opcode> getOpcodes(Path seqPath) throws IOException {
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(seqPath);
+    boolean foundChrLongBinary = false;
 
     byte[] bytes = Files.readAllBytes(seqPath);
     ByteStream bs = new ByteStream(bytes);
@@ -146,6 +149,17 @@ public class SeqKing {
           if (!SeqHelper.isComboList(bs)) {
             // There is binary data after the combo list that leads to the last set of opcodes
             Opcode binary = SeqHelper.getBinaryUntilBranchAndLink(bs);
+            System.out.println(binary);
+            opcodes.add(binary);
+            continue;
+          }
+        } else if (lastOpcode instanceof BranchLinkReturn) {
+          if (SeqHelper.isChrLongBinary(opcodes)) {
+            if (foundChrLongBinary) {
+              throw new IllegalStateException("There should only be one chr long binary.");
+            }
+            foundChrLongBinary = true;
+            Opcode binary = SeqHelper.getChrLongBinary(bs);
             System.out.println(binary);
             opcodes.add(binary);
             continue;
@@ -253,25 +267,21 @@ public class SeqKing {
       binaryOffsetToSize.put(0x5EFC, 0x3C0);
       binaryOffsetToSize.put(0x7940, 0x1E0);
       binaryOffsetToSize.put(0x15364, 0x2C);
-      binaryOffsetToSize.put(0x1F5D0, 0x36AC);
     } else if (path.endsWith("chr/miz/0000.seq")) {
       binaryOffsetToSize.put(0x4CD4, 0x7B0);
       binaryOffsetToSize.put(0x5EFC, 0x3C0);
       binaryOffsetToSize.put(0x7940, 0x1E0);
       binaryOffsetToSize.put(0x15718, 0x2C);
-      binaryOffsetToSize.put(0x1F620, 0x37FC);
     } else if (path.endsWith("chr/sas/0000.seq")) {
       binaryOffsetToSize.put(0x4D44, 0x7B0);
       binaryOffsetToSize.put(0x5F6C, 0x3C0);
       binaryOffsetToSize.put(0x79B0, 0x1E0);
       binaryOffsetToSize.put(0x15628, 0x2C);
-      binaryOffsetToSize.put(0x24BB4, 0x44D8);
     } else if (path.endsWith("chr/nar/0000.seq")) {
       binaryOffsetToSize.put(0x4EC4, 0x7B0);
       binaryOffsetToSize.put(0x60EC, 0x3C0);
       binaryOffsetToSize.put(0x7B30, 0x1E0);
       binaryOffsetToSize.put(0x15754, 0x2C);
-      binaryOffsetToSize.put(0x2AC08, 0x4738);
       binaryOffsetToSize.put(0x30C4C, 0x14);
       binaryOffsetToSize.put(0x319B0, 0x10);
     } else if (path.endsWith("chr/ank/0000.seq")) {
@@ -279,19 +289,16 @@ public class SeqKing {
       binaryOffsetToSize.put(0x5F5C, 0x3C0);
       binaryOffsetToSize.put(0x79A0, 0x1E0);
       binaryOffsetToSize.put(0x152BC, 0x2C);
-      binaryOffsetToSize.put(0x21420, 0x3BE4);
     } else if (path.endsWith("chr/bou/0000.seq")) {
       binaryOffsetToSize.put(0x4E44, 0x7B0);
       binaryOffsetToSize.put(0x606C, 0x3C0);
       binaryOffsetToSize.put(0x7AAC, 0x1E0);
       binaryOffsetToSize.put(0x15838, 0x2C);
-      binaryOffsetToSize.put(0x24154, 0x3968);
     } else if (path.endsWith("chr/cho/0000.seq")) {
       binaryOffsetToSize.put(0x4ED4, 0x7B0);
       binaryOffsetToSize.put(0x60FC, 0x3C0);
       binaryOffsetToSize.put(0x7B3C, 0x1E0);
       binaryOffsetToSize.put(0x14A38, 0x2C);
-      binaryOffsetToSize.put(0x22F24, 0x3864);
     }
     return binaryOffsetToSize;
   }

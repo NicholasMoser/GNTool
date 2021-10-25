@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -172,6 +173,7 @@ public class OpcodeGroup24 {
         flags.add(entry.getValue());
       }
     }
+    Collections.sort(flags);
     return String.join(", ", flags);
   }
 }

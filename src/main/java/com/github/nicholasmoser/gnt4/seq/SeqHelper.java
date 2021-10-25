@@ -1,9 +1,13 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Combo;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Push;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
@@ -115,6 +119,42 @@ public class SeqHelper {
         0x10, 0x00, 0x00, 0x00, 0x00};
     byte[] bytes = bs.peekBytes(0x10);
     return Arrays.equals(expected, bytes);
+  }
+
+  /**
+   * The chr long binary is the longest binary data block in a chr file. It will come after a
+   * function that has the following opcodes in the following order: push, push, bl, pop, pop,
+   * blr.
+   * @param opcodes
+   * @return
+   */
+  public static boolean isChrLongBinary(List<Opcode> opcodes) {
+    if (opcodes.size() < 6) {
+      return false;
+    }
+    int startPos = opcodes.size() - 1;
+    return opcodes.get(startPos--) instanceof BranchLinkReturn
+        && opcodes.get(startPos--) instanceof Pop
+        && opcodes.get(startPos--) instanceof Pop
+        && opcodes.get(startPos--) instanceof BranchLink
+        && opcodes.get(startPos--) instanceof Push
+        && opcodes.get(startPos--) instanceof Push;
+  }
+
+  /**
+   * Reads the the longest chr binary data block in a chr file. It is terminated with a movc
+   * (0x04021366).
+   * @param bs
+   * @return
+   * @throws IOException
+   */
+  public static Opcode getChrLongBinary(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    while (bs.peekWord() != 0x04021366) {
+      baos.write(bs.readBytes(4));
+    }
+    return new BinaryData(offset, baos.toByteArray());
   }
 
   /**

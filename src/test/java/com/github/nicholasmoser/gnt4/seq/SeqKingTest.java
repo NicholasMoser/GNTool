@@ -1,63 +1,112 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
 public class SeqKingTest {
+
+  private static final boolean COMPARE_MODE = false;
+
   @Test
   public void parseCharSel() throws Exception {
-    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/maki/char_sel.seq");
-    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/maki/test.html");
-    SeqKing.generate(seqPath, outputPath);
+    String seq = "D:/GNT/aaa/uncompressed/files/maki/char_sel.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
   }
 
   @Test
   public void parseIruka() throws Exception {
-    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/iru/0000.seq");
-    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/iru/0000.html");
-    SeqKing.generate(seqPath, outputPath);
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/iru/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
   }
 
   @Test
   public void parseMizuki() throws Exception {
-    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/miz/0000.seq");
-    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/miz/0000.html");
-    SeqKing.generate(seqPath, outputPath);
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/miz/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
   }
 
   @Test
   public void parseSasuke() throws Exception {
-    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/sas/0000.seq");
-    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/sas/0000.html");
-    SeqKing.generate(seqPath, outputPath);
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/sas/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
   }
 
   @Test
   public void parseNaruto() throws Exception {
-    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/nar/0000.seq");
-    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/nar/0000.html");
-    SeqKing.generate(seqPath, outputPath);
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/nar/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
   }
 
   @Test
   public void parseAnko() throws Exception {
-    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/ank/0000.seq");
-    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/ank/0000.html");
-    SeqKing.generate(seqPath, outputPath);
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/ank/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
   }
 
   @Test
   public void parseJirobo() throws Exception {
-    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/bou/0000.seq");
-    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/bou/0000.html");
-    SeqKing.generate(seqPath, outputPath);
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/bou/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
   }
 
   @Test
   public void parseChoji() throws Exception {
-    Path seqPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/cho/0000.seq");
-    Path outputPath = Paths.get("D:/GNT/aaa/uncompressed/files/chr/cho/0000.html");
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/cho/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  private void compare(String seq) throws Exception {
+    String output = seq.replace(".seq", "_test.html");
+    Path seqPath = Paths.get(seq);
+    Path outputPath = Paths.get(output);
+    SeqKing.generate(seqPath, outputPath);
+    String expected = seq.replace(".seq", ".html");
+    Path expectedPath = Paths.get(expected);
+    byte[] expectedBytes = Files.readAllBytes(expectedPath);
+    byte[] actualBytes = Files.readAllBytes(outputPath);
+    assertArrayEquals(expectedBytes, actualBytes);
+  }
+
+  private void generate(String seq) throws Exception {
+    String output = seq.replace(".seq", ".html");
+    Path seqPath = Paths.get(seq);
+    Path outputPath = Paths.get(output);
     SeqKing.generate(seqPath, outputPath);
   }
 }
