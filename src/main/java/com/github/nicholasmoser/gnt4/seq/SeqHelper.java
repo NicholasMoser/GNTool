@@ -94,6 +94,12 @@ public class SeqHelper {
           }
           uniqueBinaries.add("foundUnknownBinary4");
           return Collections.singletonList(SeqHelper.readUnknownBinary4(bs));
+        } else if (SeqHelper.isUnknownBinary5(bs)) {
+          if (uniqueBinaries.contains("foundUnknownBinary5")) {
+            throw new IllegalStateException("There should only be one unknown binary 5.");
+          }
+          uniqueBinaries.add("foundUnknownBinary5");
+          return Collections.singletonList(SeqHelper.readUnknownBinary5(bs));
         }
       }
 
@@ -256,6 +262,40 @@ public class SeqHelper {
       throw new IllegalStateException("Failed to read 0x3C0 bytes");
     } else if (bytes[0x3A8] != 0x43) {
       throw new IllegalStateException("Byte at size minus 0x18 should be 0x43");
+    }
+    return new BinaryData(offset, bytes);
+  }
+
+  /**
+   * Returns if the ByteStream is currently at unknown binary 5.
+   *
+   * @param bs The ByteStream to read from.
+   * @return If the ByteStream is at unknown binary 5.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static boolean isUnknownBinary5(ByteStream bs) throws IOException {
+    if (bs.length() - bs.offset() < 0x1E4) {
+      return false;
+    }
+    byte[] expected = new byte[]{0x00, 0x01, 0x00, 0x00, 0x63, 0x68, 0x72, 0x2F};
+    byte[] bytes = bs.peekBytes(0x8);
+    return Arrays.equals(expected, bytes);
+  }
+
+  /**
+   * Returns if the ByteStream is currently at unknown binary 5.
+   *
+   * @param bs The ByteStream to read from.
+   * @return If the ByteStream is at unknown binary 5.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static Opcode readUnknownBinary5(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    byte[] bytes = new byte[0x1E4];
+    if (bs.read(bytes) != 0x1E4) {
+      throw new IllegalStateException("Failed to read 0x1E4 bytes");
+    } else if (bytes[0x1DF] != 0x66) {
+      throw new IllegalStateException("Byte at size minus 0x5 should be 0x66");
     }
     return new BinaryData(offset, bytes);
   }
