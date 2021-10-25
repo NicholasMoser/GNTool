@@ -91,6 +91,16 @@ public class SeqKingTest {
     }
   }
 
+  @Test
+  public void parseAkamaru() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/dog/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
   private void compare(String seq) throws Exception {
     String output = seq.replace(".seq", "_test.html");
     Path seqPath = Paths.get(seq);

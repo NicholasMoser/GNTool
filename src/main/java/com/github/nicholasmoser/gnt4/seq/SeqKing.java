@@ -299,6 +299,11 @@ public class SeqKing {
       binaryOffsetToSize.put(0x60FC, 0x3C0);
       binaryOffsetToSize.put(0x7B3C, 0x1E0);
       binaryOffsetToSize.put(0x14A38, 0x2C);
+    } else if (path.endsWith("chr/dog/0000.seq")) {
+      binaryOffsetToSize.put(0x4D14, 0x7B0);
+      binaryOffsetToSize.put(0x5F3C, 0x3C0);
+      binaryOffsetToSize.put(0x795C, 0x1E0);
+      binaryOffsetToSize.put(0x131B0, 0x2C);
     }
     return binaryOffsetToSize;
   }
