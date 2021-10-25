@@ -13,12 +13,95 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class SeqHelper {
+
+  /**
+   * Returns the type of seq file this is.
+   *
+   * @param seqPath The path to the seq file.
+   * @return The type of seq this file is.
+   */
+  public static SeqType getSeqType(Path seqPath) {
+    String path = seqPath.toString();
+    if (path.endsWith("0000.seq") && (path.contains("files/chr") || path.contains("files\\chr"))) {
+      return SeqType.CHR_0000;
+    }
+    return SeqType.OTHER;
+  }
+
+  /**
+   * Read bytes to see if the next group of bytes are binary data. If they are, return a list of
+   * opcodes for them. Otherwise, return an empty list.
+   *
+   * @param bs The ByteStream to read from.
+   * @param opcodes The list of current opcodes.
+   * @param seqType The type of seq file this is.
+   * @param uniqueBinaries The unique binaries encountered during parsing so far.
+   * @return The list of binaries found, if any.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static List<Opcode> getBinaries(ByteStream bs, List<Opcode> opcodes, SeqType seqType,
+      Set<String> uniqueBinaries) throws IOException {
+    // There must be at least one opcode. Grab the last one for comparison.
+    if (opcodes.isEmpty()) {
+      return Collections.emptyList();
+    }
+    int offset = bs.offset();
+    Opcode lastOpcode = opcodes.get(opcodes.size() - 1);
+
+    if (seqType == SeqType.CHR_0000) {
+      // These binaries will always be after a specific opcode
+      if (lastOpcode instanceof ComboList) {
+        // Make sure this is the last combo list
+        if (SeqHelper.isComboList(bs)) {
+          return Collections.singletonList(SeqHelper.readComboList(bs));
+        }
+        // There is binary data after the combo list that leads to the last set of opcodes
+        return Collections.singletonList(SeqHelper.getBinaryUntilBranchAndLink(bs));
+      }
+
+      if (lastOpcode instanceof BranchLinkReturn) {
+        if (SeqHelper.isChrLongBinary(opcodes)) {
+          if (uniqueBinaries.contains("foundChrLongBinary")) {
+            throw new IllegalStateException("There should only be one chr long binary.");
+          }
+          uniqueBinaries.add("foundChrLongBinary");
+          return Collections.singletonList(SeqHelper.getChrLongBinary(bs));
+        } else if (SeqHelper.isComboList(bs)) {
+          return Collections.singletonList(SeqHelper.readComboList(bs));
+        } else if (SeqHelper.isUnknownBinary3(bs)) {
+          if (uniqueBinaries.contains("foundUnknownBinary3")) {
+            throw new IllegalStateException("There should only be one unknown binary 3.");
+          }
+          uniqueBinaries.add("foundUnknownBinary3");
+          return Collections.singletonList(SeqHelper.readUnknownBinary3(bs));
+        } else if (SeqHelper.isUnknownBinary1(bs)) {
+          if (uniqueBinaries.contains("foundUnknownBinary1")) {
+            throw new IllegalStateException("There should only be one unknown binary 1.");
+          }
+          uniqueBinaries.add("foundUnknownBinary1");
+          return Collections.singletonList(SeqHelper.readUnknownBinary1(bs));
+        }
+      }
+
+      // These binaries can be after multiple different opcodes
+      if (SeqHelper.isOp04700Binary(bs)) {
+        byte[] bytes = bs.readBytes(0x10);
+        return Collections.singletonList(new BinaryData(offset, bytes, "; Binary data referenced by op_4700"));
+      } else if (SeqHelper.isUnknownBinary2(bs)) {
+        byte[] bytes = bs.readBytes(0x10);
+        return Collections.singletonList(new BinaryData(offset, bytes));
+      }
+    }
+    return Collections.emptyList();
+  }
 
   /**
    * Reads binary data until a branch and link opcode and returns the binary data.
@@ -37,38 +120,11 @@ public class SeqHelper {
   }
 
   /**
-   * Read bytes to see if the next group of bytes are binary data. If they are, return a list of
-   * opcodes for them. Otherwise, return an empty list.
-   *
-   * @param bs The ByteStream to read from.
-   * @return The binary data.
-   * @throws IOException If an I/O error occurs.
-   */
-  public static List<Opcode> getBinaries(ByteStream bs) throws IOException {
-    int offset = bs.offset();
-    List<Opcode> opcodes = new ArrayList<>();
-    if (SeqHelper.isOp04700Binary(bs)) {
-      byte[] bytes = bs.readBytes(0x10);
-      opcodes.add(new BinaryData(offset, bytes, "; Binary data referenced by op_4700"));
-    } else if (SeqHelper.isComboList(bs)) {
-      opcodes.add(SeqHelper.readComboList(bs));
-    } else if (SeqHelper.isUnknownBinary1(bs)) {
-      opcodes.add(SeqHelper.readUnknownBinary1(bs));
-    } else if (SeqHelper.isUnknownBinary2(bs)) {
-      byte[] bytes = bs.readBytes(0x10);
-      opcodes.add(new BinaryData(offset, bytes));
-    } else if (SeqHelper.isUnknownBinary3(bs)) {
-      opcodes.add(SeqHelper.readUnknownBinary3(bs));
-    }
-    return Collections.unmodifiableList(opcodes);
-  }
-
-  /**
    * Reads a currently unknown 16-byte struct. The first three bytes are read at instructions
    * 0x8010704c, 0x80107050, and 0x80107054, which is used in opcodes such as op_4700.
    *
-   * @param bs
-   * @return
+   * @param bs The ByteStream to read from.
+   * @return If this is the binary for op_4700.
    * @throws IOException If an I/O error occurs.
    */
   public static boolean isOp04700Binary(ByteStream bs) throws IOException {
@@ -97,6 +153,13 @@ public class SeqHelper {
     return Arrays.equals(expected, bytes);
   }
 
+  /**
+   * Reads the binary data for unknown binary 1.
+   *
+   * @param bs The ByteStream to read from.
+   * @return The binary data for unknown binary 1.
+   * @throws IOException If an I/O error occurs.
+   */
   public static Opcode readUnknownBinary1(ByteStream bs) throws IOException {
     int offset = bs.offset();
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -139,6 +202,13 @@ public class SeqHelper {
     return Arrays.equals(expected, bytes);
   }
 
+  /**
+   * Returns if the ByteStream is currently at unknown binary 3.
+   *
+   * @param bs The ByteStream to read from.
+   * @return If the ByteStream is at unknown binary 3.
+   * @throws IOException If an I/O error occurs.
+   */
   public static Opcode readUnknownBinary3(ByteStream bs) throws IOException {
     int offset = bs.offset();
     byte[] bytes = new byte[0x7B0];
@@ -152,10 +222,10 @@ public class SeqHelper {
 
   /**
    * The chr long binary is the longest binary data block in a chr file. It will come after a
-   * function that has the following opcodes in the following order: push, push, bl, pop, pop,
-   * blr.
-   * @param opcodes
-   * @return
+   * function that has the following opcodes in the following order: push, push, bl, pop, pop, blr.
+   *
+   * @param opcodes The list of opcodes parsed so far.
+   * @return If the next data is the unknown long binary in a chr 0000.seq file.
    */
   public static boolean isChrLongBinary(List<Opcode> opcodes) {
     if (opcodes.size() < 6) {
@@ -167,15 +237,16 @@ public class SeqHelper {
         && opcodes.get(startPos--) instanceof Pop
         && opcodes.get(startPos--) instanceof BranchLink
         && opcodes.get(startPos--) instanceof Push
-        && opcodes.get(startPos--) instanceof Push;
+        && opcodes.get(startPos) instanceof Push;
   }
 
   /**
    * Reads the the longest chr binary data block in a chr file. It is terminated with a movc
    * (0x04021366).
-   * @param bs
-   * @return
-   * @throws IOException
+   *
+   * @param bs The ByteStream to read from.
+   * @return The binary data for the long chr 0000.seq data.
+   * @throws IOException If an I/O error occurs.
    */
   public static Opcode getChrLongBinary(ByteStream bs) throws IOException {
     int offset = bs.offset();
@@ -230,11 +301,8 @@ public class SeqHelper {
     byte[] routine = "Routi".getBytes(StandardCharsets.UTF_8);
     // Oboro
     byte[] comboJapanese = new byte[]{(byte) 0x83, 0x52, (byte) 0x83, (byte) 0x93, (byte) 0x83};
-    if (Arrays.equals(bytes, combo) || Arrays.equals(bytes, chord) ||
-        Arrays.equals(bytes, routine) || Arrays.equals(bytes, comboJapanese)) {
-      return true;
-    }
-    return false;
+    return Arrays.equals(bytes, combo) || Arrays.equals(bytes, chord) ||
+        Arrays.equals(bytes, routine) || Arrays.equals(bytes, comboJapanese);
   }
 
   /**

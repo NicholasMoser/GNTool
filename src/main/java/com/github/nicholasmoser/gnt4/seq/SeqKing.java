@@ -58,8 +58,6 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup50;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
-import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
@@ -67,15 +65,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SeqKing {
-
-  enum SeqType {
-    CHR_0000,
-    OTHER
-  }
 
   /**
    * Parse the given seq file and create an HTML report at the given output path.
@@ -99,8 +94,11 @@ public class SeqKing {
   private static List<Opcode> getOpcodes(Path seqPath) throws IOException {
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(seqPath);
-    SeqType seqType = getSeqType(seqPath);
-    boolean foundChrLongBinary = false;
+    SeqType seqType = SeqHelper.getSeqType(seqPath);
+
+    // A set of the unique binaries that have been parsed, used to fail when multiple instances of
+    // a unique binary are found, implying an error in the parsing.
+    Set<String> uniqueBinaries = new HashSet<>();
 
     byte[] bytes = Files.readAllBytes(seqPath);
     ByteStream bs = new ByteStream(bytes);
@@ -119,7 +117,7 @@ public class SeqKing {
       byte opcode = (byte) bs.read();
       bs.reset();
 
-      // Check if this is binary data. If so, skip it.
+      // Check if this is manually defined binary data. If so, skip it.
       int offset = bs.offset();
       Integer size = binaryOffsetToSize.get(offset);
       if (size != null) {
@@ -137,39 +135,13 @@ public class SeqKing {
       }
 
       // Check for known binary data in the seq
-      List<Opcode> binaries = SeqHelper.getBinaries(bs);
+      List<Opcode> binaries = SeqHelper.getBinaries(bs, opcodes, seqType, uniqueBinaries);
       if (!binaries.isEmpty()) {
         for (Opcode binary : binaries) {
           System.out.println(binary);
         }
         opcodes.addAll(binaries);
         continue;
-      }
-
-      // Check for opcodes that are always after previous opcodes
-      if (!opcodes.isEmpty()) {
-        Opcode lastOpcode = opcodes.get(opcodes.size() - 1);
-        if (lastOpcode instanceof ComboList) {
-          // Make sure this is the last combo list
-          if (!SeqHelper.isComboList(bs)) {
-            // There is binary data after the combo list that leads to the last set of opcodes
-            Opcode binary = SeqHelper.getBinaryUntilBranchAndLink(bs);
-            System.out.println(binary);
-            opcodes.add(binary);
-            continue;
-          }
-        } else if (lastOpcode instanceof BranchLinkReturn) {
-          if (seqType == SeqType.CHR_0000 && SeqHelper.isChrLongBinary(opcodes)) {
-            if (foundChrLongBinary) {
-              throw new IllegalStateException("There should only be one chr long binary.");
-            }
-            foundChrLongBinary = true;
-            Opcode binary = SeqHelper.getChrLongBinary(bs);
-            System.out.println(binary);
-            opcodes.add(binary);
-            continue;
-          }
-        }
       }
 
       // Check if this is an seq section
@@ -250,14 +222,6 @@ public class SeqKing {
       }
     }
     return opcodes;
-  }
-
-  private static SeqType getSeqType(Path seqPath) {
-    String path = seqPath.toString();
-    if (path.endsWith("0000.seq") && (path.contains("files/chr") || path.contains("files\\chr"))) {
-      return SeqType.CHR_0000;
-    }
-    return SeqType.OTHER;
   }
 
   /**
