@@ -239,24 +239,9 @@ public class SeqKing {
       binaryOffsetToSize.put(0x2370, 0x100);
       binaryOffsetToSize.put(0xF3E0, 0x43C);
       binaryOffsetToSize.put(0xFAA0, 0x14B4);
-    } else if (path.endsWith("chr/iru/0000.seq")) {
-      binaryOffsetToSize.put(0x15364, 0x2C);
-    } else if (path.endsWith("chr/miz/0000.seq")) {
-      binaryOffsetToSize.put(0x15718, 0x2C);
-    } else if (path.endsWith("chr/sas/0000.seq")) {
-      binaryOffsetToSize.put(0x15628, 0x2C);
     } else if (path.endsWith("chr/nar/0000.seq")) {
-      binaryOffsetToSize.put(0x15754, 0x2C);
       binaryOffsetToSize.put(0x30C4C, 0x14);
       binaryOffsetToSize.put(0x319B0, 0x10);
-    } else if (path.endsWith("chr/ank/0000.seq")) {
-      binaryOffsetToSize.put(0x152BC, 0x2C);
-    } else if (path.endsWith("chr/bou/0000.seq")) {
-      binaryOffsetToSize.put(0x15838, 0x2C);
-    } else if (path.endsWith("chr/cho/0000.seq")) {
-      binaryOffsetToSize.put(0x14A38, 0x2C);
-    } else if (path.endsWith("chr/dog/0000.seq")) {
-      binaryOffsetToSize.put(0x131B0, 0x2C);
     }
     return binaryOffsetToSize;
   }
