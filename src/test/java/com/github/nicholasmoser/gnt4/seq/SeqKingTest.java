@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 public class SeqKingTest {
 
-  private static final boolean COMPARE_MODE = false;
+  private static final boolean COMPARE_MODE = true;
 
   @Test
   public void parseCharSel() throws Exception {

@@ -331,11 +331,14 @@ public class SeqHelper {
    */
   public static Opcode readUnknownBinary6(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    byte[] bytes = new byte[0x2C];
-    if (bs.read(bytes) != 0x2C) {
-      throw new IllegalStateException("Failed to read 0x2C bytes");
-    } else if (bytes[0x2A] != 0xB && bytes[0x2A] != (byte) 0xFF) {
-      throw new IllegalStateException("The second last byte should be 0xB or 0xFF");
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    while (bs.peekWord() != 0x0908023F) {
+      baos.write(bs.readBytes(4));
+    }
+    byte[] bytes = baos.toByteArray();
+    int len = bytes.length;
+    if (len != 0x2C) {
+      throw new IllegalStateException("Unknown binary 6 must be of size 0x2C but is size " + len);
     }
     return new BinaryData(offset, bytes);
   }
