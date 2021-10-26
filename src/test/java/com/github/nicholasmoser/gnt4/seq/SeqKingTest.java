@@ -132,6 +132,16 @@ public class SeqKingTest {
   }
 
   @Test
+  public void parseItachi() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/ita/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
   public void parseKankuro() throws Exception {
     String seq = "D:/GNT/aaa/uncompressed/files/chr/kan/0000.seq";
     if (COMPARE_MODE) {

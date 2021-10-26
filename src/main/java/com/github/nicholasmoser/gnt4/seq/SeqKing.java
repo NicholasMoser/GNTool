@@ -57,6 +57,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4C;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4D;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup50;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup56;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
@@ -214,6 +215,7 @@ public class SeqKing {
         case 0x4D -> opcodes.add(OpcodeGroup4D.parse(bs, opcode));
         case 0x50 -> opcodes.add(OpcodeGroup50.parse(bs, opcode));
         case 0x55 -> opcodes.add(OpcodeGroup55.parse(bs, opcode));
+        case 0x56 -> opcodes.add(OpcodeGroup56.parse(bs, opcode));
         case 0x61 -> opcodes.add(OpcodeGroup61.parse(bs, opcode));
         default -> throw new IllegalStateException(
             String.format("Unknown opcode group: %02X", opcodeGroup));
