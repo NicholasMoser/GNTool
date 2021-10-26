@@ -142,8 +142,58 @@ public class SeqKingTest {
   }
 
   @Test
+  public void parseJiraiya() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/jir/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseKabuto() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/kab/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseKakashi() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/kak/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
   public void parseKankuro() throws Exception {
     String seq = "D:/GNT/aaa/uncompressed/files/chr/kan/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseKarasu() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/kar/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseKiba() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/kib/0000.seq";
     if (COMPARE_MODE) {
       compare(seq);
     } else {

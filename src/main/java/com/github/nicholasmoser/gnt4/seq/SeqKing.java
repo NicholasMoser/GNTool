@@ -246,6 +246,9 @@ public class SeqKing {
     } else if (path.endsWith("chr/nar/0000.seq")) {
       binaryOffsetToSize.put(0x30C4C, 0x14);
       binaryOffsetToSize.put(0x319B0, 0x10);
+    } else if (path.endsWith("chr/kak/0000.seq")) {
+      binaryOffsetToSize.put(0x32CB0, 0x10);
+      binaryOffsetToSize.put(0x344C0, 0x10);
     }
     return binaryOffsetToSize;
   }

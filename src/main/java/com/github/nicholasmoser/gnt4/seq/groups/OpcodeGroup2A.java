@@ -52,11 +52,15 @@ public class OpcodeGroup2A {
       case 0x30:
       case 0x34:
       case 0x3E:
+      case 0x44:
       case 0x45:
       case 0x46:
       case 0x47:
       case 0x4F:
+      case 0x55:
+      case 0x56:
       case 0x5A:
+      case 0x70:
       case 0x77:
       case 0x9A:
       case 0x9C:
@@ -78,6 +82,7 @@ public class OpcodeGroup2A {
       case 0x3B:
       case 0x4C:
       case 0x4E:
+      case 0x54:
       case 0X68:
       case 0x6A:
       case 0xC9:
@@ -134,6 +139,7 @@ public class OpcodeGroup2A {
       case 0x49:
       case 0x5F:
       case 0x61:
+      case 0x64:
       case 0xCD:
       case 0xCE:
         baos.write(bs.readBytes(0x14));
@@ -150,17 +156,21 @@ public class OpcodeGroup2A {
       case 0x7D:
       case 0x82:
       case 0x8C:
+      case 0x8E:
       case 0x8F:
       case 0x91:
+      case 0x92:
         baos.write(bs.readBytes(0x1C));
         break;
       case 0x19:
       case 0x62:
       case 0x6B:
+      case 0x75:
       case 0x81:
         baos.write(bs.readBytes(0x20));
         break;
       case 0x17:
+      case 0x65:
       case 0x6C:
       case 0x83:
       case 0x87:

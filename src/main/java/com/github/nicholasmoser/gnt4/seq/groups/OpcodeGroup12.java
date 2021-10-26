@@ -19,6 +19,7 @@ public class OpcodeGroup12 {
       case 0x05 -> op_1205(bs);
       case 0x09 -> op_1209(bs);
       case 0x0A -> op_120A(bs);
+      case 0x0B -> op_120B(bs);
       case 0x19 -> op_1219(bs);
       case 0x1A -> op_121A(bs);
       case 0x1B -> op_121B(bs);
@@ -83,6 +84,13 @@ public class OpcodeGroup12 {
   }
 
   private static Opcode op_120A(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_120B(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
