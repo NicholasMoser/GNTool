@@ -334,8 +334,8 @@ public class SeqHelper {
     byte[] bytes = new byte[0x2C];
     if (bs.read(bytes) != 0x2C) {
       throw new IllegalStateException("Failed to read 0x2C bytes");
-    } else if (bytes[0x2A] != 0xB) {
-      throw new IllegalStateException("The second last byte should be 0xB");
+    } else if (bytes[0x2A] != 0xB && bytes[0x2A] != (byte) 0xFF) {
+      throw new IllegalStateException("The second last byte should be 0xB or 0xFF");
     }
     return new BinaryData(offset, bytes);
   }

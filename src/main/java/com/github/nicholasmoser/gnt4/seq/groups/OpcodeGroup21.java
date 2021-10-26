@@ -23,6 +23,7 @@ public class OpcodeGroup21 {
       case 0x10 -> op_2110(bs);
       case 0x11 -> op_2111(bs);
       case 0x12 -> op_2112(bs);
+      case 0x13 -> op_2113(bs);
       case 0x14 -> op_2114(bs);
       case 0x15 -> op_2115(bs);
       case 0x16 -> op_2116(bs);
@@ -115,6 +116,14 @@ public class OpcodeGroup21 {
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_2113(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(0x10);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 
   private static Opcode op_2114(ByteStream bs) throws IOException {

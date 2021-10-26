@@ -17,6 +17,7 @@ public class OpcodeGroup2A {
     return switch (opcodeByte) {
       case 0x00 -> op_2A00(bs);
       case 0x01 -> op_2A01(bs);
+      case 0x02 -> op_2A02(bs);
       case 0x19 -> op_2A19(bs);
       case 0x1A -> op_2A1A(bs);
       case 0x1B -> op_2A1B(bs);
@@ -51,6 +52,8 @@ public class OpcodeGroup2A {
       case 0x2B:
       case 0x30:
       case 0x34:
+      case 0x36:
+      case 0x37:
       case 0x3E:
       case 0x44:
       case 0x45:
@@ -59,6 +62,7 @@ public class OpcodeGroup2A {
       case 0x4F:
       case 0x55:
       case 0x56:
+      case 0x59:
       case 0x5A:
       case 0x70:
       case 0x77:
@@ -80,8 +84,10 @@ public class OpcodeGroup2A {
       case 0x32:
       case 0x35:
       case 0x3B:
+      case 0x4A:
       case 0x4C:
       case 0x4E:
+      case 0x50:
       case 0x54:
       case 0X68:
       case 0x6A:
@@ -95,12 +101,14 @@ public class OpcodeGroup2A {
       case 0x18:
       case 0x3A:
       case 0x41:
+      case 0x42:
       case 0x6F:
       case 0x7E:
       case 0x7F:
       case 0x80:
       case 0x89:
       case 0xCA:
+      case 0xCF:
         baos.write(bs.readBytes(0x8));
         break;
       case 0x3:
@@ -259,6 +267,19 @@ public class OpcodeGroup2A {
             0x80212bb0 + pointerOffset);
         throw new IllegalStateException(message);
     }
+    return new UnknownOpcode(offset, baos.toByteArray(), info);
+  }
+
+  private static Opcode op_2A02(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    baos.write(ea.getBytes());
+    String info = String.format(" %s", ea.getDescription());
+    EffectiveAddress ea2 = EffectiveAddress.get(bs);
+    baos.write(ea2.getBytes());
+    info += String.format("; %s", ea2.getDescription());
+    baos.write(bs.readBytes(4));
     return new UnknownOpcode(offset, baos.toByteArray(), info);
   }
 

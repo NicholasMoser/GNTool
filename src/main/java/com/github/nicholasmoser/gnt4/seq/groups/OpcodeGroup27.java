@@ -37,6 +37,8 @@ public class OpcodeGroup27 {
       case 0x1A -> op_271A(bs);
       case 0x2C -> op_272C(bs);
       case 0x2D -> op_272D(bs);
+      case 0x31 -> op_2731(bs);
+      case 0x32 -> op_2732(bs);
       case (byte) 0x80 -> op_2780(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
@@ -233,6 +235,22 @@ public class OpcodeGroup27 {
   }
 
   private static Opcode op_272D(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_2731(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(8);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  private static Opcode op_2732(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
