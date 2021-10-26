@@ -41,42 +41,44 @@ public class OpcodeGroup2A {
       case 0x0:
       case 0x4:
       case 0x10:
-      case 0x1c:
-      case 0x1f:
+      case 0x1C:
+      case 0x1F:
       case 0x21:
       case 0x22:
       case 0x24:
       case 0x27:
       case 0x29:
-      case 0x2b:
+      case 0x2B:
       case 0x30:
       case 0x34:
-      case 0x3e:
+      case 0x3E:
       case 0x45:
       case 0x46:
       case 0x47:
-      case 0x4f:
-      case 0x5a:
+      case 0x4F:
+      case 0x5A:
       case 0x77:
-      case 0x9c:
-      case 0xc8:
+      case 0x9C:
+      case 0xC8:
         break;
       case 0x8:
-      case 0xa:
-      case 0xe:
-      case 0x1b:
-      case 0x1d:
-      case 0x1e:
+      case 0xA:
+      case 0xE:
+      case 0x1B:
+      case 0x1D:
+      case 0x1E:
       case 0x23:
       case 0x25:
       case 0x26:
-      case 0x2c:
+      case 0x2C:
       case 0x31:
       case 0x32:
       case 0x35:
-      case 0x3b:
-      case 0x4e:
-      case 0xc9:
+      case 0x3B:
+      case 0x4C:
+      case 0x4E:
+      case 0X68:
+      case 0xC9:
       case 0x144:
         baos.write(bs.readBytes(0x4));
         break;
@@ -84,65 +86,68 @@ public class OpcodeGroup2A {
       case 0x6:
       case 0x12:
       case 0x18:
+      case 0x3A:
       case 0x41:
-      case 0x6f:
-      case 0x7e:
-      case 0x7f:
+      case 0x6F:
+      case 0x7E:
+      case 0x7F:
       case 0x80:
       case 0x89:
-      case 0xca:
+      case 0xCA:
         baos.write(bs.readBytes(0x8));
         break;
       case 0x3:
       case 0x13:
       case 0x20:
-      case 0x2d:
+      case 0x2D:
       case 0x48:
       case 0x84:
       case 0x86:
       case 0x88:
-      case 0x8a:
+      case 0x8A:
         baos.write(bs.readBytes(0xc));
         break;
-      case 0xc:
-      case 0xd:
-      case 0xf:
+      case 0xC:
+      case 0xD:
+      case 0xF:
       case 0x14:
-      case 0x2a:
-      case 0x2e:
-      case 0x2f:
+      case 0x2A:
+      case 0x2E:
+      case 0x2F:
+      case 0x39:
       case 0x60:
       case 0x79:
       case 0x85:
       case 0x90:
-      case 0x9b:
-      case 0xcc:
+      case 0x9B:
+      case 0xCC:
         baos.write(bs.readBytes(0x10));
         break;
       case 0x7:
-      case 0xb:
+      case 0xB:
       case 0x15:
       case 0x16:
       case 0x28:
-      case 0x3d:
+      case 0x3D:
       case 0x49:
-      case 0x5f:
+      case 0x5F:
       case 0x61:
-      case 0xce:
+      case 0xCD:
+      case 0xCE:
         baos.write(bs.readBytes(0x14));
         break;
       case 0x9:
-      case 0xd0:
+      case 0xD0:
         baos.write(bs.readBytes(0x18));
         break;
       case 0x1:
       case 0x5:
       case 0x11:
-      case 0x1a:
+      case 0x1A:
       case 0x38:
       case 0x82:
-      case 0x8c:
-      case 0x8f:
+      case 0x8C:
+      case 0x8F:
       case 0x91:
         baos.write(bs.readBytes(0x1C));
         break;
