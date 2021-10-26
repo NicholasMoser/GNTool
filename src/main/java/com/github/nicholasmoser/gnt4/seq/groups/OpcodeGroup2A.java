@@ -54,16 +54,20 @@ public class OpcodeGroup2A {
       case 0x34:
       case 0x36:
       case 0x37:
+      case 0x3C:
       case 0x3E:
       case 0x44:
       case 0x45:
       case 0x46:
       case 0x47:
+      case 0x4D:
       case 0x4F:
       case 0x55:
       case 0x56:
       case 0x59:
       case 0x5A:
+      case 0x5C:
+      case 0x5D:
       case 0x70:
       case 0x77:
       case 0x9A:
@@ -91,6 +95,8 @@ public class OpcodeGroup2A {
       case 0x54:
       case 0X68:
       case 0x6A:
+      case 0x76:
+      case 0x94:
       case 0xC9:
       case 0x144:
         baos.write(bs.readBytes(0x4));
@@ -100,13 +106,17 @@ public class OpcodeGroup2A {
       case 0x12:
       case 0x18:
       case 0x3A:
+      case 0x40:
       case 0x41:
       case 0x42:
+      case 0x63:
+      case 0x67:
       case 0x6F:
       case 0x7E:
       case 0x7F:
       case 0x80:
       case 0x89:
+      case 0x9E:
       case 0xCA:
       case 0xCF:
         baos.write(bs.readBytes(0x8));
@@ -120,6 +130,7 @@ public class OpcodeGroup2A {
       case 0x86:
       case 0x88:
       case 0x8A:
+      case 0xCB:
         baos.write(bs.readBytes(0xc));
         break;
       case 0xC:
@@ -132,8 +143,10 @@ public class OpcodeGroup2A {
       case 0x39:
       case 0x60:
       case 0x79:
+      case 0x7A:
       case 0x85:
       case 0x90:
+      case 0x93:
       case 0x9B:
       case 0xCC:
         baos.write(bs.readBytes(0x10));
@@ -145,9 +158,14 @@ public class OpcodeGroup2A {
       case 0x28:
       case 0x3D:
       case 0x49:
+      case 0x5E:
       case 0x5F:
       case 0x61:
       case 0x64:
+      case 0x7B:
+      case 0x8D:
+      case 0x95:
+      case 0x96:
       case 0xCD:
       case 0xCE:
         baos.write(bs.readBytes(0x14));
@@ -161,6 +179,7 @@ public class OpcodeGroup2A {
       case 0x11:
       case 0x1A:
       case 0x38:
+      case 0x74:
       case 0x7D:
       case 0x82:
       case 0x8C:
@@ -171,18 +190,30 @@ public class OpcodeGroup2A {
         baos.write(bs.readBytes(0x1C));
         break;
       case 0x19:
+      case 0x5B:
       case 0x62:
+      case 0x69:
       case 0x6B:
+      case 0x72:
+      case 0x73:
       case 0x75:
       case 0x81:
+      case 0x97:
+      case 0x9F:
+      case 0xD1:
         baos.write(bs.readBytes(0x20));
         break;
       case 0x17:
       case 0x65:
       case 0x6C:
+      case 0x71:
       case 0x83:
       case 0x87:
         baos.write(bs.readBytes(0x24));
+        break;
+      case 0x6E:
+      case 0x99:
+        baos.write(bs.readBytes(0x28));
         break;
       default:
         int flagOffset = pointerIndex * 4;
@@ -261,8 +292,11 @@ public class OpcodeGroup2A {
       case 0x34:
         baos.write(bs.readBytes(0x18));
         break;
+      case 0x38:
+        baos.write(bs.readBytes(0x4));
+        break;
       default:
-        String message = "This flag is not yet supported for op_2A01: " + pointerOffset;
+        String message = String.format("This flag is not yet supported for op_2A01: %X", pointerOffset);
         message += String.format("\nLook at offset from 0x80212BB0 + 0x%X = 0x%X", pointerOffset,
             0x80212bb0 + pointerOffset);
         throw new IllegalStateException(message);

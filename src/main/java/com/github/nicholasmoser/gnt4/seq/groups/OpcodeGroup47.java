@@ -37,6 +37,9 @@ public class OpcodeGroup47 {
       case 0x1A -> UnknownOpcode.of(0x47, 0x1A, 0x8, bs);
       case 0x1B -> UnknownOpcode.of(0x47, 0x1B, 0x8, bs);
       case 0x1C -> UnknownOpcode.of(0x47, 0x1C, 0x8, bs);
+      case 0x1D -> UnknownOpcode.of(0x47, 0x1D, 0x4, bs);
+      case 0x1E -> UnknownOpcode.of(0x47, 0x1E, 0x10, bs);
+      case 0x1F -> op_471F(bs);
       case 0x20 -> UnknownOpcode.of(0x47, 0x20, 0x18, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
@@ -77,6 +80,14 @@ public class OpcodeGroup47 {
   }
 
   public static Opcode op_4712(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  public static Opcode op_471F(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());

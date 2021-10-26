@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 public class SeqKingTest {
 
-  private static final boolean COMPARE_MODE = true;
+  private static final boolean COMPARE_MODE = false;
 
   @Test
   public void parseCharSel() throws Exception {
@@ -292,8 +292,138 @@ public class SeqKingTest {
   }
 
   @Test
+  public void parseOrochimaru() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/oro/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseCS2Sasuke() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/sa2/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseSakura() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/sak/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseSarutobi() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/sar/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
   public void parseSasuke() throws Exception {
     String seq = "D:/GNT/aaa/uncompressed/files/chr/sas/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseShikamaru() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/sik/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseShino() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/sin/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseSakon() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/sko/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseDokiDemon() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/ta2/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseTayuya() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/tay/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseTemari() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/tem/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseTenten() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/ten/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseTsunade() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/tsu/0000.seq";
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseZabuza() throws Exception {
+    String seq = "D:/GNT/aaa/uncompressed/files/chr/zab/0000.seq";
     if (COMPARE_MODE) {
       compare(seq);
     } else {
