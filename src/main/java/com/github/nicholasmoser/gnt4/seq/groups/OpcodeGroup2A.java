@@ -36,124 +36,129 @@ public class OpcodeGroup2A {
     bb.put(flags[2]);
     bb.put(flags[3]);
     short pointerIndex = bb.getShort(0);
+    info += String.format("; with flag 0x%X", pointerIndex);
     switch (pointerIndex) {
-      case 0:
-      case 4:
-      case 16:
-      case 28:
-      case 31:
-      case 33:
-      case 34:
-      case 36:
-      case 39:
-      case 41:
-      case 43:
-      case 48:
-      case 52:
-      case 62:
-      case 69:
-      case 70:
-      case 71:
-      case 79:
-      case 119:
-      case 156:
-      case 200:
+      case 0x0:
+      case 0x4:
+      case 0x10:
+      case 0x1c:
+      case 0x1f:
+      case 0x21:
+      case 0x22:
+      case 0x24:
+      case 0x27:
+      case 0x29:
+      case 0x2b:
+      case 0x30:
+      case 0x34:
+      case 0x3e:
+      case 0x45:
+      case 0x46:
+      case 0x47:
+      case 0x4f:
+      case 0x5a:
+      case 0x77:
+      case 0x9c:
+      case 0xc8:
         break;
-      case 8:
-      case 10:
-      case 14:
-      case 27:
-      case 29:
-      case 30:
-      case 35:
-      case 37:
-      case 38:
-      case 44:
-      case 49:
-      case 50:
-      case 53:
-      case 59:
-      case 78:
-      case 201:
-      case 324:
+      case 0x8:
+      case 0xa:
+      case 0xe:
+      case 0x1b:
+      case 0x1d:
+      case 0x1e:
+      case 0x23:
+      case 0x25:
+      case 0x26:
+      case 0x2c:
+      case 0x31:
+      case 0x32:
+      case 0x35:
+      case 0x3b:
+      case 0x4e:
+      case 0xc9:
+      case 0x144:
         baos.write(bs.readBytes(0x4));
         break;
-      case 2:
-      case 6:
-      case 18:
-      case 24:
-      case 65:
-      case 111:
-      case 126:
-      case 127:
-      case 128:
-      case 137:
-      case 202:
+      case 0x2:
+      case 0x6:
+      case 0x12:
+      case 0x18:
+      case 0x41:
+      case 0x6f:
+      case 0x7e:
+      case 0x7f:
+      case 0x80:
+      case 0x89:
+      case 0xca:
         baos.write(bs.readBytes(0x8));
         break;
-      case 3:
-      case 19:
-      case 32:
-      case 45:
-      case 72:
-      case 132:
-      case 134:
-      case 136:
-      case 138:
+      case 0x3:
+      case 0x13:
+      case 0x20:
+      case 0x2d:
+      case 0x48:
+      case 0x84:
+      case 0x86:
+      case 0x88:
+      case 0x8a:
         baos.write(bs.readBytes(0xc));
         break;
-      case 12:
-      case 13:
-      case 15:
-      case 20:
-      case 42:
-      case 46:
-      case 47:
-      case 96:
-      case 121:
-      case 133:
-      case 155:
-      case 204:
+      case 0xc:
+      case 0xd:
+      case 0xf:
+      case 0x14:
+      case 0x2a:
+      case 0x2e:
+      case 0x2f:
+      case 0x60:
+      case 0x79:
+      case 0x85:
+      case 0x90:
+      case 0x9b:
+      case 0xcc:
         baos.write(bs.readBytes(0x10));
         break;
-      case 7:
-      case 11:
-      case 21:
-      case 22:
-      case 40:
-      case 95:
-      case 97:
-      case 206:
+      case 0x7:
+      case 0xb:
+      case 0x15:
+      case 0x16:
+      case 0x28:
+      case 0x3d:
+      case 0x49:
+      case 0x5f:
+      case 0x61:
+      case 0xce:
         baos.write(bs.readBytes(0x14));
         break;
-      case 9:
-      case 208:
+      case 0x9:
+      case 0xd0:
         baos.write(bs.readBytes(0x18));
         break;
-      case 1:
-      case 5:
-      case 17:
-      case 26:
-      case 56:
-      case 130:
-      case 140:
-      case 143:
-      case 145:
+      case 0x1:
+      case 0x5:
+      case 0x11:
+      case 0x1a:
+      case 0x38:
+      case 0x82:
+      case 0x8c:
+      case 0x8f:
+      case 0x91:
         baos.write(bs.readBytes(0x1C));
         break;
-      case 25:
-      case 98:
-      case 129:
+      case 0x19:
+      case 0x62:
+      case 0x81:
         baos.write(bs.readBytes(0x20));
         break;
-      case 23:
-      case 131:
-      case 135:
+      case 0x17:
+      case 0x83:
+      case 0x87:
         baos.write(bs.readBytes(0x24));
         break;
       default:
         int flagOffset = pointerIndex * 4;
-        String message = "This flag is not yet supported for op_2A00: " + pointerIndex;
+        String message = String.format("This flag is not yet supported for op_2A00: 0x%X", pointerIndex);
         message = String.format("%s\nLook at address 0x80212868 + 0x%X = 0x%X", message, flagOffset,
             0x80212868 + flagOffset);
         throw new IllegalStateException(message);
