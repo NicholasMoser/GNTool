@@ -22,6 +22,17 @@ import java.util.Set;
 
 public class SeqHelper {
 
+  // Vanilla Combo translation for Oboro: コンボその
+  private static final byte[] COMBO_JAPANESE = new byte[]{(byte) 0x83, 0x52, (byte) 0x83, (byte) 0x93, (byte) 0x83};
+  // Vanilla Combo text for all other characters: 連打
+  private static final byte[] REPEATED_HITS = new byte[]{(byte) 0x98, 0x41, (byte) 0x92, 0x65, (byte) 0x82};
+  // Kosheh Combo translation for most characters
+  private static final byte[] COMBO = "Combo".getBytes(StandardCharsets.UTF_8);
+  // Kosheh Combo translation for Tayuyu doki demon
+  private static final byte[] CHORD = "Chord".getBytes(StandardCharsets.UTF_8);
+  // Kosheh Combo translation for Karasu
+  private static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
+
   /**
    * Returns the type of seq file this is.
    *
@@ -417,15 +428,9 @@ public class SeqHelper {
    * @return If the 5 bytes are a combo definition.
    */
   public static boolean isCombo(byte[] bytes) {
-    byte[] combo = "Combo".getBytes(StandardCharsets.UTF_8);
-    // Tayuyu doki demon
-    byte[] chord = "Chord".getBytes(StandardCharsets.UTF_8);
-    // Karasu
-    byte[] routine = "Routi".getBytes(StandardCharsets.UTF_8);
-    // Oboro
-    byte[] comboJapanese = new byte[]{(byte) 0x83, 0x52, (byte) 0x83, (byte) 0x93, (byte) 0x83};
-    return Arrays.equals(bytes, combo) || Arrays.equals(bytes, chord) ||
-        Arrays.equals(bytes, routine) || Arrays.equals(bytes, comboJapanese);
+    return Arrays.equals(bytes, COMBO) || Arrays.equals(bytes, CHORD) ||
+        Arrays.equals(bytes, ROUTINE) || Arrays.equals(bytes, COMBO_JAPANESE) ||
+        Arrays.equals(bytes, REPEATED_HITS);
   }
 
   /**
@@ -448,13 +453,15 @@ public class SeqHelper {
     byte[] bytes = bs.readBytes(4);
     int offset = bs.offset();
     boolean parsingName = true;
+    int comboNum = 1;
     while (!Arrays.equals(end, bytes)) {
       baos.write(bytes);
       if (bytes[3] == 0) {
         if (parsingName) {
           parsingName = false;
         } else {
-          String info = replaceNulls(baos.toString(StandardCharsets.US_ASCII));
+          String combo = getComboText(baos.toByteArray());
+          String info = String.format("Combo %d %s ", comboNum++, combo);
           if (bs.peekWord() == -1) {
             baos.write(end);
           }
@@ -470,15 +477,50 @@ public class SeqHelper {
   }
 
   /**
-   * Replaces combinations of 1-4 null bytes with a single space. This will make sure that
+   * Gets the combo text for the given bytes. It will usually start with zeroes, followed by bytes
+   * that correlate to the text for "Combo", followed by one or more zeroes, followed by the combo
+   * itself. The combo can be represented in ASCII for the most part.
    *
-   * @param text The text to replace nulls in.
-   * @return The text without nulls.
+   * @param bytes The bytes to parse the combo text for.
+   * @return The combo in ASCII text, for the most party.
    */
-  private static String replaceNulls(String text) {
-    String newText = text.replace("\0\0\0\0", " ");
-    newText = newText.replace("\0\0\0", " ");
-    newText = newText.replace("\0\0", " ");
-    return newText.replace('\0', ' ');
+  private static String getComboText(byte[] bytes) {
+    boolean firstZeroes = true;
+    boolean name = false;
+    boolean theRest = false;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    for (byte chr : bytes) {
+      if (firstZeroes && chr != 0) {
+        firstZeroes = false;
+        name = true;
+      } else if (name && chr == 0) {
+        name = false;
+        theRest = true;
+      } else if (theRest && chr != 0) {
+        baos.write(chr);
+      }
+    }
+    return baos.toString(StandardCharsets.US_ASCII);
+  }
+
+  /**
+   * Returns null bytes as binary data, where the null bytes are 0xCCCCCCCC. This is currently
+   * only used in mods in Super Clash of Ninja 4 (SCON4).
+   *
+   * @param bs The ByteStream to read from.
+   * @return The null bytes as an opcode.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static Opcode getNullBytes(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    int word = bs.peekWord();
+    if (word != 0xCCCCCCCC) {
+      throw new IllegalStateException("Null word is not 0xCCCCCCCC at offset " + offset);
+    }
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    while (bs.peekWord() == 0xCCCCCCCC) {
+      baos.write(bs.readBytes(4));
+    }
+    return new BinaryData(offset, baos.toByteArray(), " null bytes");
   }
 }

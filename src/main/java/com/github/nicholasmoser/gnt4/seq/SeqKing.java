@@ -217,6 +217,7 @@ public class SeqKing {
         case 0x55 -> opcodes.add(OpcodeGroup55.parse(bs, opcode));
         case 0x56 -> opcodes.add(OpcodeGroup56.parse(bs, opcode));
         case 0x61 -> opcodes.add(OpcodeGroup61.parse(bs, opcode));
+        case (byte) 0xCC -> opcodes.add(SeqHelper.getNullBytes(bs)); // SCON4-specific
         default -> throw new IllegalStateException(
             String.format("Unknown opcode group: %02X", opcodeGroup));
       }
