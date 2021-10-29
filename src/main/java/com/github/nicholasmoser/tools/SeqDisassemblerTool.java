@@ -6,6 +6,7 @@ import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqKing;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -17,17 +18,20 @@ public class SeqDisassemblerTool {
 
   private static final Logger LOGGER = Logger.getLogger(SeqDisassemblerTool.class.getName());
 
+  private static File currentDirectory = GNTool.USER_HOME;
+
   /**
    * Disassembles a seq file to html.
    */
   public static void disassembleToHTML() {
-    Optional<Path> optionalSeq = Choosers.getInputSeq(GNTool.USER_HOME);
+    Optional<Path> optionalSeq = Choosers.getInputSeq(currentDirectory);
     if (optionalSeq.isEmpty()) {
       return;
     }
     Path seqPath = optionalSeq.get();
+    currentDirectory = seqPath.getParent().toFile();
     Optional<Path> outputPath;
-    outputPath = Choosers.getOutputHTML(seqPath.getParent().toFile());
+    outputPath = Choosers.getOutputHTML(currentDirectory);
     if (outputPath.isEmpty()) {
       return;
     }
@@ -38,13 +42,14 @@ public class SeqDisassemblerTool {
    * Disassembles a seq file to txt.
    */
   public static void disassembleToTXT() {
-    Optional<Path> optionalSeq = Choosers.getInputSeq(GNTool.USER_HOME);
+    Optional<Path> optionalSeq = Choosers.getInputSeq(currentDirectory);
     if (optionalSeq.isEmpty()) {
       return;
     }
     Path seqPath = optionalSeq.get();
+    currentDirectory = seqPath.getParent().toFile();
     Optional<Path> outputPath;
-    outputPath = Choosers.getOutputTXT(seqPath.getParent().toFile());
+    outputPath = Choosers.getOutputTXT(currentDirectory);
     if (outputPath.isEmpty()) {
       return;
     }
