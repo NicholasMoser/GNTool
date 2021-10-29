@@ -29,6 +29,7 @@ import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
+import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
@@ -981,6 +982,16 @@ public class MenuController {
       loadingWindow.close();
     });
     new Thread(task).start();
+  }
+
+  @FXML
+  protected void disassembleSeqToHTML() {
+    SeqDisassemblerTool.disassembleToHTML(uncompressedDirectory.resolve("files").toFile());
+  }
+
+  @FXML
+  protected void disassembleSeqToTXT() {
+    SeqDisassemblerTool.disassembleToTXT(uncompressedDirectory.resolve("files").toFile());
   }
 
   @FXML

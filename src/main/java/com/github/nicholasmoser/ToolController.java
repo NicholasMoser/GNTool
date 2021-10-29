@@ -5,6 +5,7 @@ import com.github.nicholasmoser.tools.FPKUnpackerTool;
 import com.github.nicholasmoser.tools.ISOCompareTool;
 import com.github.nicholasmoser.tools.ISOExtractorTool;
 import com.github.nicholasmoser.tools.ISOPatcher;
+import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.TXG2TPLTool;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,6 +35,8 @@ public class ToolController {
   private static final String FPK_REPACKER_WII = "FPK Repacker (Wii)";
   private static final String FPK_REPACKER_PS2 = "FPK Repacker (PS2/PSP)";
   private static final String TXG2TPL = "TXG2TPL";
+  private static final String SEQ_DISASSEMBLER_HTML = "Seq Disassembler (HTML)";
+  private static final String SEQ_DISASSEMBLER_TXT = "Seq Disassembler (TXT)";
 
   @FXML
   private ListView<String> tools;
@@ -53,6 +56,8 @@ public class ToolController {
     items.add(FPK_REPACKER_WII);
     items.add(FPK_REPACKER_PS2);
     items.add(TXG2TPL);
+    items.add(SEQ_DISASSEMBLER_HTML);
+    items.add(SEQ_DISASSEMBLER_TXT);
   }
 
   @FXML
@@ -90,6 +95,8 @@ public class ToolController {
         case ISO_PATCHER_GC -> ISOPatcher.patchGameCubeISO();
         case ISO_COMPARE_GC -> ISOCompareTool.compareGameCubeISO();
         case TXG2TPL -> TXG2TPLTool.run();
+        case SEQ_DISASSEMBLER_HTML -> SeqDisassemblerTool.disassembleToHTML();
+        case SEQ_DISASSEMBLER_TXT -> SeqDisassemblerTool.disassembleToTXT();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);

@@ -4,6 +4,10 @@ import java.util.AbstractMap;
 import java.util.Map;
 
 public class Seq {
+
+  // The size of the largest SEQ file, m_title.seq
+  public static final int MAX_SIZE = 0x492A0;
+
   // SEQ File Sections
   public static final String CHR_TBL = "chr_tbl";
   public static final String CHR_ACT = "chr_act";
@@ -116,226 +120,495 @@ public class Seq {
   // 0x01320000 0001BAC4 (Also fall animation)
   // 0x01320000 0001ACCC (Enter and attack in 3-man cell)
 
-  // KF Flags
-  public static final int KF_ATTACK_FLAG_ID = 0x241A1200;
-  public static final String KF_ATTACK_FLAG_DESCRIPTION = "KF Attack Flags";
-  public static final int KF_ATTACK_FLAG_PROJ_ID = 0x48040000;
-  public static final String KF_ATTACK_FLAG_PROJ_DESCRIPTION = "KF Attack Flags (Projectile)";
-
-  public static final Map<Integer, String> KF_ATTACK_FLAGS =
-      Map.ofEntries(new AbstractMap.SimpleEntry<Integer, String>(0x00000001, "replay"), // No effect
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000002, "BDrive"), // Changes lighting,
-                                                                              // no sub or tech
-                                                                              // roll, generally on
-                                                                              // Ougi moves
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000004, "Shot"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000008, "Pow_W"), // Weak hit. affects
-                                                                             // blockstun and
-                                                                             // hitstun
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000010, "Pow_M"), // Medium hit
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000020, "Pow_S"), // Strong hit
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000040, "Low"), // Attack hits low, and
-                                                                           // can be evaded by AF
-                                                                           // float flag
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000080, "Middle"), // Attack hits middle
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000100, "High"), // Attack hits high, and
-                                                                            // can be evaded by AF
-                                                                            // sit flag
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000200, "Punch"), // Attack is classified
-                                                                             // as a punch
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000400, "Kick"), // Attack is classified
-                                                                            // as a kick
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000800, "Throw"), // Attack is classified
-                                                                             // as a throw, no sub
-                                                                             // or tech roll
-          new AbstractMap.SimpleEntry<Integer, String>(0x00001000, "Oiuchi"), // Hits later on OTG
-                                                                              // and during tech
-                                                                              // rolls (also called
-                                                                              // “Pursuit”)
-          new AbstractMap.SimpleEntry<Integer, String>(0x00002000, "Special"), // Builds no chakra,
-                                                                               // generally seen on
-                                                                               // Ougi moves
-          new AbstractMap.SimpleEntry<Integer, String>(0x00004000, "NoGuard"), // Unblockable
-          new AbstractMap.SimpleEntry<Integer, String>(0x00008000, "TDown"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00010000, "SPTata"), // This is a large
-                                                                              // bounce. Ex: Naruto
-                                                                              // 4B
-          new AbstractMap.SimpleEntry<Integer, String>(0x00020000, "Break"), // This combines with
-                                                                             // other KF flags to
-                                                                             // affect the opponents
-                                                                             // guard.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00040000, "Combo"), // Still not entirely
-                                                                             // understood
-          new AbstractMap.SimpleEntry<Integer, String>(0x00080000, "Down"), // Spinout launcher.
-                                                                            // Launches higher than
-                                                                            // Uki flag
-          new AbstractMap.SimpleEntry<Integer, String>(0x00100000, "Yoro"), // Stagger
-          new AbstractMap.SimpleEntry<Integer, String>(0x00200000, "Butt"), // Flying Screen
-                                                                            // knockback
-          new AbstractMap.SimpleEntry<Integer, String>(0x00400000, "Uki"), // Launch on hit
-          new AbstractMap.SimpleEntry<Integer, String>(0x00800000, "Furi"), // Turns opponents
-                                                                            // around on hit. This
-                                                                            // is leftover from
-                                                                            // Bloody Roar and not
-                                                                            // used.
-          new AbstractMap.SimpleEntry<Integer, String>(0x01000000, "Koro"), // Sweep: beats super
-                                                                            // armor, cannot be Y
-                                                                            // cancelled
-          new AbstractMap.SimpleEntry<Integer, String>(0x02000000, "Reach_L"), // Unsure, but
-                                                                               // generally in
-                                                                               // attacks with a
-                                                                               // good deal of
-                                                                               // motion. Ex: Naruto
-                                                                               // 6B
-          new AbstractMap.SimpleEntry<Integer, String>(0x04000000, "Tata"), // Small Ground Bounce.
-                                                                            // Ex: Naruto 6B
-          new AbstractMap.SimpleEntry<Integer, String>(0x08000000, "NoSpeEp"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x10000000, "Beast"), // Slash hit effect and
-                                                                             // chip damage
-          new AbstractMap.SimpleEntry<Integer, String>(0x20000000, "Freeze"), // Opponent moves less
-                                                                              // during the attack,
-                                                                              // which allows moves
-                                                                              // to combo better
-          new AbstractMap.SimpleEntry<Integer, String>(0x40000000, "Cancel"), // Cancel the move
-                                                                              // when you press Y
-                                                                              // like an any frame
-                                                                              // feint (not used)
-          new AbstractMap.SimpleEntry<Integer, String>(0x80000000, "AtkCan") // Super Cancel
+  public static final Map<Integer, String> MF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "GUARD"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "MUTEKI"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "BUTT"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "DEBUG"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "DEKA"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "TIBI"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "UDE"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "TYAKURA"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "TYAKURAREC"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "09"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "10"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "11"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "12"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "13"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "14"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "15"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "16"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "17"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "18"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "19"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "20"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "21"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "22"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "23"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "24"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "25"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "26"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "27"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "28"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "29"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "30"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "31")
       );
 
-  // K2F Flags
-  public static final int K2F_SPECIAL_ATTACK_FLAG_ID = 0x241A4800;
-  public static final String intK2F_SPECIAL_ATTACK_FLAG_DESCRIPTION = "K2F Special Attack Flags";
-  public static final int K2F_SPECIAL_ATTACK_PROJ_FLAG_ID = 0x48150000;
-  public static final String K2F_SPECIAL_ATTACK_PROJ_FLAG_DESCRIPTION =
-      "K2F Special Attack Flags (Projectile)";
-  public static final Map<Integer, String> K2F_SPECIAL_ATTACK_FLAGS =
-      Map.ofEntries(new AbstractMap.SimpleEntry<Integer, String>(0x00000001, "yoro2"), // Feet
-                                                                                       // trapped.
-                                                                                       // Ex:
-                                                                                       // Kidomaru
-                                                                                       // 5A1C
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000002, "hiki"), // Sink into the ground
-                                                                            // and pop out. Ex:
-                                                                            // Jiraya 2A
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000004, "hiki2"), // Sink into the ground
-                                                                             // and fall from above.
-                                                                             // Ex: Shika 2X
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000008, "mission"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000010, "natemi"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000020, "superarmor"), // Gives the move
-                                                                                  // super armor,
-                                                                                  // must be turned
-                                                                                  // off. Ex: Chouji
-                                                                                  // 5A
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000040, "mato2"), // Trapped. Ex: Shino
-                                                                             // 2A
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000080, "atkallcan"), // Can follow up
-                                                                                 // with any other
-                                                                                 // attack
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000100, "toji"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000200, "hasa"), // Crumple. Ex: Jirobo
-                                                                            // stone clap crumple
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000400, "shave"), // For Kisame.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000800, "nemu"), // Sleep. Ex: Kabuto 2X
-          new AbstractMap.SimpleEntry<Integer, String>(0x00001000, "wing"), // ex: Kabuto 2X
-          new AbstractMap.SimpleEntry<Integer, String>(0x00002000, "null1"), // Crumple. Ex: OTK 2X
-          new AbstractMap.SimpleEntry<Integer, String>(0x00004000, "null2"));
+  public static final Map<Integer, String> AF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "STAND"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "FORWARD"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "BACK"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "DASH"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "SIT"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "FUSE"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "UKEMI"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "KIRI"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "SPMDMG"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "SLANT"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "QUICK"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "FLOAT"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "JUMP"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "FALL"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "SMALL"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "DAMAGE"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "DOWNU"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "DOWNO"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "GETUP"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "TURN"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "TDOWN"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "CANTACT"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "SDEF"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "BDEF"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "BEAST"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "UKI"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "BUTT"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "NDOWN"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "DEF"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "TFAIL"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "THROW"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "ATTACK")
+      );
 
-  // NF Flags
-  public static final int NF_STATE_FLAG_ID = 0x241A0900;
-  public static final String NF_STATE_FLAG_DESCRIPTION = "NF State Flags";
-  public static final Map<Integer, String> NF_STATE_FLAGS =
-      Map.ofEntries(new AbstractMap.SimpleEntry<Integer, String>(0x00000001, "kamae"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000002, "disp"), // Disappears, can even
-                                                                            // walk through opponent
-                                                                            // while invisible.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000004, "tdmg"), // Used in conjuction
-                                                                            // with tdown for
-                                                                            // intangibility.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000008, "jump2"), // Flag that appears
-                                                                             // after doing your
-                                                                             // midair jump
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000010, "leverdir"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000020, "getup"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000040, "hiteft"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000080, "nfog"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000100, "takeon"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000200, "(blank)"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000400, "bdrivesleep"), // Makes BDrive
-                                                                                   // not active.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000800, "jump"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00001000, "fall"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00002000, "jspd"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00004000, "shotdef"), // Expected this to
-                                                                               // block projectiles.
-                                                                               // It didn"t.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00008000, "move"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00010000, "attack"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00020000, "button"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00040000, "combo"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00080000, "disp_n"), // Disappears. Ends at
-                                                                              // the end of the
-                                                                              // action..?
-          new AbstractMap.SimpleEntry<Integer, String>(0x00100000, "kabehit"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00200000, "bodytouch"), // Used for some
-                                                                                 // throw attacks
-                                                                                 // like Kisame.
-                                                                                 // Disables sub.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00400000, "aguard"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00800000, "damage"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x01000000, "guard"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x02000000, "autodir"), // Determines if
-                                                                               // something has any
-                                                                               // tracking on it..?
-          new AbstractMap.SimpleEntry<Integer, String>(0x04000000, "eneauto"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x08000000, "njpturn"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x10000000, "ringout"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x20000000, "kabe"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x40000000, "tdown"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x80000000, "lever"));
+  public static final Map<Integer, String> PF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "DEFOK"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "BDEFOK"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "BGUARD"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "HIT"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "REVERSAL"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "GHIT"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "COMBO"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "FLOAT"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "FALL"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "ENEDMG"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "DIRNOGRD"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "ENEDWN"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "ENEATK"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "BDEF"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "THROWOK"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "BTNOMOVE"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "NECKTURN"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "ABSTURN"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "AIR"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "RINGOUT"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "TURN"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "ZOMBIE"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "BACK"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "BODY"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "M_KABE"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "GUARD"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "DAMAGE"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "ABSTURNR"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "NORMAL"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "DMG"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "DEF"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "OUT")
+      );
 
-  // AF Flags
-  public static final int AF_ACTION_STATE_FLAG_ID = 0x241A0000;
-  public static final String AF_ACTION_STATE_FLAG_DESCRIPTION = "AF Action State Flags";
-  public static final Map<Integer, String> AF_ACTION_STATE_FLAGS =
-      Map.ofEntries(new AbstractMap.SimpleEntry<Integer, String>(0x00000001, "stand"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000002, "forward"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000004, "back"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000008, "dash"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000010, "sit"), // Immune to high
-                                                                           // attacks.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000020, "fuse"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000040, "ukemi"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000080, "kiri"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000100, "spmdmg"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000200, "slant"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000400, "quick"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00000800, "float"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00001000, "jump"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00002000, "fall"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00004000, "small"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00008000, "damage"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00010000, "downu"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00020000, "downo"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00040000, "getup"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00080000, "turn"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00100000, "tdown"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00200000, "cantact"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x00400000, "sdef"), // Side defense.
-          new AbstractMap.SimpleEntry<Integer, String>(0x00800000, "bdef"), // Back defense.
-          new AbstractMap.SimpleEntry<Integer, String>(0x01000000, "beast"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x02000000, "uki"), // Note: if this is added
-                                                                           // on an attacking move,
-                                                                           // that move can no
-                                                                           // longer Y cancel.
-          new AbstractMap.SimpleEntry<Integer, String>(0x04000000, "butt"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x08000000, "ndown"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x10000000, "def"), // Defense from the
-                                                                           // front. Like 4B guard.
-          new AbstractMap.SimpleEntry<Integer, String>(0x20000000, "tfail"), // Missed throw
-          new AbstractMap.SimpleEntry<Integer, String>(0x40000000, "throw"),
-          new AbstractMap.SimpleEntry<Integer, String>(0x80000000, "attack"));
+  public static final Map<Integer, String> NF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "KAMAE"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "DISP"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "TDMG"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "JUMP2"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "LEVERDIR"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "GETUP"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "HITEFT"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "NFOG"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "TAKEON"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "FOG"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "BDRIVESLEEP"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "JUMP"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "FALL"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "JSPD"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "SHOTDEF"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "MOVE"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "ATTACK"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "BUTTON"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "COMBO"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "DISP_N"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "KABEHIT"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "BODYTOUCH"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "AGUARD"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "DAMAGE"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "GUARD"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "AUTODIR"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "ENEAUTO"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "NJPTURN"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "RINGOUT"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "KABE"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "TDOWN"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "LEVER")
+      );
+
+  public static final Map<Integer, String> N2F_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "KAMAE"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "KAWARIMI"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "NAGENUKE"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "PUSH"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "DEFEFT"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "HITSHOCK"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "DEFSHOCK"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "GAGE"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "TYAKURA"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "CAMERAOFF"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "CUTOFF"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "KABEHITSP"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "NULL")
+      );
+
+  public static final Map<Integer, String> KF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "REPLAY"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "BDRIVE"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "SHOT"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "POW_W"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "POW_M"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "POW_S"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "LOW"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "MIDDLE"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "HIGH"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "PUNCH"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "KICK"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "THROW"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "OIUCHI"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "SPECIAL"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "NOGUARD"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "TDOWN"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "SPTATA"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "BREAK"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "COMBO"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "DOWN"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "YORO"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "BUTT"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "UKI"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "FURI"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "KORO"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "REACH_L"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "TATA"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "NOSPEEP"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "BEAST"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "FREEZE"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "CANCEL"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "ATKCAN")
+      );
+
+  public static final Map<Integer, String> K2F_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "YORO2"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "HIKI"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "HIKI2"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "MISSION"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "NATEMI"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "SUPERARMOR"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "MOTO2"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "ATKALLCAN"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "TOJI"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "HASA"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "SHAVE"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "NEMU"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "WING"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "NULL")
+      );
+
+  public static final Map<Integer, String> DF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "F"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "B"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "R"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "L"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "W"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "M"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "S"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "SPECIAL"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "DOWN"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "YORO"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "BUTT"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "UKI"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "FURI"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "KORO"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "TATA"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "NODIS"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "A_LOW"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "A_MIDDLE"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "A_HIGH"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "BREAK"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "NBREAK"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "OIUCHI"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "TESCAPE"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "MEKURI"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "BDRIVE"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "COUNTER_N"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "SHOT"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "COUNTER"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "HITCNT"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "HITCNT2"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "OFFSET"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "SPMDMG")
+      );
+
+  public static final Map<Integer, String> D2F_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "MATO"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "HIKI"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "HIKI2"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "MISSION"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "BDGUARD"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "MOTO2"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "TOJI"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "HASA"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "NEMU"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "NULL")
+      );
+
+  public static final Map<Integer, String> EF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "KABE"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "KABEN"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "KABEC"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "PAUSE"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "COMNUKE"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "RESCAPE"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "HOKAN"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "WARPHIP"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "TDOWNFAIL"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "NULL"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "BKOUT"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "ATK"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "SPOSE"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "LEVERREV"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "ATKCAN"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "OFFBEAST"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "HOPUP"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "WARP"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "FIX"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "TAKEON"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "RINGOUT"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "TFAIL"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "THROW"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "TDOWN"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "COMBO0"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "COMBO1"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "TESCAPE"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "BDRIVE"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "FLAG0"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "FLAG1"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "FLAG2"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "31")
+      );
+
+  public static final Map<Integer, String> RF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "COLOR"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "TYAKURASUB"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "HAZIKI"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "HAZIKIR"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "ALLGUARD"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "EFTREV"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "TARGETDIRA"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "GCANCELCHK"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "GCANCELOK"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "GCANCEL"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "GATTACK"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "NKAWARIMI"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "AUTOMOTION"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "EVENT00"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "SHADOWOFF"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "NOBACK"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "NSOUSAI"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "TAG2SP"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "TAG3SP"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "VANISH"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "INTRUDE"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "NOSTIFF"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "MOTIONREG"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "BDRIVEDEFDMG"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "ATTACKOK"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "DEFAULTTEXREV"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "PARDIR"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "ATKCHANGE"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "KAWARIMI"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "ACTCAN"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "30"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "31")
+      );
+
+  public static final Map<Integer, String> CF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "DMGOFF"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "TYAKURASUB"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "DISPOFF"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "TAKEONOFF"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "CHGNOATTACK"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "CHGNODMG"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "ANMCHG"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "COPYPFHIT"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "CLR"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "TYAKURAADD"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "PARENTMOVE"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "PINCH"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "CAMERAON"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "COMBOONLY"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "TARGETPARENT"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "NORESULT"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "TARGETPARENT2"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "PARDMGOFFCOPYTHROW"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "19"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "20"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "21"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "22"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "23"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "24"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "25"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "26"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "27"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "28"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "29"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "30"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "31"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "(empty)")
+      );
+
+  public static final Map<Integer, String> SF_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "HIT"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "GHIT"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "DAMAGE"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "GUARD"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "DEFOK"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "CATCH"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "06"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "07"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "08"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "09"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "10"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "11"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "12"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "13"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "14"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "15"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "16"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "17"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "18"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "19"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "20"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "21"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "22"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "23"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "24"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "25"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "26"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "27"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "28"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "29"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "30"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "31")
+      );
+
+  public static final Map<Integer, String> CHR_MOD_FLAGS =
+      Map.ofEntries(new AbstractMap.SimpleEntry<>(0x00000001, "Attack Boost Lv1"),
+          new AbstractMap.SimpleEntry<>(0x00000002, "Attack Boost Lv2"),
+          new AbstractMap.SimpleEntry<>(0x00000004, "Disable Chakra Gain"),
+          new AbstractMap.SimpleEntry<>(0x00000008, "Auto-Recover Chakra"),
+          new AbstractMap.SimpleEntry<>(0x00000010, "Special Jutsu Boost"),
+          new AbstractMap.SimpleEntry<>(0x00000020, "Health Absorption"),
+          new AbstractMap.SimpleEntry<>(0x00000040, "Reverse Directions"),
+          new AbstractMap.SimpleEntry<>(0x00000080, "Health Boost Small"),
+          new AbstractMap.SimpleEntry<>(0x00000100, "Health Boost Medium"),
+          new AbstractMap.SimpleEntry<>(0x00000200, "Health Boost Large"),
+          new AbstractMap.SimpleEntry<>(0x00000400, "Auto-Throw Escape"),
+          new AbstractMap.SimpleEntry<>(0x00000800, "Auto-Ground Tech"),
+          new AbstractMap.SimpleEntry<>(0x00001000, "Super Armor"),
+          new AbstractMap.SimpleEntry<>(0x00002000, "Auto-Recover Health"),
+          new AbstractMap.SimpleEntry<>(0x00004000, "Invincibility for 10 Seconds"),
+          new AbstractMap.SimpleEntry<>(0x00008000, "Absolute Defense"),
+          new AbstractMap.SimpleEntry<>(0x00010000, "Halve Chakra Consumption"),
+          new AbstractMap.SimpleEntry<>(0x00020000, "Disable Ground Tech"),
+          new AbstractMap.SimpleEntry<>(0x00040000, "Disable Substitution"),
+          new AbstractMap.SimpleEntry<>(0x00080000, "Disable Sidestep"),
+          new AbstractMap.SimpleEntry<>(0x00100000, "Disable B Button"),
+          new AbstractMap.SimpleEntry<>(0x00200000, "Disable A Button"),
+          new AbstractMap.SimpleEntry<>(0x00400000, "Disable X Button"),
+          new AbstractMap.SimpleEntry<>(0x00800000, "Disable Y Button"),
+          new AbstractMap.SimpleEntry<>(0x01000000, "Disable Throw Escape"),
+          new AbstractMap.SimpleEntry<>(0x02000000, "Disable Chakra Use"),
+          new AbstractMap.SimpleEntry<>(0x04000000, "Disable Jump"),
+          new AbstractMap.SimpleEntry<>(0x08000000, "Disable Guard"),
+          new AbstractMap.SimpleEntry<>(0x10000000, "Disable Projectiles"),
+          new AbstractMap.SimpleEntry<>(0x20000000, "Health Drain"),
+          new AbstractMap.SimpleEntry<>(0x40000000, "Halve Attack Power"),
+          new AbstractMap.SimpleEntry<>(0x80000000, "Delete HP and Chakra Guard")
+      );
 
   // Mapping of a seq file offset to its associated action
   // Action = namedtuple("Action", ["id", "description"])

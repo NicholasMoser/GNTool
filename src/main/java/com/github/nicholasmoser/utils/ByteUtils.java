@@ -1,8 +1,10 @@
 package com.github.nicholasmoser.utils;
 
 import com.google.common.io.BaseEncoding;
+import com.google.common.io.CountingInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -248,6 +250,21 @@ public class ByteUtils {
       values[i] = value;
     }
     return values;
+  }
+
+  /**
+   * Reads a big-endian int32 (as an int) from a CountingInputStream.
+   *
+   * @param cis The CountingInputStream to read from.
+   * @return The int32 (as an int).
+   * @throws IOException If an I/O error occurs.
+   */
+  public static int readInt32(CountingInputStream cis) throws IOException {
+    byte[] bytes = new byte[4];
+    if (cis.read(bytes) != 4) {
+      throw new IOException("Failed to read int at offset " + cis.getCount());
+    }
+    return toInt32(bytes);
   }
 
   /**

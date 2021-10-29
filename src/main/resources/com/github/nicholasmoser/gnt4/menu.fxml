@@ -142,8 +142,10 @@
       <Tab text="Sequence">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
           <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Seq Files" />
-          <ComboBox fx:id="seqs" layoutX="140.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
-          <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#seqKage" text="Launch SEQ Kage" />
+          <ComboBox fx:id="seqs" layoutX="141.0" layoutY="126.0" prefHeight="25.0" prefWidth="204.0" />
+          <Button layoutX="20.0" layoutY="126.0" mnemonicParsing="false" onMouseClicked="#seqKage" text="Launch SEQ Kage" />
+          <Button layoutX="20.0" layoutY="46.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToHTML" text="Disassemble Seq File to HTML" />
+          <Button layoutX="20.0" layoutY="85.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToTXT" text="Disassemble Seq File to TXT" />
         </AnchorPane>
       </Tab>
          <Tab text="Code Injection">
