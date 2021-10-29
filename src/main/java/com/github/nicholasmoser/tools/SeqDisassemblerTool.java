@@ -24,7 +24,16 @@ public class SeqDisassemblerTool {
    * Disassembles a seq file to html.
    */
   public static void disassembleToHTML() {
-    Optional<Path> optionalSeq = Choosers.getInputSeq(currentDirectory);
+    disassembleToHTML(currentDirectory);
+  }
+
+  /**
+   * Disassembles a seq file to html.
+   *
+   * @param initialDirectory The initial directory to start at when selecting a seq file.
+   */
+  public static void disassembleToHTML(File initialDirectory) {
+    Optional<Path> optionalSeq = Choosers.getInputSeq(initialDirectory);
     if (optionalSeq.isEmpty()) {
       return;
     }
@@ -42,7 +51,16 @@ public class SeqDisassemblerTool {
    * Disassembles a seq file to txt.
    */
   public static void disassembleToTXT() {
-    Optional<Path> optionalSeq = Choosers.getInputSeq(currentDirectory);
+    disassembleToTXT(currentDirectory);
+  }
+
+  /**
+   * Disassembles a seq file to txt.
+   *
+   * @param initialDirectory The initial directory to start at when selecting a seq file.
+   */
+  public static void disassembleToTXT(File initialDirectory) {
+    Optional<Path> optionalSeq = Choosers.getInputSeq(initialDirectory);
     if (optionalSeq.isEmpty()) {
       return;
     }

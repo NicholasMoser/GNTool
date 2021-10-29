@@ -74,7 +74,7 @@
               <CheckBox fx:id="unlockAll" layoutX="14.0" layoutY="418.0" mnemonicParsing="false" onAction="#unlockAll" text="Unlock Everything" />
               <CheckBox fx:id="enableWidescreen" layoutX="14.0" layoutY="456.0" mnemonicParsing="false" onAction="#enableWidescreen" text="Widescreen 16:9" />
               <CheckBox layoutX="14.0" layoutY="494.0" mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" fx:id="xDoesNotBreakThrows" />
-              <Button layoutX="12.0" layoutY="529.0" mnemonicParsing="false" text="Apply" onAction="#allow4pDupeChrs" />
+              <Button layoutX="12.0" layoutY="529.0" mnemonicParsing="false" onAction="#allow4pDupeChrs" text="Apply" />
               <Text layoutX="69.0" layoutY="546.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Allow duplicate characters in 4-player battles" />
             </AnchorPane>
           </ScrollPane>
@@ -134,8 +134,10 @@
       <Tab text="Sequence">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
           <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Seq Files" />
-          <ComboBox fx:id="seqs" layoutX="140.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
-          <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#seqKage" text="Launch SEQ Kage" />
+          <ComboBox fx:id="seqs" layoutX="141.0" layoutY="126.0" prefHeight="25.0" prefWidth="204.0" />
+          <Button layoutX="20.0" layoutY="126.0" mnemonicParsing="false" onMouseClicked="#seqKage" text="Launch SEQ Kage" />
+          <Button layoutX="20.0" layoutY="46.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToHTML" text="Disassemble Seq File to HTML" />
+          <Button layoutX="20.0" layoutY="85.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToTXT" text="Disassemble Seq File to TXT" />
         </AnchorPane>
       </Tab>
          <Tab text="Code Injection">
