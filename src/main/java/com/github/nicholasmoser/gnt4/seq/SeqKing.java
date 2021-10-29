@@ -63,6 +63,8 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -79,21 +81,41 @@ public class SeqKing {
    *
    * @param seqPath    The seq file path.
    * @param outputPath The output HTML report file path.
+   * @param verbose    If the txt output should be printed to the console.
    * @throws IOException If an I/O error occurs.
    */
-  public static void generate(Path seqPath, Path outputPath) throws IOException {
-    List<Opcode> opcodes = getOpcodes(seqPath);
+  public static void generateHTML(Path seqPath, Path outputPath, boolean verbose) throws IOException {
+    List<Opcode> opcodes = getOpcodes(seqPath, verbose);
     SeqKingHtml.generate(seqPath.getFileName().toString(), opcodes, outputPath);
+  }
+
+  /**
+   * Parse the given seq file and create an HTML report at the given output path.
+   *
+   * @param seqPath    The seq file path.
+   * @param outputPath The output HTML report file path.
+   * @param verbose    If the txt output should be printed to the console.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static void generateTXT(Path seqPath, Path outputPath, boolean verbose) throws IOException {
+    List<Opcode> opcodes = getOpcodes(seqPath, verbose);
+    try(OutputStream os = Files.newOutputStream(outputPath)) {
+      for (Opcode opcode : opcodes) {
+        os.write(opcode.toString().getBytes(StandardCharsets.UTF_8));
+        os.write('\n');
+      }
+    }
   }
 
   /**
    * Get the list of opcodes for the given seq file.
    *
    * @param seqPath The path to the seq file.
+   * @param verbose If the txt output should be printed to the console.
    * @return The list of opcodes.
    * @throws IOException If an I/O error occurs.
    */
-  private static List<Opcode> getOpcodes(Path seqPath) throws IOException {
+  public static List<Opcode> getOpcodes(Path seqPath, boolean verbose) throws IOException {
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(seqPath);
     SeqType seqType = SeqHelper.getSeqType(seqPath);
@@ -129,7 +151,9 @@ public class SeqKing {
         }
         Opcode binaryOpcode = new BinaryData(offset, binaryData);
         opcodes.add(binaryOpcode);
-        System.out.println(binaryOpcode);
+        if (verbose) {
+          System.out.println(binaryOpcode);
+        }
         if (bs.offset() == bytes.length) {
           break; // EOF
         }
@@ -140,7 +164,9 @@ public class SeqKing {
       List<Opcode> binaries = SeqHelper.getBinaries(bs, opcodes, seqType, uniqueBinaries);
       if (!binaries.isEmpty()) {
         for (Opcode binary : binaries) {
-          System.out.println(binary);
+          if (verbose) {
+            System.out.println(binary);
+          }
         }
         opcodes.addAll(binaries);
         continue;
@@ -150,7 +176,9 @@ public class SeqKing {
       if (SeqSection.isSeqSectionTitle(bs)) {
         List<Opcode> section = SeqSection.handleSeqSection(bs);
         for (Opcode sectionPart : section) {
-          System.out.println(sectionPart);
+          if (verbose) {
+            System.out.println(sectionPart);
+          }
         }
         opcodes.addAll(section);
         continue;
@@ -221,7 +249,9 @@ public class SeqKing {
         default -> throw new IllegalStateException(
             String.format("Unknown opcode group: %02X", opcodeGroup));
       }
-      System.out.println(opcodes.get(opcodes.size() - 1));
+      if (verbose) {
+        System.out.println(opcodes.get(opcodes.size() - 1));
+      }
       if (bs.offset() == bytes.length) {
         break; // EOF
       }

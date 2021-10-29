@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 public class SeqKingTest {
 
   private static final boolean COMPARE_MODE = false;
+  private static final boolean VERBOSE = false;
 
   @Test
   public void parseCharSel() throws Exception {
@@ -435,7 +436,7 @@ public class SeqKingTest {
     String output = seq.replace(".seq", "_test.html");
     Path seqPath = Paths.get(seq);
     Path outputPath = Paths.get(output);
-    SeqKing.generate(seqPath, outputPath);
+    SeqKing.generateHTML(seqPath, outputPath, VERBOSE);
     String expected = seq.replace(".seq", ".html");
     Path expectedPath = Paths.get(expected);
     byte[] expectedBytes = Files.readAllBytes(expectedPath);
@@ -447,6 +448,6 @@ public class SeqKingTest {
     String output = seq.replace(".seq", ".html");
     Path seqPath = Paths.get(seq);
     Path outputPath = Paths.get(output);
-    SeqKing.generate(seqPath, outputPath);
+    SeqKing.generateHTML(seqPath, outputPath, VERBOSE);
   }
 }

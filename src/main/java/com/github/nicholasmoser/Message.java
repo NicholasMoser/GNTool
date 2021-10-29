@@ -37,6 +37,22 @@ public class Message {
   }
 
   /**
+   * Display an info window to the user with the given header and message. This will ask the user
+   * Yes or No and return true if Yes is selected.
+   *
+   * @param header The header of the info window.
+   * @param message The message of the info window.
+   * @return If the user selects Yes.
+   */
+  public static boolean infoConfirmation(String header, String message) {
+    Alert alert = new Alert(AlertType.INFORMATION, message, ButtonType.YES, ButtonType.NO);
+    alert.setTitle("Info");
+    alert.setHeaderText(header);
+    Optional<ButtonType> selectedButton = alert.showAndWait();
+    return selectedButton.isPresent() && selectedButton.get() == ButtonType.YES;
+  }
+
+  /**
    * Display a warning window to the user with the given header and message. This will ask the user
    * Yes or No and return true if Yes is selected.
    * 
