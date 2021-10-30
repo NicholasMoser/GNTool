@@ -2,10 +2,10 @@ package com.github.nicholasmoser.iso;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.github.nicholasmoser.testing.Prereqs;
 import com.github.nicholasmoser.utils.CRC32;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,10 +30,7 @@ public class DuplicateISOTest {
 
   @BeforeAll
   public static void init() throws Exception {
-    gnt4Path = Paths.get("src/test/gnt4/GNT4.iso");
-    if (!Files.exists(gnt4Path)) {
-      throw new FileNotFoundException("Integration test requires GNT4.iso at project root.");
-    }
+    gnt4Path = Prereqs.getGNT4Iso();
     String unique = Long.toString(System.currentTimeMillis());
     testDirectory = Files.createDirectory(Paths.get(unique));
     testIso = Files.createFile(Paths.get(unique + ".iso"));

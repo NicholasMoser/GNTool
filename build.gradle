@@ -30,8 +30,9 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-java:3.10.0'
     implementation 'org.json:json:20200518'
     implementation 'com.j2html:j2html:1.4.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
     testImplementation 'net.java.dev.jna:jna:5.5.0'
     // Force Gradle to load the JUnit Platform Launcher from the module-path, as
     // configured in buildSrc/.../ModulePlugin.java -- see SKARA-69 for details.

@@ -3,20 +3,18 @@ package com.github.nicholasmoser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.gnt4.GNT4Files;
 import com.github.nicholasmoser.testing.Prereqs;
 import com.github.nicholasmoser.utils.FileUtils;
+import com.github.nicholasmoser.utils.ProtobufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
-import com.github.nicholasmoser.utils.ProtobufUtils;
 
 public class ProtoBufCreatorTest {
 

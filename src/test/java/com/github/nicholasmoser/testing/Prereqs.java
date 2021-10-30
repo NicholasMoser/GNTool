@@ -57,6 +57,11 @@ public class Prereqs {
     return compressed;
   }
 
+  public static Path getGNT4Iso() throws IOException {
+    validateGNT4Iso();
+    return Paths.get(GNT4_ISO);
+  }
+
   private static void validateGNT4Iso() throws IOException {
     Path gnt4Iso = Paths.get(GNT4_ISO);
     if (!Files.isRegularFile(gnt4Iso)) {
