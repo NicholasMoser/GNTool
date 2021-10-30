@@ -30,7 +30,7 @@ public class DuplicateISOTest {
 
   @BeforeAll
   public static void init() throws Exception {
-    gnt4Path = Paths.get("GNT4.iso");
+    gnt4Path = Paths.get("src/test/gnt4/GNT4.iso");
     if (!Files.exists(gnt4Path)) {
       throw new FileNotFoundException("Integration test requires GNT4.iso at project root.");
     }

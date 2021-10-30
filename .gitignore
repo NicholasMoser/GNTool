@@ -5,7 +5,7 @@ dtkmake.exe
 DSPADPCM.exe
 dsptool.dll
 soundfile.dll
-GNT4.iso
+src/test/gnt
 DARK_MODE_DISABLED
 
 ##############################
