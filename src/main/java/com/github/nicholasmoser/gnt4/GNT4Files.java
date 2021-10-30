@@ -98,20 +98,8 @@ public class GNT4Files {
    * @throws IOException If an I/O error occurs.
    */
   private void loadVanillaState() throws IOException {
-    try (InputStream is = getClass().getResourceAsStream(VANILLA_STATE)) {
-      this.vanillaFiles = GNTFiles.parseFrom(is);
-    }
-
-    allowedWorkspaceFiles = Sets.newHashSetWithExpectedSize(2574);
-    for (GNTFile gntFile : vanillaFiles.getGntFileList()) {
-      if (gntFile.getGntChildFileCount() == 0) {
-        allowedWorkspaceFiles.add(gntFile.getFilePath());
-      } else {
-        for (GNTChildFile child : gntFile.getGntChildFileList()) {
-          allowedWorkspaceFiles.add(child.getFilePath());
-        }
-      }
-    }
+    this.vanillaFiles = getVanillaFiles();
+    this.allowedWorkspaceFiles = getAllowedWorkspaceFiles(vanillaFiles);
   }
 
   /**
@@ -257,5 +245,35 @@ public class GNT4Files {
       }
     }
     throw new IOException(filePath + " not found.");
+  }
+
+  /**
+   * @return The GNT4 vanilla files protobuf object.
+   * @throws IOException If the file cannot be read.
+   */
+  public static GNTFiles getVanillaFiles() throws IOException {
+    try (InputStream is = GNT4Files.class.getResourceAsStream(VANILLA_STATE)) {
+      return GNTFiles.parseFrom(is);
+    }
+  }
+
+  /**
+   * Returns the allowed files for a GNT4 workspace.
+   *
+   * @param vanillaFiles The vanilla files protobuf object.
+   * @return The allowed workspace files.
+   */
+  public static Set<String> getAllowedWorkspaceFiles(GNTFiles vanillaFiles) {
+    Set<String> allowedWorkspaceFiles = Sets.newHashSetWithExpectedSize(2574);
+    for (GNTFile gntFile : vanillaFiles.getGntFileList()) {
+      if (gntFile.getGntChildFileCount() == 0) {
+        allowedWorkspaceFiles.add(gntFile.getFilePath());
+      } else {
+        for (GNTChildFile child : gntFile.getGntChildFileList()) {
+          allowedWorkspaceFiles.add(child.getFilePath());
+        }
+      }
+    }
+    return allowedWorkspaceFiles;
   }
 }
