@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-public class TestRandomizer {
+public class RandomizerTest {
 
   @Test
   public void testNullListRandomizeFilesFails() {

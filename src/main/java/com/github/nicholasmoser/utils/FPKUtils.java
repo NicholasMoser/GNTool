@@ -1,6 +1,6 @@
 package com.github.nicholasmoser.utils;
 
-import com.github.nicholasmoser.FPKFileHeader;
+import com.github.nicholasmoser.fpk.FPKFileHeader;
 import com.github.nicholasmoser.PRSUncompressor;
 import com.google.common.primitives.Bytes;
 import java.io.IOException;

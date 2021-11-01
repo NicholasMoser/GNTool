@@ -4,6 +4,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
+import com.github.nicholasmoser.fpk.FPKFile;
+import com.github.nicholasmoser.fpk.FPKFileHeader;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.FPKUtils;
 import com.google.common.primitives.Bytes;

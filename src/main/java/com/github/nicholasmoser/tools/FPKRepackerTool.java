@@ -1,8 +1,8 @@
 package com.github.nicholasmoser.tools;
 
 import com.github.nicholasmoser.Choosers;
-import com.github.nicholasmoser.FPKFile;
-import com.github.nicholasmoser.FPKFileHeader;
+import com.github.nicholasmoser.fpk.FPKFile;
+import com.github.nicholasmoser.fpk.FPKFileHeader;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.PRSCompressor;

@@ -6,6 +6,8 @@ module com.github.nicholasmoser {
 
   opens com.github.nicholasmoser to javafx.fxml;
   opens com.github.nicholasmoser.gnt4 to javafx.fxml;
+  exports com.github.nicholasmoser.fpk;
+  opens com.github.nicholasmoser.fpk to javafx.fxml;
 
   requires com.google.common;
   requires com.google.protobuf;
