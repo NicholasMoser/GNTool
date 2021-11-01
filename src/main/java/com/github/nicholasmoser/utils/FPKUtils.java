@@ -60,28 +60,43 @@ public class FPKUtils {
     byte[] compressedSizeWord = new byte[4];
     byte[] uncompressedSizeWord = new byte[4];
     if (is.read(fileNameWord) != pathLength) {
-      throw new IOException("Unable to read FPK header.");
+      throw new IOException("Unable to read file name from FPK file header.");
     }
     if (is.skip(4) != 4) {
-      throw new IOException("Unable to read FPK header.");
+      throw new IOException("Unable to skip first null bytes of FPK file header.");
     }
     if (is.read(offsetWord) != 4) {
-      throw new IOException("Unable to read FPK header.");
+      throw new IOException("Unable to read offset from FPK file header.");
     }
     if (is.read(compressedSizeWord) != 4) {
-      throw new IOException("Unable to read FPK header.");
+      throw new IOException("Unable to read compressed word from FPK file header.");
     }
     if (is.read(uncompressedSizeWord) != 4) {
-      throw new IOException("Unable to read FPK header.");
+      throw new IOException("Unable to read uncompressed word from FPK file header.");
     }
     String fileName = new String(fileNameWord, Charset.forName("Shift_JIS")).trim();
-    ByteBuffer buf = ByteBuffer.wrap(offsetWord);
-    int offset = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
-    buf = ByteBuffer.wrap(compressedSizeWord);
-    int compressedSize = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
-    buf = ByteBuffer.wrap(uncompressedSizeWord);
-    int uncompressedSize = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
+    int offset = getValue(offsetWord, bigEndian);
+    int compressedSize = getValue(compressedSizeWord, bigEndian);
+    int uncompressedSize = getValue(uncompressedSizeWord, bigEndian);
     return new FPKFileHeader(fileName, offset, compressedSize, uncompressedSize, longPaths, bigEndian);
+  }
+
+  /**
+   * Get the integer value of bytes in accordance to the provided endianness.
+   *
+   * @param bytes The bytes to read the integer from.
+   * @param bigEndian The endianness of the bytes.
+   * @return The integer value.
+   * @throws IOException If the integer value is less than 0.
+   */
+  private static int getValue(byte[] bytes, boolean bigEndian) throws IOException {
+    ByteBuffer buf = ByteBuffer.wrap(bytes);
+    int value = bigEndian ? buf.getInt() : buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
+    if (value < 0) {
+      String msg = "This is likely the result of reading past the last file in the FPK header.";
+      throw new IOException("Found invalid values in FPK file header. " + msg);
+    }
+    return value;
   }
 
   /**
