@@ -16,9 +16,9 @@ public class Randomizer {
   /**
    * Randomizes the contents of a list of files. This will take the contents of one file, put them
    * in another, and take the contents of that file and put it into another, and so on. The list be
-   * must non-null, non-empty, and comprised of regular resolvable file paths.
+   * must non-null, non-empty, modifiable, and comprised of regular resolvable file paths.
    *
-   * @param filePaths The list of file paths.
+   * @param filePaths A modifiable list of file paths.
    * @throws IOException If an I/O error occurs
    */
   public static void randomizeFiles(List<Path> filePaths) throws IOException {

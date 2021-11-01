@@ -6,9 +6,7 @@ import com.github.nicholasmoser.testing.Prereqs;
 import com.github.nicholasmoser.utils.FileUtils;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class DolParserTest {
