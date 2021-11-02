@@ -22,23 +22,23 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'com.google.guava:guava:31.0.1-jre'
     implementation 'org.openjfx:javafx-controls:13.0.1'
     implementation 'org.openjfx:javafx-graphics:13.0.1'
     implementation 'org.openjfx:javafx-base:13.0.1'
     implementation 'org.openjfx:javafx-fxml:13.0.1'
-    implementation 'com.google.protobuf:protobuf-java:3.10.0'
-    implementation 'org.json:json:20200518'
-    implementation 'com.j2html:j2html:1.4.0'
+    implementation 'com.google.protobuf:protobuf-java:3.18.1'
+    implementation 'org.json:json:20210307'
+    implementation 'com.j2html:j2html:1.5.0'
     testImplementation(platform('org.junit:junit-bom:5.8.1'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    testImplementation 'net.java.dev.jna:jna:5.5.0'
+    testImplementation 'net.java.dev.jna:jna:5.9.0'
 }
 
 group = 'com.github.nicholasmoser'
-version = '3.13.2-SNAPSHOT'
+version = '4.0.0-SNAPSHOT'
 description = 'GNTool'
-sourceCompatibility = '14'
+sourceCompatibility = '17'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
