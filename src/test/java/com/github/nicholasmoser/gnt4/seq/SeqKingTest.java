@@ -447,7 +447,7 @@ public class SeqKingTest {
       byte[] actualBytes = Files.readAllBytes(outputPath);
       assertArrayEquals(expectedBytes, actualBytes);
     } finally {
-      if (DELETE_FILE) {
+      if (DELETE_FILE && outputPath != null) {
         Files.deleteIfExists(outputPath);
       }
     }
@@ -460,7 +460,7 @@ public class SeqKingTest {
       outputPath = Paths.get(output);
       SeqKing.generateHTML(seq, outputPath, VERBOSE);
     } finally {
-      if (DELETE_FILE) {
+      if (DELETE_FILE && outputPath != null) {
         Files.deleteIfExists(outputPath);
       }
     }
