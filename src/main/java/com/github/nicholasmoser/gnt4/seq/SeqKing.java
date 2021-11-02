@@ -18,7 +18,6 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup13;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup14;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup15;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup16;
-import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup19;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1A;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1C;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1D;
@@ -204,7 +203,6 @@ public class SeqKing {
         case 0x14 -> opcodes.add(OpcodeGroup14.parse(bs, opcode));
         case 0x15 -> opcodes.add(OpcodeGroup15.parse(bs, opcode));
         case 0x16 -> opcodes.add(OpcodeGroup16.parse(bs, opcode));
-        case 0x19 -> opcodes.add(OpcodeGroup19.parse(bs, opcode));
         case 0x1A -> opcodes.add(OpcodeGroup1A.parse(bs, opcode));
         case 0x1C -> opcodes.add(OpcodeGroup1C.parse(bs, opcode));
         case 0x1D -> opcodes.add(OpcodeGroup1D.parse(bs, opcode));

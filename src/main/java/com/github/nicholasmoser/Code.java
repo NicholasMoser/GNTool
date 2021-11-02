@@ -1,12 +1,12 @@
 package com.github.nicholasmoser;
 
+import com.google.common.primitives.Bytes;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import com.google.common.primitives.Bytes;
 
 /**
  * A code to modify a file. Consists of a series of insert, overwrite, and/or delete actions.
@@ -78,7 +78,10 @@ public class Code {
       throw new IllegalArgumentException(filePath + " is not a file.");
     }
     byte[] bytes = Files.readAllBytes(filePath);
-    List<Byte> byteList = Bytes.asList(bytes);
+    List<Byte> byteList = new ArrayList<>();
+    for (byte b : bytes) {
+      byteList.add(b);
+    }
     for (Action action : actions) {
       ActionType actionType = action.getActionType();
       int offset = action.getOffset();

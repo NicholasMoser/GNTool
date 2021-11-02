@@ -2,8 +2,6 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
-import com.github.nicholasmoser.Message;
-import com.github.nicholasmoser.audio.DtkMake;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

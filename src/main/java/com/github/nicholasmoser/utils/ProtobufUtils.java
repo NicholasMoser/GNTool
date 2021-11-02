@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.github.nicholasmoser.FPKFileHeader;
+import com.github.nicholasmoser.fpk.FPKFileHeader;
 import com.github.nicholasmoser.GNTFileProtos;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.PRSUncompressor;

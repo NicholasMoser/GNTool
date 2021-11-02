@@ -1,4 +1,4 @@
-package com.github.nicholasmoser;
+package com.github.nicholasmoser.fpk;
 
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;

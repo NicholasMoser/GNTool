@@ -1,18 +1,35 @@
 package com.github.nicholasmoser.dol;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.github.nicholasmoser.testing.Prereqs;
+import com.github.nicholasmoser.utils.FileUtils;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.junit.jupiter.api.Disabled;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 public class DolParserTest {
+
+  /**
+   * Tests reading and writing a dol file.
+   *
+   * @throws Exception If any exception occurs.
+   */
   @Test
-  @Disabled("This test needs to be reformatted to use an actual dol")
-  public void test() throws Exception {
-    Path dolPath = Paths.get("D:\\GNT\\aaa\\uncompressed\\sys\\main_old.dol");
+  public void testReadingWritingDol() throws Exception {
+    Path uncompressed = Prereqs.getUncompressedGNT4();
+    Path dolPath = uncompressed.resolve("sys/main.dol");
     DolParser parser = new DolParser(dolPath);
     Dol dol = parser.parse();
-    System.out.println(dol);
-    dol.writeToFile(Paths.get("D:\\GNT\\aaa\\uncompressed\\sys\\main.dol"));
+    Path tempDir = FileUtils.getTempDirectory();
+    Path exportFile = tempDir.resolve(UUID.randomUUID().toString());
+    try {
+      dol.writeToFile(exportFile);
+      assertTrue(Files.exists(exportFile));
+      assertTrue(Files.size(exportFile) > 0);
+    } finally {
+      Files.deleteIfExists(exportFile);
+    }
   }
 }

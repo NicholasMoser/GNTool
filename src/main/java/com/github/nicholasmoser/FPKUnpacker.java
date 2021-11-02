@@ -1,5 +1,6 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.fpk.FPKFileHeader;
 import com.github.nicholasmoser.fpk.FileNames;
 import com.github.nicholasmoser.utils.FPKUtils;
 import com.google.common.io.MoreFiles;

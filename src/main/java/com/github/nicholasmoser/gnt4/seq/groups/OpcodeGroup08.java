@@ -1,15 +1,12 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchDecrementNotZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FloatCompare;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FloatDivide;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FloatMove;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FloatMultiply;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FloatSubtract;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Movc;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 
