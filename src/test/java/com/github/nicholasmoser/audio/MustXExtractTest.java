@@ -1,7 +1,10 @@
 package com.github.nicholasmoser.audio;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import com.github.nicholasmoser.testing.Prereqs;
@@ -63,36 +66,73 @@ public class MustXExtractTest {
   }
 
   /**
-   * Test extracting and repacking each .sam and .sdi file in GNT4.
+   * Test extracting and repacking each .sam and .sdi file in GNT4. Then extract it again and make
+   * sure the files are as expected.
    *
    * @param inputSdi The input .sdi file.
    * @param inputSam The input .sam file.
    * @throws Exception If any exception occurs.
    */
-  @ParameterizedTest(name="#{index} - Test with Argument={0},{1}")
+  @ParameterizedTest(name = "#{index} - Test with Argument={0},{1}")
   @MethodSource("samSdiPathProvider")
   public void testExtractAndRepack(Path inputSdi, Path inputSam) throws Exception {
     // Outputs
     Path tempDir = FileUtils.getTempDirectory();
     Path outputDir = tempDir.resolve(UUID.randomUUID().toString());
+    Path outputDir2 = tempDir.resolve(UUID.randomUUID().toString());
     Path outputSdi = tempDir.resolve(UUID.randomUUID() + ".sdi");
     Path outputSam = tempDir.resolve(UUID.randomUUID() + ".sam");
     Files.createDirectories(outputDir);
+    Files.createDirectories(outputDir2);
 
     try {
+      // Create dsp files from sam and sdi
       MusyXExtract.extract_samples(inputSdi, inputSam, outputDir);
+      // Create new sam and sdi from dsp files
       MusyXExtract.pack_samples(outputDir, outputSdi, outputSam);
-      long expectedSdiLength = Files.size(inputSdi);
-      long actualSdiLength = Files.size(outputSdi);
-      assertEquals(expectedSdiLength, actualSdiLength);
-      long expectedSamLength = Files.size(inputSam);
-      long actualSamLength = Files.size(outputSam);
-      assertEquals(expectedSamLength, actualSamLength, 1024);
+      // Create new dsp files from new sam and sdi files
+      MusyXExtract.extract_samples(outputSdi, outputSam, outputDir2);
+
+      if (areStageLoopingSounds(inputSdi)) {
+        // .sdi files with looping will have different looping lengths due to loss of accuracy of
+        // converting back and forth between .sdi and .dsp which converts back and forth between
+        // samples and nibbles.
+        assertEquals(Files.size(inputSdi), Files.size(outputSdi));
+        long delta = (long) (Files.size(inputSam) * 0.03);
+        assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
+        assertEquals(Files.list(outputDir).count(), Files.list(outputDir2).count());
+      } else {
+        assertFalse(Files.mismatch(inputSdi, outputSdi) != -1);
+        long delta = (long) (Files.size(inputSam) * 0.03);
+        assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
+        assertTrue(FileUtils.areDirectoriesEqual(outputDir, outputDir2));
+      }
     } finally {
       Files.deleteIfExists(outputSam);
       Files.deleteIfExists(outputSdi);
-      MoreFiles.deleteRecursively(outputDir, RecursiveDeleteOption.ALLOW_INSECURE);
+      if (Files.isDirectory(outputDir)) {
+        MoreFiles.deleteRecursively(outputDir, RecursiveDeleteOption.ALLOW_INSECURE);
+      }
+      if (Files.isDirectory(outputDir2)) {
+        MoreFiles.deleteRecursively(outputDir2, RecursiveDeleteOption.ALLOW_INSECURE);
+      }
     }
+  }
+
+  /**
+   * Return if the given sdi file is part of the looping sound of a stage.
+   *
+   * @param filePath The sdi file to check.
+   * @return If it is the looping sound of a stage.
+   */
+  private boolean areStageLoopingSounds(Path filePath) {
+    return filePath.endsWith("stg/007/3000.sdi")
+        || filePath.endsWith("stg/008/3000.sdi")
+        || filePath.endsWith("stg/019/3000.sdi")
+        || filePath.endsWith("stg/021/3000.sdi")
+        || filePath.endsWith("stg/022/3000.sdi")
+        || filePath.endsWith("stg/024/3000.sdi")
+        || filePath.endsWith("stg/032/3000.sdi");
   }
 
   @Test

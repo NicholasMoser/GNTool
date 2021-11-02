@@ -108,7 +108,8 @@ public class MusyXExtract {
   }
 
   /**
-   * Converts samples to nibbles.
+   * Converts samples to nibbles. This conversion will result in a larger output than the input.
+   * There will be a loss in accuracy if you convert back and forth between nibbles and samples.
    *
    * @param samples The samples to convert.
    * @return The samples in nibbles.
@@ -123,7 +124,8 @@ public class MusyXExtract {
   }
 
   /**
-   * Converts nibbles to samples.
+   * Converts nibbles to samples. This conversion will result in a smaller output than the input.
+   * There will be a loss in accuracy if you convert back and forth between nibbles and samples.
    *
    * @param nibbles The nibbles to convert.
    * @return The nibbles in samples.
@@ -311,8 +313,8 @@ public class MusyXExtract {
       put_binary(sdirbuf, tbl2_offset, new byte[]{0x00, 0x08});
       put_binary(sdirbuf, tbl2_offset + 0x02, Arrays.copyOfRange(meta.getPs(), 1, 2));
       put_binary(sdirbuf, tbl2_offset + 0x03, Arrays.copyOfRange(meta.getLps(), 1, 2));
-      put_binary(sdirbuf, tbl2_offset + 0x04, meta.getLyn2());
-      put_binary(sdirbuf, tbl2_offset + 0x06, meta.getLyn1());
+      put_binary(sdirbuf, tbl2_offset + 0x04, meta.getLyn1());
+      put_binary(sdirbuf, tbl2_offset + 0x06, meta.getLyn2());
       put_binary(sdirbuf, tbl2_offset + 0x08, meta.getCoeffs());
 
       tbl1_offset += 0x20;
