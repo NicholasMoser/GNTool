@@ -309,8 +309,8 @@ public class MusyXExtract {
       put_u32_be(sdirbuf, tbl1_offset + 0x1C, tbl2_offset);
 
       put_binary(sdirbuf, tbl2_offset, new byte[]{0x00, 0x08});
-      put_binary(sdirbuf, tbl2_offset + 0x02, Arrays.copyOfRange(meta.getPs(), 1, 1));
-      put_binary(sdirbuf, tbl2_offset + 0x03, Arrays.copyOfRange(meta.getLps(), 1, 1));
+      put_binary(sdirbuf, tbl2_offset + 0x02, Arrays.copyOfRange(meta.getPs(), 1, 2));
+      put_binary(sdirbuf, tbl2_offset + 0x03, Arrays.copyOfRange(meta.getLps(), 1, 2));
       put_binary(sdirbuf, tbl2_offset + 0x04, meta.getLyn2());
       put_binary(sdirbuf, tbl2_offset + 0x06, meta.getLyn1());
       put_binary(sdirbuf, tbl2_offset + 0x08, meta.getCoeffs());
