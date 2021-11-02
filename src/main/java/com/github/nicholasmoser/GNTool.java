@@ -1,6 +1,10 @@
 package com.github.nicholasmoser;
 
-import com.github.nicholasmoser.gnt4.MenuController;
+import com.github.nicholasmoser.gamecube.GameCubeISO;
+import com.github.nicholasmoser.gnt4.GNT4Extractor;
+import com.github.nicholasmoser.gnt4.GNT4Workspace;
+import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
+import com.github.nicholasmoser.utils.GUIUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,11 +13,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import com.github.nicholasmoser.gamecube.GameCubeISO;
-import com.github.nicholasmoser.gnt4.GNT4Extractor;
-import com.github.nicholasmoser.gnt4.GNT4Workspace;
-import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
-import com.github.nicholasmoser.utils.GUIUtils;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;

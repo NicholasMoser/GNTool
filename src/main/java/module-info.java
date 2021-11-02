@@ -3,11 +3,10 @@ module com.github.nicholasmoser {
   exports com.github.nicholasmoser.gamecube;
   exports com.github.nicholasmoser.gnt4;
   exports com.github.nicholasmoser.utils;
+  exports com.github.nicholasmoser.fpk;
 
   opens com.github.nicholasmoser to javafx.fxml;
   opens com.github.nicholasmoser.gnt4 to javafx.fxml;
-  exports com.github.nicholasmoser.fpk;
-  opens com.github.nicholasmoser.fpk to javafx.fxml;
 
   requires com.google.common;
   requires com.google.protobuf;

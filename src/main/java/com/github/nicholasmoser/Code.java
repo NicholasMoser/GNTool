@@ -1,14 +1,12 @@
 package com.github.nicholasmoser;
 
+import com.google.common.primitives.Bytes;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import com.google.common.primitives.Bytes;
 
 /**
  * A code to modify a file. Consists of a series of insert, overwrite, and/or delete actions.

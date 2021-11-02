@@ -4,7 +4,6 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.io.CountingInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
