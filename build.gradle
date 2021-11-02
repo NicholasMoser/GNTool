@@ -8,16 +8,12 @@ plugins {
     id 'maven-publish'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
-    id 'org.beryx.jlink' version '2.22.1'
-    id 'net.researchgate.release' version '2.6.0'
+    id 'org.beryx.jlink' version '2.24.4'
+    id 'net.researchgate.release' version '2.8.1'
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        url = 'https://repo.maven.apache.org/maven2'
-    }
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
