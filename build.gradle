@@ -10,6 +10,12 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.10'
     id 'org.beryx.jlink' version '2.24.4'
     id 'net.researchgate.release' version '2.8.1'
+    // javafxplugin uses moduleplugin:1.8.2 which errors on gradlew dist as per
+    // https://github.com/java9-modularity/gradle-modules-plugin/issues/199
+    // The solution is to upgrade to 1.8.10, but we would need to do that inside of the plugin
+    // unless gradle lets you override. We also currently can't include moduleplugin here, as
+    // gradle 6.4 added module support that conflicts and required additional work
+    //id 'org.javamodularity.moduleplugin' version "1.8.10"
 }
 
 repositories {
