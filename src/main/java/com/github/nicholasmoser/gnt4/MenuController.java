@@ -21,6 +21,7 @@ import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
+import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
@@ -80,6 +81,7 @@ public class MenuController {
   private Path workspaceDirectory;
   private GNT4Codes codes;
   private List<GeckoCodeGroup> codeGroups;
+  private byte[] originalHijackedBytes;
 
   @FXML
   private ListView<String> changedFiles;
@@ -1076,6 +1078,8 @@ public class MenuController {
           .findFirst();
       if (optionalGroup.isPresent()) {
         removeCodeGroup(optionalGroup.get());
+        defragCodeGroups(codeGroups);
+        asyncRefresh();
       } else {
         String message = String.format("Unable to remove code %s, try refreshing?", selected);
         LOGGER.log(Level.SEVERE, message);
@@ -1090,12 +1094,14 @@ public class MenuController {
    * @param workspace The workspace to add.
    * @param stage     The stage for the application.
    */
-  public void init(Workspace workspace, Stage stage) {
+  public void init(Workspace workspace, Stage stage) throws IOException {
     this.workspace = workspace;
     this.stage = stage;
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.codes = new GNT4Codes(uncompressedDirectory);
+    this.originalHijackedBytes = DolHijack.class.getResourceAsStream("hijack_original.bin")
+        .readAllBytes();
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
@@ -1204,7 +1210,7 @@ public class MenuController {
             addedCodes.getItems().add(codeGroup.getName());
           }
         } else {
-          if (DolHijack.handleActiveCodesButNoCodeFile(uncompressedDirectory.resolve(DOL))) {
+          if (DolHijack.handleActiveCodesButNoCodeFile(uncompressedDirectory.resolve(DOL), originalHijackedBytes)) {
             // This ISO has injected codes but no associated JSON code file. The previous method
             // call successfully created one, so now let's parse it.
             codeGroups = GeckoCodeJSON.parseFile(codeFile);
@@ -1454,6 +1460,26 @@ public class MenuController {
   }
 
   /**
+   * Defrags the list of gecko codes. This will update the code objects for any codes that are moved
+   * in the dol as a result. The algorithm used simply iterates over each code and moves it
+   * immediately after the previous code. The first code will be moved to START_RAM_ADDRESS.
+   *
+   * @param codeGroups The code groups to defrag.
+   */
+  private void defragCodeGroups(List<GeckoCodeGroup> codeGroups) {
+    try {
+      Path dolPath = uncompressedDirectory.resolve(DOL);
+      DolDefragger defragger = new DolDefragger(dolPath, codeGroups, originalHijackedBytes);
+      defragger.run();
+      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      GeckoCodeJSON.writeFile(codeGroups, codeFile);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unable to Defrag Codes", e);
+      Message.error("Unable to Defrag Codes", "Unable to defrag codes, see log for more details.");
+    }
+  }
+
+  /**
    * Removes the given GeckoCodeGroup from the dol. This will write the new codes.json file after
    * removal and will refresh.
    *
@@ -1474,7 +1500,6 @@ public class MenuController {
       codeGroups.remove(group);
       Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
-      asyncRefresh();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Remove Code", e);
       Message.error("Unable to Remove Code", "Unable to remove code, see log for more details.");

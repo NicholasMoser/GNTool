@@ -118,13 +118,12 @@ public class DolHijack {
    * with known codes.
    *
    * @param dolPath The path to the dol.
+   * @param originalBytes The original bytes in the dol that can be hijacked.
    * @return If codes were found to be injected and a new codes JSON file was created.
    * @throws IOException if an I/O error occurs
    */
-  public static boolean handleActiveCodesButNoCodeFile(Path dolPath) throws IOException {
+  public static boolean handleActiveCodesButNoCodeFile(Path dolPath, byte[] originalBytes) throws IOException {
     byte[] currentBytes = getCurrentBytes(dolPath);
-    byte[] originalBytes = DolHijack.class.getResourceAsStream("hijack_original.bin")
-        .readAllBytes();
     assertSameSize(originalBytes, currentBytes);
     if (Arrays.equals(originalBytes, currentBytes)) {
       return false;
