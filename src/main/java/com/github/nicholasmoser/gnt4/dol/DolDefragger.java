@@ -11,12 +11,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A class for defragging hijacked codes in a dol.
  */
 public class DolDefragger {
 
+  private static final Logger LOGGER = Logger.getLogger(DolDefragger.class.getName());
   private final Path dolPath;
   private final byte[] hijackedBytes;
   private final List<ActiveInsertAsmCode> activeInsertAsmCodes;
@@ -45,7 +47,9 @@ public class DolDefragger {
       // Adjust the first code if necessary
       ActiveInsertAsmCode firstCode = activeInsertAsmCodes.get(0);
       if (firstCode.getHijackedAddress() != DolHijack.START_RAM_ADDRESS) {
+        LOGGER.info("Defragging code: " + firstCode);
         writeBytesAndUpdateCode(raf, firstCode, DolHijack.START_RAM_ADDRESS);
+        LOGGER.info("Defragging complete: " + firstCode);
       }
       // Adjust the rest of the codes if necessary (and they exist)
       for (int i = 1; i < activeInsertAsmCodes.size(); i++) {
@@ -64,7 +68,9 @@ public class DolDefragger {
           continue;
         }
 
+        LOGGER.info("Defragging code: " + currCode);
         writeBytesAndUpdateCode(raf, currCode, endOfPrevCode);
+        LOGGER.info("Defragging complete: " + currCode);
       }
 
       if (hasDefraggingOccurred(oldEndOfHijacking)) {
