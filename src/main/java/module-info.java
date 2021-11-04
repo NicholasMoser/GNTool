@@ -13,6 +13,7 @@ module com.github.nicholasmoser {
 
   requires java.desktop;
   requires java.logging;
+  requires java.net.http;
   requires javafx.controls;
   requires javafx.fxml;
   requires javafx.graphics;
