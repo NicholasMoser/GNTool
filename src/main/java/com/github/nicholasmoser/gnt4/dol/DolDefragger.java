@@ -47,7 +47,7 @@ public class DolDefragger {
       // Adjust the first code if necessary
       ActiveInsertAsmCode firstCode = activeInsertAsmCodes.get(0);
       if (firstCode.getHijackedAddress() != DolHijack.START_RAM_ADDRESS) {
-        LOGGER.info("Defragging code: " + firstCode);
+        LOGGER.info("Defragging code:     " + firstCode);
         writeBytesAndUpdateCode(raf, firstCode, DolHijack.START_RAM_ADDRESS);
         LOGGER.info("Defragging complete: " + firstCode);
       }
@@ -68,7 +68,7 @@ public class DolDefragger {
           continue;
         }
 
-        LOGGER.info("Defragging code: " + currCode);
+        LOGGER.info("Defragging code:     " + currCode);
         writeBytesAndUpdateCode(raf, currCode, endOfPrevCode);
         LOGGER.info("Defragging complete: " + currCode);
       }
