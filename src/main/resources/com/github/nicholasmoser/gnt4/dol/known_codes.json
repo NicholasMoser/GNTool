@@ -1,0 +1,206 @@
+[
+  {
+    "codes": [{
+      "bytes": "38000002B003000038000000",
+      "targetAddress": "800D687C",
+      "replacedBytes": "B0030000",
+      "type": "C2"
+    }],
+    "name": "Battle Mode is the Default Menu Option [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "2C150080418200307C771B78386003003880021C38A07F0038C0000038E000003C00800C6000E4A87C0903A64E8004217EE3BB783A70016660000000",
+      "targetAddress": "8003A378",
+      "replacedBytes": "3A700166",
+      "type": "C2"
+    }],
+    "name": "Counter Hit Plays Sound (1C) [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "2C150080418200307C771B78386003003880025338A07F0038C0000038E000003C00800C6000E4A87C0903A64E8004217EE3BB783A70016660000000",
+      "targetAddress": "8003A378",
+      "replacedBytes": "3A700166",
+      "type": "C2"
+    }],
+    "name": "Counter Hit Plays Sound (53) [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "9003001C3CA08022800561EC280000074082001038000006900561EC480000103CA0800538A5CB6490A40008",
+      "targetAddress": "80045328",
+      "replacedBytes": "9003001C",
+      "type": "C2"
+    }],
+    "name": "3MC Training Mode is 1v1 Training Mode and 1v1 Training Mode Uses Fight Debug Menu [Nick]"
+  },
+  {
+    "codes": [
+      {
+        "bytes": "38000002B003002C60000000",
+        "targetAddress": "80045350",
+        "replacedBytes": "B0A3002C",
+        "type": "C2"
+      },
+      {
+        "bytes": "3BC00012",
+        "targetAddress": "8002E718",
+        "replacedBytes": "3BC00011",
+        "type": "04"
+      },
+      {
+        "bytes": "3BC00012",
+        "targetAddress": "8002E728",
+        "replacedBytes": "3BC00011",
+        "type": "04"
+      }
+    ],
+    "name": "Training Mode Default 2P Action: 2P Control [Nick]"
+  },
+  {
+    "codes": [
+      {
+        "bytes": "B0A30032",
+        "targetAddress": "80045364",
+        "replacedBytes": "B0030032",
+        "type": "04"
+      },
+      {
+        "bytes": "3FE080223BFF61D883FF221C64000080901F00008001002460000000",
+        "targetAddress": "8004CF8C",
+        "replacedBytes": "80010024",
+        "type": "C2"
+      }
+    ],
+    "name": "Training Mode Default Show Inputs: OFF [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "3860FFFF3FC08022907E3258907E325C907E3260907E3264907E3268907E326C907E3270907E3274907E3278907E327C907E3280907E3284907E32FC907E3300907E3304907E3308907E330C907E3310907E3314907E3318907E331C907E3320907E3324907E3328907E332C907E3330907E3334907E3338907E333C3FE00002387FFF03907E32E838600000",
+      "targetAddress": "8008956C",
+      "replacedBytes": "38600000",
+      "type": "C2"
+    }],
+    "name": "Unlock Everything [Nick]"
+  },
+  {
+    "codes": [
+      {
+        "bytes": "3FA00000",
+        "targetAddress": "80278890",
+        "replacedBytes": "3FC00000",
+        "type": "04"
+      },
+      {
+        "bytes": "8003001C28000003408200083800000860000000",
+        "targetAddress": "8003E2B0",
+        "replacedBytes": "8003001C",
+        "type": "C2"
+      }
+    ],
+    "name": "ZTK and S. Kakashi take 1.25x damage [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "9003001C3CA08022800561EC28000007408200103CA0800538A5CB6490A4000860000000",
+      "targetAddress": "80045328",
+      "replacedBytes": "9003001C",
+      "type": "C2"
+    }],
+    "name": "3MC Training Mode Uses Fight Debug Menu [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "54A007BD4182000864A5000854A007FF4182000864A5000454A0077B4182000864A5000254A007394182000864A5000180030154",
+      "targetAddress": "80042C40",
+      "replacedBytes": "80030154",
+      "type": "C2"
+    }],
+    "name": "Enable DPad During Fights [Ralf]"
+  },
+  {
+    "codes": [
+      {
+        "bytes": "3FA00000",
+        "targetAddress": "80278894",
+        "replacedBytes": "3F99999A",
+        "type": "04"
+      },
+      {
+        "bytes": "2C000004",
+        "targetAddress": "8003E2C0",
+        "replacedBytes": "2C000008",
+        "type": "04"
+      },
+      {
+        "bytes": "5400077B",
+        "targetAddress": "8003E2D0",
+        "replacedBytes": "540007BD",
+        "type": "04"
+      },
+      {
+        "bytes": "8003001C28000008418200282800000341820020280000044082001C800308545400077B4182000C380000044800000838000022",
+        "targetAddress": "8003E2B0",
+        "replacedBytes": "8003001C",
+        "type": "C2"
+      }
+    ],
+    "name": "ZTK, Ukon, 1G Lee, and S. Kakashi takes 1.25x damage and 2GLee takes 1.5x damage [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "3C808022608461EC808400002C040006418000142C0400074181000C38600000B06500003C60802260000000",
+      "targetAddress": "80014884",
+      "replacedBytes": "3C608022",
+      "type": "C2"
+    }],
+    "name": "No Slow Down on Kill (Training Mode Only) [Nick]"
+  },
+  {
+    "codes": [
+      {
+        "bytes": "801F0128540000C74082000C5480402E901F02F8",
+        "targetAddress": "800B5140",
+        "replacedBytes": "5480402E",
+        "type": "C2"
+      },
+      {
+        "bytes": "60000000",
+        "targetAddress": "800B5144",
+        "replacedBytes": "901F02F8",
+        "type": "04"
+      }
+    ],
+    "name": "Turn off grab break while DEF or SDEF is active [Nick]"
+  },
+  {
+    "codes": [
+      {
+        "bytes": "2C0000114082000838006DAD7C04412E60000000",
+        "targetAddress": "8015B9E8",
+        "replacedBytes": "7C04412E",
+        "type": "C2"
+      },
+      {
+        "bytes": "7CA6282E2C056DAD408200649421FFF090610004900100089081000C386000293CA0801C60A5CE507CA903A64E8004212C0300004081FFE82C03000F4182FFE02C0300114182FFD82C0300144182FFD02C0300294080FFC87C651B788081000C800100088061000438210010",
+        "targetAddress": "80092154",
+        "replacedBytes": "7CA6282E",
+        "type": "C2"
+      },
+      {
+        "bytes": "00000026",
+        "targetAddress": "80213FB4",
+        "replacedBytes": "00000011",
+        "type": "04"
+      },
+      {
+        "bytes": "00000011",
+        "targetAddress": "80214014",
+        "replacedBytes": "00000026",
+        "type": "04"
+      }
+    ],
+    "name": "Add Random Select to Character Select Screen [Nick]"
+  }
+]

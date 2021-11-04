@@ -21,6 +21,7 @@ import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
+import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
@@ -34,6 +35,7 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +52,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
@@ -80,6 +83,7 @@ public class MenuController {
   private Path workspaceDirectory;
   private GNT4Codes codes;
   private List<GeckoCodeGroup> codeGroups;
+  private byte[] originalHijackedBytes;
 
   @FXML
   private ListView<String> changedFiles;
@@ -152,6 +156,15 @@ public class MenuController {
 
   @FXML
   private ListView<String> addedCodes;
+
+  @FXML
+  private Button validateCodes;
+
+  @FXML
+  private Button addCodes;
+
+  @FXML
+  private Button removeCode;
 
   /**
    * Toggles the code for fixing the audio.
@@ -1076,6 +1089,8 @@ public class MenuController {
           .findFirst();
       if (optionalGroup.isPresent()) {
         removeCodeGroup(optionalGroup.get());
+        defragCodeGroups(codeGroups);
+        asyncRefresh();
       } else {
         String message = String.format("Unable to remove code %s, try refreshing?", selected);
         LOGGER.log(Level.SEVERE, message);
@@ -1090,12 +1105,18 @@ public class MenuController {
    * @param workspace The workspace to add.
    * @param stage     The stage for the application.
    */
-  public void init(Workspace workspace, Stage stage) {
+  public void init(Workspace workspace, Stage stage) throws IOException {
     this.workspace = workspace;
     this.stage = stage;
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.codes = new GNT4Codes(uncompressedDirectory);
+    try(InputStream is = DolHijack.class.getResourceAsStream("hijack_original.bin")) {
+      if (is == null) {
+        throw new IllegalStateException("Unable to find resource hijack_original.bin");
+      }
+      this.originalHijackedBytes = is.readAllBytes();
+    }
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
@@ -1204,7 +1225,7 @@ public class MenuController {
             addedCodes.getItems().add(codeGroup.getName());
           }
         } else {
-          if (DolHijack.handleActiveCodesButNoCodeFile(uncompressedDirectory.resolve(DOL))) {
+          if (DolHijack.handleActiveCodesButNoCodeFile(uncompressedDirectory.resolve(DOL), originalHijackedBytes)) {
             // This ISO has injected codes but no associated JSON code file. The previous method
             // call successfully created one, so now let's parse it.
             codeGroups = GeckoCodeJSON.parseFile(codeFile);
@@ -1220,7 +1241,11 @@ public class MenuController {
           }
         }
       } catch (Exception e) {
+        validateCodes.setDisable(true);
+        addCodes.setDisable(true);
+        removeCode.setDisable(true);
         LOGGER.log(Level.SEVERE, "Error getting list of applied codes.", e);
+        Message.error("Error Reading Codes", SEE_LOG);
       }
     });
   }
@@ -1454,6 +1479,26 @@ public class MenuController {
   }
 
   /**
+   * Defrags the list of gecko codes. This will update the code objects for any codes that are moved
+   * in the dol as a result. The algorithm used simply iterates over each code and moves it
+   * immediately after the previous code. The first code will be moved to START_RAM_ADDRESS.
+   *
+   * @param codeGroups The code groups to defrag.
+   */
+  private void defragCodeGroups(List<GeckoCodeGroup> codeGroups) {
+    try {
+      Path dolPath = uncompressedDirectory.resolve(DOL);
+      DolDefragger defragger = new DolDefragger(dolPath, codeGroups, originalHijackedBytes);
+      defragger.run();
+      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      GeckoCodeJSON.writeFile(codeGroups, codeFile);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unable to Defrag Codes", e);
+      Message.error("Unable to Defrag Codes", "Unable to defrag codes, see log for more details.");
+    }
+  }
+
+  /**
    * Removes the given GeckoCodeGroup from the dol. This will write the new codes.json file after
    * removal and will refresh.
    *
@@ -1474,7 +1519,6 @@ public class MenuController {
       codeGroups.remove(group);
       Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
-      asyncRefresh();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Remove Code", e);
       Message.error("Unable to Remove Code", "Unable to remove code, see log for more details.");
