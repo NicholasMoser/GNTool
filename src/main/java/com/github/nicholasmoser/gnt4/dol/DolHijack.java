@@ -5,25 +5,20 @@ import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.InsertAsmCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
-import com.github.nicholasmoser.gecko.codes.BattleModeDefaultMenuOption;
-import com.github.nicholasmoser.gecko.codes.CounterHitPlaysSound;
-import com.github.nicholasmoser.gecko.codes.DebugTraining;
-import com.github.nicholasmoser.gecko.codes.Default2PControl;
-import com.github.nicholasmoser.gecko.codes.DefaultInputsOff;
-import com.github.nicholasmoser.gecko.codes.GeckoInjectionCode;
-import com.github.nicholasmoser.gecko.codes.UnlockEverything;
-import com.github.nicholasmoser.gecko.codes.ZtkSKakDamageMultiplier;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * Class for hijacking code in the dol for GNT4. The code currently hijacked is a space of 297
@@ -52,10 +47,7 @@ public class DolHijack {
 
   public final static int SIZE = (int) (END_DOL_OFFSET - START_DOL_OFFSET);
 
-  private final static List<GeckoInjectionCode> CODES = List
-      .of(new Default2PControl(), new DefaultInputsOff(), new ZtkSKakDamageMultiplier(),
-          new UnlockEverything(), new DebugTraining(), new BattleModeDefaultMenuOption(),
-          new CounterHitPlaysSound());
+  private static JSONArray CODES;
 
   /**
    * Returns whether or not the given Gecko codes overflow the limit of hijacked code. Logs and
@@ -135,7 +127,11 @@ public class DolHijack {
       CodeMatchResult result = findCodeMatch(currentBytes, originalBytes, i);
       i = result.getNewIndex();
       if (result.isCodeMatch()) {
-        codesList.put(result.getCodeGroup().get());
+        JSONObject codeGroup = result.getCodeGroup().get();
+        // See if the code group has already been added
+        if (!codeAlreadyadded(codesList, codeGroup)) {
+          codesList.put(codeGroup);
+        }
         // Continue finding code matches until we can't find any more
         continue;
       }
@@ -153,8 +149,7 @@ public class DolHijack {
         }
         // There's a lot of different reasons this could occur, but they all will require manual
         // inspection of the user's dol. Ask them to just log an issue.
-        LOGGER.log(Level.SEVERE, "A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
-        return false;
+        throw new IOException("A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
       }
       // Write the codes list to the codes.json file
       Path codesJson = dolPath.resolve("../../../codes.json");
@@ -162,6 +157,18 @@ public class DolHijack {
       break;
     }
     return true;
+  }
+
+  private static boolean codeAlreadyadded(JSONArray codesList, JSONObject codeGroup) {
+    String newCodeName = codeGroup.getString("name");
+    for (int i = 0; i < codesList.length(); i++) {
+      JSONObject code = codesList.getJSONObject(i);
+      String currCodeName = code.getString("name");
+      if (newCodeName.equals(currCodeName)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static boolean isAtMatchingWord(byte[] bytes1, byte[] bytes2) {
@@ -182,19 +189,33 @@ public class DolHijack {
    * @param i The index in the current and original bytes.
    * @return The result of trying to find a code match.
    */
-  private static CodeMatchResult findCodeMatch(byte[] currentBytes, byte[] originalBytes, int i) {
+  private static CodeMatchResult findCodeMatch(byte[] currentBytes, byte[] originalBytes, int i) throws IOException {
+    if (CODES == null) {
+      CODES = loadCodes();
+    }
     int bytesLeft = currentBytes.length - i;
-    for (GeckoInjectionCode code : CODES) {
-      byte[] codeBytes = code.getCode();
-      if (bytesLeft >= codeBytes.length) {
-        byte[] subsection = Arrays.copyOfRange(currentBytes, i, i + codeBytes.length);
-        if (Arrays.equals(subsection, codeBytes)) {
-          // Code match
-          byte[] hijackedBytes = Arrays.copyOfRange(originalBytes, i, i + codeBytes.length + 4);
-          JSONObject codeGroup = code.getJSONObject(START_RAM_ADDRESS + i, hijackedBytes);
-          i += codeBytes.length;
-          i += 4; // Skip the ending branch
-          return new CodeMatchResult(true, i, codeGroup);
+    for (int j = 0; j < CODES.length(); j++) {
+      JSONObject codeGroup = CODES.getJSONObject(j);
+      JSONArray codes = codeGroup.getJSONArray("codes");
+      for (int k = 0; k < codes.length(); k++) {
+        JSONObject code = codes.getJSONObject(k);
+        if ("C2".equals(code.getString("type"))) {
+          byte[] codeBytes = ByteUtils.hexStringToBytes(code.getString("bytes"));
+          if (bytesLeft < codeBytes.length) {
+            continue;
+          }
+          int endOfCode = i + codeBytes.length; // Not including branch
+          byte[] subsection = Arrays.copyOfRange(currentBytes, i, endOfCode);
+          if (Arrays.equals(subsection, codeBytes)) {
+            // Code match
+            byte[] hijackedBytes = Arrays.copyOfRange(originalBytes, i, i + codeBytes.length + 4);
+            code.put("hijackedAddress",  ByteUtils.fromLong(START_RAM_ADDRESS + i));
+            code.put("hijackedBytes", ByteUtils.bytesToHexString(hijackedBytes));
+            code.put("bytes", ByteUtils.bytesToHexString(codeBytes) + "00000000");
+            i += codeBytes.length;
+            i += 4; // Skip the ending branch
+            return new CodeMatchResult(true, i, codeGroup);
+          }
         }
       }
     }
@@ -232,6 +253,21 @@ public class DolHijack {
       String msg = "Length of original bytes not equal to current bytes";
       throw new IOException(
           String.format("%s: %d vs %d", msg, originalBytes.length, currentBytes.length));
+    }
+  }
+
+  /**
+   *
+   *
+   * @return
+   * @throws IOException If the known codes json file cannot be read.
+   */
+  private static JSONArray loadCodes() throws IOException {
+    try (InputStream is = DolHijack.class.getResourceAsStream("known_codes.json")) {
+      if (is == null) {
+        throw new IllegalStateException("Unable to find resource known_codes.json");
+      }
+      return new JSONArray(new JSONTokener(is));
     }
   }
 }

@@ -35,6 +35,7 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,6 +52,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
@@ -154,6 +156,15 @@ public class MenuController {
 
   @FXML
   private ListView<String> addedCodes;
+
+  @FXML
+  private Button validateCodes;
+
+  @FXML
+  private Button addCodes;
+
+  @FXML
+  private Button removeCode;
 
   /**
    * Toggles the code for fixing the audio.
@@ -1100,8 +1111,12 @@ public class MenuController {
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.codes = new GNT4Codes(uncompressedDirectory);
-    this.originalHijackedBytes = DolHijack.class.getResourceAsStream("hijack_original.bin")
-        .readAllBytes();
+    try(InputStream is = DolHijack.class.getResourceAsStream("hijack_original.bin")) {
+      if (is == null) {
+        throw new IllegalStateException("Unable to find resource hijack_original.bin");
+      }
+      this.originalHijackedBytes = is.readAllBytes();
+    }
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
@@ -1226,7 +1241,11 @@ public class MenuController {
           }
         }
       } catch (Exception e) {
+        validateCodes.setDisable(true);
+        addCodes.setDisable(true);
+        removeCode.setDisable(true);
         LOGGER.log(Level.SEVERE, "Error getting list of applied codes.", e);
+        Message.error("Error Reading Codes", SEE_LOG);
       }
     });
   }
