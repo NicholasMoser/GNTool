@@ -6,13 +6,13 @@ import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.InsertAsmCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
 import com.github.nicholasmoser.utils.ByteUtils;
+import com.github.nicholasmoser.utils.HttpUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +46,9 @@ public class DolHijack {
   public final static long END_DOL_OFFSET = 0x843FC;
 
   public final static int SIZE = (int) (END_DOL_OFFSET - START_DOL_OFFSET);
+
+  private final static String KNOWN_CODES_RESOURCE = "known_codes.json";
+  private final static String KNOWN_CODES_URL = "https://raw.githubusercontent.com/NicholasMoser/GNTool/master/src/main/resources/com/github/nicholasmoser/gnt4/dol/known_codes.json";
 
   private static JSONArray CODES;
 
@@ -270,7 +273,12 @@ public class DolHijack {
    * @throws IOException If the known codes json file cannot be read.
    */
   private static JSONArray loadCodes() throws IOException {
-    try (InputStream is = DolHijack.class.getResourceAsStream("known_codes.json")) {
+    try {
+      return HttpUtils.getJSON(KNOWN_CODES_URL);
+    } catch (Exception e) {
+      LOGGER.log(Level.WARNING, "Error downloading known codes from " + KNOWN_CODES_URL, e);
+    }
+    try (InputStream is = DolHijack.class.getResourceAsStream(KNOWN_CODES_RESOURCE)) {
       if (is == null) {
         throw new IllegalStateException("Unable to find resource known_codes.json");
       }
