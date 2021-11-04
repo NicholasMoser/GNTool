@@ -179,6 +179,15 @@ public class DolDefragger {
     return diff > 0; // 0 means no defragging occurred
   }
 
+  /**
+   * After defragging, there will be empty space after the last code that contains invalid bytes.
+   * These bytes are neither part of a code nor the original bytes from the dol. This method fixes
+   * that and writes the original bytes back to this new space.
+   *
+   * @param raf The file to write to.
+   * @param oldEndOfHijacking The old end address of the hijacked codes.
+   * @throws IOException If any I/O issues occur
+   */
   private void updateBytesAfterDefrag(RandomAccessFile raf, long oldEndOfHijacking) throws IOException {
     long newEndOfHijacking = getEndOfHijacking(activeInsertAsmCodes);
     long diff = oldEndOfHijacking - newEndOfHijacking;

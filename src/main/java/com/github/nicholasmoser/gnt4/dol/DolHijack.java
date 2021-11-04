@@ -159,6 +159,13 @@ public class DolHijack {
     return true;
   }
 
+  /**
+   * Returns if the given code group is already in the codes list.
+   *
+   * @param codesList The codes list to check for the code group.
+   * @param codeGroup The code group to check for in the codes list.
+   * @return If the code group is in the code list.
+   */
   private static boolean codeAlreadyadded(JSONArray codesList, JSONObject codeGroup) {
     String newCodeName = codeGroup.getString("name");
     for (int i = 0; i < codesList.length(); i++) {
@@ -257,9 +264,9 @@ public class DolHijack {
   }
 
   /**
+   * Load codes into a JSONArray from the known_codes.json resource.
    *
-   *
-   * @return
+   * @return The known codes JSONArray.
    * @throws IOException If the known codes json file cannot be read.
    */
   private static JSONArray loadCodes() throws IOException {
