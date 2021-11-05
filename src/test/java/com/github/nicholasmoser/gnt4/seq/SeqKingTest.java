@@ -12,8 +12,8 @@ public class SeqKingTest {
 
   // For unit testing: compare mode is off, verbose is off, and output files are deleted
   private static final boolean COMPARE_MODE = false;
-  private static final boolean VERBOSE = false;
-  private static final boolean DELETE_FILE = true;
+  private static final boolean VERBOSE = true;
+  private static final boolean DELETE_FILE = false;
 
   @Test
   public void parseCharSel() throws Exception {
@@ -428,6 +428,16 @@ public class SeqKingTest {
   @Test
   public void parseZabuza() throws Exception {
     Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/zab/0000.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseIruka0010() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/iru/0010.seq");
     if (COMPARE_MODE) {
       compare(seq);
     } else {
