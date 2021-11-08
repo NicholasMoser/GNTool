@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 public class SeqKingTest {
 
   // For unit testing: compare mode is off, verbose is off, and output files are deleted
-  private static final boolean COMPARE_MODE = false;
-  private static final boolean VERBOSE = true;
+  private static final boolean COMPARE_MODE = true;
+  private static final boolean VERBOSE = false;
   private static final boolean DELETE_FILE = false;
 
   @Test

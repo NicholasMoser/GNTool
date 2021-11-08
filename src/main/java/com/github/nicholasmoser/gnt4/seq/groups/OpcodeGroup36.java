@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
+import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -31,17 +32,9 @@ public class OpcodeGroup36 {
     byte[] firstWord = bs.readBytes(4);
     baos.write(firstWord);
     StringBuilder info = new StringBuilder(String.format(" Use index 0x%x", ByteUtils.toInt32(firstWord)));
-    // Get filename
-    StringBuilder fileNameBuilder = new StringBuilder();
-    byte[] buffer = new byte[4];
-    do {
-      if (bs.read(buffer) != 4) {
-        throw new IOException("Failed to parse bytes of opcode at " + offset);
-      }
-      baos.write(buffer);
-      fileNameBuilder.append(new String(buffer, "shift-jis"));
-    } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
-    String fileName = fileNameBuilder.toString().replace("\0", "");
+    byte[] textBytes = SeqHelper.readString(bs);
+    baos.write(textBytes);
+    String fileName = SeqHelper.getString(textBytes);
     info.append(" for texture file \"");
     info.append(fileName);
     info.append('"');
@@ -55,20 +48,12 @@ public class OpcodeGroup36 {
     baos.write(ea.getBytes());
     baos.write(bs.readBytes(4));
     StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
-    // Get filename
-    StringBuilder fileNameBuilder = new StringBuilder();
-    byte[] buffer = new byte[4];
-    do {
-      if (bs.read(buffer) != 4) {
-        throw new IOException("Failed to parse bytes of opcode at " + offset);
-      }
-      fileNameBuilder.append(new String(buffer, "shift-jis"));
-    } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
-    String fileName = fileNameBuilder.toString().replace("\0", "");
+    byte[] textBytes = SeqHelper.readString(bs);
+    baos.write(textBytes);
+    String fileName = SeqHelper.getString(textBytes);
     info.append(" with file \"");
     info.append(fileName);
     info.append('"');
-    baos.write(fileNameBuilder.toString().getBytes("shift-jis"));
     return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
   }
 
@@ -83,21 +68,15 @@ public class OpcodeGroup36 {
   private static Opcode seqInit(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(ea.getBytes());
     StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
-    // Get filename
-    StringBuilder fileNameBuilder = new StringBuilder();
-    byte[] buffer = new byte[4];
-    do {
-      if (bs.read(buffer) != 4) {
-        throw new IOException("Failed to parse bytes of opcode at " + offset);
-      }
-      fileNameBuilder.append(new String(buffer, "shift-jis"));
-    } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
-    String fileName = fileNameBuilder.toString().replace("\0", "");
+    byte[] textBytes = SeqHelper.readString(bs);
+    baos.write(textBytes);
+    String fileName = SeqHelper.getString(textBytes);
     info.append(" and init seq \"");
     info.append(fileName);
     info.append('"');
-    byte[] fullBytes = Bytes.concat(ea.getBytes(), fileNameBuilder.toString().getBytes("shift-jis"));
-    return new UnknownOpcode(offset, fullBytes, info.toString());
+    return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
   }
 }
