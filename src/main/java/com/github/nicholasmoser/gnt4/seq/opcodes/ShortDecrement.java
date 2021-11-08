@@ -5,13 +5,13 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class Push implements Opcode {
+public class ShortDecrement implements Opcode {
 
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public Push(int offset, byte[] bytes, String info) {
+  public ShortDecrement(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;
@@ -29,7 +29,7 @@ public class Push implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | push %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | s_dec %s %s", offset, formatRawBytes(bytes), info);
   }
 
   @Override

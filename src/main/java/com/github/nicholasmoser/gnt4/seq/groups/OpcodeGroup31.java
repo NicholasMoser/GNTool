@@ -9,57 +9,63 @@ import com.github.nicholasmoser.utils.ByteStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class OpcodeGroup02 {
+public class OpcodeGroup31 {
+
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x03 -> op_0203(bs);
-      case 0x05 -> op_0205(bs);
-      case 0x06 -> op_0206(bs);
-      case 0x07 -> op_0207(bs);
-      case 0x08 -> op_0208(bs);
+      case 0x00 -> op_3100(bs);
+      case 0x01 -> op_3101(bs);
+      case 0x03 -> op_3103(bs);
+      case 0x06 -> op_3106(bs);
+      case 0x0B -> op_310B(bs);
+      case 0x1B -> op_311B(bs);
+      case 0x1C -> UnknownOpcode.of(0x31, 0x1C, 0x4, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
 
-  private static Opcode op_0203(ByteStream bs) throws IOException {
+  private static Opcode op_3100(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(ea.getBytes());
-    StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
+    baos.write(bs.readBytes(4));
     byte[] textBytes = SeqHelper.readString(bs);
     baos.write(textBytes);
-    String fileName = SeqHelper.getString(textBytes);
-    info.append(" with file name \"");
-    info.append(fileName);
-    info.append('"');
-    return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
+    String text = SeqHelper.getString(textBytes);
+    String info = String.format(" with text \"%s\"", text);
+    return new UnknownOpcode(offset, baos.toByteArray(), info);
   }
 
-  private static Opcode op_0205(ByteStream bs) throws IOException {
+  private static Opcode op_3101(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
-  private static Opcode op_0206(ByteStream bs) throws IOException {
+  private static Opcode op_3103(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_3106(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
-  private static Opcode op_0207(ByteStream bs) throws IOException {
+  private static Opcode op_310B(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
-  private static Opcode op_0208(ByteStream bs) throws IOException {
+  private static Opcode op_311B(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }

@@ -12,6 +12,7 @@ import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -522,5 +523,38 @@ public class SeqHelper {
       baos.write(bs.readBytes(4));
     }
     return new BinaryData(offset, baos.toByteArray(), " null bytes");
+  }
+
+  /**
+   * Read the string bytes from the byte stream. Reads a word at a time and terminates when any byte
+   * in the word is 0.
+   *
+   * @param bs The byte stream to read from.
+   * @return The string bytes.
+   * @throws IOException If there was a failure parsing the string bytes.
+   */
+  public static byte[] readString(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte[] buffer = new byte[4];
+    do {
+      if (bs.read(buffer) != 4) {
+        throw new IOException("Failed to parse bytes of opcode at " + offset);
+      }
+      baos.write(buffer);
+    } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
+    return baos.toByteArray();
+  }
+
+  /**
+   * Given bytes from {@link #readString(ByteStream)}, return the shift-jis string.
+   *
+   * @param bytes The bytes read from an seq byte stream.
+   * @return The shift-jis string.
+   * @throws UnsupportedEncodingException If shift-jis is not supported.
+   */
+  public static String getString(byte[] bytes) throws UnsupportedEncodingException {
+    String text = new String(bytes, "shift-jis");
+    return text.replace("\0", "").replace("\n", "\\n");
   }
 }

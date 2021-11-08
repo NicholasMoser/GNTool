@@ -4,6 +4,8 @@ import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
 import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZeroLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLessThanEqualZeroLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLessThanZeroLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchDecrementNotZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZero;
@@ -13,6 +15,10 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLessThanOrEqualToZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLessThanZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnEqualZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnGreaterThanEqualZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnGreaterThanZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnLessThanEqualZero;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnLessThanZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnNotEqualZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualToZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualZeroLink;
@@ -41,9 +47,15 @@ public class OpcodeGroup01 {
       case 0x3C -> branchLink(bs);
       case 0x3D -> branchEqualToZeroLink(bs);
       case 0x3E -> branchNotEqualZeroLink(bs);
+      case 0x41 -> branchLessThanZeroLink(bs);
+      case 0x42 -> branchLessThanEqualZeroLink(bs);
       case 0x45 -> branchLinkReturn(bs);
       case 0x46 -> branchLinkReturnEqualZero(bs);
       case 0x47 -> branchLinkReturnNotEqualZero(bs);
+      case 0x48 -> branchLinkReturnGreaterThanZero(bs);
+      case 0x49 -> branchLinkReturnGreaterThanEqualZero(bs);
+      case 0x4A -> branchLinkReturnLessThanZero(bs);
+      case 0x4B -> branchLinkReturnLessThanEqualZero(bs);
       case 0x50 -> op_0150(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
@@ -155,6 +167,24 @@ public class OpcodeGroup01 {
     return new BranchNotEqualZeroLink(offset, destination);
   }
 
+  private static Opcode branchLessThanZeroLink(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse bytes of opcode at " + offset);
+    }
+    int destination = bs.readWord();
+    return new BranchLessThanZeroLink(offset, destination);
+  }
+
+  private static Opcode branchLessThanEqualZeroLink(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse bytes of opcode at " + offset);
+    }
+    int destination = bs.readWord();
+    return new BranchLessThanEqualZeroLink(offset, destination);
+  }
+
   public static Opcode branchLinkReturn(ByteStream bs) throws IOException {
     int offset = bs.offset();
     if (bs.skip(4) != 4) {
@@ -177,6 +207,38 @@ public class OpcodeGroup01 {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
     return new BranchLinkReturnNotEqualZero(offset);
+  }
+
+  public static Opcode branchLinkReturnGreaterThanZero(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse bytes of opcode at " + offset);
+    }
+    return new BranchLinkReturnGreaterThanZero(offset);
+  }
+
+  public static Opcode branchLinkReturnGreaterThanEqualZero(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse bytes of opcode at " + offset);
+    }
+    return new BranchLinkReturnGreaterThanEqualZero(offset);
+  }
+
+  public static Opcode branchLinkReturnLessThanZero(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse bytes of opcode at " + offset);
+    }
+    return new BranchLinkReturnLessThanZero(offset);
+  }
+
+  public static Opcode branchLinkReturnLessThanEqualZero(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    if (bs.skip(4) != 4) {
+      throw new IOException("Failed to parse bytes of opcode at " + offset);
+    }
+    return new BranchLinkReturnLessThanEqualZero(offset);
   }
 
   private static Opcode op_0150(ByteStream bs) throws IOException {

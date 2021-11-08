@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup02;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup03;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup04;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup05;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup06;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup08;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup09;
@@ -31,6 +32,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup27;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup28;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup2A;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup2B;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup31;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup34;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup36;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup37;
@@ -57,6 +59,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4D;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup50;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup56;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup5B;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
@@ -190,6 +193,7 @@ public class SeqKing {
         case 0x02 -> opcodes.add(OpcodeGroup02.parse(bs, opcode));
         case 0x03 -> opcodes.add(OpcodeGroup03.parse(bs, opcode));
         case 0x04 -> opcodes.add(OpcodeGroup04.parse(bs, opcode));
+        case 0x05 -> opcodes.add(OpcodeGroup05.parse(bs, opcode));
         case 0x06 -> opcodes.add(OpcodeGroup06.parse(bs, opcode));
         case 0x08 -> opcodes.add(OpcodeGroup08.parse(bs, opcode));
         case 0x09 -> opcodes.add(OpcodeGroup09.parse(bs, opcode));
@@ -216,6 +220,7 @@ public class SeqKing {
         case 0x28 -> opcodes.add(OpcodeGroup28.parse(bs, opcode));
         case 0x2A -> opcodes.add(OpcodeGroup2A.parse(bs, opcode));
         case 0x2B -> opcodes.add(OpcodeGroup2B.parse(bs, opcode));
+        case 0x31 -> opcodes.add(OpcodeGroup31.parse(bs, opcode));
         case 0x34 -> opcodes.add(OpcodeGroup34.parse(bs, opcode));
         case 0x36 -> opcodes.add(OpcodeGroup36.parse(bs, opcode));
         case 0x37 -> opcodes.add(OpcodeGroup37.parse(bs, opcode));
@@ -242,6 +247,7 @@ public class SeqKing {
         case 0x50 -> opcodes.add(OpcodeGroup50.parse(bs, opcode));
         case 0x55 -> opcodes.add(OpcodeGroup55.parse(bs, opcode));
         case 0x56 -> opcodes.add(OpcodeGroup56.parse(bs, opcode));
+        case 0x5B -> opcodes.add(OpcodeGroup5B.parse(bs, opcode));
         case 0x61 -> opcodes.add(OpcodeGroup61.parse(bs, opcode));
         case (byte) 0xCC -> opcodes.add(SeqHelper.getNullBytes(bs)); // SCON4-specific
         default -> throw new IllegalStateException(
@@ -280,6 +286,10 @@ public class SeqKing {
       binaryOffsetToSize.put(0x344C0, 0x10);
     } else if (path.endsWith("chr/kim/0000.seq")) {
       binaryOffsetToSize.put(0x28BC4, 0x10);
+    } else if (path.endsWith("chr/iru/0010.seq")) {
+      binaryOffsetToSize.put(0x2C34, 0x200);
+      binaryOffsetToSize.put(0x2EE8, 0x18);
+      binaryOffsetToSize.put(0x2F08, 0x10);
     }
     return binaryOffsetToSize;
   }

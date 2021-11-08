@@ -5,16 +5,12 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class Push implements Opcode {
+public class BranchLinkReturnGreaterThanZero implements Opcode {
 
   private final int offset;
-  private final byte[] bytes;
-  private final String info;
 
-  public Push(int offset, byte[] bytes, String info) {
+  public BranchLinkReturnGreaterThanZero(int offset) {
     this.offset = offset;
-    this.bytes = bytes;
-    this.info = info;
   }
 
   @Override
@@ -24,12 +20,12 @@ public class Push implements Opcode {
 
   @Override
   public byte[] getBytes() {
-    return bytes;
+    return new byte[] { 0x01, 0x48, 0x00, 0x00 };
   }
 
   @Override
   public String toString() {
-    return String.format("%05X | push %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | blrgtz {01480000}", offset);
   }
 
   @Override

@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
 import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
+import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -38,17 +39,9 @@ public class OpcodeGroup12 {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
     StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
-    // Get filename
-    StringBuilder fileNameBuilder = new StringBuilder();
-    byte[] buffer = new byte[4];
-    do {
-      if (bs.read(buffer) != 4) {
-        throw new IOException("Failed to parse bytes of opcode at " + offset);
-      }
-      baos.write(buffer);
-      fileNameBuilder.append(new String(buffer, "shift-jis"));
-    } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
-    String fileName = fileNameBuilder.toString().replace("\0", "");
+    byte[] textBytes = SeqHelper.readString(bs);
+    baos.write(textBytes);
+    String fileName = SeqHelper.getString(textBytes);
     info.append(" with file name \"");
     info.append(fileName);
     info.append('"');
