@@ -219,5 +219,23 @@
       }
     ],
     "name": "Random Select (OLD) [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "901102A480100138540305AD4182000C38600001907102A05403056B4182000C38600000907102A06000000000000000",
+      "targetAddress": "8003BAD4",
+      "replacedBytes": "901102A4",
+      "type": "C2"
+    }],
+    "name": "Tsunade: Punch KF Flag Reverses Buttons, Kick KF Flag Reverses Movement [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "901102A480100138540305AD4182000C38600000907102A05403056B4182000C38600001907102A06000000000000000",
+      "targetAddress": "8003BAD4",
+      "replacedBytes": "901102A4",
+      "type": "C2"
+    }],
+    "name": "Tsunade: Punch KF Flag Reverses Movement, Kick KF Flag Reverses Buttons [Nick]"
   }
 ]
