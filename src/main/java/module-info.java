@@ -14,6 +14,7 @@ module com.github.nicholasmoser {
   requires java.desktop;
   requires java.logging;
   requires java.net.http;
+  requires jdk.crypto.ec;
   requires javafx.controls;
   requires javafx.fxml;
   requires javafx.graphics;
