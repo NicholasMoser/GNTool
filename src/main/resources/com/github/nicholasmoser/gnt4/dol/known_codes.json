@@ -237,5 +237,250 @@
       "type": "C2"
     }],
     "name": "Tsunade: Punch KF Flag Reverses Movement, Kick KF Flag Reverses Buttons [Nick]"
+  },
+  {
+    "codes": [
+      {
+        "bytes": "2C0000114082000838006DAD7C04412E60000000",
+        "targetAddress": "8015B9E8",
+        "replacedBytes": "7C04412E",
+        "type": "C2"
+      },
+      {
+        "bytes": "7CA6282E2C056DAD408200649421FFF090610004900100089081000C386000293CA0801C60A5CE507CA903A64E8004212C0300004081FFE82C03000F4182FFE02C0300114182FFD82C0300144182FFD02C0300294080FFC87C651B788081000C800100088061000438210010",
+        "targetAddress": "80092154",
+        "replacedBytes": "7CA6282E",
+        "type": "C2"
+      },
+      {
+        "bytes": "00000024",
+        "targetAddress": "80213F80",
+        "replacedBytes": "00000001",
+        "type": "04"
+      },
+      {
+        "bytes": "00000001",
+        "targetAddress": "80213F84",
+        "replacedBytes": "00000002",
+        "type": "04"
+      },
+      {
+        "bytes": "00000023",
+        "targetAddress": "80213F88",
+        "replacedBytes": "00000003",
+        "type": "04"
+      },
+      {
+        "bytes": "00000002",
+        "targetAddress": "80213F8C",
+        "replacedBytes": "0000000A",
+        "type": "04"
+      },
+      {
+        "bytes": "00000003",
+        "targetAddress": "80213F90",
+        "replacedBytes": "00000007",
+        "type": "04"
+      },
+      {
+        "bytes": "0000000A",
+        "targetAddress": "80213F94",
+        "replacedBytes": "00000012",
+        "type": "04"
+      },
+      {
+        "bytes": "00000007",
+        "targetAddress": "80213F98",
+        "replacedBytes": "0000000B",
+        "type": "04"
+      },
+      {
+        "bytes": "00000012",
+        "targetAddress": "80213F9C",
+        "replacedBytes": "0000000D",
+        "type": "04"
+      },
+      {
+        "bytes": "0000000B",
+        "targetAddress": "80213FA0",
+        "replacedBytes": "00000014",
+        "type": "04"
+      },
+      {
+        "bytes": "0000000D",
+        "targetAddress": "80213FA4",
+        "replacedBytes": "0000000C",
+        "type": "04"
+      },
+      {
+        "bytes": "00000014",
+        "targetAddress": "80213FA8",
+        "replacedBytes": "00000013",
+        "type": "04"
+      },
+      {
+        "bytes": "0000000C",
+        "targetAddress": "80213FAC",
+        "replacedBytes": "0000000E",
+        "type": "04"
+      },
+      {
+        "bytes": "00000013",
+        "targetAddress": "80213FB0",
+        "replacedBytes": "0000000F",
+        "type": "04"
+      },
+      {
+        "bytes": "0000000E",
+        "targetAddress": "80213FB4",
+        "replacedBytes": "00000011",
+        "type": "04"
+      },
+      {
+        "bytes": "0000000F",
+        "targetAddress": "80213FB8",
+        "replacedBytes": "00000009",
+        "type": "04"
+      },
+      {
+        "bytes": "00000026",
+        "targetAddress": "80213FBC",
+        "replacedBytes": "00000008",
+        "type": "04"
+      },
+      {
+        "bytes": "00000009",
+        "targetAddress": "80213FC0",
+        "replacedBytes": "00000015",
+        "type": "04"
+      },
+      {
+        "bytes": "00000015",
+        "targetAddress": "80213FC4",
+        "replacedBytes": "0000001A",
+        "type": "04"
+      },
+      {
+        "bytes": "00000008",
+        "targetAddress": "80213FC8",
+        "replacedBytes": "00000006",
+        "type": "04"
+      },
+      {
+        "bytes": "0000001A",
+        "targetAddress": "80213FCC",
+        "replacedBytes": "00000005",
+        "type": "04"
+      },
+      {
+        "bytes": "00000006",
+        "targetAddress": "80213FD0",
+        "replacedBytes": "00000004",
+        "type": "04"
+      },
+      {
+        "bytes": "00000005",
+        "targetAddress": "80213FD4",
+        "replacedBytes": "0000001B",
+        "type": "04"
+      },
+      {
+        "bytes": "00000004",
+        "targetAddress": "80213FD8",
+        "replacedBytes": "0000001C",
+        "type": "04"
+      },
+      {
+        "bytes": "0000001B",
+        "targetAddress": "80213FDC",
+        "replacedBytes": "00000018",
+        "type": "04"
+      },
+      {
+        "bytes": "0000001C",
+        "targetAddress": "80213FE0",
+        "replacedBytes": "00000016",
+        "type": "04"
+      },
+      {
+        "bytes": "00000018",
+        "targetAddress": "80213FE4",
+        "replacedBytes": "00000017",
+        "type": "04"
+      },
+      {
+        "bytes": "00000016",
+        "targetAddress": "80213FE8",
+        "replacedBytes": "00000010",
+        "type": "04"
+      },
+      {
+        "bytes": "00000017",
+        "targetAddress": "80213FEC",
+        "replacedBytes": "00000020",
+        "type": "04"
+      },
+      {
+        "bytes": "00000010",
+        "targetAddress": "80213FF0",
+        "replacedBytes": "00000021",
+        "type": "04"
+      },
+      {
+        "bytes": "00000025",
+        "targetAddress": "80213FF4",
+        "replacedBytes": "0000001E",
+        "type": "04"
+      },
+      {
+        "bytes": "00000020",
+        "targetAddress": "80213FF8",
+        "replacedBytes": "0000001F",
+        "type": "04"
+      },
+      {
+        "bytes": "00000021",
+        "targetAddress": "80213FFC",
+        "replacedBytes": "0000001D",
+        "type": "04"
+      },
+      {
+        "bytes": "0000001E",
+        "targetAddress": "80214000",
+        "replacedBytes": "00000025",
+        "type": "04"
+      },
+      {
+        "bytes": "0000001F",
+        "targetAddress": "80214004",
+        "replacedBytes": "00000019",
+        "type": "04"
+      },
+      {
+        "bytes": "0000001D",
+        "targetAddress": "80214008",
+        "replacedBytes": "00000022",
+        "type": "04"
+      },
+      {
+        "bytes": "00000019",
+        "targetAddress": "8021400C",
+        "replacedBytes": "00000023",
+        "type": "04"
+      },
+      {
+        "bytes": "00000022",
+        "targetAddress": "80214010",
+        "replacedBytes": "00000024",
+        "type": "04"
+      },
+      {
+        "bytes": "00000011",
+        "targetAddress": "80214014",
+        "replacedBytes": "00000026",
+        "type": "04"
+      }
+    ],
+    "name": "Add Random Select and Reorder CSS [Nick]"
   }
 ]
