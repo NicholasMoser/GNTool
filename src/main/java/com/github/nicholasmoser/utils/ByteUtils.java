@@ -275,7 +275,9 @@ public class ByteUtils {
    */
   public static int readUint32LE(RandomAccessFile raf) throws IOException {
     byte[] buffer = new byte[4];
-    raf.read(buffer);
+    if (raf.read(buffer) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
     return ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
   }
 
@@ -288,7 +290,9 @@ public class ByteUtils {
    */
   public static int readInt32(RandomAccessFile raf) throws IOException {
     byte[] bytes = new byte[4];
-    raf.read(bytes);
+    if (raf.read(bytes) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
     return toInt32(bytes);
   }
 
