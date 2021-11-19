@@ -38,6 +38,7 @@ public class SeqExt {
     try (ByteStream bs = new ByteStream(seqExtBytes)) {
       while (bs.bytesAreLeft()) {
         String name = new String(SeqHelper.readString(bs), StandardCharsets.UTF_8);
+        name = name.replace("\0", "");
         int offset = bs.readWord();
         byte[] oldBytes = readEditBytes(bs);
         byte[] newBytes = readEditBytes(bs);

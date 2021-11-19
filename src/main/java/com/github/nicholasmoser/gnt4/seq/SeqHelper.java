@@ -539,7 +539,7 @@ public class SeqHelper {
     byte[] buffer = new byte[4];
     do {
       if (bs.read(buffer) != 4) {
-        throw new IOException("Failed to parse bytes of opcode at " + offset);
+        throw new IOException("Failed to parse bytes at offset " + offset);
       }
       baos.write(buffer);
     } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
