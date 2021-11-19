@@ -48,6 +48,15 @@ public class SeqExt {
     return seqEdits;
   }
 
+  public static void addEdit(SeqEdit edit, Path seqPath) throws IOException {
+    byte[] bytes = Files.readAllBytes(seqPath);
+    Files.write(seqPath, addEdit(edit, bytes));
+  }
+
+  public static byte[] addEdit(SeqEdit edit, byte[] seqBytes) throws IOException {
+    return null; // TODO
+  }
+
   /**
    * Returns if this seq ends with seq_end\n and therefore has an added seq_ext section added to
    * it.
