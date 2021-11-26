@@ -13,9 +13,10 @@ public class SeqEditBuilder {
   private Integer endOffset;
   private byte[] newBytes;
   private String name;
+  private boolean branchBack;
 
   private SeqEditBuilder() {
-
+    this.branchBack = true;
   }
 
   public static SeqEditBuilder getBuilder() {
@@ -52,6 +53,11 @@ public class SeqEditBuilder {
     return this;
   }
 
+  public SeqEditBuilder branchBack(boolean branchBack) {
+    this.branchBack = branchBack;
+    return this;
+  }
+
   public SeqEdit create() throws IOException {
     // Check that builder values are valid
     if (endOffset == null) {
@@ -85,6 +91,7 @@ public class SeqEditBuilder {
     } else {
       throw new IllegalArgumentException("seqBytes and seqPath both are null");
     }
-    return new SeqEdit(name, startOffset, oldBytes, newBytes);
+    SeqEdit edit = new SeqEdit(name, startOffset, oldBytes, newBytes, branchBack);
+    return edit;
   }
 }

@@ -5,30 +5,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.testing.Prereqs;
+import com.github.nicholasmoser.utils.FileUtils;
 import com.google.common.primitives.Bytes;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 public class SeqExtTest {
 
   @Test
-  public void testEmptyBytes() throws Exception {
+  void testEmptyBytes() throws Exception {
     List<SeqEdit> seqEdits = SeqExt.getEdits(new byte[0]);
     assertTrue(seqEdits.isEmpty());
   }
 
   @Test
-  public void testEightZeroes() throws Exception {
+  void testEightZeroes() throws Exception {
     List<SeqEdit> seqEdits = SeqExt.getEdits(new byte[]{0, 0, 0, 0, 0, 0, 0, 0});
     assertTrue(seqEdits.isEmpty());
   }
 
   @Test
-  public void testAllSeqsNoEdits() throws Exception {
+  void testAllSeqsNoEdits() throws Exception {
     Path uncompressed = Prereqs.getUncompressedGNT4();
     for (String seq : Seqs.ALL) {
       Path seqPath = uncompressed.resolve(seq);
@@ -38,40 +42,40 @@ public class SeqExtTest {
   }
 
   @Test
-  public void testOnlySeqEndErrors() {
+  void testOnlySeqEndErrors() {
     assertThrows(IOException.class, () -> SeqExt.getEdits(SeqExt.SEQ_END));
   }
 
   @Test
-  public void testSeqExtAndSeqEnd() throws Exception {
+  void testSeqExtAndSeqEnd() throws Exception {
     byte[] bytes = Bytes.concat(SeqExt.SEQ_EXT, SeqExt.SEQ_END);
     List<SeqEdit> seqEdits = SeqExt.getEdits(bytes);
     assertTrue(seqEdits.isEmpty());
   }
 
   @Test
-  public void testInvalidNameErrors() {
+  void testInvalidNameErrors() {
     byte[] filler = new byte[]{0, 1, 2, 3};
     byte[] bytes = Bytes.concat(SeqExt.SEQ_EXT, filler, SeqExt.SEQ_END);
     assertThrows(IOException.class, () -> SeqExt.getEdits(bytes));
   }
 
   @Test
-  public void testNoOffsetErrors() {
+  void testNoOffsetErrors() {
     byte[] name = new byte[]{0x73, 0x65, 0x71, 0x00};
     byte[] bytes = Bytes.concat(SeqExt.SEQ_EXT, name, SeqExt.SEQ_END);
     assertThrows(IOException.class, () -> SeqExt.getEdits(bytes));
   }
 
   @Test
-  public void testNoOldBytesErrors() {
+  void testNoOldBytesErrors() {
     byte[] nameAndOffset = new byte[]{0x73, 0x65, 0x71, 0x00, 0x00, 0x00, 0x01, 0x00};
     byte[] bytes = Bytes.concat(SeqExt.SEQ_EXT, nameAndOffset, SeqExt.SEQ_END);
     assertThrows(IOException.class, () -> SeqExt.getEdits(bytes));
   }
 
   @Test
-  public void testNoNewBytesErrors() {
+  void testNoNewBytesErrors() {
     byte[] nameAndOffset = new byte[]{0x73, 0x65, 0x71, 0x00, 0x00, 0x00, 0x01, 0x00};
     byte[] oldBytes = new byte[]{0x12, 0x23, 0x45, 0x67};
     byte[] bytes = Bytes.concat(SeqExt.SEQ_EXT, nameAndOffset, oldBytes, SeqEdit.STOP,
@@ -80,25 +84,26 @@ public class SeqExtTest {
   }
 
   @Test
-  public void testInvalidStopInBytes() {
+  void testInvalidStopInBytes() {
     byte[] nullWord = new byte[]{0x0, 0x0, 0x0, 0x0};
     byte[] invalidBytes = Bytes.concat(nullWord, SeqEdit.STOP, nullWord);
     byte[] validBytes = new byte[]{0x67, 0x45, 0x23, 0x12};
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, invalidBytes, validBytes));
+        () -> new SeqEdit("Name", 0x8, invalidBytes, validBytes, false));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, validBytes, invalidBytes));
+        () -> new SeqEdit("Name", 0x8, validBytes, invalidBytes, false));
   }
 
   @Test
-  public void testInvalidBytesSize() {
+  void testInvalidBytesSize() {
     assertThrows(IllegalArgumentException.class,
         () -> new SeqEdit("Name", 0x8, new byte[0], new byte[1]));
     assertThrows(IllegalArgumentException.class,
         () -> new SeqEdit("Name", 0x8, new byte[0], new byte[2]));
     assertThrows(IllegalArgumentException.class,
         () -> new SeqEdit("Name", 0x8, new byte[0], new byte[3]));
-    new SeqEdit("Name", 0x8, new byte[0], new byte[4]);
+    assertThrows(IllegalArgumentException.class,
+        () -> new SeqEdit("Name", 0x8, new byte[0], new byte[4]));
     assertThrows(IllegalArgumentException.class,
         () -> new SeqEdit("Name", 0x8, new byte[0], new byte[5]));
     assertThrows(IllegalArgumentException.class,
@@ -125,7 +130,7 @@ public class SeqExtTest {
   }
 
   @Test
-  public void testOneEdit() throws Exception {
+  void testOneEdit() throws Exception {
     byte[] nameAndOffset = new byte[]{0x73, 0x65, 0x71, 0x00, 0x00, 0x00, 0x01, 0x00};
     byte[] oldBytes = new byte[]{0x12, 0x23, 0x45, 0x67};
     byte[] newBytes = new byte[]{0x67, 0x45, 0x23, 0x12};
@@ -142,7 +147,7 @@ public class SeqExtTest {
   }
 
   @Test
-  public void testThreeEdits() throws Exception {
+  void testThreeEdits() throws Exception {
     byte[] nameAndOffset1 = new byte[]{0x73, 0x65, 0x71, 0x00, 0x00, 0x00, 0x01, 0x00};
     byte[] nameAndOffset2 = new byte[]{0x77, 0x65, 0x71, 0x00, 0x7F, (byte) 0xFF, 0x00, 0x01};
     byte[] nameAndOffset3 = new byte[]{0x77, 0x6F, 0x77, 0x00, 0x10, 0x00, 0x00, 0x27};
@@ -176,5 +181,32 @@ public class SeqExtTest {
     assertArrayEquals(bytes5, seqEdit3.getOldBytes());
     assertArrayEquals(bytes6, seqEdit3.getNewBytes());
     assertArrayEquals(edit3, seqEdit3.getFullBytes());
+  }
+
+  @Test
+  void addAndRemoveKabutoScalingFix() throws Exception {
+    Path kab0000 = Prereqs.getUncompressedGNT4().resolve(Seqs.KAB_0000);
+    byte[] originalBytes = Files.readAllBytes(kab0000);
+    Path testSeq = FileUtils.getTempDirectory().resolve(UUID.randomUUID().toString());
+    try {
+      Files.copy(kab0000, testSeq);
+      List<SeqEdit> seqEdits = SeqExt.getEdits(testSeq);
+      assertTrue(seqEdits.isEmpty());
+
+      // Apply the Kabuto Scaling Fix and validate
+      SeqEdit edit = KabutoScalingFix.getSeqEdit(kab0000);
+      SeqExt.addEdit(edit, testSeq);
+      seqEdits = SeqExt.getEdits(testSeq);
+      assertEquals(1, seqEdits.size());
+      SeqEdit actualEdit = seqEdits.get(0);
+      assertEquals(edit, actualEdit);
+
+      // Remove the Kabuto scaling fix and validate
+      SeqExt.removeEdit(edit, testSeq);
+      byte[] newBytes = Files.readAllBytes(testSeq);
+      assertArrayEquals(originalBytes, newBytes);
+    } finally {
+      Files.deleteIfExists(testSeq);
+    }
   }
 }

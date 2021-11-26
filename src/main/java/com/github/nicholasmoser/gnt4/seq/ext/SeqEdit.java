@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class SeqEdit {
 
@@ -17,6 +18,7 @@ public class SeqEdit {
   // stop, used to signal end of old and new bytes
   public static final byte[] STOP = { 0x73, 0x74, 0x6F, 0x70 };
 
+
   /**
    *
    * @param name The name of this seq edit (do not include null bytes).
@@ -25,7 +27,25 @@ public class SeqEdit {
    * @param newBytes The new bytes that this seq edit executes.
    */
   public SeqEdit(String name, int offset, byte[] oldBytes, byte[] newBytes) {
-    if (oldBytes.length % 4 != 0) {
+    this(name, offset, oldBytes, newBytes, false);
+  }
+
+  /**
+   *
+   * @param name The name of this seq edit (do not include null bytes).
+   * @param offset The offset in the seq file of this seq edit.
+   * @param oldBytes The old bytes that this seq edit overrides.
+   * @param newBytes The new bytes that this seq edit executes.
+   * @param branchBack If the new bytes should branch back to the origin of the seq edit.
+   */
+  public SeqEdit(String name, int offset, byte[] oldBytes, byte[] newBytes, boolean branchBack) {
+    if (name == null) {
+      throw new IllegalArgumentException("name cannot be null");
+    } else if (oldBytes == null) {
+      throw new IllegalArgumentException("oldBytes cannot be null");
+    } else if (newBytes == null) {
+      throw new IllegalArgumentException("newBytes cannot be null");
+    } else if (oldBytes.length % 4 != 0) {
       throw new IllegalArgumentException("Original bytes size must be multiple of 4");
     } else if (newBytes.length % 4 != 0) {
       throw new IllegalArgumentException("New bytes size must be multiple of 4");
@@ -33,11 +53,19 @@ public class SeqEdit {
       throw new IllegalArgumentException("Original bytes contain string \"stop\"");
     } else if (containsStop(newBytes)) {
       throw new IllegalArgumentException("New bytes contain string \"stop\"");
+    } else if (oldBytes.length < 4) {
+      throw new IllegalArgumentException("Hijacked bytes must be 4 or greater.");
     }
     this.name = name;
     this.offset = offset;
     this.oldBytes = oldBytes;
-    this.newBytes = newBytes;
+    if (branchBack) {
+      byte[] branch = new byte[] { 0x01, 0x32, 0x00, 0x00 };
+      byte[] branchOffset = ByteUtils.fromInt32(offset + oldBytes.length);
+      this.newBytes = Bytes.concat(newBytes, branch, branchOffset);
+    } else {
+      this.newBytes = newBytes;
+    }
   }
 
   public String getName() {
@@ -71,6 +99,22 @@ public class SeqEdit {
     }
   }
 
+  /**
+   * The offset in this seq edit where the new bytes begin. This should be used to find where to
+   * branch to when editing a seq file.
+   *
+   * @return The offset in this seq edits bytes where the new bytes are.
+   * @throws IOException
+   */
+  public int getNewBytesOffset() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(getNameBytes());
+    baos.write(ByteUtils.fromInt32(offset));
+    baos.write(oldBytes);
+    baos.write(STOP);
+    return baos.size();
+  }
+
   private byte[] getNameBytes() throws IOException {
     byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -94,7 +138,7 @@ public class SeqEdit {
 
   @Override
   public String toString() {
-    String buffer = "SeqEdit\nName: "
+    return "SeqEdit\nName: "
         + name
         + "\nOffset: "
         + String.format("0x%X", offset)
@@ -104,6 +148,26 @@ public class SeqEdit {
         + ByteUtils.bytesToHexString(newBytes)
         + "\nFull Bytes: 0x"
         + ByteUtils.bytesToHexString(getFullBytes());
-    return buffer;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    SeqEdit seqEdit = (SeqEdit) o;
+    return offset == seqEdit.offset && name.equals(seqEdit.name) && Arrays.equals(oldBytes,
+        seqEdit.oldBytes) && Arrays.equals(newBytes, seqEdit.newBytes);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(name, offset);
+    result = 31 * result + Arrays.hashCode(oldBytes);
+    result = 31 * result + Arrays.hashCode(newBytes);
+    return result;
   }
 }

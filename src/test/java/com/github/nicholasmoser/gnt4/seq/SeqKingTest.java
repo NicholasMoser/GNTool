@@ -13,7 +13,7 @@ public class SeqKingTest {
   // For unit testing: compare mode is off, verbose is off, and output files are deleted
   private static final boolean COMPARE_MODE = false;
   private static final boolean VERBOSE = false;
-  private static final boolean DELETE_FILE = true;
+  private static final boolean DELETE_FILE = false;
 
   @Test
   public void parseCharSel() throws Exception {

@@ -1,5 +1,7 @@
 package com.github.nicholasmoser.gnt4.chr;
 
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEditBuilder;
 import com.github.nicholasmoser.utils.CRC32;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +35,9 @@ public class KabutoScalingFix {
    *
    * @param uncompressedDir The uncompressed directory of the GNT4 workspace.
    * @throws IOException If any I/O issues occur
+   * @deprecated This has been replaced with seq editing via {@link #getSeqEdit(Path)}
    */
+  @Deprecated
   public static void apply(Path uncompressedDir) throws IOException {
     Path filePath = uncompressedDir.resolve(KABUTO_0000_SEQ);
     byte[] oldBytes = Files.readAllBytes(filePath);
@@ -61,5 +65,22 @@ public class KabutoScalingFix {
     newBytes[0x26637] = 0x50;
     newBytes[0x26677] = (byte) 0x88;
     Files.write(filePath, newBytes);
+  }
+
+  /**
+   * Get the seq edit for the Kabuto scaling fix.
+   *
+   * @param seqPath The path to Kabuto's 0000.seq
+   * @return
+   */
+  public static SeqEdit getSeqEdit(Path seqPath) throws IOException {
+    return SeqEditBuilder.getBuilder()
+        .name("Kabuto Scaling Fix")
+        .newBytes(new byte[] { 0x20, 0x11, 0x26, 0x3F, 0x00, 0x00, 0x00, 0x01, 0x20, 0x12, 0x00,
+            0x26, 0x01, 0x3C, 0x00, 0x00, 0x00, 0x00, 0x13, 0x74 })
+        .seqPath(seqPath)
+        .startOffset(0x20770)
+        .endOffset(0x20778)
+        .create();
   }
 }

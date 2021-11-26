@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 public class SeqEditBuilderTest {
 
   @Test
-  public void testSeqBytes() throws Exception {
+  void testSeqBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0x4;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
@@ -30,7 +30,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testSeqPath() throws Exception {
+  void testSeqPath() throws Exception {
     Path seqPath = Paths.get("src/test/resources/gnt4/seq/ext/small.seq");
     String name = "Test Edit";
     int offset = 0x4;
@@ -49,7 +49,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testFirstFourBytes() throws Exception {
+  void testFirstFourBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
@@ -67,7 +67,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testLastFourBytes() throws Exception {
+  void testLastFourBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0x8;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
@@ -85,7 +85,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testLargeNewBytes() throws Exception {
+  void testLargeNewBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0x4;
     byte[] newBytes = new byte[0x1000];
@@ -103,7 +103,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testLargeOldBytes() throws Exception {
+  void testLargeOldBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0x444;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
@@ -121,7 +121,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testNullStartOffsetErrors() {
+  void testNullStartOffsetErrors() {
     String name = "Test Edit";
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
@@ -133,7 +133,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testNullEndOffsetErrors() {
+  void testNullEndOffsetErrors() {
     String name = "Test Edit";
     int offset = 0x4;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
@@ -146,7 +146,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testNullNewBytesErrors() {
+  void testNullNewBytesErrors() {
     String name = "Test Edit";
     int offset = 0x4;
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
@@ -158,7 +158,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testNullNameErrors() {
+  void testNullNameErrors() {
     int offset = 0x4;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
@@ -170,7 +170,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testNoSeqBytesOrPathErrors() {
+  void testNoSeqBytesOrPathErrors() {
     String name = "Test Edit";
     int offset = 0x4;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
@@ -183,7 +183,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testInvalidPathErrors() {
+  void testInvalidPathErrors() {
     Path invalidPath = Paths.get("doesnotexist");
     String name = "Test Edit";
     int offset = 0x4;
@@ -198,7 +198,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testStartOffsetNot4ByteAligned() {
+  void testStartOffsetNot4ByteAligned() {
     String name = "Test Edit";
     int offset = 0x5;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
@@ -212,7 +212,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testEndOffsetNot4ByteAligned() {
+  void testEndOffsetNot4ByteAligned() {
     String name = "Test Edit";
     int offset = 0x4;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
@@ -226,7 +226,7 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  public void testNewBytesNot4ByteAligned() {
+  void testNewBytesNot4ByteAligned() {
     String name = "Test Edit";
     int offset = 0x4;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78, 0x11, 0x22, 0x33};
@@ -237,5 +237,40 @@ public class SeqEditBuilderTest {
         .name(name)
         .newBytes(newBytes)
         .create());
+  }
+
+  @Test
+  void testOldBytesMustBeFourOrGreater() throws Exception {
+    String name = "Test Edit";
+    int offset = 0x4;
+    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78, 0x11, 0x22, 0x33, 0x44};
+    assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(0x5)
+        .name(name)
+        .newBytes(newBytes)
+        .create());
+    assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(0x6)
+        .name(name)
+        .newBytes(newBytes)
+        .create());
+    assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(0x7)
+        .name(name)
+        .newBytes(newBytes)
+        .create());
+    SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(0x8)
+        .name(name)
+        .newBytes(newBytes)
+        .create();
   }
 }
