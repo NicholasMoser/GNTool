@@ -16,7 +16,7 @@ public class SeqEditBuilder {
   private boolean branchBack;
 
   private SeqEditBuilder() {
-    this.branchBack = true;
+
   }
 
   public static SeqEditBuilder getBuilder() {

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.google.common.primitives.Bytes;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -118,6 +119,28 @@ public class SeqEditBuilderTest {
     assertEquals(offset, seqEdit.getOffset());
     assertArrayEquals(newBytes, seqEdit.getNewBytes());
     assertArrayEquals(new byte[0x200], seqEdit.getOldBytes());
+  }
+
+  @Test
+  void testBranchBack() throws Exception {
+    String name = "Test Edit";
+    int offset = 0x4;
+    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    // new bytes with branch
+    byte[] expected = Bytes.concat(newBytes,
+        new byte[]{0x01, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08});
+    SeqEdit seqEdit = SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(0x8)
+        .name(name)
+        .newBytes(newBytes)
+        .branchBack(true)
+        .create();
+    assertEquals(name, seqEdit.getName());
+    assertEquals(offset, seqEdit.getOffset());
+    assertArrayEquals(expected, seqEdit.getNewBytes());
+    assertArrayEquals(new byte[]{4, 5, 6, 7}, seqEdit.getOldBytes());
   }
 
   @Test
