@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -148,17 +149,18 @@ public class GNT4Files {
    * @param changedFile The child file path.
    * @return The parent FPK file if it exists.
    */
-  public Optional<GNTFile> getParentFPK(String changedFile) {
+  public List<GNTFile> getParentFPKs(String changedFile) {
     Verify.verifyNotNull(vanillaFiles, "Vanilla state has not been initialized.");
     Verify.verifyNotNull(changedFile, "Changed file cannot have null path.");
+    List<GNTFile> fpks = new ArrayList<>();
     for (GNTFile gntFile : vanillaFiles.getGntFileList()) {
       for (GNTChildFile child : gntFile.getGntChildFileList()) {
         if (changedFile.equals(child.getFilePath())) {
-          return Optional.of(gntFile);
+          fpks.add(gntFile);
         }
       }
     }
-    return Optional.empty();
+    return fpks;
   }
 
   /**
