@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -66,12 +65,12 @@ public class FPKPacker {
     Set<String> changedNonFPKs = new HashSet<>();
 
     for (String changedFile : changedFiles) {
-      Optional<GNTFile> parent = workspace.getParentFPK(changedFile);
+      List<GNTFile> parents = workspace.getParentFPKs(changedFile);
       // If there is no parent, it does not belong to an FPK
-      if (parent.isPresent()) {
-        changedFPKs.add(parent.get());
-      } else {
+      if (parents.isEmpty()) {
         changedNonFPKs.add(changedFile);
+      } else {
+        changedFPKs.addAll(parents);
       }
     }
 

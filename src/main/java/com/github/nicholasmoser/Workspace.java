@@ -73,12 +73,13 @@ public interface Workspace {
   List<GNTChildFile> getFPKChildren(String filePath);
 
   /**
-   * Attempts to find the parent FPK file path of a child file path.
+   * Attempts to find the parent FPK file paths of a child file path. It is possible for there to
+   * be more than one, although that is rare.
    *
    * @param changedFile The child file path.
-   * @return The parent FPK file.
+   * @return The parent FPK files.
    */
-  Optional<GNTFile> getParentFPK(String changedFile);
+  List<GNTFile> getParentFPKs(String changedFile);
 
   /**
    * Reverts a changed file.
