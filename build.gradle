@@ -36,7 +36,7 @@ dependencies {
 }
 
 group = 'com.github.nicholasmoser'
-version = '3.14.1-SNAPSHOT'
+version = '3.14.2-SNAPSHOT'
 description = 'GNTool'
 sourceCompatibility = '14'
 
