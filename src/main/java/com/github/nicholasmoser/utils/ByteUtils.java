@@ -399,6 +399,24 @@ public class ByteUtils {
   }
 
   /**
+   * Converts a byte array to a hex String. The hex returned will be in uppercase. The bytes will
+   * be returned as 32-bit words.
+   *
+   * @param bytes The bytes to convert.
+   * @return The bytes in hex.
+   */
+  public static String bytesToHexStringWords(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < bytes.length; i++) {
+      sb.append(String.format("%02X", bytes[i]));
+      if (i % 4 == 3 && i != bytes.length - 1) {
+        sb.append(' ');
+      }
+    }
+    return sb.toString();
+  }
+
+  /**
    * Converts a hex String to a byte array.
    *
    * @param hex The hex String.
