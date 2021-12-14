@@ -28,7 +28,7 @@ public class FPKPacker {
 
   private final Path compressedDirectory;
 
-  private final Path uncompressedDirectory;
+  private final Path uncompressedDir;
 
   private final Workspace workspace;
 
@@ -44,7 +44,7 @@ public class FPKPacker {
   public FPKPacker(Workspace workspace, boolean longPaths, boolean bigEndian) {
     this.workspace = workspace;
     this.compressedDirectory = workspace.getCompressedDirectory();
-    this.uncompressedDirectory = workspace.getUncompressedDirectory();
+    this.uncompressedDir = workspace.getUncompressedDirectory();
     this.longPaths = longPaths;
     this.bigEndian = bigEndian;
   }
@@ -75,7 +75,7 @@ public class FPKPacker {
     }
 
     for (String changedNonFPK : changedNonFPKs) {
-      Path newFile = uncompressedDirectory.resolve(changedNonFPK);
+      Path newFile = uncompressedDir.resolve(changedNonFPK);
       Path oldFile = compressedDirectory.resolve(changedNonFPK);
       Files.copy(newFile, oldFile, REPLACE_EXISTING);
     }
@@ -119,10 +119,27 @@ public class FPKPacker {
    * @throws IOException If there is an issue reading/writing bytes to the file.
    */
   public Path repackFPK(GNTFile fpk) throws IOException {
-    List<GNTChildFile> fpkChildren = fpk.getGntChildFileList();
+    Path outputFPK = uncompressedDir.resolve(fpk.getFilePath());
+    repackFPK(fpk.getGntChildFileList(), outputFPK, uncompressedDir, bigEndian, longPaths);
+    return outputFPK;
+  }
+
+  /**
+   * Repacks the given FPK children into the given FPK file. The paths of files will resolve against
+   * the given uncompressed directory. The new FPK file will be created in accordance to the
+   * provided big endian and long paths options as well.
+   *
+   * @param fpkChildren The child files to pack into an FPK file.
+   * @param outputFPK The output FPK file.
+   * @param uncompressedDir The compressed directory to resolve file paths against.
+   * @param bigEndian If the output FPK should be big endian.
+   * @param longPaths If the output FPK should use long paths.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static void repackFPK(List<GNTChildFile> fpkChildren, Path outputFPK, Path uncompressedDir, boolean bigEndian, boolean longPaths) throws IOException {
     List<FPKFile> newFPKs = new ArrayList<>(fpkChildren.size());
     for (GNTChildFile child : fpkChildren) {
-      byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(child.getFilePath()));
+      byte[] input = Files.readAllBytes(uncompressedDir.resolve(child.getFilePath()));
       byte[] output;
 
       if (child.getCompressed()) {
@@ -136,7 +153,7 @@ public class FPKPacker {
       // the files
       String shiftJisPath = ByteUtils.encodeShiftJis(child.getCompressedPath());
       // TODO: Remove GameCube FPK format assumption (short paths, big endian)
-      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length, false, true);
+      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length, longPaths, bigEndian);
       newFPKs.add(new FPKFile(header, output));
       LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
           child.getFilePath(), input.length, output.length));
@@ -167,11 +184,9 @@ public class FPKPacker {
     for (FPKFile file : newFPKs) {
       fpkBytes = Bytes.concat(fpkBytes, file.getData());
     }
-    Path outputFPK = compressedDirectory.resolve(fpk.getFilePath());
     if (!Files.isDirectory(outputFPK.getParent())) {
       Files.createDirectories(outputFPK.getParent());
     }
     Files.write(outputFPK, fpkBytes);
-    return outputFPK;
   }
 }
