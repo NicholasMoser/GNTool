@@ -5,12 +5,12 @@ public class GlobalOperand implements Operand {
   private final StringBuilder infoBuilder;
 
   public enum Value {
-    HITBOX_IDENTITY_MATRIX,
-    CONTROLLERS,
+    HITBOX_IDENTITY_MATRIX, // Init to size 0xc78 at 0x8001521c
+    CONTROLLERS, // Init to size 0x100 at 0x80014160
     PRIMARY_CONTROLLER,
-    DISPLAY,
-    SAVE_DATA,
-    DEBUG_MODE,
+    DISPLAY, // Init to size 0x40 at 0x80015230
+    SAVE_DATA, // 1c0?
+    DEBUG_MODE, // 84?
     PAUSE_GAME,
     GAME_INFO,
     UNUSED
