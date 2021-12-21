@@ -24,14 +24,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(CONCURRENT)
+/**
+ * Contains tests relating to FPK packing and unpacking.
+ */
 public class FPKTest {
 
   private static Path TEST_STATE;
@@ -54,6 +55,7 @@ public class FPKTest {
 
   @ParameterizedTest(name="#{index} - Test with Argument={0}")
   @MethodSource("fpkPathProvider")
+  @Disabled("This take a long time to run...")
   void testUnpackAllGNT4FPKS(Path fpkPath) throws Exception {
     Path tempDir = FileUtils.getTempDirectory();
     Path testDir = tempDir.resolve(UUID.randomUUID().toString());
@@ -87,6 +89,7 @@ public class FPKTest {
   // Note to self: a single, non-concurrent run took 14 min, 24 seconds
   @ParameterizedTest(name="#{index} - Test with Argument={0}")
   @MethodSource("fpkPathProvider")
+  @Disabled("This take a long time to run...")
   void testPackAndUnpackAllGNT4FPKS(Path fpkPath) throws Exception {
     // Get test paths
     Path tempDir = FileUtils.getTempDirectory();
@@ -119,6 +122,60 @@ public class FPKTest {
       if (Files.isDirectory(workspaceDir)) {
         MoreFiles.deleteRecursively(workspaceDir, RecursiveDeleteOption.ALLOW_INSECURE);
       }
+    }
+  }
+
+  /**
+   * Test creating an FPK with 231 files in it.
+   *
+   * @throws Exception If any Exception occurs.
+   */
+  @Test
+  void packLargeNumbersFPK() throws Exception {
+    List<GNTChildFile> children = GNT4_FILES.getFPKChildren("files/fpack/seq0000.fpk");
+    assertFalse(children.isEmpty());
+    Path uncompressedDir = Prereqs.getUncompressedGNT4();
+    Path testFPK = FileUtils.getTempDirectory().resolve(UUID.randomUUID().toString());
+    try {
+      FPKPacker.repackFPK(children, testFPK, uncompressedDir, true, false);
+    } finally {
+      Files.deleteIfExists(testFPK);
+    }
+  }
+
+  /**
+   * Test creating an ~6,235 KB FPK.
+   *
+   * @throws Exception If any Exception occurs.
+   */
+  @Test
+  void packLargeSizeFPK() throws Exception {
+    List<GNTChildFile> children = GNT4_FILES.getFPKChildren("files/fpack/game0001.fpk");
+    assertFalse(children.isEmpty());
+    Path uncompressedDir = Prereqs.getUncompressedGNT4();
+    Path testFPK = FileUtils.getTempDirectory().resolve(UUID.randomUUID().toString());
+    try {
+      FPKPacker.repackFPK(children, testFPK, uncompressedDir, true, false);
+    } finally {
+      Files.deleteIfExists(testFPK);
+    }
+  }
+
+  /**
+   * Test creating an ~8 KB FPK.
+   *
+   * @throws Exception If any Exception occurs.
+   */
+  @Test
+  public void packSmallFPK() throws Exception {
+    List<GNTChildFile> children = GNT4_FILES.getFPKChildren("files/fpack/story/story0124.fpk");
+    assertFalse(children.isEmpty());
+    Path uncompressedDir = Prereqs.getUncompressedGNT4();
+    Path testFPK = FileUtils.getTempDirectory().resolve(UUID.randomUUID().toString());
+    try {
+      FPKPacker.repackFPK(children, testFPK, uncompressedDir, true, false);
+    } finally {
+      Files.deleteIfExists(testFPK);
     }
   }
 

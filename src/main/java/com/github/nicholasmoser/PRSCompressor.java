@@ -160,9 +160,12 @@ public class PRSCompressor {
   private boolean memcmp(int index1, int index2, int size) {
     // ArrayIndexOutOfBoundsException safe version of memcpy
     if (index1 + size > input.length) {
-      byte[] range1 = Arrays.copyOfRange(input, index1, index1 + size);
-      byte[] range2 = Arrays.copyOfRange(input, index2, index2 + size);
-      return Arrays.equals(range1, range2);
+      for (int i = 0; index1 + i < input.length; i++) {
+        if (input[index1 + i] != input[index2 + i]) {
+          return false;
+        }
+      }
+      return true;
     }
     // Fast version of memcpy
     for (int i = 0; i < size; i++) {
