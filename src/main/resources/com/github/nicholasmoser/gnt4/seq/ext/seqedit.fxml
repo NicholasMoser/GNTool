@@ -138,7 +138,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
             </Label>
-                  <TextArea fx:id="hijackedBytesText" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="78.0" prefWidth="383.0" wrapText="true" VBox.vgrow="ALWAYS">
+                  <TextArea fx:id="hijackedBytesTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="78.0" prefWidth="383.0" wrapText="true" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin></TextArea>
@@ -150,7 +150,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
             </Label>
-                  <TextArea fx:id="newBytesText" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="290.0" prefWidth="383.0" wrapText="true" VBox.vgrow="ALWAYS">
+                  <TextArea fx:id="newBytesTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="290.0" prefWidth="383.0" wrapText="true" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin></TextArea>
