@@ -58,6 +58,7 @@ public class SeqEditor {
     this.leftStatus.setText(seqPath.toAbsolutePath().toString());
     this.editsByName = new HashMap<>();
     updateSeqEditsFromPath();
+    setDisableFields(true);
   }
 
   public void clear() {
@@ -79,6 +80,7 @@ public class SeqEditor {
         return;
       }
     }
+    setDisableFields(false);
     clear();
     this.mode = Mode.CREATE;
     this.rightStatus.setText(mode.toString());
@@ -100,6 +102,7 @@ public class SeqEditor {
   }
 
   private void openEdit(SeqEdit seqEdit) {
+    setDisableFields(false);
     this.mode = Mode.EDIT;
     this.rightStatus.setText(mode.toString());
     this.selectedEdit = seqEdit;
@@ -262,6 +265,20 @@ public class SeqEditor {
   }
 
   /**
+   * Sets the disabled status of the fields.
+   *
+   * @param value If the fields are to be disabled.
+   */
+  private void setDisableFields(boolean value) {
+    name.setDisable(value);
+    offset.setDisable(value);
+    hijackedBytesLength.setDisable(value);
+    hijackedBytesTextArea.setDisable(value);
+    newBytesTextArea.setDisable(value);
+    opcodes.setDisable(value);
+  }
+
+  /**
    * Verifies that the fields for the current edit are valid. Will display an error message and
    * return false if not. Otherwise, return true.
    *
@@ -345,6 +362,9 @@ public class SeqEditor {
       verifyIsHex(newBytesText, "New bytes");
       // Verify that the new code does not conflict with existing codes
       for (SeqEdit existingEdit : editsByName.values()) {
+        if (mode == Mode.EDIT && existingEdit == selectedEdit) {
+          continue; // Skip the existing edit we are editing
+        }
         if (name.getText().equals(existingEdit.getName())) {
           throw new IllegalStateException("Edit name already exists: " + existingEdit.getName());
         }
