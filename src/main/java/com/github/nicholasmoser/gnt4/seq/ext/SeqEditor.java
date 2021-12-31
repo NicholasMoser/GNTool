@@ -25,6 +25,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * A class to represent the GUI for the seq editor tool. This allows the user to modify a seq file
+ * without having to manually edit the hex of the file. The edits are accomplished by branching
+ * from the user-provided offset to the end of the seq file where new code is added.
+ */
 public class SeqEditor {
 
   private static final Logger LOGGER = Logger.getLogger(SeqEditor.class.getName());
@@ -44,12 +49,22 @@ public class SeqEditor {
   public Label leftStatus;
   public Label rightStatus;
 
+  /**
+   * The current mode that the seq editor application is in.
+   */
   public enum Mode {
     NONE_SELECTED,
     CREATE,
     EDIT
   }
 
+  /**
+   * Initialize the seq editor.
+   *
+   * @param seqPath The path to the seq file to edit.
+   * @param stage The stage of the application.
+   * @throws IOException If there is an issue reading from the seq file.
+   */
   public void init(Path seqPath, Stage stage) throws IOException {
     this.stage = stage;
     this.seqPath = seqPath;
@@ -61,6 +76,9 @@ public class SeqEditor {
     setDisableFields(true);
   }
 
+  /**
+   * Clear the editable seq edit fields.
+   */
   public void clear() {
     this.mode = Mode.NONE_SELECTED;
     this.rightStatus.setText(mode.toString());
@@ -72,6 +90,9 @@ public class SeqEditor {
     opcodes.setText("");
   }
 
+  /**
+   * Attempt to open a new seq edit to be created. This may switch to {@link Mode#CREATE}.
+   */
   public void newEdit() {
     if (mode == Mode.CREATE || mode == Mode.EDIT) {
       boolean confirm = Message.warnConfirmation("Confirm Reset",
@@ -86,6 +107,10 @@ public class SeqEditor {
     this.rightStatus.setText(mode.toString());
   }
 
+  /**
+   * Attempt to retrieve the currently selected edit and open it. This may switch to
+   * {@link Mode#EDIT}.
+   */
   public void openEdit() {
     Optional<String> selectedEdit = getSelectedEdit();
     if (selectedEdit.isPresent()) {
@@ -101,6 +126,11 @@ public class SeqEditor {
     }
   }
 
+  /**
+   * Open the given seq edit. This will switch to {@link Mode#EDIT}.
+   *
+   * @param seqEdit The seq edit to open.
+   */
   private void openEdit(SeqEdit seqEdit) {
     setDisableFields(false);
     this.mode = Mode.EDIT;
@@ -117,10 +147,16 @@ public class SeqEditor {
     opcodes.setText(getOpcodesString(newBytes));
   }
 
+  /**
+   * Quit the application.
+   */
   public void quit() {
     stage.close();
   }
 
+  /**
+   * Apply the changes of the seq edit.
+   */
   public void apply() {
     if (mode == Mode.CREATE) {
       if (verifyEditValid()) {
@@ -135,6 +171,9 @@ public class SeqEditor {
     }
   }
 
+  /**
+   * Reset the fields for the seq edit.
+   */
   public void reset() {
     if (mode == Mode.CREATE) {
       boolean confirm = Message.warnConfirmation("Confirm Reset",
