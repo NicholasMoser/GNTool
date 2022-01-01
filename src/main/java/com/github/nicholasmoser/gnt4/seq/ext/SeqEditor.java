@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +28,8 @@ import javafx.stage.Stage;
 
 /**
  * A class to represent the GUI for the seq editor tool. This allows the user to modify a seq file
- * without having to manually edit the hex of the file. The edits are accomplished by branching
- * from the user-provided offset to the end of the seq file where new code is added.
+ * without having to manually edit the hex of the file. The edits are accomplished by branching from
+ * the user-provided offset to the end of the seq file where new code is added.
  */
 public class SeqEditor {
 
@@ -62,7 +63,7 @@ public class SeqEditor {
    * Initialize the seq editor.
    *
    * @param seqPath The path to the seq file to edit.
-   * @param stage The stage of the application.
+   * @param stage   The stage of the application.
    * @throws IOException If there is an issue reading from the seq file.
    */
   public void init(Path seqPath, Stage stage) throws IOException {
@@ -74,6 +75,10 @@ public class SeqEditor {
     this.editsByName = new HashMap<>();
     updateSeqEditsFromPath();
     setDisableFields(true);
+    offsetTextField.textProperty()
+        .addListener((observable, oldValue, newValue) -> tryToUpdateHijackedBytes());
+    hijackedBytesLengthTextField.textProperty()
+        .addListener((observable, oldValue, newValue) -> tryToUpdateHijackedBytes());
   }
 
   /**
@@ -108,8 +113,8 @@ public class SeqEditor {
   }
 
   /**
-   * Attempt to retrieve the currently selected edit and open it. This may switch to
-   * {@link Mode#EDIT}.
+   * Attempt to retrieve the currently selected edit and open it. This may switch to {@link
+   * Mode#EDIT}.
    */
   public void openEdit() {
     Optional<String> selectedEdit = getSelectedEdit();
@@ -158,7 +163,8 @@ public class SeqEditor {
         Message.error("Cannot Find Edit",
             "Cannot find edit with name: " + selectedEdit.get());
       } else {
-        String msg = String.format("Are you sure you wish to delete edit \"%s\"?", seqEdit.getName());
+        String msg = String.format("Are you sure you wish to delete edit \"%s\"?",
+            seqEdit.getName());
         if (Message.warnConfirmation("Confirm Deletion", msg)) {
           deleteEdit(seqEdit);
         }
@@ -409,9 +415,29 @@ public class SeqEditor {
   }
 
   /**
+   * Tries to update the hijacked bytes display using the offset and hijacked bytes length.
+   */
+  private void tryToUpdateHijackedBytes() {
+    try {
+      int offset = readNumber(offsetTextField.getText());
+      int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
+      try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
+        byte[] bytes = new byte[hijackedBytesLength];
+        raf.seek(offset);
+        if (raf.read(bytes) != hijackedBytesLength) {
+          throw new IOException("Failed to read " + hijackedBytesLength + " bytes.");
+        }
+        hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(bytes));
+      }
+    } catch (Exception e) {
+      hijackedBytesTextArea.setText(e.getMessage());
+    }
+  }
+
+  /**
    * Reads a decimal or hex number from a String. By default, decimal will be used. If the number
-   * String starts with 0x then hex will be used. This method will throw an IllegalStateException
-   * is the number is not valid.
+   * String starts with 0x then hex will be used. This method will throw an IllegalStateException is
+   * the number is not valid.
    *
    * @param number The number String to read.
    * @return The number as an int.
@@ -566,7 +592,7 @@ public class SeqEditor {
     byte[] data = new byte[len / 2];
     for (int i = 0; i < len; i += 2) {
       data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-          + Character.digit(s.charAt(i+1), 16));
+          + Character.digit(s.charAt(i + 1), 16));
     }
     return data;
   }
