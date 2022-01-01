@@ -18,10 +18,10 @@ import java.util.List;
 public class SeqExt {
 
   // seq_ext\n
-  public static final byte[] SEQ_EXT = { 0x73, 0x65, 0x71, 0x5F, 0x65, 0x78, 0x74, 0x0A };
+  public static final byte[] SEQ_EXT = {0x73, 0x65, 0x71, 0x5F, 0x65, 0x78, 0x74, 0x0A};
 
   // seq_end\n
-  public static final byte[] SEQ_END = { 0x73, 0x65, 0x71, 0x5F, 0x65, 0x6E, 0x64, 0x0A };
+  public static final byte[] SEQ_END = {0x73, 0x65, 0x71, 0x5F, 0x65, 0x6E, 0x64, 0x0A};
 
   /**
    * Get the list of seq edits from a seq file.
@@ -57,7 +57,8 @@ public class SeqExt {
         int offset = bs.readWord();
         byte[] oldBytes = readEditBytes(bs);
         byte[] newBytes = readEditBytes(bs);
-        seqEdits.add(new SeqEdit(name, offset, oldBytes, newBytes));
+        byte[] newBytesWithoutBranchBack = Arrays.copyOfRange(newBytes, 0, newBytes.length - 8);
+        seqEdits.add(new SeqEdit(name, offset, oldBytes, newBytesWithoutBranchBack));
       }
     }
     return seqEdits;
@@ -66,7 +67,7 @@ public class SeqExt {
   /**
    * Add a seq edit to the given seq file.
    *
-   * @param edit The edit to add.
+   * @param edit    The edit to add.
    * @param seqPath The seq file path.
    * @throws IOException
    */
@@ -78,7 +79,7 @@ public class SeqExt {
   /**
    * Add a seq edit to the given seq file bytes.
    *
-   * @param edit The edit to add.
+   * @param edit     The edit to add.
    * @param seqBytes The seq file bytes.
    * @return The new seq bytes with the seq edit added.
    * @throws IOException
@@ -93,7 +94,7 @@ public class SeqExt {
   /**
    * Remove a seq edit from the given seq file.
    *
-   * @param edit The edit to remove.
+   * @param edit    The edit to remove.
    * @param seqPath The seq file path.
    * @throws IOException
    */
@@ -105,7 +106,7 @@ public class SeqExt {
   /**
    * Remove a seq edit from the given seq file bytes.
    *
-   * @param edit The edit to remove.
+   * @param edit     The edit to remove.
    * @param seqBytes The seq file bytes.
    * @return The new seq bytes with the seq edit added.
    * @throws IOException
@@ -122,7 +123,7 @@ public class SeqExt {
    * pass in every current seq edit, it will return the original seq bytes before any edits.
    *
    * @param seqBytes The current seq bytes.
-   * @param edits The list of edits to remove.
+   * @param edits    The list of edits to remove.
    * @return The seq bytes without the given edits.
    */
   private static byte[] getOriginalBytesWithoutEdits(byte[] seqBytes, List<SeqEdit> edits) {
@@ -169,7 +170,7 @@ public class SeqExt {
       throw new IllegalStateException("Hijack length cannot be less than 4");
     }
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(new byte[] { 0x01, 0x32, 0x00, 0x00 }); // branch
+    baos.write(new byte[]{0x01, 0x32, 0x00, 0x00}); // branch
     baos.write(ByteUtils.fromInt32(offset)); // offset
     byte[] nullBytes = new byte[hijackLength - 0x8];
     Arrays.fill(nullBytes, (byte) 0xCC);
@@ -226,7 +227,7 @@ public class SeqExt {
     if (bs.read(buffer) != 4) {
       throw new IOException("Failed to read 4 bytes from seq ext edit bytes.");
     }
-    while(!Arrays.equals(SeqEdit.STOP, buffer)) {
+    while (!Arrays.equals(SeqEdit.STOP, buffer)) {
       baos.write(buffer);
       if (bs.read(buffer) != 4) {
         throw new IOException("Failed to read 4 bytes from seq ext edit bytes.");

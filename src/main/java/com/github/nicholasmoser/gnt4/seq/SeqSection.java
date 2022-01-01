@@ -123,12 +123,14 @@ public class SeqSection {
       int hijackOffset = bs.readWord();
       byte[] oldBytes = readEditBytes(bs);
       byte[] newBytes = readEditBytes(bs);
-      SeqEdit edit = new SeqEdit(name, hijackOffset, oldBytes, newBytes);
+      byte[] newBytesWithoutBranchBack = Arrays.copyOfRange(newBytes, 0, newBytes.length - 8);
+      SeqEdit edit = new SeqEdit(name, hijackOffset, oldBytes, newBytesWithoutBranchBack);
       opcodes.add(new SeqEditOpcode(offset, edit));
     }
     offset = bs.offset();
     byte[] endBytes = bs.readBytes(8);
-    opcodes.add(new SectionTitle(offset, endBytes, new String(endBytes, StandardCharsets.US_ASCII).strip()));
+    opcodes.add(new SectionTitle(offset, endBytes,
+        new String(endBytes, StandardCharsets.US_ASCII).strip()));
     return opcodes;
   }
 
@@ -138,7 +140,7 @@ public class SeqSection {
     if (bs.read(buffer) != 4) {
       throw new IOException("Failed to read 4 bytes from seq ext edit bytes.");
     }
-    while(!Arrays.equals(SeqEdit.STOP, buffer)) {
+    while (!Arrays.equals(SeqEdit.STOP, buffer)) {
       baos.write(buffer);
       if (bs.read(buffer) != 4) {
         throw new IOException("Failed to read 4 bytes from seq ext edit bytes.");
@@ -151,7 +153,7 @@ public class SeqSection {
    * Parse and return the opcodes associated with the chr_tbl section. This section is composed of
    * action IDs and their associated offsets. It ends with 0xFFFFFFFF.
    *
-   * @param bs The seq ByteStream.
+   * @param bs    The seq ByteStream.
    * @param title The chr_tbl title.
    * @return The list of opcodes associated with chr_tbl.
    * @throws IOException If an I/O error occurs.
@@ -181,7 +183,7 @@ public class SeqSection {
    * Parse and return the opcodes associated with the chr_data section. This section is composed of
    * binary data, that ends with the definition of the next section.
    *
-   * @param bs The seq ByteStream.
+   * @param bs    The seq ByteStream.
    * @param title The chr_data title.
    * @return The list of opcodes associated with chr_data.
    * @throws IOException If an I/O error occurs.
@@ -200,7 +202,7 @@ public class SeqSection {
    * 4 bytes of binary data followed by seq opcodes. The binary will be 0x00000004 0x0000000A
    * 0x0000000A and 0x00000000.
    *
-   * @param bs The seq ByteStream.
+   * @param bs    The seq ByteStream.
    * @param title The chr_shot title.
    * @return The chr_shot title and 4-bytes of binary data.
    * @throws IOException If an I/O error occurs.

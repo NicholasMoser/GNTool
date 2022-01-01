@@ -71,7 +71,7 @@ public class KabutoScalingFix {
    * Get the seq edit for the Kabuto scaling fix.
    *
    * @param seqPath The path to Kabuto's 0000.seq
-   * @return
+   * @return The seq edit for the Kabuto 2A scaling fix.
    */
   public static SeqEdit getSeqEdit(Path seqPath) throws IOException {
     return SeqEditBuilder.getBuilder()

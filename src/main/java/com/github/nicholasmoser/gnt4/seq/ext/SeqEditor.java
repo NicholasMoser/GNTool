@@ -40,12 +40,12 @@ public class SeqEditor {
   private SeqEdit selectedEdit;
 
   public ListView editList;
-  public TextArea name;
-  public TextField offset;
-  public TextField hijackedBytesLength;
+  public TextArea nameTextArea;
+  public TextField offsetTextField;
+  public TextField hijackedBytesLengthTextField;
   public TextArea hijackedBytesTextArea;
   public TextArea newBytesTextArea;
-  public TextArea opcodes;
+  public TextArea opcodesTextArea;
   public Label leftStatus;
   public Label rightStatus;
 
@@ -82,12 +82,12 @@ public class SeqEditor {
   public void clear() {
     this.mode = Mode.NONE_SELECTED;
     this.rightStatus.setText(mode.toString());
-    name.setText("");
-    offset.setText("");
-    hijackedBytesLength.setText("");
+    nameTextArea.setText("");
+    offsetTextField.setText("");
+    hijackedBytesLengthTextField.setText("");
     hijackedBytesTextArea.setText("");
     newBytesTextArea.setText("");
-    opcodes.setText("");
+    opcodesTextArea.setText("");
   }
 
   /**
@@ -139,12 +139,12 @@ public class SeqEditor {
     String editName = seqEdit.getName();
     byte[] oldBytes = seqEdit.getOldBytes();
     byte[] newBytes = seqEdit.getNewBytes();
-    name.setText(editName);
-    offset.setText(Integer.toString(seqEdit.getOffset()));
-    hijackedBytesLength.setText(Integer.toString(oldBytes.length));
+    nameTextArea.setText(editName);
+    offsetTextField.setText(Integer.toString(seqEdit.getOffset()));
+    hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
     hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
     newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
-    opcodes.setText(getOpcodesString(newBytes));
+    opcodesTextArea.setText(getOpcodesString(newBytes));
   }
 
   /**
@@ -225,6 +225,26 @@ public class SeqEditor {
    * This method assumes that {@link #verifyEditValid()} has already been called and returned true.
    */
   private void applyNewEdit() {
+    try {
+      String name = nameTextArea.getText();
+      int offset = readNumber(offsetTextField.getText());
+      int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
+      byte[] newBytes = readHex(newBytesTextArea.getText());
+      SeqEdit seqEdit = SeqEditBuilder.getBuilder()
+          .name(name)
+          .startOffset(offset)
+          .endOffset(offset + hijackedBytesLength)
+          .newBytes(newBytes)
+          .seqPath(seqPath)
+          .create();
+      // Add the new edit
+      SeqExt.addEdit(seqEdit, seqPath);
+      editsByName.put(name, seqEdit);
+      editList.getItems().add(name);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Create New Edit", e);
+      Message.error("Failed to Create New Edit", e.getMessage());
+    }
   }
 
   /**
@@ -233,6 +253,31 @@ public class SeqEditor {
    * #verifyEditValid()} has already been called and returned true.
    */
   private void applyExistingEdit() {
+    try {
+      String name = nameTextArea.getText();
+      int offset = readNumber(offsetTextField.getText());
+      int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
+      byte[] newBytes = readHex(newBytesTextArea.getText());
+      SeqEdit seqEdit = SeqEditBuilder.getBuilder()
+          .name(name)
+          .startOffset(offset)
+          .endOffset(offset + hijackedBytesLength)
+          .newBytes(newBytes)
+          .seqPath(seqPath)
+          .create();
+      // Remove the existing edit
+      SeqExt.removeEdit(selectedEdit, seqPath);
+      editsByName.remove(selectedEdit.getName());
+      editList.getItems().remove(selectedEdit.getName());
+      // Add the new edit
+      SeqExt.addEdit(seqEdit, seqPath);
+      editsByName.put(name, seqEdit);
+      editList.getItems().add(name);
+      selectedEdit = seqEdit;
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Modify Edit", e);
+      Message.error("Failed to Modify Edit", e.getMessage());
+    }
   }
 
   /**
@@ -309,12 +354,28 @@ public class SeqEditor {
    * @param value If the fields are to be disabled.
    */
   private void setDisableFields(boolean value) {
-    name.setDisable(value);
-    offset.setDisable(value);
-    hijackedBytesLength.setDisable(value);
+    nameTextArea.setDisable(value);
+    offsetTextField.setDisable(value);
+    hijackedBytesLengthTextField.setDisable(value);
     hijackedBytesTextArea.setDisable(value);
     newBytesTextArea.setDisable(value);
-    opcodes.setDisable(value);
+    opcodesTextArea.setDisable(value);
+  }
+
+  /**
+   * Reads a decimal or hex number from a String. By default, decimal will be used. If the number
+   * String starts with 0x then hex will be used. This method will throw an IllegalStateException
+   * is the number is not valid.
+   *
+   * @param number The number String to read.
+   * @return The number as an int.
+   */
+  private int readNumber(String number) throws IllegalStateException {
+    try {
+      return Integer.decode(number);
+    } catch (NumberFormatException e) {
+      throw new IllegalStateException("Not a valid number: " + number, e);
+    }
   }
 
   /**
@@ -326,64 +387,30 @@ public class SeqEditor {
   private boolean verifyEditValid() {
     try {
       // Name is filled out
-      if (name.getText() == null || name.getText().isBlank()) {
+      if (nameTextArea.getText() == null || nameTextArea.getText().isBlank()) {
         throw new IllegalStateException("Name is blank or empty.");
       }
       // Offset is filled out
-      String offsetText = offset.getText();
+      String offsetText = offsetTextField.getText();
       if (offsetText == null || offsetText.isBlank()) {
         throw new IllegalStateException("Offset is blank or empty");
       }
-      // Offset is a number
-      int offset;
-      if (offsetText.startsWith("0x")) {
-        try {
-          offset = Integer.decode(offsetText);
-          if (offset % 4 != 0) {
-            throw new IllegalStateException("Offset must be multiple of 4.");
-          }
-        } catch (NumberFormatException e) {
-          throw new IllegalStateException("Offset is not a valid hex number", e);
-        }
-      } else {
-        try {
-          offset = Integer.parseInt(offsetText);
-          if (offset % 4 != 0) {
-            throw new IllegalStateException("Offset must be multiple of 4.");
-          }
-        } catch (NumberFormatException e) {
-          throw new IllegalStateException("Offset is not a valid decimal number", e);
-        }
+      // Offset is a number and a multiple of 4
+      int offset = readNumber(offsetText);
+      if (offset % 4 != 0) {
+        throw new IllegalStateException("Offset must be multiple of 4.");
       }
       // Hijacked bytes length is filled out
-      String hijackedBytesLengthText = hijackedBytesLength.getText();
+      String hijackedBytesLengthText = hijackedBytesLengthTextField.getText();
       if (hijackedBytesLengthText == null || hijackedBytesLengthText.isBlank()) {
         throw new IllegalStateException("Hijacked bytes length is blank or empty");
       }
-      // Hijacked bytes length is a number
-      int hijackedBytesLength;
-      if (hijackedBytesLengthText.startsWith("0x")) {
-        try {
-          hijackedBytesLength = Integer.decode(hijackedBytesLengthText);
-          if (hijackedBytesLength % 4 != 0) {
-            throw new IllegalStateException("Hijacked bytes length must be multiple of 4.");
-          } else if (hijackedBytesLength == 0) {
-            throw new IllegalStateException("Hijacked bytes length must be at least 4.");
-          }
-        } catch (NumberFormatException e) {
-          throw new IllegalStateException("Hijacked bytes length is not a valid hex number", e);
-        }
-      } else {
-        try {
-          hijackedBytesLength = Integer.parseInt(hijackedBytesLengthText);
-          if (hijackedBytesLength % 4 != 0) {
-            throw new IllegalStateException("Hijacked bytes length must be multiple of 4.");
-          } else if (hijackedBytesLength == 0) {
-            throw new IllegalStateException("Hijacked bytes length must be at least 4.");
-          }
-        } catch (NumberFormatException e) {
-          throw new IllegalStateException("Hijacked bytes length is not a valid decimal number", e);
-        }
+      // Hijacked bytes length is a number, a multiple of 4, and not 0
+      int hijackedBytesLength = readNumber(hijackedBytesLengthText);
+      if (hijackedBytesLength % 4 != 0) {
+        throw new IllegalStateException("Hijacked bytes length must be multiple of 4.");
+      } else if (hijackedBytesLength == 0) {
+        throw new IllegalStateException("Hijacked bytes length must not be zero.");
       }
       // Hijacked bytes is filled out
       String hijackedBytesText = hijackedBytesTextArea.getText();
@@ -404,7 +431,7 @@ public class SeqEditor {
         if (mode == Mode.EDIT && existingEdit == selectedEdit) {
           continue; // Skip the existing edit we are editing
         }
-        if (name.getText().equals(existingEdit.getName())) {
+        if (nameTextArea.getText().equals(existingEdit.getName())) {
           throw new IllegalStateException("Edit name already exists: " + existingEdit.getName());
         }
         int existingStart = existingEdit.getOffset();
@@ -473,5 +500,28 @@ public class SeqEditor {
     if (count % 8 != 0) {
       throw new IllegalStateException(fieldName + " must only have four-byte words");
     }
+  }
+
+  /**
+   * Read a hex String, ignoring whitespace, and return a byte array. Courtesy of Dave L. via
+   * https://stackoverflow.com/a/140861
+   *
+   * @param s The String to read.
+   * @return The byte array.
+   */
+  public byte[] readHex(String s) {
+    // Remove whitespace
+    s = s.replace(" ", "");
+    s = s.replace("\r", "");
+    s = s.replace("\n", "");
+    s = s.replace("\t", "");
+    // Original code from stack overflow
+    int len = s.length();
+    byte[] data = new byte[len / 2];
+    for (int i = 0; i < len; i += 2) {
+      data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+          + Character.digit(s.charAt(i+1), 16));
+    }
+    return data;
   }
 }

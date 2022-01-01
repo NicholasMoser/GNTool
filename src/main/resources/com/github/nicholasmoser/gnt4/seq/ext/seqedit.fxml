@@ -34,6 +34,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -102,7 +103,7 @@
                         <Insets left="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextArea fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="68.0" prefWidth="383.0" VBox.vgrow="ALWAYS">
+                  <TextArea fx:id="nameTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="68.0" prefWidth="383.0" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin></TextArea>
@@ -114,7 +115,7 @@
                         <Insets left="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="offset" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                  <TextField fx:id="offsetTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin></TextField>
@@ -126,7 +127,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="hijackedBytesLength" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                  <TextField fx:id="hijackedBytesLengthTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin></TextField>
@@ -174,7 +175,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextArea fx:id="opcodes" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="737.0" prefWidth="387.0" VBox.vgrow="ALWAYS">
+                  <TextArea fx:id="opcodesTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="737.0" prefWidth="387.0" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </VBox.margin></TextArea>

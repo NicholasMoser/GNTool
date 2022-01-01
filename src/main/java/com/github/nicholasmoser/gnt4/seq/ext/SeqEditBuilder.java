@@ -13,7 +13,6 @@ public class SeqEditBuilder {
   private Integer endOffset;
   private byte[] newBytes;
   private String name;
-  private boolean branchBack;
 
   private SeqEditBuilder() {
 
@@ -53,11 +52,6 @@ public class SeqEditBuilder {
     return this;
   }
 
-  public SeqEditBuilder branchBack(boolean branchBack) {
-    this.branchBack = branchBack;
-    return this;
-  }
-
   public SeqEdit create() throws IOException {
     // Check that builder values are valid
     if (endOffset == null) {
@@ -74,6 +68,8 @@ public class SeqEditBuilder {
       throw new IllegalArgumentException("newBytes length must be 4-byte aligned");
     } else if (name == null) {
       throw new IllegalArgumentException("name is null");
+    } else if (seqBytes != null && seqPath != null) {
+      throw new IllegalArgumentException("only provide one of seqPath and seqBytes");
     }
     // Read old bytes from seq file or seq file bytes
     byte[] oldBytes;
@@ -91,7 +87,7 @@ public class SeqEditBuilder {
     } else {
       throw new IllegalArgumentException("seqBytes and seqPath both are null");
     }
-    SeqEdit edit = new SeqEdit(name, startOffset, oldBytes, newBytes, branchBack);
+    SeqEdit edit = new SeqEdit(name, startOffset, oldBytes, newBytes);
     return edit;
   }
 }

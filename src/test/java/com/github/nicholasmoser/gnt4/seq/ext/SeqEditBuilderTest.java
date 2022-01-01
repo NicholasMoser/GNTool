@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.google.common.primitives.Bytes;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,65 +11,12 @@ import org.junit.jupiter.api.Test;
 
 public class SeqEditBuilderTest {
 
+  private static final int BRANCH_BACK_LEN = 8;
+
   @Test
   void testSeqBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
-    SeqEdit seqEdit = SeqEditBuilder.getBuilder()
-        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
-        .startOffset(offset)
-        .endOffset(0x8)
-        .name(name)
-        .newBytes(newBytes)
-        .create();
-    assertEquals(name, seqEdit.getName());
-    assertEquals(offset, seqEdit.getOffset());
-    assertArrayEquals(newBytes, seqEdit.getNewBytes());
-    assertArrayEquals(new byte[]{4, 5, 6, 7}, seqEdit.getOldBytes());
-  }
-
-  @Test
-  void testSeqPath() throws Exception {
-    Path seqPath = Paths.get("src/test/resources/gnt4/seq/ext/small.seq");
-    String name = "Test Edit";
-    int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
-    SeqEdit seqEdit = SeqEditBuilder.getBuilder()
-        .seqPath(seqPath)
-        .startOffset(offset)
-        .endOffset(0x8)
-        .name(name)
-        .newBytes(newBytes)
-        .create();
-    assertEquals(name, seqEdit.getName());
-    assertEquals(offset, seqEdit.getOffset());
-    assertArrayEquals(newBytes, seqEdit.getNewBytes());
-    assertArrayEquals(new byte[]{4, 5, 6, 7}, seqEdit.getOldBytes());
-  }
-
-  @Test
-  void testFirstFourBytes() throws Exception {
-    String name = "Test Edit";
-    int offset = 0;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
-    SeqEdit seqEdit = SeqEditBuilder.getBuilder()
-        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
-        .startOffset(offset)
-        .endOffset(0x4)
-        .name(name)
-        .newBytes(newBytes)
-        .create();
-    assertEquals(name, seqEdit.getName());
-    assertEquals(offset, seqEdit.getOffset());
-    assertArrayEquals(newBytes, seqEdit.getNewBytes());
-    assertArrayEquals(new byte[]{0, 1, 2, 3}, seqEdit.getOldBytes());
-  }
-
-  @Test
-  void testLastFourBytes() throws Exception {
-    String name = "Test Edit";
-    int offset = 0x8;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
     SeqEdit seqEdit = SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
@@ -82,14 +28,35 @@ public class SeqEditBuilderTest {
     assertEquals(name, seqEdit.getName());
     assertEquals(offset, seqEdit.getOffset());
     assertArrayEquals(newBytes, seqEdit.getNewBytes());
-    assertArrayEquals(new byte[]{8, 9, 10, 11}, seqEdit.getOldBytes());
+    assertArrayEquals(new byte[]{4, 5, 6, 7, 8, 9, 10, 11}, seqEdit.getOldBytes());
+    assertEquals(newBytes.length + BRANCH_BACK_LEN, seqEdit.getNewBytesWithBranchBack().length);
   }
 
   @Test
-  void testLargeNewBytes() throws Exception {
+  void testSeqPath() throws Exception {
+    Path seqPath = Paths.get("src/test/resources/gnt4/seq/ext/small.seq");
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[0x1000];
+    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    SeqEdit seqEdit = SeqEditBuilder.getBuilder()
+        .seqPath(seqPath)
+        .startOffset(offset)
+        .endOffset(0xC)
+        .name(name)
+        .newBytes(newBytes)
+        .create();
+    assertEquals(name, seqEdit.getName());
+    assertEquals(offset, seqEdit.getOffset());
+    assertArrayEquals(newBytes, seqEdit.getNewBytes());
+    assertArrayEquals(new byte[]{4, 5, 6, 7, 8, 9, 10, 11}, seqEdit.getOldBytes());
+    assertEquals(newBytes.length + BRANCH_BACK_LEN, seqEdit.getNewBytesWithBranchBack().length);
+  }
+
+  @Test
+  void testFirstFourBytes() throws Exception {
+    String name = "Test Edit";
+    int offset = 0;
+    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
     SeqEdit seqEdit = SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
@@ -100,7 +67,46 @@ public class SeqEditBuilderTest {
     assertEquals(name, seqEdit.getName());
     assertEquals(offset, seqEdit.getOffset());
     assertArrayEquals(newBytes, seqEdit.getNewBytes());
-    assertArrayEquals(new byte[]{4, 5, 6, 7}, seqEdit.getOldBytes());
+    assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6, 7}, seqEdit.getOldBytes());
+    assertEquals(newBytes.length + BRANCH_BACK_LEN, seqEdit.getNewBytesWithBranchBack().length);
+  }
+
+  @Test
+  void testLastFourBytes() throws Exception {
+    String name = "Test Edit";
+    int offset = 0x8;
+    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    SeqEdit seqEdit = SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15})
+        .startOffset(offset)
+        .endOffset(0x10)
+        .name(name)
+        .newBytes(newBytes)
+        .create();
+    assertEquals(name, seqEdit.getName());
+    assertEquals(offset, seqEdit.getOffset());
+    assertArrayEquals(newBytes, seqEdit.getNewBytes());
+    assertArrayEquals(new byte[]{8, 9, 10, 11, 12, 13, 14, 15}, seqEdit.getOldBytes());
+    assertEquals(newBytes.length + BRANCH_BACK_LEN, seqEdit.getNewBytesWithBranchBack().length);
+  }
+
+  @Test
+  void testLargeNewBytes() throws Exception {
+    String name = "Test Edit";
+    int offset = 0x4;
+    byte[] newBytes = new byte[0x1000];
+    SeqEdit seqEdit = SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(0xC)
+        .name(name)
+        .newBytes(newBytes)
+        .create();
+    assertEquals(name, seqEdit.getName());
+    assertEquals(offset, seqEdit.getOffset());
+    assertArrayEquals(newBytes, seqEdit.getNewBytes());
+    assertArrayEquals(new byte[]{4, 5, 6, 7, 8, 9, 10, 11}, seqEdit.getOldBytes());
+    assertEquals(newBytes.length + BRANCH_BACK_LEN, seqEdit.getNewBytesWithBranchBack().length);
   }
 
   @Test
@@ -119,28 +125,7 @@ public class SeqEditBuilderTest {
     assertEquals(offset, seqEdit.getOffset());
     assertArrayEquals(newBytes, seqEdit.getNewBytes());
     assertArrayEquals(new byte[0x200], seqEdit.getOldBytes());
-  }
-
-  @Test
-  void testBranchBack() throws Exception {
-    String name = "Test Edit";
-    int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
-    // new bytes with branch
-    byte[] expected = Bytes.concat(newBytes,
-        new byte[]{0x01, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08});
-    SeqEdit seqEdit = SeqEditBuilder.getBuilder()
-        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
-        .startOffset(offset)
-        .endOffset(0x8)
-        .name(name)
-        .newBytes(newBytes)
-        .branchBack(true)
-        .create();
-    assertEquals(name, seqEdit.getName());
-    assertEquals(offset, seqEdit.getOffset());
-    assertArrayEquals(expected, seqEdit.getNewBytes());
-    assertArrayEquals(new byte[]{4, 5, 6, 7}, seqEdit.getOldBytes());
+    assertEquals(newBytes.length + BRANCH_BACK_LEN, seqEdit.getNewBytesWithBranchBack().length);
   }
 
   @Test
@@ -263,35 +248,63 @@ public class SeqEditBuilderTest {
   }
 
   @Test
-  void testOldBytesMustBeFourOrGreater() throws Exception {
+  void testOldBytesMustBeEightOrGreater() throws Exception {
     String name = "Test Edit";
-    int offset = 0x4;
+    int offset = 4;
     byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78, 0x11, 0x22, 0x33, 0x44};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
-        .endOffset(0x5)
+        .endOffset(5)
         .name(name)
         .newBytes(newBytes)
         .create());
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
-        .endOffset(0x6)
+        .endOffset(6)
         .name(name)
         .newBytes(newBytes)
         .create());
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
-        .endOffset(0x7)
+        .endOffset(7)
+        .name(name)
+        .newBytes(newBytes)
+        .create());
+    assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(8)
+        .name(name)
+        .newBytes(newBytes)
+        .create());
+    assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(9)
+        .name(name)
+        .newBytes(newBytes)
+        .create());
+    assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(10)
+        .name(name)
+        .newBytes(newBytes)
+        .create());
+    assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
+        .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
+        .startOffset(offset)
+        .endOffset(11)
         .name(name)
         .newBytes(newBytes)
         .create());
     SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
-        .endOffset(0x8)
+        .endOffset(12)
         .name(name)
         .newBytes(newBytes)
         .create();
