@@ -254,6 +254,11 @@ public class SeqEditor {
    */
   private void applyExistingEdit() {
     try {
+      // Remove the existing edit
+      SeqExt.removeEdit(selectedEdit, seqPath);
+      editsByName.remove(selectedEdit.getName());
+      editList.getItems().remove(selectedEdit.getName());
+      // Create the new edit
       String name = nameTextArea.getText();
       int offset = readNumber(offsetTextField.getText());
       int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
@@ -265,10 +270,6 @@ public class SeqEditor {
           .newBytes(newBytes)
           .seqPath(seqPath)
           .create();
-      // Remove the existing edit
-      SeqExt.removeEdit(selectedEdit, seqPath);
-      editsByName.remove(selectedEdit.getName());
-      editList.getItems().remove(selectedEdit.getName());
       // Add the new edit
       SeqExt.addEdit(seqEdit, seqPath);
       editsByName.put(name, seqEdit);
