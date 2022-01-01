@@ -148,6 +148,48 @@ public class SeqEditor {
   }
 
   /**
+   * Attempt to delete the currently selected edit.
+   */
+  public void deleteEdit() {
+    Optional<String> selectedEdit = getSelectedEdit();
+    if (selectedEdit.isPresent()) {
+      SeqEdit seqEdit = editsByName.get(selectedEdit.get());
+      if (seqEdit == null) {
+        Message.error("Cannot Find Edit",
+            "Cannot find edit with name: " + selectedEdit.get());
+      } else {
+        String msg = String.format("Are you sure you wish to delete edit \"%s\"?", seqEdit.getName());
+        if (Message.warnConfirmation("Confirm Deletion", msg)) {
+          deleteEdit(seqEdit);
+        }
+      }
+    } else {
+      Message.error("No Edit Selected", "Cannot delete the edit because no edit is selected.");
+    }
+  }
+
+  /**
+   * Delete the given seq edit.
+   *
+   * @param seqEdit The seq edit to delete.
+   */
+  private void deleteEdit(SeqEdit seqEdit) {
+    try {
+      SeqExt.removeEdit(seqEdit, seqPath);
+      editsByName.remove(seqEdit.getName());
+      editList.getItems().remove(seqEdit.getName());
+      if (mode == Mode.EDIT && seqEdit.equals(selectedEdit)) {
+        // Edit currently being edited was deleted, clear the fields
+        clear();
+        setDisableFields(true);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Delete Edit", e);
+      Message.error("Failed to Delete Edit", e.getMessage());
+    }
+  }
+
+  /**
    * Quit the application.
    */
   public void quit() {
@@ -205,9 +247,12 @@ public class SeqEditor {
         // Handle right click
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
           ContextMenu contextMenu = new ContextMenu();
-          MenuItem openFile = new MenuItem("Open Edit");
-          openFile.setOnAction(event -> openEdit());
-          contextMenu.getItems().addAll(openFile);
+          MenuItem openEdit = new MenuItem("Open Edit");
+          openEdit.setOnAction(event -> openEdit());
+          contextMenu.getItems().add(openEdit);
+          MenuItem deleteEdit = new MenuItem("Delete Edit");
+          deleteEdit.setOnAction(event -> deleteEdit());
+          contextMenu.getItems().add(deleteEdit);
           contextMenu.show(stage, mouseEvent.getScreenX(), mouseEvent.getScreenY());
         }
         // Handle double left click
