@@ -16,16 +16,17 @@ public class SeqEditorTool {
 
   private static File currentDirectory = GNTool.USER_HOME;
 
-  public static void editSeq() throws IOException {
-    editSeq(currentDirectory);
-  }
-
-  public static void editSeq(File initialDirectory) throws IOException {
-    Optional<Path> optionalSeq = Choosers.getInputSeq(initialDirectory);
+  public static void open() throws IOException {
+    Optional<Path> optionalSeq = Choosers.getInputSeq(currentDirectory);
     if (optionalSeq.isEmpty()) {
       return;
     }
     Path seqPath = optionalSeq.get();
+    currentDirectory = seqPath.getParent().toFile();
+    open(seqPath);
+  }
+
+  public static void open(Path seqPath) throws IOException {
     FXMLLoader loader = new FXMLLoader(SeqEditor.class.getResource("seqedit.fxml"));
     Scene scene = new Scene(loader.load());
     GUIUtils.initDarkMode(scene);
@@ -34,7 +35,7 @@ public class SeqEditorTool {
     GUIUtils.setIcons(stage);
     seqEditor.init(seqPath, stage);
     stage.setScene(scene);
-    stage.setTitle("GNT4 Workspace");
+    stage.setTitle("SEQ Editor: " + seqPath.getFileName());
     stage.centerOnScreen();
     stage.show();
   }

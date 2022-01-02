@@ -31,6 +31,7 @@ import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
 import com.github.nicholasmoser.tools.SeqDisassemblerTool;
+import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
@@ -50,6 +51,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -84,87 +86,34 @@ public class MenuController {
   private GNT4Codes codes;
   private List<GeckoCodeGroup> codeGroups;
   private byte[] originalHijackedBytes;
-
-  @FXML
-  private ListView<String> changedFiles;
-
-  @FXML
-  private ListView<String> missingFiles;
-
-  @FXML
-  private CheckBox audioFixCode;
-
-  @FXML
-  private CheckBox skipCutscenesCode;
-
-  @FXML
-  private CheckBox playAudioWhilePaused;
-
-  @FXML
-  private CheckBox noSlowDownOnKill;
-
-  @FXML
-  private CheckBox unlockAll;
-
-  @FXML
-  private CheckBox enableWidescreen;
-
-  @FXML
-  private CheckBox xDoesNotBreakThrows;
-
-  @FXML
-  private Spinner<Integer> cssInitialSpeed;
-
-  @FXML
-  private Spinner<Integer> cssMaxSpeed;
-
-  @FXML
-  private Spinner<Integer> demoTimeOut;
-
-  @FXML
-  private Spinner<Integer> cssModelLoad;
-
-  @FXML
-  private ComboBox<String> musyxSamFile;
-
-  @FXML
-  private ComboBox<String> txg2tplTexture;
-
-  @FXML
-  private ComboBox<String> mainMenuCharacter;
-
-  @FXML
-  private CheckMenuItem parallelBuild;
-
-  @FXML
-  private CheckMenuItem pushToBackOfISO;
-
-  @FXML
-  private ComboBox<String> seqs;
-
-  @FXML
-  private TextField ztkDamageMultiplier;
-
-  @FXML
-  private TextField ukonDamageMultiplier;
-
-  @FXML
-  private TextArea geckoCodes;
-
-  @FXML
-  private TextField codeName;
-
-  @FXML
-  private ListView<String> addedCodes;
-
-  @FXML
-  private Button validateCodes;
-
-  @FXML
-  private Button addCodes;
-
-  @FXML
-  private Button removeCode;
+  public ListView<String> changedFiles;
+  public ListView<String> missingFiles;
+  public CheckBox audioFixCode;
+  public CheckBox skipCutscenesCode;
+  public CheckBox playAudioWhilePaused;
+  public CheckBox noSlowDownOnKill;
+  public CheckBox unlockAll;
+  public CheckBox enableWidescreen;
+  public CheckBox xDoesNotBreakThrows;
+  public Spinner<Integer> cssInitialSpeed;
+  public Spinner<Integer> cssMaxSpeed;
+  public Spinner<Integer> demoTimeOut;
+  public Spinner<Integer> cssModelLoad;
+  public ComboBox<String> musyxSamFile;
+  public ComboBox<String> txg2tplTexture;
+  public ComboBox<String> mainMenuCharacter;
+  public CheckMenuItem parallelBuild;
+  public CheckMenuItem pushToBackOfISO;
+  public ComboBox<String> seqEditorComboBox;
+  public ComboBox<String> seqKageComboBox;
+  public TextField ztkDamageMultiplier;
+  public TextField ukonDamageMultiplier;
+  public TextArea geckoCodes;
+  public TextField codeName;
+  public ListView<String> addedCodes;
+  public Button validateCodes;
+  public Button addCodes;
+  public Button removeCode;
 
   /**
    * Toggles the code for fixing the audio.
@@ -1008,6 +957,35 @@ public class MenuController {
   }
 
   @FXML
+  protected void seqEditor() {
+    try {
+      String seq = seqEditorComboBox.getSelectionModel().getSelectedItem();
+      Path seqPath = uncompressedDirectory.resolve(seq);
+      if (!Files.exists(seqPath)) {
+        throw new IOException("Unable to find " + seqPath);
+      }
+      SeqEditorTool.open(seqPath);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQ Editor", e);
+      Message.error("Error Running SEQ Editor", "See log for more information");
+    }
+  }
+
+  @FXML
+  protected void seqEditorBrowse() {
+    Optional<Path> inputSeq = Choosers.getInputSeq(GNTool.USER_HOME);
+    if (inputSeq.isEmpty()) {
+      return;
+    }
+    try {
+      SeqEditorTool.open(inputSeq.get());
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQ Editor", e);
+      Message.error("Error Running SEQ Editor", "See log for more information");
+    }
+  }
+
+  @FXML
   protected void seqKage() {
     try {
       if (SeqKage.isNotAvailable()) {
@@ -1018,7 +996,7 @@ public class MenuController {
           return;
         }
       }
-      String seq = seqs.getSelectionModel().getSelectedItem();
+      String seq = seqKageComboBox.getSelectionModel().getSelectedItem();
       Path seqPath = uncompressedDirectory.resolve(seq);
       if (!Files.exists(seqPath)) {
         LOGGER.log(Level.SEVERE, "Unable to find " + seqPath);
@@ -1121,8 +1099,10 @@ public class MenuController {
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
     txg2tplTexture.getSelectionModel().selectFirst();
-    seqs.getItems().setAll(Seqs.ALL);
-    seqs.getSelectionModel().selectFirst();
+    seqKageComboBox.getItems().setAll(Seqs.ALL);
+    seqKageComboBox.getSelectionModel().selectFirst();
+    seqEditorComboBox.getItems().setAll(Seqs.ALL);
+    seqEditorComboBox.getSelectionModel().selectFirst();
     mainMenuCharacter.getItems().setAll(GNT4Characters.MAIN_MENU_CHARS);
     mainMenuCharacter.getSelectionModel().select(GNT4Characters.SAKURA);
     asyncRefresh();

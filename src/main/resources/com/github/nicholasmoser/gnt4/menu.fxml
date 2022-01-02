@@ -21,7 +21,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.nicholasmoser.gnt4.MenuController">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.nicholasmoser.gnt4.MenuController">
   <MenuBar VBox.vgrow="NEVER">
     <Menu mnemonicParsing="false" text="File">
       <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace" />
@@ -141,11 +141,13 @@
       </Tab>
       <Tab text="Sequence">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Seq Files" />
-          <ComboBox fx:id="seqs" layoutX="141.0" layoutY="126.0" prefHeight="25.0" prefWidth="204.0" />
-          <Button layoutX="20.0" layoutY="126.0" mnemonicParsing="false" onMouseClicked="#seqKage" text="Launch SEQ Kage" />
-          <Button layoutX="20.0" layoutY="46.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToHTML" text="Disassemble Seq File to HTML" />
-          <Button layoutX="20.0" layoutY="85.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToTXT" text="Disassemble Seq File to TXT" />
+          <ComboBox fx:id="seqKageComboBox" layoutX="160.0" layoutY="150.0" prefHeight="25.0" prefWidth="204.0" />
+          <Button layoutX="21.0" layoutY="150.0" mnemonicParsing="false" onAction="#seqKage" prefHeight="25.0" prefWidth="128.0" text="Launch SEQ Kage" />
+          <Button layoutX="20.0" layoutY="19.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToHTML" text="Disassemble SEQ File to HTML" />
+          <Button layoutX="20.0" layoutY="61.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToTXT" prefHeight="25.0" prefWidth="176.0" text="Disassemble SEQ File to TXT" />
+               <Button layoutX="21.0" layoutY="106.0" mnemonicParsing="false" onAction="#seqEditor" prefHeight="25.0" prefWidth="127.0" text="Launch SEQ Editor" />
+               <ComboBox fx:id="seqEditorComboBox" layoutX="160.0" layoutY="106.0" prefHeight="25.0" prefWidth="203.0" />
+               <Button layoutX="378.0" layoutY="106.0" mnemonicParsing="false" onAction="#seqEditorBrowse" text="Browse" />
         </AnchorPane>
       </Tab>
          <Tab text="Code Injection">

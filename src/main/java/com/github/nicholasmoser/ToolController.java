@@ -100,7 +100,7 @@ public class ToolController {
         case TXG2TPL -> TXG2TPLTool.run();
         case SEQ_DISASSEMBLER_HTML -> SeqDisassemblerTool.disassembleToHTML();
         case SEQ_DISASSEMBLER_TXT -> SeqDisassemblerTool.disassembleToTXT();
-        case SEQ_EDITOR -> SeqEditorTool.editSeq();
+        case SEQ_EDITOR -> SeqEditorTool.open();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);
