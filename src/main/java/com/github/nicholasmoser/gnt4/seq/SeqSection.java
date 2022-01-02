@@ -47,7 +47,7 @@ public class SeqSection {
 
   /**
    * Handles the current SEQ section. First reads the section title, which ends with 0x0A and is
-   * 16-byte aligned.
+   * 16-byte aligned. {@link #isSeqSectionTitle(ByteStream)} must be called first.
    *
    * @param bs The seq ByteStream.
    * @throws IOException If an I/O error occurs.
@@ -99,7 +99,7 @@ public class SeqSection {
       case (Seq.CHR_VISUAL2D):
         return Collections.singletonList(sectionTitle);
       case (Seq.SEQ_EXT):
-        throw new RuntimeException();
+        throw new RuntimeException("Did not call isSeqSectionTitle first");
       default:
         throw new IOException("Unknown seq section: " + title);
     }

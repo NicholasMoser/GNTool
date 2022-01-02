@@ -41,7 +41,7 @@ public class SeqEditOpcode implements Opcode {
     List<ContainerTag> opcodes = new ArrayList<>();
     try {
       int newBytesOffset = offset + edit.getNewBytesOffset();
-      opcodes.addAll(SeqHelper.getOpcodesString(edit.getNewBytes(), newBytesOffset));
+      opcodes.addAll(SeqHelper.getOpcodesString(edit.getNewBytesWithBranchBack(), newBytesOffset));
     } catch (Exception e) {
       opcodes.add(p("Unable to parse opcodes: " + e.getLocalizedMessage()));
     }
@@ -51,6 +51,8 @@ public class SeqEditOpcode implements Opcode {
         + formatRawBytes(edit.getOldBytes())
         + "<br>New Bytes: "
         + formatRawBytes(edit.getNewBytes())
+        + "<br>New Bytes with Branch Back: "
+        + formatRawBytes(edit.getNewBytesWithBranchBack())
         + "<br>New Byte Opcodes: ";
     return div(attrs(id)).withText(text).with(opcodes);
   }
