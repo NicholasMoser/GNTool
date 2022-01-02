@@ -5,6 +5,9 @@ import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+/**
+ * A builder for a seq edit.
+ */
 public class SeqEditBuilder {
 
   private Path seqPath;

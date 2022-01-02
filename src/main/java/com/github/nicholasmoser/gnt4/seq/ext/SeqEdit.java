@@ -8,6 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * A single edit made to a seq file.
+ */
 public class SeqEdit {
 
   // stop, used to signal end of old and new bytes
@@ -20,6 +23,7 @@ public class SeqEdit {
   private final byte[] newBytesWithBranchBack;
 
   /**
+   * Constructor for a seq edit.
    *
    * @param name The name of this seq edit (do not include null bytes).
    * @param offset The offset in the seq file of this seq edit.
@@ -58,26 +62,47 @@ public class SeqEdit {
     this.newBytesWithBranchBack = Bytes.concat(newBytes, branch, branchOffset);
   }
 
+  /**
+   * @return The name of the edit, also can serve as a description.
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * @return The offset in the seq file where the seq edit begins.
+   */
   public int getOffset() {
     return offset;
   }
 
+  /**
+   * @return The original, overridden opcode bytes at the offset used for this seq edit.
+   */
   public byte[] getOldBytes() {
     return oldBytes;
   }
 
+  /**
+   * @return The opcode bytes to execute with this seq edit, not including the branch back to the
+   * origin.
+   */
   public byte[] getNewBytes() {
     return newBytes;
   }
 
+  /**
+   * @return The opcode bytes to execute with this seq edit, including the branch back to the
+   * origin.
+   */
   public byte[] getNewBytesWithBranchBack() {
     return newBytesWithBranchBack;
   }
 
+  /**
+   * @return The full bytes for this seq edit, to be appended to the seq extension section of the
+   * seq file.
+   */
   public byte[] getFullBytes() {
     try {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -111,8 +136,8 @@ public class SeqEdit {
 
   /**
    *
-   * @return
-   * @throws IOException
+   * @return The 4-byte aligned, UTF-8 encoded bytes of the name of this seq edit.
+   * @throws IOException If any I/O exception occurs.
    */
   private byte[] getNameBytes() throws IOException {
     byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);

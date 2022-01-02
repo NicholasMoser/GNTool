@@ -12,10 +12,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * A tool to edit seq files. This will allow a user to branch from seq code locations to run
+ *  an arbitrary amount of new code and branch back when complete, similar to a Gecko code
+ *  injection.
+ */
 public class SeqEditorTool {
 
   private static File currentDirectory = GNTool.USER_HOME;
 
+  /**
+   * Query the user to open a seq file with the SeqEditorTool. Defaults to the user home but will
+   * remember the last directory selected from for subsequent calls.
+   *
+   * @throws IOException If any I/O exception occurs.
+   */
   public static void open() throws IOException {
     Optional<Path> optionalSeq = Choosers.getInputSeq(currentDirectory);
     if (optionalSeq.isEmpty()) {
@@ -26,6 +37,12 @@ public class SeqEditorTool {
     open(seqPath);
   }
 
+  /**
+   * Opens a seq file with the SeqEditorTool.
+   *
+   * @param seqPath The seq to open.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static void open(Path seqPath) throws IOException {
     FXMLLoader loader = new FXMLLoader(SeqEditor.class.getResource("seqedit.fxml"));
     Scene scene = new Scene(loader.load());

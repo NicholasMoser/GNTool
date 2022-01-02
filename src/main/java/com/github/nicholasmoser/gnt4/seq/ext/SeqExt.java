@@ -1,7 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
-import com.github.nicholasmoser.ppc.Branch;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
@@ -12,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class SeqExt {
@@ -55,8 +53,8 @@ public class SeqExt {
         String name = new String(SeqHelper.readString(bs), StandardCharsets.UTF_8);
         name = name.replace("\0", "");
         int offset = bs.readWord();
-        byte[] oldBytes = readEditBytes(bs);
-        byte[] newBytes = readEditBytes(bs);
+        byte[] oldBytes = readOpcodeBytes(bs);
+        byte[] newBytes = readOpcodeBytes(bs);
         byte[] newBytesWithoutBranchBack = Arrays.copyOfRange(newBytes, 0, newBytes.length - 8);
         seqEdits.add(new SeqEdit(name, offset, oldBytes, newBytesWithoutBranchBack));
       }
@@ -221,7 +219,14 @@ public class SeqExt {
     }
   }
 
-  private static byte[] readEditBytes(ByteStream bs) throws IOException {
+  /**
+   * Read opcode bytes from the ByteStream until a {@link SeqEdit#STOP} is encountered.
+   *
+   * @param bs The ByteStream to read from.
+   * @return The opcode bytes read.ent calls.
+   * @throws IOException If any I/O exception occurs.
+   */
+  private static byte[] readOpcodeBytes(ByteStream bs) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte[] buffer = new byte[4];
     if (bs.read(buffer) != 4) {
