@@ -10,6 +10,7 @@ public class KisamePhantomSwordFixTest {
   @Test
   public void testSeqNotModified() throws Exception {
     Path uncompressedDir = Prereqs.getUncompressedGNT4();
-    assertFalse(KisamePhantomSwordFix.isSeqModified(uncompressedDir));
+    assertFalse(KisamePhantomSwordFix.isUsingNewFix(uncompressedDir));
+    assertFalse(KisamePhantomSwordFix.isUsingOldFix(uncompressedDir));
   }
 }

@@ -26,6 +26,8 @@ import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.graphics.TXG2TPL;
@@ -384,18 +386,21 @@ public class MenuController {
   @FXML
   protected void applyKabutoScalingFix() {
     try {
-      boolean isModified = KabutoScalingFix.isSeqModified(uncompressedDirectory);
-      if (isModified) {
-        String header = "Applying Kabuto Scaling Fix May Break Kabuto";
-        String message = "Kabuto's 0000.seq has been modified and is no longer vanilla. "
-            + "There is a high likelihood applying this fix will break Kabuto's 0000.seq. "
-            + "Are you sure you wish to continue?";
-        boolean confirm = Message.warnConfirmation(header, message);
-        if (!confirm) {
-          return;
-        }
+      Path seqPath = uncompressedDirectory.resolve(Seqs.KAB_0000);
+      if (KabutoScalingFix.isUsingOldFix(seqPath)) {
+        String message = "An old version of this fix has already been applied to this character.";
+        message += "The older version directly modified the file bytes, whereas the new version ";
+        message += "of this code adds a seq edit using the seq extension section.\n";
+        message += "This code is unable to be reversed. Please get a clean Kabuto 0000.seq and ";
+        message += "try again.";
+        Message.error("Already Using Old Fix", message);
+        return;
+      } else if (KabutoScalingFix.isUsingNewFix(seqPath)) {
+        Message.info("Fix Already Applied", "This fix has already been applied.");
+        return;
       }
-      KabutoScalingFix.apply(uncompressedDirectory);
+      SeqEdit seqEdit = KabutoScalingFix.getSeqEdit(seqPath);
+      SeqExt.addEdit(seqEdit, seqPath);
       String header = "Kabuto Scaling Fix Applied";
       String message = "The Kabuto Scaling Fix has been applied to Kabuto's 0000.seq file.";
       Message.info(header, message);
@@ -408,18 +413,23 @@ public class MenuController {
   @FXML
   protected void applyKisamePhantomSwordFix() {
     try {
-      boolean isModified = KisamePhantomSwordFix.isSeqModified(uncompressedDirectory);
-      if (isModified) {
-        String header = "Applying Kisame Phantom Sword Fix May Break Kisame";
-        String message = "Kisame's 0000.seq has been modified and is no longer vanilla. "
-            + "There is a high likelihood applying this fix will break Kisame's 0000.seq. "
-            + "Are you sure you wish to continue?";
-        boolean confirm = Message.warnConfirmation(header, message);
+      Path seqPath = uncompressedDirectory.resolve(Seqs.KIS_0000);
+      if (KisamePhantomSwordFix.isUsingOldFix(seqPath)) {
+        String message = "An old version of this fix has already been applied to this character.";
+        message += "The older version directly modified the file bytes, whereas the new version ";
+        message += "of this code adds a seq edit using the seq extension section.\n";
+        message += "Do you wish to convert the old code to the new code?";
+        boolean confirm = Message.warnConfirmation("Already Using Old Fix", message);
         if (!confirm) {
           return;
         }
+        KisamePhantomSwordFix.removeOldFix(seqPath);
+      } else if (KisamePhantomSwordFix.isUsingNewFix(seqPath)) {
+        Message.info("Fix Already Applied", "This fix has already been applied.");
+        return;
       }
-      KisamePhantomSwordFix.apply(uncompressedDirectory);
+      SeqEdit seqEdit = KisamePhantomSwordFix.getSeqEdit(seqPath);
+      SeqExt.addEdit(seqEdit, seqPath);
       String header = "Kisame Phantom Sword Fix Applied";
       String message = "The Kisame Phantom Sword Fix has been applied to Kisame's 0000.seq file.";
       Message.info(header, message);
@@ -432,18 +442,23 @@ public class MenuController {
   @FXML
   protected void applyZabuzaPhantomSwordFix() {
     try {
-      boolean isModified = ZabuzaPhantomSwordFix.isSeqModified(uncompressedDirectory);
-      if (isModified) {
-        String header = "Applying Zabuza Phantom Sword Fix May Break Zabuza";
-        String message = "Zabuza's 0000.seq has been modified and is no longer vanilla. "
-            + "There is a high likelihood applying this fix will break Zabuza's 0000.seq. "
-            + "Are you sure you wish to continue?";
-        boolean confirm = Message.warnConfirmation(header, message);
+      Path seqPath = uncompressedDirectory.resolve(Seqs.ZAB_0000);
+      if (ZabuzaPhantomSwordFix.isUsingOldFix(seqPath)) {
+        String message = "An old version of this fix has already been applied to this character.";
+        message += "The older version directly modified the file bytes, whereas the new version ";
+        message += "of this code adds a seq edit using the seq extension section.\n";
+        message += "Do you wish to convert the old code to the new code?";
+        boolean confirm = Message.warnConfirmation("Already Using Old Fix", message);
         if (!confirm) {
           return;
         }
+        ZabuzaPhantomSwordFix.removeOldFix(seqPath);
+      } else if (ZabuzaPhantomSwordFix.isUsingNewFix(seqPath)) {
+        Message.info("Fix Already Applied", "This fix has already been applied.");
+        return;
       }
-      ZabuzaPhantomSwordFix.apply(uncompressedDirectory);
+      SeqEdit seqEdit = ZabuzaPhantomSwordFix.getSeqEdit(seqPath);
+      SeqExt.addEdit(seqEdit, seqPath);
       String header = "Zabuza Phantom Sword Fix Applied";
       String message = "The Zabuza Phantom Sword Fix has been applied to Zabuza's 0000.seq file.";
       Message.info(header, message);

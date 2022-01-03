@@ -10,6 +10,7 @@ public class KabutoScalingFixTest {
   @Test
   public void testSeqNotModified() throws Exception {
     Path uncompressedDir = Prereqs.getUncompressedGNT4();
-    assertFalse(KabutoScalingFix.isSeqModified(uncompressedDir));
+    assertFalse(KabutoScalingFix.isUsingNewFix(uncompressedDir));
+    assertFalse(KabutoScalingFix.isUsingOldFix(uncompressedDir));
   }
 }

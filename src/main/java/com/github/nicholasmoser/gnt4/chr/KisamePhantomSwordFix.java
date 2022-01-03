@@ -1,54 +1,75 @@
 package com.github.nicholasmoser.gnt4.chr;
 
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEditBuilder;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import com.github.nicholasmoser.utils.CRC32;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * A class to fix the issue where only Kisame only the player 1 side can Phantom Sword. Phantom Sword
- * is where JA is unblockable if you land with it on a specific frame. The issue is fixed by adding
- * the unblockable flag for the KF flags on the first flag of landing.
+ * A class to fix the issue where only Kisame only the player 1 side can Phantom Sword. Phantom
+ * Sword is where JA is unblockable if you land with it on a specific frame. The issue is fixed by
+ * adding the unblockable flag for the KF flags on the first flag of landing.
+ * <p>
+ * More specifically, this changes:
+ * <ul>
+ *   <li>1C308 | add_nf_flags "GUARD, TDOWN" {241A0900 41000000}</li>
+ *   <li>1C310 | op_2406 {24060400 05550000}</li>
+ *   <li>1C318 | add_nf_flags "AUTODIR" {241A0900 02000000}</li>
+ * </ul>
+ *
+ * <p>
+ * to:
+ * <ul>
+ *   <li>1C308 | add_nf_flags "AUTODIR, GUARD, TDOWN" {241A0900 43000000}</li>
+ *   <li>1C310 | op_2406 {24060400 05550000}</li>
+ *   <li>1C318 | set_kf_flags "BEAST, MIDDLE, NOGUARD, POW_S, PUNCH, YORO" {241A1200 101042A0}</li>
+ * </ul>
  */
 public class KisamePhantomSwordFix {
+  private static final byte[] OLD_BYTES = new byte[]{0x24, 0x1A, 0x09, 0x00, 0x41, 0x00, 0x00, 0x00,
+      0x24, 0x06, 0x04, 0x00, 0x05, 0x55, 0x00, 0x00, 0x24, 0x1A, 0x09, 0x00, 0x02, 0x00, 0x00,
+      0x00};
+  private static final byte[] NEW_BYTES = new byte[]{0x24, 0x1A, 0x09, 0x00, 0x43, 0x00, 0x00, 0x00,
+      0x24, 0x06, 0x04, 0x00, 0x05, 0x55, 0x00, 0x00, 0x24, 0x1A, 0x12, 0x00, 0x10, 0x10, 0x42,
+      (byte) 0xA0};
+  private static final int OFFSET = 0x1C308;
 
-  public static final String KISAME_0000_SEQ = "files/chr/kis/0000.seq";
-
-  /**
-   * Returns whether or not Kisame's 0000.seq has been modified in the given uncompressed directory.
-   *
-   * @param uncompressedDir The uncompressed directory of the GNT4 workspace.
-   * @return If Kisame's 0000.seq has been modified.
-   * @throws IOException If any I/O issues occur
-   */
-  public static boolean isSeqModified(Path uncompressedDir) throws IOException {
-    return CRC32.getHash(uncompressedDir.resolve(KISAME_0000_SEQ)) != 0x8dc540a8;
+  public static SeqEdit getSeqEdit(Path seqPath) throws IOException {
+    return SeqEditBuilder.getBuilder()
+        .name("Kisame Phantom Sword Fix")
+        .newBytes(NEW_BYTES)
+        .seqPath(seqPath)
+        .startOffset(OFFSET)
+        .endOffset(OFFSET + NEW_BYTES.length)
+        .create();
   }
 
-  /**
-   * Applies the fix to Kisame's 0000.seq in the given uncompressed directory. Will probably break
-   * the seq file if you run it against anything that a vanilla Kisame 0000.seq. You can comfirm
-   * this is the case by first calling {@link #isSeqModified(Path)}.
-   *
-   * @param uncompressedDir The uncompressed directory of the GNT4 workspace.
-   * @throws IOException If any I/O issues occur
-   */
-  public static void apply(Path uncompressedDir) throws IOException {
-    File filePath = uncompressedDir.resolve(KISAME_0000_SEQ).toFile();
-    try (RandomAccessFile raf = new RandomAccessFile(filePath, "rw")) {
-      raf.seek(0x1C30C);
-      raf.write(0x43);
-      raf.seek(0x1C31A);
-      raf.write(0x12);
-      raf.seek(0x1C31C);
-      raf.write(0x10);
-      raf.seek(0x1C31D);
-      raf.write(0x10);
-      raf.seek(0x1C31E);
-      raf.write(0x42);
-      raf.seek(0x1C31F);
-      raf.write(0xA0);
+  public static boolean isUsingOldFix(Path seqPath) throws IOException {
+    try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
+      raf.seek(OFFSET);
+      byte[] bytes = new byte[NEW_BYTES.length];
+      if (raf.read(bytes) != NEW_BYTES.length) {
+        throw new IOException("Failed to read " + NEW_BYTES.length + " bytes from " + seqPath);
+      }
+      return Arrays.equals(bytes, NEW_BYTES);
+    }
+  }
+
+  public static boolean isUsingNewFix(Path seqPath) throws IOException {
+    List<SeqEdit> edits = SeqExt.getEdits(seqPath);
+    return edits.contains(getSeqEdit(seqPath));
+  }
+
+  public static void removeOldFix(Path seqPath) throws IOException {
+    try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
+      raf.seek(OFFSET);
+      raf.write(OLD_BYTES);
     }
   }
 }

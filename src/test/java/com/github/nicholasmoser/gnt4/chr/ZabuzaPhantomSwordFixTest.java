@@ -10,6 +10,7 @@ public class ZabuzaPhantomSwordFixTest {
   @Test
   public void testSeqNotModified() throws Exception {
     Path uncompressedDir = Prereqs.getUncompressedGNT4();
-    assertFalse(ZabuzaPhantomSwordFix.isSeqModified(uncompressedDir));
+    assertFalse(ZabuzaPhantomSwordFix.isUsingNewFix(uncompressedDir));
+    assertFalse(ZabuzaPhantomSwordFix.isUsingOldFix(uncompressedDir));
   }
 }
