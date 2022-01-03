@@ -40,6 +40,13 @@ public class ZabuzaPhantomSwordFix {
       0x00};
   private static final int OFFSET = 0x1B864;
 
+  /**
+   * Returns the SeqEdit object for this fix.
+   *
+   * @param seqPath The path to the Zabuza 0000.seq file.
+   * @return The SeqEdit object.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static SeqEdit getSeqEdit(Path seqPath) throws IOException {
     return SeqEditBuilder.getBuilder()
         .name("Zabuza Phantom Sword Fix")
@@ -50,6 +57,14 @@ public class ZabuzaPhantomSwordFix {
         .create();
   }
 
+  /**
+   * Returns if this Zabuza 0000.seq file is using the old version of the phantom sword fix that
+   * wrote bytes directly to the seq file.
+   *
+   * @param seqPath The seq file to check.
+   * @return If it is using the old fix.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static boolean isUsingOldFix(Path seqPath) throws IOException {
     try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
       raf.seek(OFFSET);
@@ -61,13 +76,28 @@ public class ZabuzaPhantomSwordFix {
     }
   }
 
+  /**
+   * Returns if this Zabuza 0000.seq file is using the new version of the phantom sword fix that
+   * uses seq extensions.
+   *
+   * @param seqPath The seq file to check.
+   * @return If it is using the new fix.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static boolean isUsingNewFix(Path seqPath) throws IOException {
     List<SeqEdit> edits = SeqExt.getEdits(seqPath);
     return edits.contains(getSeqEdit(seqPath));
   }
 
+  /**
+   * Removes the old version of this fix that directly wrote bytes to the seq file, instead of
+   * using seq extensions. Make sure to first call {@link #isUsingOldFix(Path)}.
+   *
+   * @param seqPath The path to the seq to modify.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static void removeOldFix(Path seqPath) throws IOException {
-    try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
+    try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "rw")) {
       raf.seek(OFFSET);
       raf.write(OLD_BYTES);
     }

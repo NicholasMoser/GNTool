@@ -388,7 +388,7 @@ public class MenuController {
     try {
       Path seqPath = uncompressedDirectory.resolve(Seqs.KAB_0000);
       if (KabutoScalingFix.isUsingOldFix(seqPath)) {
-        String message = "An old version of this fix has already been applied to this character.";
+        String message = "An old version of this fix has already been applied to this character. ";
         message += "The older version directly modified the file bytes, whereas the new version ";
         message += "of this code adds a seq edit using the seq extension section.\n";
         message += "This code is unable to be reversed. Please get a clean Kabuto 0000.seq and ";
@@ -415,7 +415,7 @@ public class MenuController {
     try {
       Path seqPath = uncompressedDirectory.resolve(Seqs.KIS_0000);
       if (KisamePhantomSwordFix.isUsingOldFix(seqPath)) {
-        String message = "An old version of this fix has already been applied to this character.";
+        String message = "An old version of this fix has already been applied to this character. ";
         message += "The older version directly modified the file bytes, whereas the new version ";
         message += "of this code adds a seq edit using the seq extension section.\n";
         message += "Do you wish to convert the old code to the new code?";
@@ -444,7 +444,7 @@ public class MenuController {
     try {
       Path seqPath = uncompressedDirectory.resolve(Seqs.ZAB_0000);
       if (ZabuzaPhantomSwordFix.isUsingOldFix(seqPath)) {
-        String message = "An old version of this fix has already been applied to this character.";
+        String message = "An old version of this fix has already been applied to this character. ";
         message += "The older version directly modified the file bytes, whereas the new version ";
         message += "of this code adds a seq edit using the seq extension section.\n";
         message += "Do you wish to convert the old code to the new code?";

@@ -16,15 +16,17 @@ import java.util.List;
  * frame, the issue no longer occurs and both player 1 and player 2 do full damage.
  */
 public class KabutoScalingFix {
-  private static final byte[] NEW_BYTES = new byte[] { 0x20, 0x11, 0x26, 0x3F, 0x00, 0x00, 0x00, 0x01, 0x20, 0x12, 0x00,
-      0x26, 0x01, 0x3C, 0x00, 0x00, 0x00, 0x00, 0x13, 0x74};
+
+  private static final byte[] NEW_BYTES = new byte[]{0x20, 0x11, 0x26, 0x3F, 0x00, 0x00, 0x00,
+      0x01, 0x20, 0x12, 0x00, 0x26, 0x01, 0x3C, 0x00, 0x00, 0x00, 0x00, 0x13, 0x74};
   private static final int OFFSET = 0x20770;
 
   /**
-   * Get the seq edit for the Kabuto scaling fix.
+   * Returns the SeqEdit object for this fix.
    *
-   * @param seqPath The path to Kabuto's 0000.seq
-   * @return The seq edit for the Kabuto 2A scaling fix.
+   * @param seqPath The path to the Kabuto 0000.seq file.
+   * @return The SeqEdit object.
+   * @throws IOException If any I/O exception occurs.
    */
   public static SeqEdit getSeqEdit(Path seqPath) throws IOException {
     return SeqEditBuilder.getBuilder()
@@ -36,17 +38,33 @@ public class KabutoScalingFix {
         .create();
   }
 
+  /**
+   * Returns if this Kabuto 0000.seq file is using the old version of the 2A scaling fix that
+   * wrote bytes directly to the seq file.
+   *
+   * @param seqPath The seq file to check.
+   * @return If it is using the old fix.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static boolean isUsingOldFix(Path seqPath) throws IOException {
     try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
-      raf.seek(OFFSET);
-      byte[] bytes = new byte[NEW_BYTES.length];
-      if (raf.read(bytes) != NEW_BYTES.length) {
-        throw new IOException("Failed to read " + NEW_BYTES.length + " bytes from " + seqPath);
+      raf.seek(0x26614);
+      byte[] bytes = new byte[4];
+      if (raf.read(bytes) != 4) {
+        throw new IOException("Failed to read 4 bytes from " + seqPath);
       }
-      return Arrays.equals(bytes, NEW_BYTES);
+      return Arrays.equals(bytes, new byte[] { 0x20, 0x11, 0x26, 0x3F });
     }
   }
 
+  /**
+   * Returns if this Kabuto 0000.seq file is using the new version of the 2A scaling fix that
+   * uses seq extensions.
+   *
+   * @param seqPath The seq file to check.
+   * @return If it is using the new fix.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static boolean isUsingNewFix(Path seqPath) throws IOException {
     List<SeqEdit> edits = SeqExt.getEdits(seqPath);
     return edits.contains(getSeqEdit(seqPath));
