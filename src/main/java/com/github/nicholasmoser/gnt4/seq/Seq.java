@@ -21,6 +21,7 @@ public class Seq {
   public static final String CHR_FACE = "chr_face";
   public static final String CHR_DATA = "chr_data";
   public static final String CHR_VISUAL2D = "chr_visual2d";
+  public static final String SEQ_EXT = "seq_ext";
 
   // Notable Action IDs
   public static final int ACTION_5B = 0x0A0;

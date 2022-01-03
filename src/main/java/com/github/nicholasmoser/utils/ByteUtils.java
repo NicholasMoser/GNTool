@@ -275,7 +275,9 @@ public class ByteUtils {
    */
   public static int readUint32LE(RandomAccessFile raf) throws IOException {
     byte[] buffer = new byte[4];
-    raf.read(buffer);
+    if (raf.read(buffer) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
     return ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
   }
 
@@ -288,7 +290,9 @@ public class ByteUtils {
    */
   public static int readInt32(RandomAccessFile raf) throws IOException {
     byte[] bytes = new byte[4];
-    raf.read(bytes);
+    if (raf.read(bytes) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
     return toInt32(bytes);
   }
 
@@ -392,6 +396,24 @@ public class ByteUtils {
    */
   public static String bytesToHexString(byte[] bytes) {
     return BaseEncoding.base16().upperCase().encode(bytes);
+  }
+
+  /**
+   * Converts a byte array to a hex String. The hex returned will be in uppercase. The bytes will
+   * be returned as 32-bit words.
+   *
+   * @param bytes The bytes to convert.
+   * @return The bytes in hex.
+   */
+  public static String bytesToHexStringWords(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < bytes.length; i++) {
+      sb.append(String.format("%02X", bytes[i]));
+      if (i % 4 == 3 && i != bytes.length - 1) {
+        sb.append(' ');
+      }
+    }
+    return sb.toString();
   }
 
   /**

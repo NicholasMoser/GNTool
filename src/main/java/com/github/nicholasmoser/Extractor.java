@@ -10,7 +10,7 @@ public interface Extractor {
 
   /**
    * Extracts the ISO to the extraction path.
-   * 
+   *
    * @throws IOException If there is an I/O related exception.
    */
   void extractISO() throws IOException;

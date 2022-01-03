@@ -158,4 +158,8 @@ public class ByteStream extends ByteArrayInputStream {
     }
     this.pos = pos;
   }
+
+  public boolean bytesAreLeft() {
+    return pos < buf.length;
+  }
 }
