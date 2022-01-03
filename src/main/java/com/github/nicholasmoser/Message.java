@@ -1,5 +1,6 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.utils.GUIUtils;
 import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -20,6 +21,7 @@ public class Message {
     Alert alert = new Alert(AlertType.ERROR, message);
     alert.setTitle("Error");
     alert.setHeaderText(header);
+    GUIUtils.setIcons(alert);
     alert.showAndWait();
   }
 
@@ -33,6 +35,7 @@ public class Message {
     Alert alert = new Alert(AlertType.INFORMATION, message);
     alert.setTitle("Info");
     alert.setHeaderText(header);
+    GUIUtils.setIcons(alert);
     alert.showAndWait();
   }
 
@@ -48,6 +51,7 @@ public class Message {
     Alert alert = new Alert(AlertType.INFORMATION, message, ButtonType.YES, ButtonType.NO);
     alert.setTitle("Info");
     alert.setHeaderText(header);
+    GUIUtils.setIcons(alert);
     Optional<ButtonType> selectedButton = alert.showAndWait();
     return selectedButton.isPresent() && selectedButton.get() == ButtonType.YES;
   }
@@ -64,6 +68,7 @@ public class Message {
     Alert alert = new Alert(AlertType.WARNING, message, ButtonType.YES, ButtonType.NO);
     alert.setTitle("Info");
     alert.setHeaderText(header);
+    GUIUtils.setIcons(alert);
     Optional<ButtonType> selectedButton = alert.showAndWait();
     return selectedButton.isPresent() && selectedButton.get() == ButtonType.YES;
   }
