@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
+import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
+import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.testing.Prereqs;
 import com.github.nicholasmoser.utils.FileUtils;
@@ -212,6 +214,60 @@ public class SeqExtTest {
       assertEquals(edit, actualEdit);
 
       // Remove the Kabuto scaling fix and validate
+      SeqExt.removeEdit(edit, testSeq);
+      byte[] newBytes = Files.readAllBytes(testSeq);
+      assertArrayEquals(originalBytes, newBytes);
+    } finally {
+      Files.deleteIfExists(testSeq);
+    }
+  }
+
+  @Test
+  void addAndRemoveKisamePhantomSwordFix() throws Exception {
+    Path kab0000 = Prereqs.getUncompressedGNT4().resolve(Seqs.KIS_0000);
+    byte[] originalBytes = Files.readAllBytes(kab0000);
+    Path testSeq = FileUtils.getTempDirectory().resolve(UUID.randomUUID().toString());
+    try {
+      Files.copy(kab0000, testSeq);
+      List<SeqEdit> seqEdits = SeqExt.getEdits(testSeq);
+      assertTrue(seqEdits.isEmpty());
+
+      // Apply the Kisame Scaling Fix and validate
+      SeqEdit edit = KisamePhantomSwordFix.getSeqEdit(kab0000);
+      SeqExt.addEdit(edit, testSeq);
+      seqEdits = SeqExt.getEdits(testSeq);
+      assertEquals(1, seqEdits.size());
+      SeqEdit actualEdit = seqEdits.get(0);
+      assertEquals(edit, actualEdit);
+
+      // Remove the Kisame scaling fix and validate
+      SeqExt.removeEdit(edit, testSeq);
+      byte[] newBytes = Files.readAllBytes(testSeq);
+      assertArrayEquals(originalBytes, newBytes);
+    } finally {
+      Files.deleteIfExists(testSeq);
+    }
+  }
+
+  @Test
+  void addAndRemoveZabuzaPhantomSwordFix() throws Exception {
+    Path kab0000 = Prereqs.getUncompressedGNT4().resolve(Seqs.ZAB_0000);
+    byte[] originalBytes = Files.readAllBytes(kab0000);
+    Path testSeq = FileUtils.getTempDirectory().resolve(UUID.randomUUID().toString());
+    try {
+      Files.copy(kab0000, testSeq);
+      List<SeqEdit> seqEdits = SeqExt.getEdits(testSeq);
+      assertTrue(seqEdits.isEmpty());
+
+      // Apply the Zabuza Scaling Fix and validate
+      SeqEdit edit = ZabuzaPhantomSwordFix.getSeqEdit(kab0000);
+      SeqExt.addEdit(edit, testSeq);
+      seqEdits = SeqExt.getEdits(testSeq);
+      assertEquals(1, seqEdits.size());
+      SeqEdit actualEdit = seqEdits.get(0);
+      assertEquals(edit, actualEdit);
+
+      // Remove the Zabuza scaling fix and validate
       SeqExt.removeEdit(edit, testSeq);
       byte[] newBytes = Files.readAllBytes(testSeq);
       assertArrayEquals(originalBytes, newBytes);

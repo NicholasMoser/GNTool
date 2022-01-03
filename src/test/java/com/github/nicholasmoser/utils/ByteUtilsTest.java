@@ -760,4 +760,32 @@ public class ByteUtilsTest {
     assertEquals("FFFFFFFE", ByteUtils.fromLong(-2L));
     assertEquals("FFFFFFC8", ByteUtils.fromLong(-56L));
   }
+
+  @Test
+  public void testBytesToHexStringWords() {
+    assertEquals("", ByteUtils.bytesToHexStringWords(new byte[]{}));
+    assertEquals("00", ByteUtils.bytesToHexStringWords(new byte[]{0x00}));
+    assertEquals("01", ByteUtils.bytesToHexStringWords(new byte[]{0x01}));
+    assertEquals("7F", ByteUtils.bytesToHexStringWords(new byte[]{0x7F}));
+    assertEquals("CC", ByteUtils.bytesToHexStringWords(new byte[]{(byte) 0xCC}));
+    assertEquals("FF", ByteUtils.bytesToHexStringWords(new byte[]{(byte) 0xFF}));
+    assertEquals("0000", ByteUtils.bytesToHexStringWords(new byte[]{0x00, 0x00}));
+    assertEquals("0001", ByteUtils.bytesToHexStringWords(new byte[]{0x00, 0x01}));
+    assertEquals("007F", ByteUtils.bytesToHexStringWords(new byte[]{0x00, 0x7F}));
+    assertEquals("00CC", ByteUtils.bytesToHexStringWords(new byte[]{0x00, (byte) 0xCC}));
+    assertEquals("00FF", ByteUtils.bytesToHexStringWords(new byte[]{0x00, (byte) 0xFF}));
+    assertEquals("00010203", ByteUtils.bytesToHexStringWords(new byte[]{0x00, 0x01, 0x02, 0x03}));
+    assertEquals("00010203 04",
+        ByteUtils.bytesToHexStringWords(new byte[]{0x00, 0x01, 0x02, 0x03, 0x04}));
+    assertEquals("00010203 0405",
+        ByteUtils.bytesToHexStringWords(new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05}));
+    assertEquals("00010203 040506",
+        ByteUtils.bytesToHexStringWords(new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06}));
+    assertEquals("00010203 04050607", ByteUtils.bytesToHexStringWords(
+        new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}));
+    assertEquals("00010203 04050607 08", ByteUtils.bytesToHexStringWords(
+        new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}));
+    assertEquals("00010203 04050607 0809", ByteUtils.bytesToHexStringWords(
+        new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09}));
+  }
 }
