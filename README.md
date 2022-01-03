@@ -186,7 +186,7 @@ loaded from your local file system instead of via an ISO/disc. This freeze can r
 quality of life while playing the game. By raising the number of frames, you can make the game wait
 longer (or basically forever) before it tries to load the model.
 
-The maximum is 2147483647 frames, which would require waiting 13.6 months.
+The maximum is 2147483391 frames, which would require waiting ~14 months.
 
 #### ZTK Damage Taken Multiplier
 

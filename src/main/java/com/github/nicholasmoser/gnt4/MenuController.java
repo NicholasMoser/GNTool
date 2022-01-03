@@ -53,7 +53,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -78,8 +77,6 @@ public class MenuController {
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
   private static final int DEFAULT_CSS_MODEL_LOAD_FRAMES = 60;
-  private static final int MAX_CSS_MODEL_LOAD_FRAMES = Integer.MAX_VALUE;
-  private static final String SEE_LOG = "See the log for more information.";
   private static final String DOL = "sys/main.dol";
   private Workspace workspace;
   private Stage stage;
@@ -106,8 +103,7 @@ public class MenuController {
   public ComboBox<String> mainMenuCharacter;
   public CheckMenuItem parallelBuild;
   public CheckMenuItem pushToBackOfISO;
-  public ComboBox<String> seqEditorComboBox;
-  public ComboBox<String> seqKageComboBox;
+  public ComboBox<String> selectedSeq;
   public TextField ztkDamageMultiplier;
   public TextField ukonDamageMultiplier;
   public TextArea geckoCodes;
@@ -131,7 +127,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Audio Fix Code", e);
-      Message.error("Error Triggering Audio Fix Code", SEE_LOG);
+      Message.error("Error Triggering Audio Fix Code", e.getMessage());
     }
   }
 
@@ -149,7 +145,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Play Audio While Paused Code", e);
-      Message.error("Error Triggering Play Audio While Paused Code", SEE_LOG);
+      Message.error("Error Triggering Play Audio While Paused Code", e.getMessage());
     }
   }
 
@@ -167,7 +163,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering No Slowdown On Kill Code", e);
-      Message.error("Error Triggering No Slowdown On Kill Code", SEE_LOG);
+      Message.error("Error Triggering No Slowdown On Kill Code", e.getMessage());
     }
   }
 
@@ -185,7 +181,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Unlock Everything Code", e);
-      Message.error("Error Triggering Unlock Everything Code", SEE_LOG);
+      Message.error("Error Triggering Unlock Everything Code", e.getMessage());
     }
   }
 
@@ -200,7 +196,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Widescreen Code", e);
-      Message.error("Error Triggering Widescreen Code", SEE_LOG);
+      Message.error("Error Triggering Widescreen Code", e.getMessage());
     }
   }
 
@@ -215,7 +211,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering X Does Not Break Throws Code", e);
-      Message.error("Error Triggering X Does Not Break Throws Code", SEE_LOG);
+      Message.error("Error Triggering X Does Not Break Throws Code", e.getMessage());
     }
   }
 
@@ -233,7 +229,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Skip Cutscenes Code", e);
-      Message.error("Error Triggering Skip Cutscenes Code", SEE_LOG);
+      Message.error("Error Triggering Skip Cutscenes Code", e.getMessage());
     }
   }
 
@@ -255,7 +251,7 @@ public class MenuController {
       Message.info("Translation Complete", "Translation to English completed.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to translate", e);
-      Message.error("Failed to translate", SEE_LOG);
+      Message.error("Failed to translate", e.getMessage());
     }
   }
 
@@ -266,7 +262,7 @@ public class MenuController {
       Message.info("Patch Applied", "Duplicate characters are now allowed in 4-player mode.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Allow Duplicate Characters in 4-Player Mode", e);
-      Message.error("Failed to apply patch.", SEE_LOG);
+      Message.error("Failed to apply patch.", e.getMessage());
     }
   }
 
@@ -278,7 +274,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.INITIAL_SPEEDS_FFA, value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the CSS Initial Speed", e);
-      Message.error("Failed to Update the CSS Initial Speed", SEE_LOG);
+      Message.error("Failed to Update the CSS Initial Speed", e.getMessage());
     }
   }
 
@@ -290,8 +286,28 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.MAX_SPEEDS_FFA, value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the CSS Max Speed", e);
-      Message.error("Failed to Update the CSS Max Speed", SEE_LOG);
+      Message.error("Failed to Update the CSS Max Speed", e.getMessage());
     }
+  }
+
+  @FXML
+  protected void defaultCSSInitialSpeed() {
+    cssInitialSpeed.getValueFactory().setValue(12);
+  }
+
+  @FXML
+  protected void maxCSSInitialSpeed() {
+    cssInitialSpeed.getValueFactory().setValue(15);
+  }
+
+  @FXML
+  protected void defaultCSSMaxSpeed() {
+    cssMaxSpeed.getValueFactory().setValue(8);
+  }
+
+  @FXML
+  protected void maxCSSMaxSpeed() {
+    cssMaxSpeed.getValueFactory().setValue(15);
   }
 
   @FXML
@@ -301,7 +317,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.DEMO_TIME_OUT, frames);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the Title Demo Timeout", e);
-      Message.error("Failed to Update the Title Demo Timeout", SEE_LOG);
+      Message.error("Failed to Update the Title Demo Timeout", e.getMessage());
     }
   }
 
@@ -313,7 +329,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.CSS_FFA_LOAD_CHR_MODELS, frames);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the Frames Until CSS Model Load", e);
-      Message.error("Failed to Update the Frames Until CSS Model Load", SEE_LOG);
+      Message.error("Failed to Update the Frames Until CSS Model Load", e.getMessage());
     }
   }
 
@@ -337,7 +353,7 @@ public class MenuController {
 
   @FXML
   public void maxCSSModelLoad() {
-    cssModelLoad.getValueFactory().setValue(MAX_CSS_MODEL_LOAD_FRAMES);
+    cssModelLoad.getValueFactory().setValue(GNT4Codes.CSS_LOAD_CHR_MODELS_MAX);
     setCssModelLoad();
   }
 
@@ -349,7 +365,7 @@ public class MenuController {
       Texture1300.mainCharacterFix(uncompressedDirectory, character);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Main Menu Character", e);
-      Message.error("Failed to Update Main Menu Character", SEE_LOG);
+      Message.error("Failed to Update Main Menu Character", e.getMessage());
     }
   }
 
@@ -364,7 +380,7 @@ public class MenuController {
       Message.error("Invalid Number", multiplier + " is not a valid number.");
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Update ZTK Damage Multiplier", e);
-      Message.error("Failed to Update ZTK Damage Multiplier", SEE_LOG);
+      Message.error("Failed to Update ZTK Damage Multiplier", e.getMessage());
     }
   }
 
@@ -379,7 +395,7 @@ public class MenuController {
       Message.error("Invalid Number", multiplier + " is not a valid number.");
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Ukon Damage Multiplier", e);
-      Message.error("Failed to Update Ukon Damage Multiplier", SEE_LOG);
+      Message.error("Failed to Update Ukon Damage Multiplier", e.getMessage());
     }
   }
 
@@ -406,7 +422,7 @@ public class MenuController {
       Message.info(header, message);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Kabuto Scaling Fix", e);
-      Message.error("Failed to Apply Kabuto Scaling Fix", SEE_LOG);
+      Message.error("Failed to Apply Kabuto Scaling Fix", e.getMessage());
     }
   }
 
@@ -435,7 +451,7 @@ public class MenuController {
       Message.info(header, message);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Kisame Phantom Sword Fix", e);
-      Message.error("Failed to Apply Kisame Phantom Sword Fix", SEE_LOG);
+      Message.error("Failed to Apply Kisame Phantom Sword Fix", e.getMessage());
     }
   }
 
@@ -464,7 +480,7 @@ public class MenuController {
       Message.info(header, message);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Zabuza Phantom Sword Fix", e);
-      Message.error("Failed to Apply Zabuza Phantom Sword Fix", SEE_LOG);
+      Message.error("Failed to Apply Zabuza Phantom Sword Fix", e.getMessage());
     }
   }
 
@@ -494,7 +510,7 @@ public class MenuController {
       syncRefresh();
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Error Refreshing Workspace", e);
-      Message.error("Error Refreshing Workspace", SEE_LOG);
+      Message.error("Error Refreshing Workspace", e.getMessage());
       return;
     }
 
@@ -571,7 +587,7 @@ public class MenuController {
       asyncRefresh();
     });
     task.setOnFailed(event -> {
-      Message.error("ISO Build Failure", SEE_LOG);
+      Message.error("ISO Build Failure", "See the log for more information");
       loadingWindow.close();
       // Don't save workspace state to make debugging easier
     });
@@ -595,7 +611,7 @@ public class MenuController {
       Desktop.getDesktop().browse(new URI(ABOUT_URL));
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
-      Message.error("Error Opening About Page", SEE_LOG);
+      Message.error("Error Opening About Page", e.getMessage());
     }
   }
 
@@ -608,7 +624,7 @@ public class MenuController {
       Desktop.getDesktop().open(uncompressedDirectory.toFile());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
-      Message.error("Error Opening Workspace Directory", SEE_LOG);
+      Message.error("Error Opening Workspace Directory", e.getMessage());
     }
   }
 
@@ -963,37 +979,61 @@ public class MenuController {
 
   @FXML
   protected void disassembleSeqToHTML() {
-    SeqDisassemblerTool.disassembleToHTML(uncompressedDirectory.resolve("files").toFile());
+    try {
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
+      Path seqPath = uncompressedDirectory.resolve(seq);
+      if (!Files.exists(seqPath)) {
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find SEQ file: " + seqPath);
+        }
+      }
+      SeqDisassemblerTool.disassembleToHTML(uncompressedDirectory.resolve("files").toFile(), seqPath);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQ Report", e);
+      Message.error("Error Running SEQ Report", e.getMessage());
+    }
   }
 
   @FXML
   protected void disassembleSeqToTXT() {
-    SeqDisassemblerTool.disassembleToTXT(uncompressedDirectory.resolve("files").toFile());
+    try {
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
+      Path seqPath = uncompressedDirectory.resolve(seq);
+      if (!Files.exists(seqPath)) {
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find SEQ file: " + seqPath);
+        }
+      }
+      SeqDisassemblerTool.disassembleToTXT(uncompressedDirectory.resolve("files").toFile(), seqPath);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQ Report", e);
+      Message.error("Error Running SEQ Report", e.getMessage());
+    }
+  }
+
+  @FXML
+  protected void browseSeq() {
+    Optional<Path> inputSeq = Choosers.getInputSeq(GNTool.USER_HOME);
+    if (inputSeq.isEmpty()) {
+      return;
+    }
+    selectedSeq.setValue(inputSeq.toString());
   }
 
   @FXML
   protected void seqEditor() {
     try {
-      String seq = seqEditorComboBox.getSelectionModel().getSelectedItem();
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
       Path seqPath = uncompressedDirectory.resolve(seq);
       if (!Files.exists(seqPath)) {
-        throw new IOException("Unable to find " + seqPath);
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find " + seqPath);
+        }
       }
       SeqEditorTool.open(seqPath);
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Running SEQ Editor", e);
-      Message.error("Error Running SEQ Editor", "See log for more information");
-    }
-  }
-
-  @FXML
-  protected void seqEditorBrowse() {
-    Optional<Path> inputSeq = Choosers.getInputSeq(GNTool.USER_HOME);
-    if (inputSeq.isEmpty()) {
-      return;
-    }
-    try {
-      SeqEditorTool.open(inputSeq.get());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running SEQ Editor", e);
       Message.error("Error Running SEQ Editor", "See log for more information");
@@ -1011,10 +1051,13 @@ public class MenuController {
           return;
         }
       }
-      String seq = seqKageComboBox.getSelectionModel().getSelectedItem();
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
       Path seqPath = uncompressedDirectory.resolve(seq);
       if (!Files.exists(seqPath)) {
-        LOGGER.log(Level.SEVERE, "Unable to find " + seqPath);
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find " + seqPath);
+        }
       }
       String output = SeqKage.run(seqPath);
       LOGGER.log(Level.INFO, output);
@@ -1114,10 +1157,8 @@ public class MenuController {
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
     txg2tplTexture.getSelectionModel().selectFirst();
-    seqKageComboBox.getItems().setAll(Seqs.ALL);
-    seqKageComboBox.getSelectionModel().selectFirst();
-    seqEditorComboBox.getItems().setAll(Seqs.ALL);
-    seqEditorComboBox.getSelectionModel().selectFirst();
+    selectedSeq.getItems().setAll(Seqs.ALL);
+    selectedSeq.getSelectionModel().selectFirst();
     mainMenuCharacter.getItems().setAll(GNT4Characters.MAIN_MENU_CHARS);
     mainMenuCharacter.getSelectionModel().select(GNT4Characters.SAKURA);
     asyncRefresh();
@@ -1172,7 +1213,7 @@ public class MenuController {
 
     task.setOnSucceeded(event -> loadingWindow.close());
     task.setOnFailed(event -> {
-      Message.error("Error Refreshing Workspace", SEE_LOG);
+      Message.error("Error Refreshing Workspace", "See the log for more information");
       loadingWindow.close();
     });
     new Thread(task).start();
@@ -1240,7 +1281,7 @@ public class MenuController {
         addCodes.setDisable(true);
         removeCode.setDisable(true);
         LOGGER.log(Level.SEVERE, "Error getting list of applied codes.", e);
-        Message.error("Error Reading Codes", SEE_LOG);
+        Message.error("Error Reading Codes", e.getMessage());
       }
     });
   }
@@ -1489,7 +1530,7 @@ public class MenuController {
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Defrag Codes", e);
-      Message.error("Unable to Defrag Codes", "Unable to defrag codes, see log for more details.");
+      Message.error("Unable to Defrag Codes", e.getMessage());
     }
   }
 
@@ -1516,7 +1557,7 @@ public class MenuController {
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Remove Code", e);
-      Message.error("Unable to Remove Code", "Unable to remove code, see log for more details.");
+      Message.error("Unable to Remove Code", e.getMessage());
     }
   }
 
