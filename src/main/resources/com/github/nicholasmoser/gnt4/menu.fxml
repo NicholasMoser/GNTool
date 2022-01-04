@@ -57,7 +57,7 @@
                                  <ColumnConstraints hgrow="SOMETIMES" />
                              </columnConstraints>
                              <rowConstraints>
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints vgrow="SOMETIMES" />
                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -65,13 +65,12 @@
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -241,12 +240,12 @@
                                        <Font name="System Bold" size="16.0" />
                                     </font>
                                     <GridPane.margin>
-                                       <Insets left="8.0" />
+                                       <Insets bottom="8.0" left="8.0" top="8.0" />
                                     </GridPane.margin>
                                  </Text>
                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Select Screen Changes" GridPane.rowIndex="8">
                                     <GridPane.margin>
-                                       <Insets left="8.0" />
+                                       <Insets bottom="8.0" left="8.0" top="8.0" />
                                     </GridPane.margin>
                                     <font>
                                       <Font name="System Bold" size="16.0" />
@@ -254,7 +253,7 @@
                                  </Text>
                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Battle Mode Changes" GridPane.rowIndex="13">
                                     <GridPane.margin>
-                                       <Insets left="8.0" />
+                                       <Insets bottom="8.0" left="8.0" top="8.0" />
                                     </GridPane.margin>
                                     <font>
                                        <Font name="System Bold" size="16.0" />
@@ -307,19 +306,23 @@
                      <ColumnConstraints hgrow="SOMETIMES" prefWidth="246.0" />
                  </columnConstraints>
                  <rowConstraints>
-                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
                  </rowConstraints>
                   <children>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyZTKDamageMultiplier" prefWidth="217.0" text="Apply" GridPane.columnIndex="2">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyZTKDamageMultiplier" prefWidth="217.0" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
                         <GridPane.margin>
-                           <Insets left="2.0" right="2.0" />
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
                         </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
                      </Button>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="ZTK Damage Taken Multiplier">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="ZTK Damage Taken Multiplier" GridPane.rowIndex="1">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -327,14 +330,23 @@
                            <Insets left="8.0" />
                         </GridPane.margin>
                      </Text>
-                <TextField fx:id="ztkDamageMultiplier" prefHeight="25.0" prefWidth="253.0" GridPane.columnIndex="1" />
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyUkonDamageMultiplier" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <TextField fx:id="ztkDamageMultiplier" prefHeight="25.0" prefWidth="253.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <font>
+                           <Font size="16.0" />
+                        </font></TextField>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyUkonDamageMultiplier" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="2">
                         <GridPane.margin>
-                           <Insets left="2.0" right="2.0" />
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
                         </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
                      </Button>
-                <TextField fx:id="ukonDamageMultiplier" prefHeight="25.0" prefWidth="148.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Ukon Damage Taken Multiplier" GridPane.rowIndex="1">
+                <TextField fx:id="ukonDamageMultiplier" prefHeight="25.0" prefWidth="148.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <font>
+                           <Font size="16.0" />
+                        </font></TextField>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Ukon Damage Taken Multiplier" GridPane.rowIndex="2">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -342,8 +354,14 @@
                            <Insets left="8.0" />
                         </GridPane.margin>
                      </Text>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyKabutoScalingFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Kabuto 2A Scaling for Player 2" GridPane.rowIndex="2">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyKabutoScalingFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Kabuto 2A Scaling for Player 2" GridPane.rowIndex="3">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -351,8 +369,14 @@
                            <Insets left="8.0" />
                         </GridPane.margin>
                      </Text>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyKisamePhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Phantom Sword for Kisame Player 2" GridPane.rowIndex="3">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyKisamePhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Phantom Sword for Kisame Player 2" GridPane.rowIndex="4">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -360,13 +384,27 @@
                            <Insets left="8.0" />
                         </GridPane.margin>
                      </Text>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyZabuzaPhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Phantom Sword for Zabuza Player 2" GridPane.rowIndex="4">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyZabuzaPhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Phantom Sword for Zabuza Player 2" GridPane.rowIndex="5">
                         <font>
                            <Font size="16.0" />
                         </font>
                         <GridPane.margin>
                            <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Specific Changes">
+                        <font>
+                           <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="8.0" left="8.0" top="8.0" />
                         </GridPane.margin>
                      </Text>
                   </children>
@@ -375,27 +413,197 @@
       </Tab>
       <Tab text="Audio">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <ComboBox fx:id="musyxSamFile" layoutX="236.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
-          <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxExtract" text="Extract" />
-          <Button layoutX="172.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" />
-          <Button layoutX="84.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#randomizeSoundEffects" text="Randomize" />
-          <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Sound Effects" wrappingWidth="79.13671875" />
-          <Button layoutX="20.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#soundEffectReplace" text="Replace" />
-          <Button layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#musyxExtractAll" text="Extract All" />
-          <Button layoutX="101.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All" />
-          <Text layoutX="20.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Music" />
-          <Button layoutX="20.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#randomizeMusic" text="Randomize" />
-          <Button layoutX="108.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#musicReplace" text="Replace" />
+               <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="555.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="245.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                <ComboBox fx:id="musyxSamFile" editable="true" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="204.0" GridPane.rowIndex="7">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </ComboBox>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxExtract" text="Extract" GridPane.rowIndex="8">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" GridPane.rowIndex="10">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#randomizeSoundEffects" text="Randomize" GridPane.rowIndex="9">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#soundEffectReplace" text="Create DSP File from Sound Effect" GridPane.rowIndex="4">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxExtractAll" text="Extract All Sound Effects" GridPane.rowIndex="1">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All Sound Effects" GridPane.rowIndex="2">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#randomizeMusic" text="Randomize All Music" GridPane.rowIndex="5">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musicReplace" text="Create TRK File from Music File" GridPane.rowIndex="3">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Modify a Specific Sound Effect" GridPane.rowIndex="6">
+                        <font>
+                           <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" top="4.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Audio Utilities">
+                        <font>
+                           <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" top="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                  </children>
+               </GridPane>
         </AnchorPane>
       </Tab>
       <Tab text="Graphics">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Textures" />
-          <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#txg2tplExtract" text="Extract" />
-          <Button layoutX="84.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#txg2tplImport" text="Import" />
-          <Button layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#txg2tplExtractAll" text="Extract All" />
-          <Button layoutX="101.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#txg2tplImportAll" text="Import All" />
-          <ComboBox fx:id="txg2tplTexture" layoutX="148.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
+               <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="555.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="245.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplExtract" text="Extract Texture" GridPane.rowIndex="5">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplImport" text="Import Texture" GridPane.rowIndex="6">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplExtractAll" text="Extract All Textures" GridPane.rowIndex="1">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplImportAll" text="Import All Textures" GridPane.rowIndex="2">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <ComboBox fx:id="txg2tplTexture" editable="true" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="204.0" GridPane.rowIndex="4">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></ComboBox>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modify a Specific Texture" GridPane.rowIndex="3">
+                        <GridPane.margin>
+                           <Insets bottom="8.0" left="8.0" top="8.0" />
+                        </GridPane.margin>
+                       <font>
+                         <Font name="System Bold" size="16.0" />
+                       </font>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Graphics Utilities">
+                        <font>
+                          <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" top="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#browseTexture" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                  </children>
+               </GridPane>
         </AnchorPane>
       </Tab>
       <Tab text="Sequence">
@@ -407,33 +615,45 @@
                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                  </columnConstraints>
                  <rowConstraints>
-                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
                  </rowConstraints>
                   <children>
                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#seqKage" text="Launch SEQ Kage" GridPane.columnIndex="1" GridPane.rowIndex="5">
                         <GridPane.margin>
-                           <Insets left="2.0" right="2.0" />
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                         </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
                      </Button>
                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#disassembleSeqToHTML" text="Disassemble SEQ File to HTML" GridPane.columnIndex="1" GridPane.rowIndex="2">
                         <GridPane.margin>
-                           <Insets left="2.0" right="2.0" />
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                         </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
                      </Button>
                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#disassembleSeqToTXT" text="Disassemble SEQ File to TXT" GridPane.columnIndex="1" GridPane.rowIndex="3">
                         <GridPane.margin>
-                           <Insets left="2.0" right="2.0" />
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                         </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
                      </Button>
                      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#seqEditor" text="Launch SEQ Editor" GridPane.columnIndex="1" GridPane.rowIndex="4">
                         <GridPane.margin>
-                           <Insets left="2.0" right="2.0" />
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                         </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
                      </Button>
                      <ComboBox fx:id="selectedSeq" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="1">
                         <GridPane.margin>
@@ -442,8 +662,11 @@
                      </ComboBox>
                      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#browseSeq" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="1">
                         <GridPane.margin>
-                           <Insets left="2.0" right="2.0" />
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
                         </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
                      </Button>
                      <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Create an HTML Disassembly Report" GridPane.rowIndex="2">
                         <font>
@@ -482,7 +705,7 @@
                            <Font name="System Bold" size="16.0" />
                         </font>
                         <GridPane.margin>
-                           <Insets left="8.0" />
+                           <Insets bottom="8.0" left="8.0" top="8.0" />
                         </GridPane.margin>
                      </Text>
                   </children>
@@ -512,7 +735,7 @@
                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            <RowConstraints vgrow="NEVER" />
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                           <RowConstraints vgrow="NEVER" />
                        </rowConstraints>
                         <children>
                            <TextArea fx:id="geckoCodes" prefHeight="200.0" prefWidth="250.0" GridPane.columnSpan="4" GridPane.rowSpan="6">
@@ -527,16 +750,25 @@
                               <GridPane.margin>
                                  <Insets bottom="8.0" left="8.0" right="4.0" top="8.0" />
                               </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
                            </Button>
                            <Button fx:id="addCodes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#addCodes" text="Add Codes" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="7">
                               <GridPane.margin>
                                  <Insets bottom="8.0" left="4.0" right="4.0" top="8.0" />
                               </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
                            </Button>
                            <Button fx:id="removeCode" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#removeCode" text="Remove Code" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="7">
                               <GridPane.margin>
                                  <Insets bottom="8.0" left="8.0" right="8.0" top="4.0" />
                               </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
                            </Button>
                            <ListView fx:id="addedCodes" prefHeight="225.0" prefWidth="249.0" GridPane.columnIndex="4" GridPane.columnSpan="4" GridPane.rowSpan="7">
                               <GridPane.margin>
