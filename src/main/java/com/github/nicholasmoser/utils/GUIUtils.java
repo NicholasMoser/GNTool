@@ -14,6 +14,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -102,6 +103,20 @@ public class GUIUtils {
    */
   public static void setIcons(Stage primaryStage) {
     ObservableList<Image> icons = primaryStage.getIcons();
+    icons.add(NARU_16);
+    icons.add(NARU_32);
+    icons.add(NARU_64);
+    icons.add(NARU_128);
+  }
+
+  /**
+   * Sets the application icons on the alert.
+   *
+   * @param alert The alert to set the icons for.
+   */
+  public static void setIcons(Alert alert) {
+    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+    ObservableList<Image> icons = stage.getIcons();
     icons.add(NARU_16);
     icons.add(NARU_32);
     icons.add(NARU_64);

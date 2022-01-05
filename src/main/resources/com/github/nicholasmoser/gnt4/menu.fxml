@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.CheckMenuItem?>
@@ -17,11 +18,14 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.nicholasmoser.gnt4.MenuController">
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.nicholasmoser.gnt4.MenuController">
   <MenuBar VBox.vgrow="NEVER">
     <Menu mnemonicParsing="false" text="File">
       <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace" />
@@ -41,51 +45,246 @@
     <TabPane layoutX="131.0" layoutY="70.0" prefHeight="375.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <Tab text="Menu">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <ScrollPane prefHeight="346.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="704.0" prefWidth="644.0">
-              <CheckBox fx:id="audioFixCode" layoutX="14.0" layoutY="19.0" mnemonicParsing="false" onAction="#audioFixCode" text="Audio Fix" />
-              <CheckBox fx:id="skipCutscenesCode" layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#skipCutscenesCode" text="Skip Cutscenes" />
-              <Button layoutX="14.0" layoutY="92.0" mnemonicParsing="false" onMouseClicked="#translate" text="Translate" />
-              <Text layoutX="92.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Translate text in the game to English (Translations by Kosheh)" />
-              <Spinner fx:id="cssInitialSpeed" layoutX="14.0" layoutY="137.0" onKeyReleased="#setCssInitialSpeed" onMouseReleased="#setCssInitialSpeed">
-                <valueFactory>
-                  <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
-                </valueFactory>
-              </Spinner>
-              <Spinner fx:id="cssMaxSpeed" layoutX="14.0" layoutY="179.0" onKeyReleased="#setCssMaxSpeed" onMouseReleased="#setCssMaxSpeed">
-                <valueFactory>
-                  <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
-                </valueFactory>
-              </Spinner>
-              <Spinner fx:id="demoTimeOut" layoutX="14.0" layoutY="224.0" onKeyReleased="#setDemoTimeOut" onMouseReleased="#setDemoTimeOut">
-                <valueFactory>
-                  <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="86400" min="0" />
-                </valueFactory>
-              </Spinner>
-              <Text layoutX="184.0" layoutY="154.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Initial Speed" />
-              <Text layoutX="183.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Max Speed" />
-              <Text layoutX="183.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Title Timeout to Demo (seconds)" />
-              <Button layoutX="78.0" layoutY="258.0" mnemonicParsing="false" onMouseClicked="#maxTimeOut" text="Max" />
-              <Button layoutX="14.0" layoutY="258.0" mnemonicParsing="false" onMouseClicked="#defaultTimeOut" text="Default" />
-              <ComboBox fx:id="mainMenuCharacter" layoutX="14.0" layoutY="295.0" onAction="#changeMainMenuCharacter" prefHeight="25.0" prefWidth="179.0" />
-              <Text layoutX="205.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Main Menu Character" />
-              <CheckBox fx:id="playAudioWhilePaused" layoutX="14.0" layoutY="342.0" mnemonicParsing="false" onAction="#playAudioWhilePaused" text="Play Audio While Paused" />
-              <CheckBox fx:id="noSlowDownOnKill" layoutX="14.0" layoutY="380.0" mnemonicParsing="false" onAction="#noSlowDownOnKill" text="No Slow Down on Kill" />
-              <CheckBox fx:id="unlockAll" layoutX="14.0" layoutY="418.0" mnemonicParsing="false" onAction="#unlockAll" text="Unlock Everything" />
-              <CheckBox fx:id="enableWidescreen" layoutX="14.0" layoutY="456.0" mnemonicParsing="false" onAction="#enableWidescreen" text="Widescreen 16:9" />
-              <CheckBox layoutX="14.0" layoutY="494.0" mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" fx:id="xDoesNotBreakThrows" />
-              <Button layoutX="12.0" layoutY="529.0" mnemonicParsing="false" onAction="#allow4pDupeChrs" text="Apply" />
-              <Text layoutX="69.0" layoutY="546.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Allow duplicate characters in 4-player battles" />
-              <Spinner fx:id="cssModelLoad" layoutX="11.0" layoutY="568.0" onKeyReleased="#setCssModelLoad" onMouseReleased="#setCssModelLoad" prefHeight="25.0" prefWidth="157.0">
-                <valueFactory>
-                  <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="2147483647" min="0" />
-                </valueFactory>
-              </Spinner>
-              <Text layoutX="183.0" layoutY="585.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Frames Until Model is Loaded in Character Select Screen" />
-              <Button layoutX="14.0" layoutY="603.0" mnemonicParsing="false" onMouseClicked="#defaultCSSModelLoad" text="Default" />
-              <Button layoutX="78.0" layoutY="603.0" mnemonicParsing="false" onMouseClicked="#maxCSSModelLoad" text="Max" />
-            </AnchorPane>
-          </ScrollPane>
+               <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                 <content>
+                   <AnchorPane prefWidth="798.0">
+                        <children>
+                           <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                             <columnConstraints>
+                               <ColumnConstraints hgrow="SOMETIMES" />
+                               <ColumnConstraints hgrow="SOMETIMES" />
+                                 <ColumnConstraints hgrow="SOMETIMES" />
+                                 <ColumnConstraints hgrow="SOMETIMES" />
+                             </columnConstraints>
+                             <rowConstraints>
+                                 <RowConstraints vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                             </rowConstraints>
+                              <children>
+                          <CheckBox fx:id="audioFixCode" mnemonicParsing="false" onAction="#audioFixCode" text="Audio Fix" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </CheckBox>
+                          <CheckBox fx:id="skipCutscenesCode" mnemonicParsing="false" onAction="#skipCutscenesCode" text="Skip Cutscenes" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </CheckBox>
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#translate" text="Translate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Translate text in the game to English (by Kosheh)" GridPane.rowIndex="7">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </Text>
+                          <Spinner fx:id="cssInitialSpeed" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssInitialSpeed" onMouseReleased="#setCssInitialSpeed" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                            <valueFactory>
+                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
+                            </valueFactory>
+                          </Spinner>
+                          <Spinner fx:id="cssMaxSpeed" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssMaxSpeed" onMouseReleased="#setCssMaxSpeed" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                            <valueFactory>
+                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
+                            </valueFactory>
+                          </Spinner>
+                          <Spinner fx:id="demoTimeOut" maxWidth="1.7976931348623157E308" onKeyReleased="#setDemoTimeOut" onMouseReleased="#setDemoTimeOut" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                            <valueFactory>
+                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="86400" min="0" />
+                            </valueFactory>
+                          </Spinner>
+                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Initial Speed" GridPane.rowIndex="10">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </Text>
+                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Max Speed" GridPane.rowIndex="11">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </Text>
+                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Title Timeout to Demo (seconds)" GridPane.rowIndex="6">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </Text>
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#maxTimeOut" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                                    <GridPane.margin>
+                                       <Insets left="2.0" right="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#defaultTimeOut" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                    <GridPane.margin>
+                                       <Insets left="2.0" right="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                          <ComboBox fx:id="mainMenuCharacter" maxWidth="1.7976931348623157E308" onAction="#changeMainMenuCharacter" prefHeight="25.0" prefWidth="179.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Main Menu Character" GridPane.rowIndex="5">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </Text>
+                          <CheckBox fx:id="playAudioWhilePaused" mnemonicParsing="false" onAction="#playAudioWhilePaused" text="Play Audio While Paused" GridPane.rowIndex="14">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </CheckBox>
+                          <CheckBox fx:id="noSlowDownOnKill" mnemonicParsing="false" onAction="#noSlowDownOnKill" text="No Slow Down on Kill" GridPane.rowIndex="15">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </CheckBox>
+                          <CheckBox fx:id="unlockAll" mnemonicParsing="false" onAction="#unlockAll" text="Unlock Everything" GridPane.rowIndex="3">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </CheckBox>
+                          <CheckBox fx:id="enableWidescreen" mnemonicParsing="false" onAction="#enableWidescreen" text="Widescreen 16:9" GridPane.rowIndex="4">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </CheckBox>
+                          <CheckBox mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" GridPane.rowIndex="16" fx:id="xDoesNotBreakThrows">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </CheckBox>
+                          <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#allow4pDupeChrs" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                    <GridPane.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Allow duplicate characters in 4-player battles" GridPane.rowIndex="9">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </Text>
+                          <Spinner fx:id="cssModelLoad" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssModelLoad" onMouseReleased="#setCssModelLoad" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                            <valueFactory>
+                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="2147483391" min="0" />
+                            </valueFactory>
+                          </Spinner>
+                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Frames Until Character Model is Loaded " GridPane.rowIndex="12">
+                                    <GridPane.margin>
+                                       <Insets left="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font size="16.0" />
+                                    </font>
+                                 </Text>
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#defaultCSSModelLoad" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="12">
+                                    <GridPane.margin>
+                                       <Insets left="2.0" right="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#maxCSSModelLoad" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="12">
+                                    <GridPane.margin>
+                                       <Insets left="2.0" right="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="General Changes">
+                                    <font>
+                                       <Font name="System Bold" size="16.0" />
+                                    </font>
+                                    <GridPane.margin>
+                                       <Insets bottom="8.0" left="8.0" top="8.0" />
+                                    </GridPane.margin>
+                                 </Text>
+                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Select Screen Changes" GridPane.rowIndex="8">
+                                    <GridPane.margin>
+                                       <Insets bottom="8.0" left="8.0" top="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                      <Font name="System Bold" size="16.0" />
+                                    </font>
+                                 </Text>
+                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Battle Mode Changes" GridPane.rowIndex="13">
+                                    <GridPane.margin>
+                                       <Insets bottom="8.0" left="8.0" top="8.0" />
+                                    </GridPane.margin>
+                                    <font>
+                                       <Font name="System Bold" size="16.0" />
+                                    </font>
+                                 </Text>
+                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSInitialSpeed" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                                    <GridPane.margin>
+                                       <Insets left="2.0" right="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSInitialSpeed" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="10">
+                                    <GridPane.margin>
+                                       <Insets left="2.0" right="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSMaxSpeed" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="11">
+                                    <GridPane.margin>
+                                       <Insets left="2.0" right="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSMaxSpeed" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="11">
+                                    <GridPane.margin>
+                                       <Insets left="2.0" right="2.0" />
+                                    </GridPane.margin>
+                                 </Button>
+                              </children>
+                           </GridPane>
+                        </children>
+                     </AnchorPane>
+                 </content>
+               </ScrollPane>
         </AnchorPane>
       </Tab>
       <Tab text="Changed Files">
@@ -100,72 +299,497 @@
       </Tab>
       <Tab text="Characters">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <Button layoutX="26.0" layoutY="25.0" mnemonicParsing="false" onMouseClicked="#applyZTKDamageMultiplier" text="Apply" />
-          <Text layoutX="241.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="ZTK Damage Taken Multiplier" wrappingWidth="159.13671875" />
-          <TextField fx:id="ztkDamageMultiplier" layoutX="81.0" layoutY="25.0" />
-          <Button layoutX="26.0" layoutY="60.0" mnemonicParsing="false" onMouseClicked="#applyUkonDamageMultiplier" text="Apply" />
-          <TextField fx:id="ukonDamageMultiplier" layoutX="81.0" layoutY="60.0" prefHeight="25.0" prefWidth="148.0" />
-          <Text layoutX="241.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Ukon Damage Taken Multiplier" wrappingWidth="179.13671875" />
-          <Button layoutX="26.0" layoutY="95.0" mnemonicParsing="false" onMouseClicked="#applyKabutoScalingFix" text="Apply" />
-          <Text layoutX="81.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Kabuto 2A Scaling for Player 2" />
-          <Button layoutX="26.0" layoutY="130.0" mnemonicParsing="false" onMouseClicked="#applyKisamePhantomSwordFix" text="Apply" />
-          <Text layoutX="81.0" layoutY="147.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Phantom Sword for Kisame Player 2" />
-          <Button layoutX="26.0" layoutY="165.0" mnemonicParsing="false" onMouseClicked="#applyZabuzaPhantomSwordFix" text="Apply" />
-          <Text layoutX="81.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Phantom Sword for Zabuza Player 2" />
+               <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="303.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="256.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="246.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                     <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyZTKDamageMultiplier" prefWidth="217.0" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
+                        </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                     </Button>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="ZTK Damage Taken Multiplier" GridPane.rowIndex="1">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                <TextField fx:id="ztkDamageMultiplier" prefHeight="25.0" prefWidth="253.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <font>
+                           <Font size="16.0" />
+                        </font></TextField>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyUkonDamageMultiplier" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
+                        </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                     </Button>
+                <TextField fx:id="ukonDamageMultiplier" prefHeight="25.0" prefWidth="148.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <font>
+                           <Font size="16.0" />
+                        </font></TextField>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Ukon Damage Taken Multiplier" GridPane.rowIndex="2">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyKabutoScalingFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Kabuto 2A Scaling for Player 2" GridPane.rowIndex="3">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyKisamePhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Phantom Sword for Kisame Player 2" GridPane.rowIndex="4">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyZabuzaPhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Phantom Sword for Zabuza Player 2" GridPane.rowIndex="5">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Specific Changes">
+                        <font>
+                           <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="8.0" left="8.0" top="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                  </children>
+               </GridPane>
         </AnchorPane>
       </Tab>
       <Tab text="Audio">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <ComboBox fx:id="musyxSamFile" layoutX="236.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
-          <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxExtract" text="Extract" />
-          <Button layoutX="172.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" />
-          <Button layoutX="84.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#randomizeSoundEffects" text="Randomize" />
-          <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Sound Effects" wrappingWidth="79.13671875" />
-          <Button layoutX="20.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#soundEffectReplace" text="Replace" />
-          <Button layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#musyxExtractAll" text="Extract All" />
-          <Button layoutX="101.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All" />
-          <Text layoutX="20.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Music" />
-          <Button layoutX="20.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#randomizeMusic" text="Randomize" />
-          <Button layoutX="108.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#musicReplace" text="Replace" />
+               <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="555.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="245.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                <ComboBox fx:id="musyxSamFile" editable="true" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="204.0" GridPane.rowIndex="7">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </ComboBox>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxExtract" text="Extract" GridPane.rowIndex="8">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" GridPane.rowIndex="10">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#randomizeSoundEffects" text="Randomize" GridPane.rowIndex="9">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#soundEffectReplace" text="Create DSP File from Sound Effect" GridPane.rowIndex="4">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxExtractAll" text="Extract All Sound Effects" GridPane.rowIndex="1">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All Sound Effects" GridPane.rowIndex="2">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#randomizeMusic" text="Randomize All Music" GridPane.rowIndex="5">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musicReplace" text="Create TRK File from Music File" GridPane.rowIndex="3">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Modify a Specific Sound Effect" GridPane.rowIndex="6">
+                        <font>
+                           <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" top="4.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#browseSoundEffect" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Audio Utilities">
+                        <font>
+                           <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" top="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                  </children>
+               </GridPane>
         </AnchorPane>
       </Tab>
       <Tab text="Graphics">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <Text layoutX="20.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Textures" />
-          <Button layoutX="20.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#txg2tplExtract" text="Extract" />
-          <Button layoutX="84.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#txg2tplImport" text="Import" />
-          <Button layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#txg2tplExtractAll" text="Extract All" />
-          <Button layoutX="101.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#txg2tplImportAll" text="Import All" />
-          <ComboBox fx:id="txg2tplTexture" layoutX="148.0" layoutY="45.0" prefHeight="25.0" prefWidth="204.0" />
+               <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" prefWidth="555.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" prefWidth="245.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplExtract" text="Extract Texture" GridPane.rowIndex="5">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplImport" text="Import Texture" GridPane.rowIndex="6">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplExtractAll" text="Extract All Textures" GridPane.rowIndex="1">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplImportAll" text="Import All Textures" GridPane.rowIndex="2">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></Button>
+                <ComboBox fx:id="txg2tplTexture" editable="true" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="204.0" GridPane.rowIndex="4">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                        </GridPane.margin></ComboBox>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Modify a Specific Texture" GridPane.rowIndex="3">
+                        <GridPane.margin>
+                           <Insets bottom="8.0" left="8.0" top="8.0" />
+                        </GridPane.margin>
+                       <font>
+                         <Font name="System Bold" size="16.0" />
+                       </font>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Graphics Utilities">
+                        <font>
+                          <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="8.0" top="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#browseTexture" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
+                  </children>
+               </GridPane>
         </AnchorPane>
       </Tab>
       <Tab text="Sequence">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <ComboBox fx:id="seqKageComboBox" layoutX="160.0" layoutY="150.0" prefHeight="25.0" prefWidth="204.0" />
-          <Button layoutX="21.0" layoutY="150.0" mnemonicParsing="false" onAction="#seqKage" prefHeight="25.0" prefWidth="128.0" text="Launch SEQ Kage" />
-          <Button layoutX="20.0" layoutY="19.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToHTML" text="Disassemble SEQ File to HTML" />
-          <Button layoutX="20.0" layoutY="61.0" mnemonicParsing="false" onMouseClicked="#disassembleSeqToTXT" prefHeight="25.0" prefWidth="176.0" text="Disassemble SEQ File to TXT" />
-               <Button layoutX="21.0" layoutY="106.0" mnemonicParsing="false" onAction="#seqEditor" prefHeight="25.0" prefWidth="127.0" text="Launch SEQ Editor" />
-               <ComboBox fx:id="seqEditorComboBox" layoutX="160.0" layoutY="106.0" prefHeight="25.0" prefWidth="203.0" />
-               <Button layoutX="378.0" layoutY="106.0" mnemonicParsing="false" onAction="#seqEditorBrowse" text="Browse" />
+               <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                   <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#seqKage" text="Launch SEQ Kage" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#disassembleSeqToHTML" text="Disassemble SEQ File to HTML" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                     </Button>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#disassembleSeqToTXT" text="Disassemble SEQ File to TXT" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                     </Button>
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#seqEditor" text="Launch SEQ Editor" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                     </Button>
+                     <ComboBox fx:id="selectedSeq" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </ComboBox>
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#browseSeq" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
+                        </GridPane.margin>
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                     </Button>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Create an HTML Disassembly Report" GridPane.rowIndex="2">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Create a TXT Disassembly Report" GridPane.rowIndex="3">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Modify the SEQ File" GridPane.rowIndex="4">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Expand the SEQ File" GridPane.rowIndex="5">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="SEQ File Operations">
+                        <font>
+                           <Font name="System Bold" size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="8.0" left="8.0" top="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                  </children>
+               </GridPane>
         </AnchorPane>
       </Tab>
          <Tab text="Code Injection">
            <content>
              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                     <Text layoutX="14.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="WARNING: This feature is currently experimental and may break your dol. Use wisely." wrappingWidth="505.13671875" />
-                     <TextArea fx:id="geckoCodes" layoutX="37.0" layoutY="48.0" prefHeight="200.0" prefWidth="250.0">
-                        <font>
-                           <Font name="Consolas" size="12.0" />
-                        </font>
-                     </TextArea>
-                     <Button fx:id="validateCodes" layoutX="37.0" layoutY="282.0" mnemonicParsing="false" onMouseClicked="#checkCodes" text="Validate Codes" />
-                     <Button fx:id="addCodes" layoutX="212.0" layoutY="282.0" mnemonicParsing="false" onMouseClicked="#addCodes" text="Add Codes" />
-                     <Button fx:id="removeCode" layoutX="351.0" layoutY="282.0" mnemonicParsing="false" onMouseClicked="#removeCode" text="Remove Code" />
-                     <ListView fx:id="addedCodes" layoutX="351.0" layoutY="48.0" prefHeight="225.0" prefWidth="249.0" />
-                     <Text layoutX="37.0" layoutY="268.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Code Name:" wrappingWidth="71.13671875" />
-                     <TextField fx:id="codeName" layoutX="108.0" layoutY="251.0" prefHeight="25.0" prefWidth="178.0" />
+                     <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                       <columnConstraints>
+                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                       </columnConstraints>
+                       <rowConstraints>
+                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="NEVER" />
+                           <RowConstraints vgrow="NEVER" />
+                       </rowConstraints>
+                        <children>
+                           <TextArea fx:id="geckoCodes" prefHeight="200.0" prefWidth="250.0" GridPane.columnSpan="4" GridPane.rowSpan="6">
+                              <font>
+                                 <Font name="Consolas" size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets bottom="4.0" left="8.0" right="4.0" top="8.0" />
+                              </GridPane.margin>
+                           </TextArea>
+                           <Button fx:id="validateCodes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#checkCodes" text="Validate Codes" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                 <Insets bottom="8.0" left="8.0" right="4.0" top="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button fx:id="addCodes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#addCodes" text="Add Codes" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                 <Insets bottom="8.0" left="4.0" right="4.0" top="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button fx:id="removeCode" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#removeCode" text="Remove Code" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                 <Insets bottom="8.0" left="8.0" right="8.0" top="4.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <ListView fx:id="addedCodes" prefHeight="225.0" prefWidth="249.0" GridPane.columnIndex="4" GridPane.columnSpan="4" GridPane.rowSpan="7">
+                              <GridPane.margin>
+                                 <Insets bottom="4.0" left="4.0" right="8.0" top="8.0" />
+                              </GridPane.margin>
+                           </ListView>
+                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Code Name:" GridPane.rowIndex="6">
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                           </Text>
+                           <TextField fx:id="codeName" prefHeight="25.0" prefWidth="178.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+                              <GridPane.margin>
+                                 <Insets right="4.0" />
+                              </GridPane.margin>
+                           </TextField>
+                        </children>
+                     </GridPane>
                   </children>
                </AnchorPane>
            </content>

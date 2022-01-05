@@ -36,9 +36,9 @@ public class ToolController {
   private static final String FPK_REPACKER_WII = "FPK Repacker (Wii)";
   private static final String FPK_REPACKER_PS2 = "FPK Repacker (PS2/PSP)";
   private static final String TXG2TPL = "TXG2TPL";
-  private static final String SEQ_DISASSEMBLER_HTML = "Seq Disassembler (HTML)";
-  private static final String SEQ_DISASSEMBLER_TXT = "Seq Disassembler (TXT)";
-  private static final String SEQ_EDITOR = "Seq Editor";
+  private static final String SEQ_DISASSEMBLER_HTML = "SEQ Disassembler (HTML)";
+  private static final String SEQ_DISASSEMBLER_TXT = "SEQ Disassembler (TXT)";
+  private static final String SEQ_EDITOR = "SEQ Editor";
 
   @FXML
   private ListView<String> tools;

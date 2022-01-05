@@ -284,6 +284,22 @@ public class Choosers {
   }
 
   /**
+   * Asks the user to select an input sam file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input sam file. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputSAM(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Input SAM File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("SAM File (*.sam)", "*.sam");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
    * Asks the user to select a patch zip file.
    *
    * @param initialDirectory The location to set the directory chooser to start at.
