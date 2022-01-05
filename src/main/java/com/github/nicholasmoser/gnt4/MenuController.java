@@ -82,6 +82,7 @@ public class MenuController {
   private Stage stage;
   private Path uncompressedDirectory;
   private Path workspaceDirectory;
+  private Path uncompressedFiles;
   private GNT4Codes codes;
   private List<GeckoCodeGroup> codeGroups;
   private byte[] originalHijackedBytes;
@@ -639,10 +640,25 @@ public class MenuController {
   }
 
   @FXML
+  protected void browseSoundEffect() {
+    Optional<Path> inputSAM = Choosers.getInputSAM(uncompressedFiles.toFile());
+    if (inputSAM.isEmpty()) {
+      return;
+    }
+    musyxSamFile.setValue(inputSAM.get().toString());
+  }
+
+  @FXML
   protected void musyxExtract() {
     try {
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
       Path samFilePath = uncompressedDirectory.resolve(samFile);
+      if (!Files.exists(samFilePath)) {
+        samFilePath = Paths.get(samFile);
+        if (!Files.exists(samFilePath)) {
+          throw new IOException("Unable to find SAM file: " + samFile);
+        }
+      }
       String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
       Path sdiFilePath = Paths.get(sdiFile);
       String name = samFilePath.getFileName().toString().replace(".sam", "/");
@@ -658,7 +674,7 @@ public class MenuController {
       Desktop.getDesktop().open(outputPath.toFile());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
-      Message.error("Error Extracting Audio", "See log for more information");
+      Message.error("Error Extracting Audio", e.getMessage());
     }
   }
 
@@ -683,7 +699,7 @@ public class MenuController {
       Message.info("Extraction Complete", ".dsp files have been created.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
-      Message.error("Error Extracting Audio", "See log for more information");
+      Message.error("Error Extracting Audio", e.getMessage());
     }
   }
 
@@ -692,6 +708,12 @@ public class MenuController {
     try {
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
       Path samFilePath = uncompressedDirectory.resolve(samFile);
+      if (!Files.exists(samFilePath)) {
+        samFilePath = Paths.get(samFile);
+        if (!Files.exists(samFilePath)) {
+          throw new IOException("Unable to find SAM file: " + samFile);
+        }
+      }
       String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
       Path sdiFilePath = Paths.get(sdiFile);
       String directory = samFilePath.getFileName().toString().replace(".sam", "/");
@@ -706,7 +728,7 @@ public class MenuController {
       Message.info("Import Complete", ".sam and .sdi files have been created.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Importing Audio", e);
-      Message.error("Error Importing Audio", "See log for more information");
+      Message.error("Error Importing Audio", e.getMessage());
     }
   }
 
@@ -730,7 +752,7 @@ public class MenuController {
       Message.info("Import Complete", ".sam and .sdi files have been created.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Importing Audio", e);
-      Message.error("Error Importing Audio", "See log for more information");
+      Message.error("Error Importing Audio", e.getMessage());
     }
   }
 
@@ -739,6 +761,12 @@ public class MenuController {
     try {
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
       Path samFilePath = uncompressedDirectory.resolve(samFile);
+      if (!Files.exists(samFilePath)) {
+        samFilePath = Paths.get(samFile);
+        if (!Files.exists(samFilePath)) {
+          throw new IOException("Unable to find SAM file: " + samFile);
+        }
+      }
       String directory = samFilePath.getFileName().toString().replace(".sam", "/");
       Path inputPath = samFilePath.getParent().resolve(directory);
       if (!Files.isDirectory(inputPath)) {
@@ -753,7 +781,7 @@ public class MenuController {
       Randomizer.randomizeFiles(files);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error running randomizer", e);
-      Message.error("Error running randomizer", "See log for more information");
+      Message.error("Error running randomizer", e.getMessage());
     }
   }
 
@@ -791,7 +819,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Replacing Sound Effect", e);
-      Message.error("Error Replacing Sound Effect", "See log for more information");
+      Message.error("Error Replacing Sound Effect", e.getMessage());
     }
   }
 
@@ -808,7 +836,7 @@ public class MenuController {
       Randomizer.randomizeFiles(shortMusicPaths);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error running randomizer", e);
-      Message.error("Error running randomizer", "See log for more information");
+      Message.error("Error running randomizer", e.getMessage());
     }
   }
 
@@ -843,8 +871,17 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Replacing Music", e);
-      Message.error("Error Replacing Music", "See log for more information");
+      Message.error("Error Replacing Music", e.getMessage());
     }
+  }
+
+  @FXML
+  protected void browseTexture() {
+    Optional<Path> inputTXG = Choosers.getInputTXG(uncompressedFiles.toFile());
+    if (inputTXG.isEmpty()) {
+      return;
+    }
+    txg2tplTexture.setValue(inputTXG.get().toString());
   }
 
   @FXML
@@ -852,6 +889,12 @@ public class MenuController {
     try {
       String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
       Path txgFilePath = uncompressedDirectory.resolve(txgFile);
+      if (!Files.exists(txgFilePath)) {
+        txgFilePath = Paths.get(txgFile);
+        if (!Files.exists(txgFilePath)) {
+          throw new IOException("Unable to find TXG file: " + txgFile);
+        }
+      }
       String name = txgFilePath.getFileName().toString().replace(".txg", "/");
       Path outputPath = txgFilePath.getParent().resolve(name);
       if (!Files.isRegularFile(txgFilePath)) {
@@ -866,7 +909,7 @@ public class MenuController {
       Desktop.getDesktop().open(outputPath.toFile());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Extracting Textures", e);
-      Message.error("Error Extracting Textures", "See log for more information");
+      Message.error("Error Extracting Textures", e.getMessage());
     }
   }
 
@@ -875,6 +918,12 @@ public class MenuController {
     try {
       String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
       Path txgFilePath = uncompressedDirectory.resolve(txgFile);
+      if (!Files.exists(txgFilePath)) {
+        txgFilePath = Paths.get(txgFile);
+        if (!Files.exists(txgFilePath)) {
+          throw new IOException("Unable to find TXG file: " + txgFile);
+        }
+      }
       String name = txgFilePath.getFileName().toString().replace(".txg", "/");
       Path inputPath = txgFilePath.getParent().resolve(name);
       if (!Files.isDirectory(inputPath)) {
@@ -888,7 +937,7 @@ public class MenuController {
       Message.info("Import Complete", ".txg file has been created.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Importing Texture", e);
-      Message.error("Error Importing Texture", "See log for more information");
+      Message.error("Error Importing Texture", e.getMessage());
     }
   }
 
@@ -988,7 +1037,7 @@ public class MenuController {
           throw new IOException("Unable to find SEQ file: " + seqPath);
         }
       }
-      SeqDisassemblerTool.disassembleToHTML(uncompressedDirectory.resolve("files").toFile(), seqPath);
+      SeqDisassemblerTool.disassembleToHTML(uncompressedFiles.toFile(), seqPath);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running SEQ Report", e);
       Message.error("Error Running SEQ Report", e.getMessage());
@@ -1006,7 +1055,7 @@ public class MenuController {
           throw new IOException("Unable to find SEQ file: " + seqPath);
         }
       }
-      SeqDisassemblerTool.disassembleToTXT(uncompressedDirectory.resolve("files").toFile(), seqPath);
+      SeqDisassemblerTool.disassembleToTXT(uncompressedFiles.toFile(), seqPath);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running SEQ Report", e);
       Message.error("Error Running SEQ Report", e.getMessage());
@@ -1015,11 +1064,11 @@ public class MenuController {
 
   @FXML
   protected void browseSeq() {
-    Optional<Path> inputSeq = Choosers.getInputSeq(GNTool.USER_HOME);
+    Optional<Path> inputSeq = Choosers.getInputSeq(uncompressedFiles.toFile());
     if (inputSeq.isEmpty()) {
       return;
     }
-    selectedSeq.setValue(inputSeq.toString());
+    selectedSeq.setValue(inputSeq.get().toString());
   }
 
   @FXML
@@ -1036,7 +1085,7 @@ public class MenuController {
       SeqEditorTool.open(seqPath);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running SEQ Editor", e);
-      Message.error("Error Running SEQ Editor", "See log for more information");
+      Message.error("Error Running SEQ Editor", e.getMessage());
     }
   }
 
@@ -1063,7 +1112,7 @@ public class MenuController {
       LOGGER.log(Level.INFO, output);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running SEQKage", e);
-      Message.error("Error Running SEQKage", "See log for more information");
+      Message.error("Error Running SEQKage", e.getMessage());
     }
   }
 
@@ -1146,6 +1195,7 @@ public class MenuController {
     this.stage = stage;
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
+    this.uncompressedFiles = uncompressedDirectory.resolve("files");
     this.codes = new GNT4Codes(uncompressedDirectory);
     try(InputStream is = DolHijack.class.getResourceAsStream("hijack_original.bin")) {
       if (is == null) {
@@ -1383,7 +1433,7 @@ public class MenuController {
         mainMenuCharacter.getSelectionModel().select(character);
       } catch (Exception e) {
         LOGGER.log(Level.SEVERE, "Error Setting Current Main Menu Character", e);
-        Message.error("Error Setting Main Menu Character", "See log for more information");
+        Message.error("Error Setting Main Menu Character", e.getMessage());
       }
     });
   }

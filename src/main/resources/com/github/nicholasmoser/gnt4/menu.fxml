@@ -509,7 +509,7 @@
                            <Insets bottom="4.0" left="8.0" top="4.0" />
                         </GridPane.margin>
                      </Text>
-                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#browseSoundEffect" text="Browse" GridPane.columnIndex="1" GridPane.rowIndex="7">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -578,7 +578,7 @@
                         <GridPane.margin>
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin></ComboBox>
-                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Modify a Specific Texture" GridPane.rowIndex="3">
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Modify a Specific Texture" GridPane.rowIndex="3">
                         <GridPane.margin>
                            <Insets bottom="8.0" left="8.0" top="8.0" />
                         </GridPane.margin>
@@ -586,7 +586,7 @@
                          <Font name="System Bold" size="16.0" />
                        </font>
                      </Text>
-                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Graphics Utilities">
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Graphics Utilities">
                         <font>
                           <Font name="System Bold" size="16.0" />
                         </font>
