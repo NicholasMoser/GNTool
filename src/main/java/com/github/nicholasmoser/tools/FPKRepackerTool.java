@@ -149,9 +149,43 @@ public class FPKRepackerTool {
       repackFPK(fpkHeaders, filePaths, outputFPK.get(), longPaths, bigEndian);
     });
 
+    // Save template button and accompanying logic
+    Button saveTemplate = new Button("Save Template");
+    saveTemplate.setOnAction(e -> {
+      Optional<Path> inputTxt = Choosers.getOutputTXT(currentDirectory);
+      if (inputTxt.isEmpty()) {
+        return;
+      }
+      try {
+        Path txtPath = inputTxt.get();
+        List<String> lines = new ArrayList<>(numHeaders);
+        for (int i = 0; i < numHeaders; i++) {
+          Optional<Node> secondNode = GUIUtils.getNodeFromGridPane(buttonPane, 1, i);
+          if (secondNode.isEmpty()) {
+            throw new IllegalStateException("Unable to get node from GridPane.");
+          }
+          TextField textFieldTwo = (TextField) secondNode.get();
+          String text = textFieldTwo.getText();
+          if (text.isBlank()) {
+            Optional<Node> firstNode = GUIUtils.getNodeFromGridPane(buttonPane, 0, i);
+            if (firstNode.isEmpty()) {
+              throw new IllegalStateException("Unable to get node from GridPane.");
+            }
+            Text textFieldOne = (Text) firstNode.get();
+            text = textFieldOne.getText();
+          }
+          lines.add(text);
+        }
+        Files.write(txtPath, lines);
+      } catch (Exception ex) {
+        LOGGER.log(Level.SEVERE, "Error Reading Template", ex);
+        Message.error("Error Reading Template", "See the log for more information.");
+      }
+    });
+
     // Load template button and accompanying logic
-    Button templateButton = new Button("Load Template");
-    templateButton.setOnAction(e -> {
+    Button loadTemplate = new Button("Load Template");
+    loadTemplate.setOnAction(e -> {
       Optional<Path> inputTxt = Choosers.getInputTxt(currentDirectory);
       if (inputTxt.isEmpty()) {
         return;
@@ -185,8 +219,11 @@ public class FPKRepackerTool {
 
     // Configure the rest of the stage and scene
     repackButton.setFont(new Font(24));
-    buttonPane.add(repackButton, 1, numHeaders);
-    buttonPane.add(templateButton, 2, numHeaders);
+    saveTemplate.setFont(new Font(24));
+    loadTemplate.setFont(new Font(24));
+    buttonPane.add(repackButton, 0, numHeaders);
+    buttonPane.add(saveTemplate, 1, numHeaders);
+    buttonPane.add(loadTemplate, 2, numHeaders);
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setPrefSize(800, 600);
     buttonPane.setVgap(10);
