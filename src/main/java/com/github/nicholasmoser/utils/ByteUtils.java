@@ -14,6 +14,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Utility methods for working with bytes.
@@ -144,6 +145,16 @@ public class ByteUtils {
     buffer.position(0);
 
     return buffer.getLong();
+  }
+
+  /**
+   * Converts a 2-byte big-endian byte array to a int16 (as an int).
+   *
+   * @param bytes The bytes to use.
+   * @return The output int16 (as an int).
+   */
+  public static short toInt16(byte[] bytes) {
+    return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getShort();
   }
 
   /**
@@ -282,6 +293,21 @@ public class ByteUtils {
   }
 
   /**
+   * Reads a big-endian int16 (as an int) from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The int16 (as an int).
+   * @throws IOException If an I/O error occurs.
+   */
+  public static short readInt16(RandomAccessFile raf) throws IOException {
+    byte[] bytes = new byte[2];
+    if (raf.read(bytes) != 2) {
+      throw new IOException("Failed to read 2 bytes from file");
+    }
+    return toInt16(bytes);
+  }
+
+  /**
    * Reads a big-endian int32 (as an int) from a RandomAccessFile.
    *
    * @param raf The RandomAccessFile to read from.
@@ -294,6 +320,14 @@ public class ByteUtils {
       throw new IOException("Failed to read 4 bytes from file");
     }
     return toInt32(bytes);
+  }
+
+  public static float readFloat(RandomAccessFile raf) throws IOException {
+    byte[] bytes = new byte[4];
+    if (raf.read(bytes) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
+    return toFloat(bytes);
   }
 
   /**
@@ -460,5 +494,12 @@ public class ByteUtils {
    */
   public static String fromLong(long value) {
     return ByteUtils.bytesToHexString(ByteUtils.fromUint32(value));
+  }
+
+  public static void byteAlign(RandomAccessFile raf, int alignment) throws IOException {
+    long offset = raf.getFilePointer();
+    if (offset % alignment != 0) {
+      raf.skipBytes((int) (alignment - (offset % alignment)));
+    }
   }
 }

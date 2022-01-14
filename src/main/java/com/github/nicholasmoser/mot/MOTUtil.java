@@ -12,7 +12,7 @@ public class MOTUtil {
       throw new IllegalArgumentException("outputDir is a file: " + outputDir);
     }
     Files.createDirectories(outputDir);
-    AnimationArchive motion = AnimationArchive.parseFrom(inputFile);
+    Motion motion = Motion.parseFrom(inputFile);
   }
 
   public static void pack(Path inputDir, Path outputFile) throws IOException {
