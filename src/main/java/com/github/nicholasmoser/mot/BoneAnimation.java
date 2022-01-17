@@ -1,8 +1,10 @@
 package com.github.nicholasmoser.mot;
 
 import com.github.nicholasmoser.utils.ByteUtils;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,21 +12,22 @@ import java.util.List;
 
 public class BoneAnimation {
 
+  private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
   private final long offset;
   private final short unknown4;
   private final short unknown5;
   private final short maybeBoneId;
   private final short numOfKeyFrames;
-  private final int unknown6;
-  private final int animValuesOffset1;
-  private final int animValuesOffset2;
+  private final float unknown6;
+  private final int functionCurveOffset;
+  private final int coordinatesOffset;
   private final List<Float> functionCurveValues;
   private final List<Coordinate> coordinates;
   private final String junk1;
   private final String junk2;
 
   public BoneAnimation(long offset, short unknown4, short unknown5, short maybeBoneId,
-      short numOfKeyFrames, int unknown6, int animValuesOffset1, int animValuesOffset2,
+      short numOfKeyFrames, float unknown6, int functionCurveOffset, int coordinatesOffset,
       List<Float> functionCurveValues, List<Coordinate> coordinates, String junk1, String junk2) {
     this.offset = offset;
     this.unknown4 = unknown4;
@@ -32,8 +35,8 @@ public class BoneAnimation {
     this.maybeBoneId = maybeBoneId;
     this.numOfKeyFrames = numOfKeyFrames;
     this.unknown6 = unknown6;
-    this.animValuesOffset1 = animValuesOffset1;
-    this.animValuesOffset2 = animValuesOffset2;
+    this.functionCurveOffset = functionCurveOffset;
+    this.coordinatesOffset = coordinatesOffset;
     this.functionCurveValues = functionCurveValues;
     this.coordinates = coordinates;
     this.junk1 = junk1;
@@ -48,7 +51,7 @@ public class BoneAnimation {
     short unknown5 = ByteUtils.readInt16(raf);
     short maybeBoneId = ByteUtils.readInt16(raf);
     short numOfKeyFrames = ByteUtils.readInt16(raf);
-    int unknown6 = ByteUtils.readInt32(raf);
+    float unknown6 = ByteUtils.readFloat(raf);
     skipPadding(raf, 4);
     int functionCurveOffset = ByteUtils.readInt32(raf);
     int coordinatesOffset = ByteUtils.readInt32(raf);
@@ -95,6 +98,46 @@ public class BoneAnimation {
         .create();
   }
 
+  public byte[] getHeaderBytes() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(ByteUtils.fromUint16(unknown4));
+    baos.write(ByteUtils.fromUint16(unknown5));
+    baos.write(ByteUtils.fromUint16(maybeBoneId));
+    baos.write(ByteUtils.fromUint16(numOfKeyFrames));
+    baos.write(ByteUtils.fromFloat(unknown6));
+    baos.write(new byte[4]);
+    baos.write(ByteUtils.fromInt32(functionCurveOffset));
+    baos.write(ByteUtils.fromInt32(coordinatesOffset));
+    baos.write(new byte[8]);
+    return baos.toByteArray();
+  }
+
+  public byte[] getDataBytes() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    for (Float functionCurveValue : functionCurveValues) {
+      baos.write(ByteUtils.fromFloat(functionCurveValue));
+    }
+    if (junk1 != null) {
+      baos.write(junk1.getBytes(JUNK_ENCODING));
+    }
+    // TODO: Use logic to actually pad when more animations are added
+    //if (baos.size() % 16 != 0) {
+    //  // Pad to 16-byte alignment
+    //  int size = 16 - (baos.size() % 16);
+    //  baos.write(new byte[size]);
+    //}
+    for (Coordinate coordinate : coordinates) {
+      baos.write(ByteUtils.fromUint16(coordinate.getX()));
+      baos.write(ByteUtils.fromUint16(coordinate.getY()));
+      baos.write(ByteUtils.fromUint16(coordinate.getZ()));
+      baos.write(ByteUtils.fromUint16(coordinate.getW()));
+    }
+    if (junk2 != null) {
+      baos.write(junk2.getBytes(JUNK_ENCODING));
+    }
+    return baos.toByteArray();
+  }
+
   /**
    * Reads junk data until 16 byte alignment in the file.
    *
@@ -110,7 +153,7 @@ public class BoneAnimation {
       if (raf.read(bytes) != size) {
         throw new IOException(String.format("Failed to read %d bytes at offset %d", size, offset));
       }
-      return new String(bytes, StandardCharsets.ISO_8859_1);
+      return new String(bytes, JUNK_ENCODING);
     }
     return null;
   }
@@ -130,7 +173,7 @@ public class BoneAnimation {
     private short unknown5;
     private short maybeBoneId;
     private short numOfKeyFrames;
-    private int unknown6;
+    private float unknown6;
     private int functionCurveOffset;
     private int coordinatesOffset;
     private List<Float> functionCurveValues;
@@ -163,7 +206,7 @@ public class BoneAnimation {
       return this;
     }
 
-    public BoneAnimation.Builder unknown6(int unknown6) {
+    public BoneAnimation.Builder unknown6(float unknown6) {
       this.unknown6 = unknown6;
       return this;
     }

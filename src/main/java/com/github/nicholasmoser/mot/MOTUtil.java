@@ -13,6 +13,7 @@ public class MOTUtil {
     }
     Files.createDirectories(outputDir);
     Motion motion = Motion.parseFrom(inputFile);
+    motion.unpack(outputDir);
   }
 
   public static void pack(Path inputDir, Path outputFile) throws IOException {

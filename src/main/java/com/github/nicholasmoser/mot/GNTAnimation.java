@@ -1,8 +1,11 @@
 package com.github.nicholasmoser.mot;
 
 import com.github.nicholasmoser.utils.ByteUtils;
+import com.google.common.primitives.Bytes;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +17,7 @@ import java.util.List;
  */
 public class GNTAnimation {
 
+  private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
   private final int id;
   private final int numOfBoneAnimations;
   private final int unknown1;
@@ -26,12 +30,13 @@ public class GNTAnimation {
   private final int dataOffset;
   private final long boneAnimationHeadersOffset;
   private final List<Float> functionCurveValues;
+  private final String junk;
   private final List<BoneAnimation> boneAnimations;
 
   public GNTAnimation(int id, int numOfBoneAnimations, int unknown1, float bounciness,
       float repeatDelay, int playbackSpeed, short unknown2, short numberOfFunctionCurveValues,
       int unknown4, int dataOffset, long boneAnimationHeadersOffset,
-      List<Float> functionCurveValues, List<BoneAnimation> boneAnimations) {
+      List<Float> functionCurveValues, String junk, List<BoneAnimation> boneAnimations) {
     this.id = id;
     this.numOfBoneAnimations = numOfBoneAnimations;
     this.unknown1 = unknown1;
@@ -44,6 +49,7 @@ public class GNTAnimation {
     this.dataOffset = dataOffset;
     this.boneAnimationHeadersOffset = boneAnimationHeadersOffset;
     this.functionCurveValues = functionCurveValues;
+    this.junk = junk;
     this.boneAnimations = boneAnimations;
   }
 
@@ -93,8 +99,44 @@ public class GNTAnimation {
         .functionCurveValuesOffset(functionCurveValuesOffset)
         .boneAnimationHeadersOffset(boneAnimationHeadersOffset)
         .functionCurveValues(functionCurveValues)
+        .junk(junk)
         .boneAnimations(boneAnimations)
         .create();
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public byte[] getBytes() throws IOException {
+    ByteArrayOutputStream header = new ByteArrayOutputStream();
+    ByteArrayOutputStream data = new ByteArrayOutputStream();
+
+    // Write out the animation header and function curve values
+    header.write(ByteUtils.fromInt32(numOfBoneAnimations + 1));
+    header.write(ByteUtils.fromInt32(unknown1));
+    header.write(ByteUtils.fromFloat(bounciness));
+    header.write(ByteUtils.fromFloat(repeatDelay));
+    header.write(ByteUtils.fromInt32(playbackSpeed));
+    header.write(ByteUtils.fromUint16(unknown2));
+    header.write(ByteUtils.fromUint16(numberOfFunctionCurveValues));
+    header.write(ByteUtils.fromInt32(unknown4));
+    header.write(new byte[4]);
+    header.write(ByteUtils.fromInt32(dataOffset)); // TODO: Calculate the offset
+    header.write(new byte[12]);
+    for (Float functionCurveValue : functionCurveValues) {
+      data.write(ByteUtils.fromFloat(functionCurveValue));
+    }
+    if (junk != null) {
+      data.write(junk.getBytes(JUNK_ENCODING));
+    }
+
+    // Write out each bone animation header and data for them
+    for (BoneAnimation boneAnimation : boneAnimations) {
+      header.write(boneAnimation.getHeaderBytes());
+      data.write(boneAnimation.getDataBytes());
+    }
+    return Bytes.concat(header.toByteArray(), data.toByteArray());
   }
 
   /**
@@ -112,7 +154,7 @@ public class GNTAnimation {
       if (raf.read(bytes) != size) {
         throw new IOException(String.format("Failed to read %d bytes at offset %d", size, offset));
       }
-      return new String(bytes, StandardCharsets.ISO_8859_1);
+      return new String(bytes, JUNK_ENCODING);
     }
     return null;
   }
@@ -139,6 +181,7 @@ public class GNTAnimation {
     private int functionCurveValuesOffset;
     private long boneAnimationHeadersOffset;
     private List<Float> functionCurveValues;
+    private String junk;
     private List<BoneAnimation> boneAnimations;
 
     public GNTAnimation.Builder id(int id) {
@@ -201,6 +244,11 @@ public class GNTAnimation {
       return this;
     }
 
+    public GNTAnimation.Builder junk(String junk) {
+      this.junk = junk;
+      return this;
+    }
+
     public GNTAnimation.Builder boneAnimations(List<BoneAnimation> boneAnimations) {
       this.boneAnimations = Collections.unmodifiableList(boneAnimations);
       return this;
@@ -209,7 +257,7 @@ public class GNTAnimation {
     public GNTAnimation create() {
       return new GNTAnimation(id, numOfBoneAnimations, unknown1, bounciness, repeatDelay,
           playbackSpeed, unknown2, numberOfFunctionCurveValues, unknown4, functionCurveValuesOffset,
-          boneAnimationHeadersOffset, functionCurveValues, boneAnimations);
+          boneAnimationHeadersOffset, functionCurveValues, junk, boneAnimations);
     }
   }
 }

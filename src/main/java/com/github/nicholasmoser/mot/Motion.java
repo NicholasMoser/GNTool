@@ -3,6 +3,7 @@ package com.github.nicholasmoser.mot;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,6 +70,19 @@ public class Motion {
         animations.add(GNTAnimation.parseFrom(raf, id));
       }
       return new Motion(numOfAnimations, fileSize, animations);
+    }
+  }
+
+  public void unpack(Path directory) throws IOException {
+    if (Files.isRegularFile(directory)) {
+      throw new IllegalArgumentException("should be a directory but is a file: " + directory);
+    }
+    Files.createDirectories(directory);
+    for (GNTAnimation animation : animations) {
+      String name = String.format("0x%04X.gnta", animation.getId());
+      Path filePath = directory.resolve(name);
+      byte[] animationData = animation.getBytes();
+      Files.write(filePath, animationData);
     }
   }
 }

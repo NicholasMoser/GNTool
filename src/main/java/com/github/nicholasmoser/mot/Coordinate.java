@@ -13,4 +13,20 @@ public class Coordinate {
     this.z = z;
     this.w = w;
   }
+
+  public short getX() {
+    return x;
+  }
+
+  public short getY() {
+    return y;
+  }
+
+  public short getZ() {
+    return z;
+  }
+
+  public short getW() {
+    return w;
+  }
 }
