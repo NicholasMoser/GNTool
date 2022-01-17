@@ -592,6 +592,37 @@ public class ByteUtilsTest {
   }
 
   @Test
+  public void testToAndFromFloat() {
+    byte[] bytes = new byte[] {0x3E, 0x3B, (byte) 0xBB, (byte) 0xBC};
+    float floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+    bytes = new byte[] {0x3F, (byte) 0xEC, (byte) 0xCC, (byte) 0xCE};
+    floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+    bytes = new byte[] {0x3C, (byte) 0x88, (byte) 0x88, (byte) 0x89};
+    floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+    bytes = new byte[] {0x3E, 0x3B, (byte) 0xBB, (byte) 0xBC};
+    floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+    bytes = new byte[] {0x3F, 0x44, 0x44, 0x45};
+    floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+    bytes = new byte[] {0x3F, 0x6E, (byte) 0xEE, (byte) 0xF0};
+    floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+    bytes = new byte[] {0x3F, (byte) 0x8C, (byte) 0xCC, (byte) 0xCD};
+    floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+    bytes = new byte[] {0x3F, (byte) 0xD7, 0x77, 0x78};
+    floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+    bytes = new byte[] {0x3F, (byte) 0xEC, (byte) 0xCC, (byte) 0xCE};
+    floatValue = ByteUtils.toFloat(bytes);
+    assertArrayEquals(bytes, ByteUtils.fromFloat(floatValue));
+  }
+
+  @Test
   public void testFloatStringToBytes() {
     assertArrayEquals(new byte[]{(byte) 0xC2, (byte) 0xC9, 0x1E, (byte) 0xB8},
         ByteUtils.floatStringToBytes("-100.56"));
