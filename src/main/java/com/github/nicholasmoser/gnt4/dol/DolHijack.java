@@ -204,9 +204,12 @@ public class DolHijack {
       CODES = loadCodes();
     }
     int bytesLeft = currentBytes.length - i;
+    int saved_i = i;
     for (int j = 0; j < CODES.length(); j++) {
       JSONObject codeGroup = CODES.getJSONObject(j);
       JSONArray codes = codeGroup.getJSONArray("codes");
+      int numOfC2Codes = getNumberOfC2Codes(codes);
+      i = saved_i;
       for (int k = 0; k < codes.length(); k++) {
         JSONObject code = codes.getJSONObject(k);
         if ("C2".equals(code.getString("type"))) {
@@ -224,12 +227,27 @@ public class DolHijack {
             code.put("bytes", ByteUtils.bytesToHexString(codeBytes) + "00000000");
             i += codeBytes.length;
             i += 4; // Skip the ending branch
+            numOfC2Codes--;
+          }
+          if (numOfC2Codes <= 0) {
+            // All C2 codes have been processed and updated
             return new CodeMatchResult(true, i, codeGroup);
           }
         }
       }
     }
     return new CodeMatchResult(false, i);
+  }
+
+  private static int getNumberOfC2Codes(JSONArray codes) {
+    int num = 0;
+    for (int k = 0; k < codes.length(); k++) {
+      JSONObject code = codes.getJSONObject(k);
+      if ("C2".equals(code.getString("type"))) {
+        num++;
+      }
+    }
+    return num;
   }
 
   /**
