@@ -164,7 +164,7 @@ public class SeqHelper {
       case 0x61 -> OpcodeGroup61.parse(bs, opcode);
       case (byte) 0xCC -> SeqHelper.getNullBytes(bs); // Modding specific no-op
       default -> throw new IllegalStateException(
-          String.format("Unknown opcode group: %02X", opcodeGroup));
+          String.format("Unknown opcode group: %02X at offset 0x%X", opcodeGroup, bs.offset()));
     };
   }
 
