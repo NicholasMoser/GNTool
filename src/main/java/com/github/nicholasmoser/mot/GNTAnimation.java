@@ -5,58 +5,96 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * A GNTAnimation contains one or more {@link KeyFrame} objects. It is the .gnta file extracted from
- * a .mot file ({@link Motion}.
+ * A GNTAnimation contains one or more {@link BoneAnimation} objects. It is the .gnta file extracted
+ * from a .mot file ({@link Motion}.
  */
 public class GNTAnimation {
 
-  private final int offset;
   private final int id;
-  private final byte[] bytes;
+  private final int numOfBoneAnimations;
+  private final int unknown1;
+  private final float bounciness;
+  private final float repeatDelay;
+  private final int playbackSpeed;
+  private final short unknown2;
+  private final short numberOfFunctionCurveValues;
+  private final int unknown4;
+  private final int dataOffset;
+  private final long boneAnimationHeadersOffset;
+  private final List<Float> functionCurveValues;
+  private final List<BoneAnimation> boneAnimations;
 
-  public GNTAnimation(int offset, int id, byte[] bytes) {
-    this.offset = offset;
+  public GNTAnimation(int id, int numOfBoneAnimations, int unknown1, float bounciness,
+      float repeatDelay, int playbackSpeed, short unknown2, short numberOfFunctionCurveValues,
+      int unknown4, int dataOffset, long boneAnimationHeadersOffset,
+      List<Float> functionCurveValues, List<BoneAnimation> boneAnimations) {
     this.id = id;
-    this.bytes = bytes;
+    this.numOfBoneAnimations = numOfBoneAnimations;
+    this.unknown1 = unknown1;
+    this.bounciness = bounciness;
+    this.repeatDelay = repeatDelay;
+    this.playbackSpeed = playbackSpeed;
+    this.unknown2 = unknown2;
+    this.numberOfFunctionCurveValues = numberOfFunctionCurveValues;
+    this.unknown4 = unknown4;
+    this.dataOffset = dataOffset;
+    this.boneAnimationHeadersOffset = boneAnimationHeadersOffset;
+    this.functionCurveValues = functionCurveValues;
+    this.boneAnimations = boneAnimations;
   }
 
   public static GNTAnimation parseFrom(RandomAccessFile raf, int id) throws IOException {
     int animationOffset = (int) raf.getFilePointer();
 
     // Parse the animation header
-    int numOfEntries = ByteUtils.readInt32(raf);
+    int numOfBoneAnimations = ByteUtils.readInt32(raf) - 1; // one less
     int unknown1 = ByteUtils.readInt32(raf);
     float bounciness = ByteUtils.readFloat(raf);
     float repeatDelay = ByteUtils.readFloat(raf);
     int playbackSpeed = ByteUtils.readInt32(raf);
     short unknown2 = ByteUtils.readInt16(raf);
-    short count = ByteUtils.readInt16(raf);
+    short numberOfFunctionCurveValues = ByteUtils.readInt16(raf);
     int unknown4 = ByteUtils.readInt32(raf);
     skipPadding(raf, 4);
-    int dataOffset = ByteUtils.readInt32(raf);
+    int functionCurveValuesOffset = ByteUtils.readInt32(raf);
 
-    // Save the spot of the key frame headers
+    // Save the spot of the bone animation headers
     ByteUtils.byteAlign(raf, 16);
-    long keyFrameHeadersOffset = raf.getFilePointer();
+    long boneAnimationHeadersOffset = raf.getFilePointer();
 
-    // Parse the initial key frame
-    raf.seek(animationOffset + dataOffset);
-    List<Float> values = new ArrayList<>();
-    for (int i = 0; i < count; i++) {
-      values.add(ByteUtils.readFloat(raf));
+    // Parse the function curve values
+    raf.seek(animationOffset + functionCurveValuesOffset);
+    List<Float> functionCurveValues = new ArrayList<>();
+    for (int i = 0; i < numberOfFunctionCurveValues; i++) {
+      functionCurveValues.add(ByteUtils.readFloat(raf));
     }
     String junk = readJunkData(raf);
 
-    // Parse the rest of the key frames
-    raf.seek(keyFrameHeadersOffset);
-    List<KeyFrame> keyFrames = new ArrayList<>();
-    for (int i = 0; i < numOfEntries - 1; i++) {
-      keyFrames.add(KeyFrame.parseFrom(raf, animationOffset));
+    // Parse the bone animations
+    raf.seek(boneAnimationHeadersOffset);
+    List<BoneAnimation> boneAnimations = new ArrayList<>();
+    for (int i = 0; i < numOfBoneAnimations; i++) {
+      boneAnimations.add(BoneAnimation.parseFrom(raf, animationOffset));
     }
-    return null;
+    return new Builder()
+        .id(id)
+        .numOfBoneAnimations(numOfBoneAnimations)
+        .unknown1(unknown1)
+        .bounciness(bounciness)
+        .repeatDelay(repeatDelay)
+        .playbackSpeed(playbackSpeed)
+        .unknown2(unknown2)
+        .numberOfFunctionCurveValues(numberOfFunctionCurveValues)
+        .unknown4(unknown4)
+        .functionCurveValuesOffset(functionCurveValuesOffset)
+        .boneAnimationHeadersOffset(boneAnimationHeadersOffset)
+        .functionCurveValues(functionCurveValues)
+        .boneAnimations(boneAnimations)
+        .create();
   }
 
   /**
@@ -84,6 +122,94 @@ public class GNTAnimation {
     if (padding2 != 0) {
       long offset = raf.getFilePointer();
       throw new IOException("Padding must be 0 at offset " + (offset - 4));
+    }
+  }
+
+  public static class Builder {
+
+    private int id;
+    private int numOfBoneAnimations;
+    private int unknown1;
+    private float bounciness;
+    private float repeatDelay;
+    private int playbackSpeed;
+    private short unknown2;
+    private short numberOfFunctionCurveValues;
+    private int unknown4;
+    private int functionCurveValuesOffset;
+    private long boneAnimationHeadersOffset;
+    private List<Float> functionCurveValues;
+    private List<BoneAnimation> boneAnimations;
+
+    public GNTAnimation.Builder id(int id) {
+      this.id = id;
+      return this;
+    }
+
+    public GNTAnimation.Builder numOfBoneAnimations(int numOfBoneAnimations) {
+      this.numOfBoneAnimations = numOfBoneAnimations;
+      return this;
+    }
+
+    public GNTAnimation.Builder unknown1(int unknown1) {
+      this.unknown1 = unknown1;
+      return this;
+    }
+
+    public GNTAnimation.Builder bounciness(float bounciness) {
+      this.bounciness = bounciness;
+      return this;
+    }
+
+    public GNTAnimation.Builder repeatDelay(float repeatDelay) {
+      this.repeatDelay = repeatDelay;
+      return this;
+    }
+
+    public GNTAnimation.Builder playbackSpeed(int playbackSpeed) {
+      this.playbackSpeed = playbackSpeed;
+      return this;
+    }
+
+    public GNTAnimation.Builder unknown2(short unknown2) {
+      this.unknown2 = unknown2;
+      return this;
+    }
+
+    public GNTAnimation.Builder numberOfFunctionCurveValues(short numberOfFunctionCurveValues) {
+      this.numberOfFunctionCurveValues = numberOfFunctionCurveValues;
+      return this;
+    }
+
+    public GNTAnimation.Builder unknown4(int unknown4) {
+      this.unknown4 = unknown4;
+      return this;
+    }
+
+    public GNTAnimation.Builder functionCurveValuesOffset(int functionCurveValuesOffset) {
+      this.functionCurveValuesOffset = functionCurveValuesOffset;
+      return this;
+    }
+
+    public GNTAnimation.Builder boneAnimationHeadersOffset(long boneAnimationHeadersOffset) {
+      this.boneAnimationHeadersOffset = boneAnimationHeadersOffset;
+      return this;
+    }
+
+    public GNTAnimation.Builder functionCurveValues(List<Float> functionCurveValues) {
+      this.functionCurveValues = Collections.unmodifiableList(functionCurveValues);
+      return this;
+    }
+
+    public GNTAnimation.Builder boneAnimations(List<BoneAnimation> boneAnimations) {
+      this.boneAnimations = Collections.unmodifiableList(boneAnimations);
+      return this;
+    }
+
+    public GNTAnimation create() {
+      return new GNTAnimation(id, numOfBoneAnimations, unknown1, bounciness, repeatDelay,
+          playbackSpeed, unknown2, numberOfFunctionCurveValues, unknown4, functionCurveValuesOffset,
+          boneAnimationHeadersOffset, functionCurveValues, boneAnimations);
     }
   }
 }
