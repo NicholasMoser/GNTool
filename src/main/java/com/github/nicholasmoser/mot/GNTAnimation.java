@@ -139,6 +139,10 @@ public class GNTAnimation {
     return Bytes.concat(header.toByteArray(), data.toByteArray());
   }
 
+  public int getSize() throws IOException {
+    return getBytes().length;
+  }
+
   /**
    * Reads junk data until 16 byte alignment in the file.
    *
