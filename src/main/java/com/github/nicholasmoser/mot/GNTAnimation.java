@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A GNTAnimation contains one or more {@link BoneAnimation} objects. It is the .gnta file extracted
@@ -70,7 +71,7 @@ public class GNTAnimation {
 
     // Save the spot of the bone animation headers
     ByteUtils.byteAlign(raf, 16);
-    long boneAnimationHeadersOffset = raf.getFilePointer();
+    long boneAnimationHeadersOffset = raf.getFilePointer() - animationOffset;
 
     // Parse the function curve values
     raf.seek(animationOffset + functionCurveValuesOffset);
@@ -81,7 +82,7 @@ public class GNTAnimation {
     String junk = readJunkData(raf);
 
     // Parse the bone animations
-    raf.seek(boneAnimationHeadersOffset);
+    raf.seek(animationOffset + boneAnimationHeadersOffset);
     List<BoneAnimation> boneAnimations = new ArrayList<>();
     for (int i = 0; i < numOfBoneAnimations; i++) {
       boneAnimations.add(BoneAnimation.parseFrom(raf, animationOffset));
@@ -169,6 +170,33 @@ public class GNTAnimation {
       long offset = raf.getFilePointer();
       throw new IOException("Padding must be 0 at offset " + (offset - 4));
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    GNTAnimation that = (GNTAnimation) o;
+    return id == that.id && numOfBoneAnimations == that.numOfBoneAnimations
+        && unknown1 == that.unknown1 && Float.compare(that.bounciness, bounciness) == 0
+        && Float.compare(that.repeatDelay, repeatDelay) == 0
+        && playbackSpeed == that.playbackSpeed && unknown2 == that.unknown2
+        && numberOfFunctionCurveValues == that.numberOfFunctionCurveValues
+        && unknown4 == that.unknown4 && dataOffset == that.dataOffset
+        && boneAnimationHeadersOffset == that.boneAnimationHeadersOffset && Objects.equals(
+        functionCurveValues, that.functionCurveValues) && Objects.equals(junk, that.junk)
+        && Objects.equals(boneAnimations, that.boneAnimations);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, numOfBoneAnimations, unknown1, bounciness, repeatDelay, playbackSpeed,
+        unknown2, numberOfFunctionCurveValues, unknown4, dataOffset, boneAnimationHeadersOffset,
+        functionCurveValues, junk, boneAnimations);
   }
 
   public static class Builder {

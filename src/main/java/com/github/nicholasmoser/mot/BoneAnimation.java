@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class BoneAnimation {
 
@@ -46,7 +47,7 @@ public class BoneAnimation {
   public static BoneAnimation parseFrom(RandomAccessFile raf, long animationOffset)
       throws IOException {
     // Read the bone animation header
-    long offset = raf.getFilePointer();
+    long offset = raf.getFilePointer() - animationOffset;
     short unknown4 = ByteUtils.readInt16(raf);
     short unknown5 = ByteUtils.readInt16(raf);
     short maybeBoneId = ByteUtils.readInt16(raf);
@@ -164,6 +165,31 @@ public class BoneAnimation {
       long offset = raf.getFilePointer();
       throw new IOException("Padding must be 0 at offset " + (offset - 4));
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    BoneAnimation that = (BoneAnimation) o;
+    return offset == that.offset && unknown4 == that.unknown4 && unknown5 == that.unknown5
+        && maybeBoneId == that.maybeBoneId && numOfKeyFrames == that.numOfKeyFrames
+        && Float.compare(that.unknown6, unknown6) == 0
+        && functionCurveOffset == that.functionCurveOffset
+        && coordinatesOffset == that.coordinatesOffset && Objects.equals(
+        functionCurveValues, that.functionCurveValues) && Objects.equals(coordinates,
+        that.coordinates) && Objects.equals(junk1, that.junk1) && Objects.equals(
+        junk2, that.junk2);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(offset, unknown4, unknown5, maybeBoneId, numOfKeyFrames, unknown6,
+        functionCurveOffset, coordinatesOffset, functionCurveValues, coordinates, junk1, junk2);
   }
 
   public static class Builder {

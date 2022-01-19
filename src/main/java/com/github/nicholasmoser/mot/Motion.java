@@ -8,9 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -20,19 +23,18 @@ import java.util.stream.Collectors;
 public class Motion {
 
   private final int totalAnimationIds;
-  private final int fileSize;
-  private final List<GNTAnimation> animations;
+  private final Set<GNTAnimation> animations;
 
   /**
-   * Create a new animation archive (.mot file data).
+   * Create a new animation archive (.mot file data). The total animation ids usually does not
+   * match the total number of animations. This is likely because some animation ids are unused
+   * for certain characters or possibly fallback to a default animation.
    *
    * @param totalAnimationIds Total possible number of animations. May not reflect the actual size.
-   * @param fileSize          The existing file size of the animation archive (.mot).
    * @param animations        The actual animations in the animation archive.
    */
-  private Motion(int totalAnimationIds, int fileSize, List<GNTAnimation> animations) {
+  private Motion(int totalAnimationIds, Set<GNTAnimation> animations) {
     this.totalAnimationIds = totalAnimationIds;
-    this.fileSize = fileSize;
     this.animations = animations;
   }
 
@@ -67,14 +69,14 @@ public class Motion {
         }
       }
       // Read the data for each animation
-      List<GNTAnimation> animations = new ArrayList<>();
+      Set<GNTAnimation> animations = new HashSet<>();
       for (Entry<Integer, Integer> entry : offsetToId.entrySet()) {
         int offset = entry.getKey();
         int id = entry.getValue();
         raf.seek(offset);
         animations.add(GNTAnimation.parseFrom(raf, id));
       }
-      return new Motion(totalAnimationIds, fileSize, animations);
+      return new Motion(totalAnimationIds, animations);
     }
   }
 
@@ -85,8 +87,7 @@ public class Motion {
     List<Path> files = Files.walk(inputDirectory).filter(Files::isRegularFile)
         .collect(Collectors.toList());
     int largestId = getLargestId(inputDirectory);
-    int fileSize = 0;
-    List<GNTAnimation> animations = new ArrayList<>();
+    Set<GNTAnimation> animations = new HashSet<>();
     for (Path file : files) {
       String fileName = file.getFileName().toString();
       if (!fileName.startsWith("0x") || !fileName.endsWith(".gnta")) {
@@ -98,11 +99,10 @@ public class Motion {
       }
       try (RandomAccessFile raf = new RandomAccessFile(file.toFile(), "r")) {
         GNTAnimation amimation = GNTAnimation.parseFrom(raf, id);
-        fileSize += amimation.getSize();
         animations.add(amimation);
       }
     }
-    return new Motion(largestId, fileSize, animations);
+    return new Motion(largestId, animations);
   }
 
   private static int getLargestId(Path inputDirectory) throws IOException {
@@ -132,5 +132,22 @@ public class Motion {
 
   public void pack(Path testFile) {
 
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Motion motion = (Motion) o;
+    return totalAnimationIds == motion.totalAnimationIds && animations.equals(motion.animations);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(totalAnimationIds, animations);
   }
 }

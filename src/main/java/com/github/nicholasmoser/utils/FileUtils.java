@@ -65,7 +65,7 @@ public class FileUtils {
    * @return If the directories are equal.
    * @throws IOException If an I/O error occurs
    */
-  public static boolean areDirectoriesEqual(Path dir1, Path dir2) throws IOException {
+  public static void assertDirectoriesEqual(Path dir1, Path dir2) throws IOException {
     if (!Files.isDirectory(dir1)) {
       throw new IllegalArgumentException("Path is not a directory: " + dir1);
     } else if (!Files.isDirectory(dir2)) {
@@ -75,23 +75,22 @@ public class FileUtils {
     Set<Path> paths2 = Files.list(dir2).map(Path::getFileName).collect(Collectors.toSet());
     if (!paths1.equals(paths2)) {
       // Directories either have different number of files or different file names
-      return false;
+      String message = String.format("Directories have different files:\n%s:\n%s\n%s:\n%s", dir1, paths1, dir2, paths2);
+      throw new IllegalStateException(message);
     }
     for (Path fileName : paths1) {
       Path path1 = dir1.resolve(fileName);
       Path path2 = dir2.resolve(fileName);
       if (Files.isDirectory(path1) && Files.isDirectory(path2)) {
         // Compare directories
-        if (!areDirectoriesEqual(path1, path2)) {
-          return false;
-        }
+        assertDirectoriesEqual(path1, path2);
       } else if (Files.isRegularFile(path1) && Files.isRegularFile(path2)) {
         // Compare files
-        if (Files.mismatch(path1, path2) != -1) {
-          return false;
+        long mismatch = Files.mismatch(path1, path2);
+        if (mismatch != -1) {
+          throw new IllegalStateException(String.format("Files %s and %s not equal at offset %d", path1, path2, mismatch));
         }
       }
     }
-    return true;
   }
 }

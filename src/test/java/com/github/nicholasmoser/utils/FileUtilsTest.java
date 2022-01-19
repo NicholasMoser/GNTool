@@ -35,8 +35,8 @@ public class FileUtilsTest {
       Files.writeString(testDir3.resolve("456"), "YARLY");
       Files.writeString(testDir2.resolve("789"), "NOWAI");
       Files.writeString(testDir4.resolve("789"), "NOWAI");
-      assertTrue(FileUtils.areDirectoriesEqual(testDir1, testDir3));
-      assertTrue(FileUtils.areDirectoriesEqual(testDir2, testDir4));
+      FileUtils.assertDirectoriesEqual(testDir1, testDir3);
+      FileUtils.assertDirectoriesEqual(testDir2, testDir4);
     } finally {
       if (Files.isDirectory(testDir1)) {
         MoreFiles.deleteRecursively(testDir1, RecursiveDeleteOption.ALLOW_INSECURE);
@@ -69,8 +69,8 @@ public class FileUtilsTest {
       Files.writeString(testDir3.resolve("456"), "YARLY");
       Files.writeString(testDir2.resolve("789"), "NOWAI");
       Files.writeString(testDir4.resolve("DIFFERENT"), "NOWAI");
-      assertFalse(FileUtils.areDirectoriesEqual(testDir1, testDir3));
-      assertFalse(FileUtils.areDirectoriesEqual(testDir2, testDir4));
+      FileUtils.assertDirectoriesEqual(testDir1, testDir3);
+      FileUtils.assertDirectoriesEqual(testDir2, testDir4);
     } finally {
       if (Files.isDirectory(testDir1)) {
         MoreFiles.deleteRecursively(testDir1, RecursiveDeleteOption.ALLOW_INSECURE);
@@ -103,8 +103,8 @@ public class FileUtilsTest {
       Files.writeString(testDir3.resolve("456"), "YARLY");
       Files.writeString(testDir2.resolve("789"), "DIFFERENT");
       Files.writeString(testDir4.resolve("789"), "NOWAI");
-      assertFalse(FileUtils.areDirectoriesEqual(testDir1, testDir3));
-      assertFalse(FileUtils.areDirectoriesEqual(testDir2, testDir4));
+      FileUtils.assertDirectoriesEqual(testDir1, testDir3);
+      FileUtils.assertDirectoriesEqual(testDir2, testDir4);
     } finally {
       if (Files.isDirectory(testDir1)) {
         MoreFiles.deleteRecursively(testDir1, RecursiveDeleteOption.ALLOW_INSECURE);
@@ -138,8 +138,8 @@ public class FileUtilsTest {
       Files.writeString(testDir2.resolve("789"), "NOWAI");
       Files.writeString(testDir4.resolve("789"), "NOWAI");
       Files.writeString(testDir4.resolve("ANOTHERONE"), "NOWAI");
-      assertFalse(FileUtils.areDirectoriesEqual(testDir1, testDir3));
-      assertFalse(FileUtils.areDirectoriesEqual(testDir2, testDir4));
+      FileUtils.assertDirectoriesEqual(testDir1, testDir3);
+      FileUtils.assertDirectoriesEqual(testDir2, testDir4);
     } finally {
       if (Files.isDirectory(testDir1)) {
         MoreFiles.deleteRecursively(testDir1, RecursiveDeleteOption.ALLOW_INSECURE);
@@ -166,8 +166,8 @@ public class FileUtilsTest {
     Files.createDirectories(testDir2);
     Files.createDirectories(testDir4);
     try {
-      assertTrue(FileUtils.areDirectoriesEqual(testDir1, testDir3));
-      assertTrue(FileUtils.areDirectoriesEqual(testDir2, testDir4));
+      FileUtils.assertDirectoriesEqual(testDir1, testDir3);
+      FileUtils.assertDirectoriesEqual(testDir2, testDir4);
     } finally {
       if (Files.isDirectory(testDir1)) {
         MoreFiles.deleteRecursively(testDir1, RecursiveDeleteOption.ALLOW_INSECURE);

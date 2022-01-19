@@ -105,7 +105,7 @@ public class MustXExtractTest {
         assertFalse(Files.mismatch(inputSdi, outputSdi) != -1);
         long delta = (long) (Files.size(inputSam) * 0.03);
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
-        assertTrue(FileUtils.areDirectoriesEqual(outputDir, outputDir2));
+        FileUtils.assertDirectoriesEqual(outputDir, outputDir2);
       }
     } finally {
       Files.deleteIfExists(outputSam);
