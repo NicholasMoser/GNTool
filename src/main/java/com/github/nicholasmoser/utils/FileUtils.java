@@ -3,7 +3,9 @@ package com.github.nicholasmoser.utils;
 import static java.nio.file.Files.copy;
 import static java.nio.file.Files.createDirectories;
 
+import com.google.common.io.CountingInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -54,43 +56,5 @@ public class FileUtils {
       throw new IOException("Temp directory does not exist: " + tempDir);
     }
     return tempDir;
-  }
-
-  /**
-   * Tests for equality of two directories. Two directories are considered equals if all files
-   * contained in them have the same bytes, recursively for all directories contained.
-   *
-   * @param dir1 The first directory to compare.
-   * @param dir2 The second directory to compare.
-   * @return If the directories are equal.
-   * @throws IOException If an I/O error occurs
-   */
-  public static void assertDirectoriesEqual(Path dir1, Path dir2) throws IOException {
-    if (!Files.isDirectory(dir1)) {
-      throw new IllegalArgumentException("Path is not a directory: " + dir1);
-    } else if (!Files.isDirectory(dir2)) {
-      throw new IllegalArgumentException("Path is not a directory: " + dir2);
-    }
-    Set<Path> paths1 = Files.list(dir1).map(Path::getFileName).collect(Collectors.toSet());
-    Set<Path> paths2 = Files.list(dir2).map(Path::getFileName).collect(Collectors.toSet());
-    if (!paths1.equals(paths2)) {
-      // Directories either have different number of files or different file names
-      String message = String.format("Directories have different files:\n%s:\n%s\n%s:\n%s", dir1, paths1, dir2, paths2);
-      throw new IllegalStateException(message);
-    }
-    for (Path fileName : paths1) {
-      Path path1 = dir1.resolve(fileName);
-      Path path2 = dir2.resolve(fileName);
-      if (Files.isDirectory(path1) && Files.isDirectory(path2)) {
-        // Compare directories
-        assertDirectoriesEqual(path1, path2);
-      } else if (Files.isRegularFile(path1) && Files.isRegularFile(path2)) {
-        // Compare files
-        long mismatch = Files.mismatch(path1, path2);
-        if (mismatch != -1) {
-          throw new IllegalStateException(String.format("Files %s and %s not equal at offset %d", path1, path2, mismatch));
-        }
-      }
-    }
   }
 }

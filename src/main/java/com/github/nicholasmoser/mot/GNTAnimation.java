@@ -66,7 +66,7 @@ public class GNTAnimation {
     short unknown2 = ByteUtils.readInt16(raf);
     short numberOfFunctionCurveValues = ByteUtils.readInt16(raf);
     int unknown4 = ByteUtils.readInt32(raf);
-    skipPadding(raf, 4);
+    skipWord(raf);
     int functionCurveValuesOffset = ByteUtils.readInt32(raf);
 
     // Save the spot of the bone animation headers
@@ -164,7 +164,7 @@ public class GNTAnimation {
     return null;
   }
 
-  private static void skipPadding(RandomAccessFile raf, int bytes) throws IOException {
+  private static void skipWord(RandomAccessFile raf) throws IOException {
     int padding2 = ByteUtils.readInt32(raf);
     if (padding2 != 0) {
       long offset = raf.getFilePointer();

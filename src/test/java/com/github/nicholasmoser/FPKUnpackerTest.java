@@ -1,5 +1,7 @@
 package com.github.nicholasmoser;
 
+import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesEqual;
+
 import com.github.nicholasmoser.fpk.FileNames;
 import com.github.nicholasmoser.gnt4.GNT4FileNames;
 import com.github.nicholasmoser.testing.Prereqs;
@@ -25,7 +27,7 @@ public class FPKUnpackerTest {
       Optional<FileNames> gnt4FileNames = Optional.of(new GNT4FileNames());
       FPKUnpacker unpacker = new FPKUnpacker(unpackDir, gnt4FileNames, false, true);
       unpacker.unpackDirectory();
-      FileUtils.assertDirectoriesEqual(uncompressedDir, unpackDir); // TODO: Fix this
+      assertDirectoriesEqual(uncompressedDir, unpackDir); // TODO: Fix this
     } finally {
       if (Files.isDirectory(unpackDir)) {
         MoreFiles.deleteRecursively(unpackDir, RecursiveDeleteOption.ALLOW_INSECURE);

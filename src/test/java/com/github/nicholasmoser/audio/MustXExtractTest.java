@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.audio;
 
+import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -105,7 +106,7 @@ public class MustXExtractTest {
         assertFalse(Files.mismatch(inputSdi, outputSdi) != -1);
         long delta = (long) (Files.size(inputSam) * 0.03);
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
-        FileUtils.assertDirectoriesEqual(outputDir, outputDir2);
+        assertDirectoriesEqual(outputDir, outputDir2);
       }
     } finally {
       Files.deleteIfExists(outputSam);
