@@ -11,6 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The animation of a specific bone. One {@link GNTAnimation} will have one or more of these.
+ */
 public class BoneAnimation {
 
   private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
@@ -44,6 +47,15 @@ public class BoneAnimation {
     this.junk2 = junk2;
   }
 
+  /**
+   * Parse the bone animation from the file at the current offset. The offset of the parent
+   * animation is also required to correctly read the data.
+   *
+   * @param raf The file to read from.
+   * @param animationOffset The offset of the parent animation.
+   * @return The bone animation.
+   * @throws IOException If an I/O error occurs
+   */
   public static BoneAnimation parseFrom(RandomAccessFile raf, long animationOffset)
       throws IOException {
     // Read the bone animation header
@@ -53,7 +65,7 @@ public class BoneAnimation {
     short maybeBoneId = ByteUtils.readInt16(raf);
     short numOfKeyFrames = ByteUtils.readInt16(raf);
     float unknown6 = ByteUtils.readFloat(raf);
-    skipPadding(raf, 4);
+    skipWordPadding(raf);
     int functionCurveOffset = ByteUtils.readInt32(raf);
     int coordinatesOffset = ByteUtils.readInt32(raf);
     ByteUtils.byteAlign(raf, 16);
@@ -99,6 +111,10 @@ public class BoneAnimation {
         .create();
   }
 
+  /**
+   * @return The header bytes of this bone animation.
+   * @throws IOException If an I/O error occurs
+   */
   public byte[] getHeaderBytes() throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ByteUtils.fromUint16(unknown4));
@@ -113,6 +129,10 @@ public class BoneAnimation {
     return baos.toByteArray();
   }
 
+  /**
+   * @return The bytes, excluding the header, of this bone animation.
+   * @throws IOException If an I/O error occurs
+   */
   public byte[] getDataBytes() throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     for (Float functionCurveValue : functionCurveValues) {
@@ -142,9 +162,9 @@ public class BoneAnimation {
   /**
    * Reads junk data until 16 byte alignment in the file.
    *
-   * @param raf
-   * @return
-   * @throws IOException
+   * @param raf The file to read from.
+   * @return The junk, if any. May be null.
+   * @throws IOException If an I/O error occurs
    */
   private static String readJunkData(RandomAccessFile raf) throws IOException {
     long offset = raf.getFilePointer();
@@ -159,7 +179,13 @@ public class BoneAnimation {
     return null;
   }
 
-  private static void skipPadding(RandomAccessFile raf, int bytes) throws IOException {
+  /**
+   * Skips a word of padding. This will throw an {@link IOException} if it is not 0.
+   *
+   * @param raf The file to read from.
+   * @throws IOException If an I/O error occurs or the padding is not 0
+   */
+  private static void skipWordPadding(RandomAccessFile raf) throws IOException {
     int padding2 = ByteUtils.readInt32(raf);
     if (padding2 != 0) {
       long offset = raf.getFilePointer();

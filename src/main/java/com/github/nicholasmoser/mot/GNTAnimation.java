@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A GNTAnimation contains one or more {@link BoneAnimation} objects. It is the .gnta file extracted
- * from a .mot file ({@link Motion}.
+ * A GNTAnimation is a single animation. It contains one or more {@link BoneAnimation} objects.
+ * It is the .gnta file extracted from a .mot file ({@link Motion}.
  */
 public class GNTAnimation {
 
@@ -54,6 +54,14 @@ public class GNTAnimation {
     this.boneAnimations = boneAnimations;
   }
 
+  /**
+   * Parse the animation from the file at the current offset with the given animation id.
+   *
+   * @param raf The file to read from.
+   * @param id The animation id.
+   * @return The animation object.
+   * @throws IOException If an I/O error occurs
+   */
   public static GNTAnimation parseFrom(RandomAccessFile raf, int id) throws IOException {
     int animationOffset = (int) raf.getFilePointer();
 
@@ -66,7 +74,7 @@ public class GNTAnimation {
     short unknown2 = ByteUtils.readInt16(raf);
     short numberOfFunctionCurveValues = ByteUtils.readInt16(raf);
     int unknown4 = ByteUtils.readInt32(raf);
-    skipWord(raf);
+    skipWordPadding(raf);
     int functionCurveValuesOffset = ByteUtils.readInt32(raf);
 
     // Save the spot of the bone animation headers
@@ -105,10 +113,17 @@ public class GNTAnimation {
         .create();
   }
 
+  /**
+   * @return The animation id.
+   */
   public int getId() {
     return id;
   }
 
+  /**
+   * @return The bytes of the animation.
+   * @throws IOException If an I/O error occurs
+   */
   public byte[] getBytes() throws IOException {
     ByteArrayOutputStream header = new ByteArrayOutputStream();
     ByteArrayOutputStream data = new ByteArrayOutputStream();
@@ -140,6 +155,10 @@ public class GNTAnimation {
     return Bytes.concat(header.toByteArray(), data.toByteArray());
   }
 
+  /**
+   * @return The size in bytes of this animation.
+   * @throws IOException If an I/O error occurs
+   */
   public int getSize() throws IOException {
     return getBytes().length;
   }
@@ -147,9 +166,9 @@ public class GNTAnimation {
   /**
    * Reads junk data until 16 byte alignment in the file.
    *
-   * @param raf
-   * @return
-   * @throws IOException
+   * @param raf The file to read from.
+   * @return The junk, if any. May be null.
+   * @throws IOException If an I/O error occurs
    */
   private static String readJunkData(RandomAccessFile raf) throws IOException {
     long offset = raf.getFilePointer();
@@ -164,7 +183,13 @@ public class GNTAnimation {
     return null;
   }
 
-  private static void skipWord(RandomAccessFile raf) throws IOException {
+  /**
+   * Skips a word of padding. This will throw an {@link IOException} if it is not 0.
+   *
+   * @param raf The file to read from.
+   * @throws IOException If an I/O error occurs or the padding is not 0
+   */
+  private static void skipWordPadding(RandomAccessFile raf) throws IOException {
     int padding2 = ByteUtils.readInt32(raf);
     if (padding2 != 0) {
       long offset = raf.getFilePointer();

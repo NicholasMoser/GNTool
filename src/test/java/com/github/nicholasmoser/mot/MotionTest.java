@@ -3,7 +3,6 @@ package com.github.nicholasmoser.mot;
 import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesEqual;
 import static com.github.nicholasmoser.utils.TestUtil.assertFilesEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.nicholasmoser.testing.Prereqs;
 import com.github.nicholasmoser.utils.FileUtils;

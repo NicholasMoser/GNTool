@@ -2,7 +2,6 @@ package com.github.nicholasmoser.mot;
 
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.collect.Maps;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
@@ -30,9 +29,9 @@ public class Motion {
   private final Map<Integer, GNTAnimation> idToAnimation;
 
   /**
-   * Create a new animation archive (.mot file data). The total animation ids usually does not
-   * match the total number of animations. This is likely because some animation ids are unused
-   * for certain characters or possibly fallback to a default animation.
+   * Create a new animation archive (.mot file data). The total animation ids usually does not match
+   * the total number of animations. This is likely because some animation ids are unused for
+   * certain characters or possibly fallback to a default animation.
    *
    * @param totalAnimationIds Total possible number of animations. May not reflect the actual size.
    * @param animations        The actual animations in the animation archive.
@@ -46,6 +45,13 @@ public class Motion {
     }
   }
 
+  /**
+   * Parse a motion object from a .mot file.
+   *
+   * @param inputFile The mot file to parse.
+   * @return The motion object.
+   * @throws IOException If an I/O error occurs
+   */
   public static Motion parseFromFile(Path inputFile) throws IOException {
     if (!Files.isRegularFile(inputFile)) {
       throw new IllegalArgumentException("inputFile not a file: " + inputFile);
@@ -88,6 +94,13 @@ public class Motion {
     }
   }
 
+  /**
+   * Parse a motion object from a directory of .gnta files.
+   *
+   * @param inputDirectory The directory to parse.
+   * @return The motion object.
+   * @throws IOException If an I/O error occurs
+   */
   public static Motion parseFromDirectory(Path inputDirectory) throws IOException {
     if (!Files.isDirectory(inputDirectory)) {
       throw new IllegalArgumentException("inputDirectory not a directory: " + inputDirectory);
@@ -113,6 +126,14 @@ public class Motion {
     return new Motion(largestId, animations);
   }
 
+  /**
+   * Unpack this motion object which creates .gnta files in the given directory. It will also write
+   * out a file named totalAnimationIds containing the total possible number of animation ids for
+   * this motion object.
+   *
+   * @param directory The directory to write the files to.
+   * @throws IOException If an I/O error occurs
+   */
   public void unpack(Path directory) throws IOException {
     if (Files.isRegularFile(directory)) {
       throw new IllegalArgumentException("should be a directory but is a file: " + directory);
@@ -133,12 +154,12 @@ public class Motion {
    * Packs the current motion into a .mot file. The logic is a little weird because the id offsets
    * are in increasing order but the animations are in decreasing order.
    *
-   * @param testFile
-   * @throws IOException
+   * @param outputFile The .mot file to create/overwrite.
+   * @throws IOException If an I/O error occurs
    */
-  public void pack(Path testFile) throws IOException {
+  public void pack(Path outputFile) throws IOException {
     int fileSize = 0;
-    try(RandomAccessFile raf = new RandomAccessFile(testFile.toFile(), "rw")) {
+    try (RandomAccessFile raf = new RandomAccessFile(outputFile.toFile(), "rw")) {
       raf.write(new byte[4]); // padding
       raf.write(ByteUtils.fromInt32(totalAnimationIds)); // total animation ids
       raf.write(new byte[]{0x00, 0x00, 0x00, 0x10}); // header size
@@ -177,6 +198,12 @@ public class Motion {
     }
   }
 
+  /**
+   * 16-byte aligns the given number.
+   *
+   * @param number The number to 16-byte align.
+   * @return The number 16-byte aligned.
+   */
   private static int byteAlign(int number) {
     if (number % 16 != 0) {
       return number + (16 - (number % 16));
@@ -184,6 +211,14 @@ public class Motion {
     return number;
   }
 
+  /**
+   * Reads the totalAnimationIds file in the given directory to get the total animation ids. If the
+   * file does not exist returns 0.
+   *
+   * @param inputDirectory The directory of the motion object files.
+   * @return The total animation ids or 0.
+   * @throws IOException If an I/O error occurs
+   */
   private static int getLargestId(Path inputDirectory) throws IOException {
     Path totalAnimationIdsPath = inputDirectory.resolve("totalAnimationIds");
     if (Files.isRegularFile(totalAnimationIdsPath)) {

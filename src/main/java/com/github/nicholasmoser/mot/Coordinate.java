@@ -2,6 +2,15 @@ package com.github.nicholasmoser.mot;
 
 import java.util.Objects;
 
+/**
+ * Represents a three-dimensional vertex with a fourth homogeneous vertex coordinate. See the
+ * following links:
+ * <ul>
+ *   <li><a href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">Homogeneous Coordinates</a></li>
+ *   <li><a href="https://www.reddit.com/r/computergraphics/comments/9fe1fq/why_xyzw_for_point_projection/">Why xyzw? (For point projection)</a></li>
+ *   <li><a href="https://stackoverflow.com/questions/2422750/in-opengl-vertex-shaders-what-is-w-and-why-do-i-divide-by-it">What is w, and why do I divide by it?</a></li>
+ * </ul>
+ */
 public class Coordinate {
 
   private final short x;
