@@ -491,5 +491,14 @@
       }
     ],
     "name": "Add Random Select and Reorder CSS [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "8079000480C500047C033000408100142C0002004082000C38600201906502F82C00000038C0000060000000",
+      "targetAddress": "800632C0",
+      "replacedBytes": "2C000000",
+      "type": "C2"
+    }],
+    "name": "Remove Port Priority on Throw Breaks [Nick]"
   }
 ]
