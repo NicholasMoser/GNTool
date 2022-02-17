@@ -25,14 +25,13 @@ public class BoneAnimation {
   private final float unknown6;
   private final int functionCurveOffset;
   private final int coordinatesOffset;
-  private final List<Float> functionCurveValues;
   private final List<Coordinate> coordinates;
   private final String junk1;
   private final String junk2;
 
   public BoneAnimation(long offset, short unknown4, short unknown5, short maybeBoneId,
       short numOfKeyFrames, float unknown6, int functionCurveOffset, int coordinatesOffset,
-      List<Float> functionCurveValues, List<Coordinate> coordinates, String junk1, String junk2) {
+      List<Coordinate> coordinates, String junk1, String junk2) {
     this.offset = offset;
     this.unknown4 = unknown4;
     this.unknown5 = unknown5;
@@ -41,7 +40,6 @@ public class BoneAnimation {
     this.unknown6 = unknown6;
     this.functionCurveOffset = functionCurveOffset;
     this.coordinatesOffset = coordinatesOffset;
-    this.functionCurveValues = functionCurveValues;
     this.coordinates = coordinates;
     this.junk1 = junk1;
     this.junk2 = junk2;
@@ -77,6 +75,7 @@ public class BoneAnimation {
     List<Float> functionCurveValues = new ArrayList<>();
     for (int i = 0; i < numOfKeyFrames; i++) {
       functionCurveValues.add(ByteUtils.readFloat(raf));
+
     }
     String junk1 = readJunkData(raf);
     if (raf.getFilePointer() != animationOffset + coordinatesOffset) {
@@ -88,7 +87,7 @@ public class BoneAnimation {
       short y = ByteUtils.readInt16(raf);
       short z = ByteUtils.readInt16(raf);
       short w = ByteUtils.readInt16(raf);
-      coordinates.add(new Coordinate(x, y, z, w));
+      coordinates.add(new Coordinate(x, y, z, w, functionCurveValues.get(i)));
     }
     String junk2 = readJunkData(raf);
 
@@ -104,7 +103,6 @@ public class BoneAnimation {
         .unknown6(unknown6)
         .functionCurveOffset(functionCurveOffset)
         .coordinatesOffset(coordinatesOffset)
-        .functionCurveValues(functionCurveValues)
         .coordinates(coordinates)
         .junk1(junk1)
         .junk2(junk2)
@@ -135,8 +133,8 @@ public class BoneAnimation {
    */
   public byte[] getDataBytes() throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (Float functionCurveValue : functionCurveValues) {
-      baos.write(ByteUtils.fromFloat(functionCurveValue));
+    for (Coordinate coordinate : coordinates) {
+      baos.write(ByteUtils.fromFloat(coordinate.getFunctionCurveValue()));
     }
     if (junk1 != null) {
       baos.write(junk1.getBytes(JUNK_ENCODING));
@@ -206,8 +204,7 @@ public class BoneAnimation {
         && maybeBoneId == that.maybeBoneId && numOfKeyFrames == that.numOfKeyFrames
         && Float.compare(that.unknown6, unknown6) == 0
         && functionCurveOffset == that.functionCurveOffset
-        && coordinatesOffset == that.coordinatesOffset && Objects.equals(
-        functionCurveValues, that.functionCurveValues) && Objects.equals(coordinates,
+        && coordinatesOffset == that.coordinatesOffset && Objects.equals(coordinates,
         that.coordinates) && Objects.equals(junk1, that.junk1) && Objects.equals(
         junk2, that.junk2);
   }
@@ -215,7 +212,7 @@ public class BoneAnimation {
   @Override
   public int hashCode() {
     return Objects.hash(offset, unknown4, unknown5, maybeBoneId, numOfKeyFrames, unknown6,
-        functionCurveOffset, coordinatesOffset, functionCurveValues, coordinates, junk1, junk2);
+        functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
   }
 
   public static class Builder {
@@ -228,7 +225,6 @@ public class BoneAnimation {
     private float unknown6;
     private int functionCurveOffset;
     private int coordinatesOffset;
-    private List<Float> functionCurveValues;
     private List<Coordinate> coordinates;
     private String junk1;
     private String junk2;
@@ -273,11 +269,6 @@ public class BoneAnimation {
       return this;
     }
 
-    public BoneAnimation.Builder functionCurveValues(List<Float> functionCurveValues) {
-      this.functionCurveValues = Collections.unmodifiableList(functionCurveValues);
-      return this;
-    }
-
     public BoneAnimation.Builder coordinates(List<Coordinate> coordinates) {
       this.coordinates = Collections.unmodifiableList(coordinates);
       return this;
@@ -295,7 +286,7 @@ public class BoneAnimation {
 
     public BoneAnimation create() {
       return new BoneAnimation(offset, unknown4, unknown5, maybeBoneId, numOfKeyFrames, unknown6,
-          functionCurveOffset, coordinatesOffset, functionCurveValues, coordinates, junk1, junk2);
+          functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
     }
   }
 }
