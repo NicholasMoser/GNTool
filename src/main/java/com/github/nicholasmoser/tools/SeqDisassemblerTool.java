@@ -158,7 +158,8 @@ public class SeqDisassemblerTool {
       try {
         Desktop.getDesktop().open(outputFile.toFile());
       } catch (Exception e) {
-        Message.error("Failed to Open File", "See log for more information.");
+        LOGGER.log(Level.SEVERE, "Failed to Open File", e);
+        Message.error("Failed to Open File", e.getMessage());
       }
     }
   }
