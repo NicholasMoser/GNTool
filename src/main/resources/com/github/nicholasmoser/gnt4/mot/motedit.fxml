@@ -33,6 +33,9 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -74,7 +77,7 @@
       <items>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label alignment="CENTER" style="&#10;" text="id" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="Animation ID" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x14" />
                      </font>
@@ -100,7 +103,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="bounciness" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="Bounciness" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x142" />
                      </font>
@@ -113,7 +116,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="repeatDelay" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="Repeat Delay" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x143" />
                      </font>
@@ -126,7 +129,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="playbackSpeed" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="Playback Speed" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x144" />
                      </font>
@@ -165,7 +168,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="dataOffset" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="Data Offset" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x148" />
                      </font>
@@ -178,7 +181,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="boneAnimationHeadersOffset" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="Bone Animation Headers Offset" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x1481" />
                      </font>
@@ -191,7 +194,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="functionCurveValues" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="Function Curve Values" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x1482" />
                      </font>
@@ -204,6 +207,14 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
+                  <LineChart fx:id="functionCurveChart">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </LineChart>
                   <Button fx:id="apply" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#apply" prefHeight="40.0" prefWidth="383.0" text="Apply" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

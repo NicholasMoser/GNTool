@@ -7,7 +7,10 @@ import com.github.nicholasmoser.mot.GNTAnimation;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -34,8 +37,8 @@ public class GNTAEditor {
   public TextField dataOffset;
   public TextField boneAnimationHeadersOffset;
   public TextField functionCurveValues;
+  public LineChart functionCurveChart;
   public Button apply;
-  public Button reset;
 
   // Bone animation values
   public ListView boneAnimations;
@@ -100,6 +103,7 @@ public class GNTAEditor {
     dataOffset.setText(String.format("0x%X", gnta.getDataOffset()));
     boneAnimationHeadersOffset.setText(String.format("0x%X", gnta.getBoneAnimationHeadersOffset()));
     functionCurveValues.setText(gnta.getFunctionCurveValues().toString());
+    updateFunctionCurveChart();
 
     // Fill out bone animations pane
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
@@ -126,6 +130,16 @@ public class GNTAEditor {
     z.setText(Short.toString(coordinate.getZ()));
     w.setText(Short.toString(coordinate.getW()));
     functionCurve.setText(Float.toString(coordinate.getFunctionCurveValue()));
+  }
+
+  private void updateFunctionCurveChart() {
+    List<Float> values = gnta.getFunctionCurveValues();
+    XYChart.Series<Integer, Integer> series = new XYChart.Series();
+    for (int i = 0; i < values.size(); i++) {
+      series.getData().add((new XYChart.Data(Integer.toString(i + 1), values.get(i))));
+    }
+    functionCurveChart.getData().add(series);
+    functionCurveChart.autosize();
   }
 
   private void selectBoneAnimation(int index) {
