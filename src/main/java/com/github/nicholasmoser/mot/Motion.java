@@ -45,6 +45,18 @@ public class Motion {
     }
   }
 
+  public int getTotalAnimationIds() {
+    return totalAnimationIds;
+  }
+
+  public Set<GNTAnimation> getAnimations() {
+    return animations;
+  }
+
+  public Map<Integer, GNTAnimation> getIdToAnimation() {
+    return idToAnimation;
+  }
+
   /**
    * Parse a motion object from a .mot file.
    *

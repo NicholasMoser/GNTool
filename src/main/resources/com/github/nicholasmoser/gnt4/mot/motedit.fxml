@@ -282,7 +282,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-            <Label alignment="CENTER" style="&#10;" text="unknown6" textAlignment="CENTER" wrapText="false">
+            <Label alignment="CENTER" style="&#10;" text="Last Function Curve Value" textAlignment="CENTER" wrapText="false">
               <font>
                 <Font size="18.0" fx:id="x122" />
               </font>
@@ -290,7 +290,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
             </Label>
-                  <TextField fx:id="unknown6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                  <TextField fx:id="lastFunctionCurveValue" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>

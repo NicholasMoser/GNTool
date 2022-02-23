@@ -22,7 +22,7 @@ public class BoneAnimation {
   private final short unknown5;
   private final short maybeBoneId;
   private final short numOfKeyFrames;
-  private final float unknown6;
+  private final float lastFunctionCurveValue;
   private final int functionCurveOffset;
   private final int coordinatesOffset;
   private final List<Coordinate> coordinates;
@@ -30,14 +30,14 @@ public class BoneAnimation {
   private final String junk2;
 
   public BoneAnimation(int offset, short unknown4, short unknown5, short maybeBoneId,
-      short numOfKeyFrames, float unknown6, int functionCurveOffset, int coordinatesOffset,
-      List<Coordinate> coordinates, String junk1, String junk2) {
+      short numOfKeyFrames, float lastFunctionCurveValue, int functionCurveOffset,
+      int coordinatesOffset, List<Coordinate> coordinates, String junk1, String junk2) {
     this.offset = offset;
     this.unknown4 = unknown4;
     this.unknown5 = unknown5;
     this.maybeBoneId = maybeBoneId;
     this.numOfKeyFrames = numOfKeyFrames;
-    this.unknown6 = unknown6;
+    this.lastFunctionCurveValue = lastFunctionCurveValue;
     this.functionCurveOffset = functionCurveOffset;
     this.coordinatesOffset = coordinatesOffset;
     this.coordinates = coordinates;
@@ -65,8 +65,8 @@ public class BoneAnimation {
     return numOfKeyFrames;
   }
 
-  public float getUnknown6() {
-    return unknown6;
+  public float getLastFunctionCurveValue() {
+    return lastFunctionCurveValue;
   }
 
   public int getFunctionCurveOffset() {
@@ -106,7 +106,7 @@ public class BoneAnimation {
     short unknown5 = ByteUtils.readInt16(raf);
     short maybeBoneId = ByteUtils.readInt16(raf);
     short numOfKeyFrames = ByteUtils.readInt16(raf);
-    float unknown6 = ByteUtils.readFloat(raf);
+    float lastFunctionCurveValue = ByteUtils.readFloat(raf);
     skipWordPadding(raf);
     int functionCurveOffset = ByteUtils.readInt32(raf);
     int coordinatesOffset = ByteUtils.readInt32(raf);
@@ -144,7 +144,7 @@ public class BoneAnimation {
         .unknown5(unknown5)
         .maybeBoneId(maybeBoneId)
         .numOfKeyFrames(numOfKeyFrames)
-        .unknown6(unknown6)
+        .lastFunctionCurveValue(lastFunctionCurveValue)
         .functionCurveOffset(functionCurveOffset)
         .coordinatesOffset(coordinatesOffset)
         .coordinates(coordinates)
@@ -163,7 +163,7 @@ public class BoneAnimation {
     baos.write(ByteUtils.fromUint16(unknown5));
     baos.write(ByteUtils.fromUint16(maybeBoneId));
     baos.write(ByteUtils.fromUint16(numOfKeyFrames));
-    baos.write(ByteUtils.fromFloat(unknown6));
+    baos.write(ByteUtils.fromFloat(lastFunctionCurveValue));
     baos.write(new byte[4]);
     baos.write(ByteUtils.fromInt32(functionCurveOffset));
     baos.write(ByteUtils.fromInt32(coordinatesOffset));
@@ -246,7 +246,7 @@ public class BoneAnimation {
     BoneAnimation that = (BoneAnimation) o;
     return offset == that.offset && unknown4 == that.unknown4 && unknown5 == that.unknown5
         && maybeBoneId == that.maybeBoneId && numOfKeyFrames == that.numOfKeyFrames
-        && Float.compare(that.unknown6, unknown6) == 0
+        && Float.compare(that.lastFunctionCurveValue, lastFunctionCurveValue) == 0
         && functionCurveOffset == that.functionCurveOffset
         && coordinatesOffset == that.coordinatesOffset && Objects.equals(coordinates,
         that.coordinates) && Objects.equals(junk1, that.junk1) && Objects.equals(
@@ -255,8 +255,8 @@ public class BoneAnimation {
 
   @Override
   public int hashCode() {
-    return Objects.hash(offset, unknown4, unknown5, maybeBoneId, numOfKeyFrames, unknown6,
-        functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
+    return Objects.hash(offset, unknown4, unknown5, maybeBoneId, numOfKeyFrames,
+        lastFunctionCurveValue, functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
   }
 
   public static class Builder {
@@ -266,7 +266,7 @@ public class BoneAnimation {
     private short unknown5;
     private short maybeBoneId;
     private short numOfKeyFrames;
-    private float unknown6;
+    private float lastFunctionCurveValue;
     private int functionCurveOffset;
     private int coordinatesOffset;
     private List<Coordinate> coordinates;
@@ -298,8 +298,8 @@ public class BoneAnimation {
       return this;
     }
 
-    public BoneAnimation.Builder unknown6(float unknown6) {
-      this.unknown6 = unknown6;
+    public BoneAnimation.Builder lastFunctionCurveValue(float lastFunctionCurveValue) {
+      this.lastFunctionCurveValue = lastFunctionCurveValue;
       return this;
     }
 
@@ -329,8 +329,9 @@ public class BoneAnimation {
     }
 
     public BoneAnimation create() {
-      return new BoneAnimation(offset, unknown4, unknown5, maybeBoneId, numOfKeyFrames, unknown6,
-          functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
+      return new BoneAnimation(offset, unknown4, unknown5, maybeBoneId, numOfKeyFrames,
+          lastFunctionCurveValue, functionCurveOffset, coordinatesOffset, coordinates, junk1,
+          junk2);
     }
   }
 }

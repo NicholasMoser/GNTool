@@ -7,7 +7,6 @@ import com.github.nicholasmoser.mot.GNTAnimation;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -46,7 +45,7 @@ public class GNTAEditor {
   public TextField unknown4;
   public TextField unknown5;
   public TextField maybeBoneId;
-  public TextField unknown6;
+  public TextField lastFunctionCurveValue;
 
   // Key frame values
   public ListView keyFrames;
@@ -116,7 +115,7 @@ public class GNTAEditor {
     unknown4.setText(String.format("0x%X", boneAnim.getUnknown4()));
     unknown5.setText(String.format("0x%X", boneAnim.getUnknown5()));
     maybeBoneId.setText(String.format("0x%X", boneAnim.getMaybeBoneId()));
-    unknown6.setText(Float.toString(boneAnim.getUnknown6()));
+    lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
@@ -138,6 +137,7 @@ public class GNTAEditor {
     for (int i = 0; i < values.size(); i++) {
       series.getData().add((new XYChart.Data(Integer.toString(i + 1), values.get(i))));
     }
+    series.setName("Function Curve Value");
     functionCurveChart.getData().add(series);
     functionCurveChart.autosize();
   }
@@ -150,11 +150,16 @@ public class GNTAEditor {
     unknown4.setText(String.format("0x%X", boneAnim.getUnknown4()));
     unknown5.setText(String.format("0x%X", boneAnim.getUnknown5()));
     maybeBoneId.setText(String.format("0x%X", boneAnim.getMaybeBoneId()));
-    unknown6.setText(Float.toString(boneAnim.getUnknown6()));
+    lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
-    Coordinate coordinate = coordinates.get(keyFrames.getSelectionModel().getSelectedIndex());
+    keyFrames.getItems().clear();
+    for (int i = 1; i <= coordinates.size(); i++) {
+      keyFrames.getItems().add(i);
+    }
+    keyFrames.getSelectionModel().selectFirst();
+    Coordinate coordinate = coordinates.get(0);
     x.setText(Short.toString(coordinate.getX()));
     y.setText(Short.toString(coordinate.getY()));
     z.setText(Short.toString(coordinate.getZ()));

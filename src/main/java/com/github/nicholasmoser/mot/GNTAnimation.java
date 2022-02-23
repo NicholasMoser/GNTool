@@ -20,7 +20,6 @@ public class GNTAnimation {
 
   private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
   private final int id;
-  private final int numOfBoneAnimations;
   private final int unknown1;
   private final float bounciness;
   private final float repeatDelay;
@@ -34,12 +33,11 @@ public class GNTAnimation {
   private final String junk;
   private final List<BoneAnimation> boneAnimations;
 
-  public GNTAnimation(int id, int numOfBoneAnimations, int unknown1, float bounciness,
+  public GNTAnimation(int id, int unknown1, float bounciness,
       float repeatDelay, int playbackSpeed, short unknown2, short numberOfFunctionCurveValues,
       float unknown4, int dataOffset, int boneAnimationHeadersOffset,
       List<Float> functionCurveValues, String junk, List<BoneAnimation> boneAnimations) {
     this.id = id;
-    this.numOfBoneAnimations = numOfBoneAnimations;
     this.unknown1 = unknown1;
     this.bounciness = bounciness;
     this.repeatDelay = repeatDelay;
@@ -52,10 +50,6 @@ public class GNTAnimation {
     this.functionCurveValues = functionCurveValues;
     this.junk = junk;
     this.boneAnimations = boneAnimations;
-  }
-
-  public int getNumOfBoneAnimations() {
-    return numOfBoneAnimations;
   }
 
   public int getUnknown1() {
@@ -149,7 +143,6 @@ public class GNTAnimation {
     }
     return new Builder()
         .id(id)
-        .numOfBoneAnimations(numOfBoneAnimations)
         .unknown1(unknown1)
         .bounciness(bounciness)
         .repeatDelay(repeatDelay)
@@ -181,7 +174,7 @@ public class GNTAnimation {
     ByteArrayOutputStream data = new ByteArrayOutputStream();
 
     // Write out the animation header and function curve values
-    header.write(ByteUtils.fromInt32(numOfBoneAnimations + 1));
+    header.write(ByteUtils.fromInt32(boneAnimations.size() + 1));
     header.write(ByteUtils.fromInt32(unknown1));
     header.write(ByteUtils.fromFloat(bounciness));
     header.write(ByteUtils.fromFloat(repeatDelay));
@@ -258,7 +251,7 @@ public class GNTAnimation {
       return false;
     }
     GNTAnimation that = (GNTAnimation) o;
-    return id == that.id && numOfBoneAnimations == that.numOfBoneAnimations
+    return id == that.id
         && unknown1 == that.unknown1 && Float.compare(that.bounciness, bounciness) == 0
         && Float.compare(that.repeatDelay, repeatDelay) == 0
         && playbackSpeed == that.playbackSpeed && unknown2 == that.unknown2
@@ -271,7 +264,7 @@ public class GNTAnimation {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, numOfBoneAnimations, unknown1, bounciness, repeatDelay, playbackSpeed,
+    return Objects.hash(id, unknown1, bounciness, repeatDelay, playbackSpeed,
         unknown2, numberOfFunctionCurveValues, unknown4, dataOffset, boneAnimationHeadersOffset,
         functionCurveValues, junk, boneAnimations);
   }
@@ -279,7 +272,6 @@ public class GNTAnimation {
   public static class Builder {
 
     private int id;
-    private int numOfBoneAnimations;
     private int unknown1;
     private float bounciness;
     private float repeatDelay;
@@ -295,11 +287,6 @@ public class GNTAnimation {
 
     public GNTAnimation.Builder id(int id) {
       this.id = id;
-      return this;
-    }
-
-    public GNTAnimation.Builder numOfBoneAnimations(int numOfBoneAnimations) {
-      this.numOfBoneAnimations = numOfBoneAnimations;
       return this;
     }
 
@@ -364,7 +351,7 @@ public class GNTAnimation {
     }
 
     public GNTAnimation create() {
-      return new GNTAnimation(id, numOfBoneAnimations, unknown1, bounciness, repeatDelay,
+      return new GNTAnimation(id, unknown1, bounciness, repeatDelay,
           playbackSpeed, unknown2, numberOfFunctionCurveValues, unknown4, functionCurveValuesOffset,
           boneAnimationHeadersOffset, functionCurveValues, junk, boneAnimations);
     }
