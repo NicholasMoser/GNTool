@@ -17,14 +17,12 @@ public class Coordinate {
   private final short y;
   private final short z;
   private final short w;
-  private final float functionCurveValue;
 
-  public Coordinate(short x, short y, short z, short w, float functionCurveValue) {
+  public Coordinate(short x, short y, short z, short w) {
     this.x = x;
     this.y = y;
     this.z = z;
     this.w = w;
-    this.functionCurveValue = functionCurveValue;
   }
 
   public short getX() {
@@ -43,10 +41,6 @@ public class Coordinate {
     return w;
   }
 
-  public float getFunctionCurveValue() {
-    return functionCurveValue;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -56,12 +50,11 @@ public class Coordinate {
       return false;
     }
     Coordinate that = (Coordinate) o;
-    return x == that.x && y == that.y && z == that.z && w == that.w
-        && Float.compare(that.functionCurveValue, functionCurveValue) == 0;
+    return x == that.x && y == that.y && z == that.z && w == that.w;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(x, y, z, w, functionCurveValue);
+    return Objects.hash(x, y, z, w);
   }
 }

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 public class Motion {
 
-  private final int totalAnimationIds;
+  private final int numOfAnimationIds;
   private final Set<GNTAnimation> animations;
   private final Map<Integer, GNTAnimation> idToAnimation;
 
@@ -33,11 +33,11 @@ public class Motion {
    * the total number of animations. This is likely because some animation ids are unused for
    * certain characters or possibly fallback to a default animation.
    *
-   * @param totalAnimationIds Total possible number of animations. May not reflect the actual size.
+   * @param numOfAnimationIds Total possible number of animations. May not reflect the actual size.
    * @param animations        The actual animations in the animation archive.
    */
-  private Motion(int totalAnimationIds, Set<GNTAnimation> animations) {
-    this.totalAnimationIds = totalAnimationIds;
+  private Motion(int numOfAnimationIds, Set<GNTAnimation> animations) {
+    this.numOfAnimationIds = numOfAnimationIds;
     this.animations = animations;
     this.idToAnimation = Maps.newHashMapWithExpectedSize(animations.size());
     for (GNTAnimation animation : animations) {
@@ -45,8 +45,8 @@ public class Motion {
     }
   }
 
-  public int getTotalAnimationIds() {
-    return totalAnimationIds;
+  public int getNumOfAnimationIds() {
+    return numOfAnimationIds;
   }
 
   public Set<GNTAnimation> getAnimations() {
@@ -70,22 +70,22 @@ public class Motion {
     }
     try (RandomAccessFile raf = new RandomAccessFile(inputFile.toFile(), "r")) {
       // Parse and validate the header
-      int nullBytes = ByteUtils.readInt32(raf);
-      int totalAnimationIds = ByteUtils.readInt32(raf); // may not reflect actual size
+      int padding = ByteUtils.readInt32(raf);
+      int numOfAnimationIds = ByteUtils.readInt32(raf); // may not reflect actual size
       int headerSize = ByteUtils.readInt32(raf);
       int fileSize = ByteUtils.readInt32(raf);
-      if (nullBytes != 0x00) {
-        throw new IllegalStateException(String.format("Null bytes not 0x00: 0x%x", nullBytes));
+      if (padding != 0x00) {
+        throw new IllegalStateException(String.format("Padding not all zeros: 0x%x", padding));
       } else if (headerSize != 0x10) {
         throw new IllegalStateException("Header size not supported: " + headerSize);
-      } else if (totalAnimationIds < 1) {
-        throw new IllegalStateException("Invalid animation size: " + totalAnimationIds);
+      } else if (numOfAnimationIds < 1) {
+        throw new IllegalStateException("Invalid num of animation ids: " + numOfAnimationIds);
       } else if (fileSize < 1) {
         throw new IllegalStateException("Invalid file size: " + fileSize);
       }
       // Parse the animation offsets and ids
       Map<Integer, Integer> offsetToId = new HashMap<>();
-      for (int i = 0; i < totalAnimationIds; i++) {
+      for (int i = 0; i < numOfAnimationIds; i++) {
         int offset = ByteUtils.readInt32(raf);
         if (offset != 0) {
           if (offsetToId.containsKey(offset)) {
@@ -102,7 +102,7 @@ public class Motion {
         raf.seek(offset);
         animations.add(GNTAnimation.parseFrom(raf, id));
       }
-      return new Motion(totalAnimationIds, animations);
+      return new Motion(numOfAnimationIds, animations);
     }
   }
 
@@ -131,8 +131,8 @@ public class Motion {
         largestId = id;
       }
       try (RandomAccessFile raf = new RandomAccessFile(file.toFile(), "r")) {
-        GNTAnimation amimation = GNTAnimation.parseFrom(raf, id);
-        animations.add(amimation);
+        GNTAnimation animation = GNTAnimation.parseFrom(raf, id);
+        animations.add(animation);
       }
     }
     return new Motion(largestId, animations);
@@ -157,7 +157,7 @@ public class Motion {
       byte[] animationData = animation.getBytes();
       Files.write(filePath, animationData);
     }
-    byte[] totalAnimationIdsBytes = Integer.toString(totalAnimationIds)
+    byte[] totalAnimationIdsBytes = Integer.toString(numOfAnimationIds)
         .getBytes(StandardCharsets.UTF_8);
     Files.write(directory.resolve("totalAnimationIds"), totalAnimationIdsBytes);
   }
@@ -173,19 +173,19 @@ public class Motion {
     int fileSize = 0;
     try (RandomAccessFile raf = new RandomAccessFile(outputFile.toFile(), "rw")) {
       raf.write(new byte[4]); // padding
-      raf.write(ByteUtils.fromInt32(totalAnimationIds)); // total animation ids
+      raf.write(ByteUtils.fromInt32(numOfAnimationIds)); // total animation ids
       raf.write(new byte[]{0x00, 0x00, 0x00, 0x10}); // header size
       raf.write(new byte[4]); // file size (will be filled out last)
 
       // Header size + 4-byte offsets for each animation id, 16-byte aligned
-      int currentDataOffset = byteAlign(0x10 + (totalAnimationIds * 4));
+      int currentDataOffset = byteAlign(0x10 + (numOfAnimationIds * 4));
       raf.seek(currentDataOffset);
       fileSize += currentDataOffset;
       // The animation offsets that will be reversed before written to the file
       List<Integer> offsets = new ArrayList<>();
 
       // Get the animations and write them to the offsets and data section
-      for (int i = totalAnimationIds - 1; i >= 0; i--) {
+      for (int i = numOfAnimationIds - 1; i >= 0; i--) {
         GNTAnimation animation = idToAnimation.get(i);
         if (animation != null) {
           offsets.add(currentDataOffset);
@@ -249,11 +249,11 @@ public class Motion {
       return false;
     }
     Motion motion = (Motion) o;
-    return totalAnimationIds == motion.totalAnimationIds && animations.equals(motion.animations);
+    return numOfAnimationIds == motion.numOfAnimationIds && animations.equals(motion.animations);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(totalAnimationIds, animations);
+    return Objects.hash(numOfAnimationIds, animations);
   }
 }

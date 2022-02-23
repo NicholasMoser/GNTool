@@ -302,7 +302,8 @@ public class ByteUtils {
   public static short readInt16(RandomAccessFile raf) throws IOException {
     byte[] bytes = new byte[2];
     if (raf.read(bytes) != 2) {
-      throw new IOException("Failed to read 2 bytes from file");
+      long offset = raf.getFilePointer();
+      throw new IOException("Failed to read 2 bytes from file at offset " + offset);
     }
     return toInt16(bytes);
   }

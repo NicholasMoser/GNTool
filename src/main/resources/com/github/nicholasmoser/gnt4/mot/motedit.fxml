@@ -90,19 +90,6 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="unknown1" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
-                     <font>
-                        <Font size="18.0" fx:id="x141" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="unknown1" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </TextField>
                   <Label alignment="CENTER" style="&#10;" text="Bounciness" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x142" />
@@ -125,84 +112,6 @@
                      </VBox.margin>
                   </Label>
                   <TextField fx:id="repeatDelay" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Playback Speed" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
-                     <font>
-                        <Font size="18.0" fx:id="x144" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="playbackSpeed" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="unknown2" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
-                     <font>
-                        <Font size="18.0" fx:id="x145" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="unknown2" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="unknown4" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
-                     <font>
-                        <Font size="18.0" fx:id="x147" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="unknown4_2" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Data Offset" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
-                     <font>
-                        <Font size="18.0" fx:id="x148" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="dataOffset" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Bone Animation Headers Offset" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
-                     <font>
-                        <Font size="18.0" fx:id="x1481" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="boneAnimationHeadersOffset" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Function Curve Values" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
-                     <font>
-                        <Font size="18.0" fx:id="x1482" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="functionCurveValues" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
@@ -245,7 +154,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="unknown4" textAlignment="CENTER" wrapText="false">
+                  <Label alignment="CENTER" style="&#10;" text="Flags 1" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x12" />
                      </font>
@@ -253,11 +162,11 @@
                         <Insets left="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="unknown4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                  <TextField fx:id="flags1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin></TextField>
-                  <Label alignment="CENTER" style="&#10;" text="unknown5" textAlignment="CENTER" wrapText="false">
+                  <Label alignment="CENTER" style="&#10;" text="Flags 2" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x1211" />
                      </font>
@@ -265,7 +174,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="unknown5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                  <TextField fx:id="flags2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin></TextField>

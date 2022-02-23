@@ -27,23 +27,16 @@ public class GNTAEditor {
 
   // Gnta values
   public TextField id;
-  public TextField unknown1;
   public TextField bounciness;
   public TextField repeatDelay;
-  public TextField playbackSpeed;
-  public TextField unknown2;
-  public TextField unknown4_2;
-  public TextField dataOffset;
-  public TextField boneAnimationHeadersOffset;
-  public TextField functionCurveValues;
   public LineChart functionCurveChart;
   public Button apply;
 
   // Bone animation values
   public ListView boneAnimations;
   public TextField offset;
-  public TextField unknown4;
-  public TextField unknown5;
+  public TextField flags1;
+  public TextField flags2;
   public TextField maybeBoneId;
   public TextField lastFunctionCurveValue;
 
@@ -93,16 +86,8 @@ public class GNTAEditor {
   private void updateAllControls() {
     // Fill out gnta pane
     id.setText(String.format("0x%X", gnta.getId()));
-    unknown1.setText(String.format("0x%X", gnta.getUnknown1()));
     bounciness.setText(Float.toString(gnta.getBounciness()));
     repeatDelay.setText(Float.toString(gnta.getRepeatDelay()));
-    playbackSpeed.setText(String.format("0x%X", gnta.getPlaybackSpeed()));
-    unknown2.setText(String.format("0x%X", gnta.getUnknown2()));
-    unknown4_2.setText(Float.toString(gnta.getUnknown4()));
-    dataOffset.setText(String.format("0x%X", gnta.getDataOffset()));
-    boneAnimationHeadersOffset.setText(String.format("0x%X", gnta.getBoneAnimationHeadersOffset()));
-    functionCurveValues.setText(gnta.getFunctionCurveValues().toString());
-    updateFunctionCurveChart();
 
     // Fill out bone animations pane
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
@@ -112,27 +97,51 @@ public class GNTAEditor {
     boneAnimations.getSelectionModel().select(0);
     BoneAnimation boneAnim = boneAnims.get(0);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
-    unknown4.setText(String.format("0x%X", boneAnim.getUnknown4()));
-    unknown5.setText(String.format("0x%X", boneAnim.getUnknown5()));
+    flags1.setText(String.format("0x%X", boneAnim.getFlags1()));
+    flags2.setText(String.format("0x%X", boneAnim.getFlags2()));
     maybeBoneId.setText(String.format("0x%X", boneAnim.getMaybeBoneId()));
     lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
-    for (int i = 1; i <= coordinates.size(); i++) {
+    List<Float> functionCurveValues = boneAnim.getFunctionCurveValues();
+    for (int i = 1; i <= functionCurveValues.size(); i++) {
       keyFrames.getItems().add(i);
     }
     keyFrames.getSelectionModel().select(0);
-    Coordinate coordinate = coordinates.get(0);
-    x.setText(Short.toString(coordinate.getX()));
-    y.setText(Short.toString(coordinate.getY()));
-    z.setText(Short.toString(coordinate.getZ()));
-    w.setText(Short.toString(coordinate.getW()));
-    functionCurve.setText(Float.toString(coordinate.getFunctionCurveValue()));
+    functionCurve.setText(Float.toString(boneAnim.getFunctionCurveValues().get(0)));
+    if (coordinates.isEmpty()) {
+      disableCoordinates(true);
+    } else {
+      disableCoordinates(false);
+      Coordinate coordinate = coordinates.get(0);
+      x.setText(Short.toString(coordinate.getX()));
+      y.setText(Short.toString(coordinate.getY()));
+      z.setText(Short.toString(coordinate.getZ()));
+      w.setText(Short.toString(coordinate.getW()));
+    }
+
+    // Fill out the function curve chart
+    updateFunctionCurveChart();
+  }
+
+  private void disableCoordinates(boolean value) {
+    x.setDisable(value);
+    y.setDisable(value);
+    z.setDisable(value);
+    w.setDisable(value);
+    if (value) {
+      x.setText("");
+      y.setText("");
+      z.setText("");
+      w.setText("");
+    }
   }
 
   private void updateFunctionCurveChart() {
-    List<Float> values = gnta.getFunctionCurveValues();
+    List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
+    BoneAnimation boneAnim = boneAnims.get(boneAnimations.getSelectionModel().getSelectedIndex());
+    List<Float> values = boneAnim.getFunctionCurveValues();
     XYChart.Series<Integer, Integer> series = new XYChart.Series();
     for (int i = 0; i < values.size(); i++) {
       series.getData().add((new XYChart.Data(Integer.toString(i + 1), values.get(i))));
@@ -147,41 +156,55 @@ public class GNTAEditor {
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
     BoneAnimation boneAnim = boneAnims.get(index);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
-    unknown4.setText(String.format("0x%X", boneAnim.getUnknown4()));
-    unknown5.setText(String.format("0x%X", boneAnim.getUnknown5()));
+    flags1.setText(String.format("0x%X", boneAnim.getFlags1()));
+    flags2.setText(String.format("0x%X", boneAnim.getFlags2()));
     maybeBoneId.setText(String.format("0x%X", boneAnim.getMaybeBoneId()));
     lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
+    List<Float> functionCurveValues = boneAnim.getFunctionCurveValues();
     keyFrames.getItems().clear();
-    for (int i = 1; i <= coordinates.size(); i++) {
+    for (int i = 1; i <= functionCurveValues.size(); i++) {
       keyFrames.getItems().add(i);
     }
     keyFrames.getSelectionModel().selectFirst();
-    Coordinate coordinate = coordinates.get(0);
-    x.setText(Short.toString(coordinate.getX()));
-    y.setText(Short.toString(coordinate.getY()));
-    z.setText(Short.toString(coordinate.getZ()));
-    w.setText(Short.toString(coordinate.getW()));
-    functionCurve.setText(Float.toString(coordinate.getFunctionCurveValue()));
+    functionCurve.setText(Float.toString(functionCurveValues.get(0)));
+    if (coordinates.isEmpty()) {
+      disableCoordinates(true);
+    } else {
+      disableCoordinates(false);
+      Coordinate coordinate = coordinates.get(0);
+      x.setText(Short.toString(coordinate.getX()));
+      y.setText(Short.toString(coordinate.getY()));
+      z.setText(Short.toString(coordinate.getZ()));
+      w.setText(Short.toString(coordinate.getW()));
+    }
   }
 
   private void selectKeyFrame(int index) {
+    // Get bone animation of this key frame
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
     BoneAnimation boneAnim = boneAnims.get(boneAnimations.getSelectionModel().getSelectedIndex());
-    Coordinate coordinate = boneAnim.getCoordinates().get(index);
-    x.setText(Short.toString(coordinate.getX()));
-    y.setText(Short.toString(coordinate.getY()));
-    z.setText(Short.toString(coordinate.getZ()));
-    w.setText(Short.toString(coordinate.getW()));
-    functionCurve.setText(Float.toString(coordinate.getFunctionCurveValue()));
+    // Get coordinates and function curve of the bone animation
+    List<Coordinate> coordinates = boneAnim.getCoordinates();
+    List<Float> functionCurveValues = boneAnim.getFunctionCurveValues();
+    // Set the function curve. Set the coordinates if they exist.
+    functionCurve.setText(Float.toString(functionCurveValues.get(index)));
+    if (coordinates.isEmpty()) {
+      disableCoordinates(true);
+    } else {
+      disableCoordinates(false);
+      Coordinate coordinate = coordinates.get(index);
+      x.setText(Short.toString(coordinate.getX()));
+      y.setText(Short.toString(coordinate.getY()));
+      z.setText(Short.toString(coordinate.getZ()));
+      w.setText(Short.toString(coordinate.getW()));
+    }
   }
 
   private void disableUnusedControls() {
     id.setDisable(true);
-    dataOffset.setDisable(true);
-    boneAnimationHeadersOffset.setDisable(true);
     offset.setDisable(true);
   }
 
