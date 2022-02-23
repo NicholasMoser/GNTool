@@ -2,6 +2,7 @@ package com.github.nicholasmoser;
 
 import com.github.nicholasmoser.tools.FPKRepackerTool;
 import com.github.nicholasmoser.tools.FPKUnpackerTool;
+import com.github.nicholasmoser.tools.GNTAEditorTool;
 import com.github.nicholasmoser.tools.ISOCompareTool;
 import com.github.nicholasmoser.tools.ISOExtractorTool;
 import com.github.nicholasmoser.tools.ISOPatcher;
@@ -43,6 +44,7 @@ public class ToolController {
   private static final String SEQ_EDITOR = "SEQ Editor";
   private static final String MOT_UNPACKER = "MOT Unpacker";
   private static final String MOT_REPACKER = "MOT Repacker";
+  private static final String GNTA_EDITOR = "GNTA Editor";
 
   @FXML
   private ListView<String> tools;
@@ -67,6 +69,7 @@ public class ToolController {
     items.add(SEQ_EDITOR);
     items.add(MOT_UNPACKER);
     items.add(MOT_REPACKER);
+    items.add(GNTA_EDITOR);
   }
 
   @FXML
@@ -109,6 +112,7 @@ public class ToolController {
         case SEQ_EDITOR -> SeqEditorTool.open();
         case MOT_UNPACKER -> MOTUnpackerTool.run();
         case MOT_REPACKER -> MOTRepackerTool.run();
+        case GNTA_EDITOR -> GNTAEditorTool.open();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);

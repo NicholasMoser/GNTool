@@ -17,7 +17,7 @@ import java.util.Objects;
 public class BoneAnimation {
 
   private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
-  private final long offset;
+  private final int offset;
   private final short unknown4;
   private final short unknown5;
   private final short maybeBoneId;
@@ -29,7 +29,7 @@ public class BoneAnimation {
   private final String junk1;
   private final String junk2;
 
-  public BoneAnimation(long offset, short unknown4, short unknown5, short maybeBoneId,
+  public BoneAnimation(int offset, short unknown4, short unknown5, short maybeBoneId,
       short numOfKeyFrames, float unknown6, int functionCurveOffset, int coordinatesOffset,
       List<Coordinate> coordinates, String junk1, String junk2) {
     this.offset = offset;
@@ -45,6 +45,50 @@ public class BoneAnimation {
     this.junk2 = junk2;
   }
 
+  public int getOffset() {
+    return offset;
+  }
+
+  public short getUnknown4() {
+    return unknown4;
+  }
+
+  public short getUnknown5() {
+    return unknown5;
+  }
+
+  public short getMaybeBoneId() {
+    return maybeBoneId;
+  }
+
+  public short getNumOfKeyFrames() {
+    return numOfKeyFrames;
+  }
+
+  public float getUnknown6() {
+    return unknown6;
+  }
+
+  public int getFunctionCurveOffset() {
+    return functionCurveOffset;
+  }
+
+  public int getCoordinatesOffset() {
+    return coordinatesOffset;
+  }
+
+  public List<Coordinate> getCoordinates() {
+    return coordinates;
+  }
+
+  public String getJunk1() {
+    return junk1;
+  }
+
+  public String getJunk2() {
+    return junk2;
+  }
+
   /**
    * Parse the bone animation from the file at the current offset. The offset of the parent
    * animation is also required to correctly read the data.
@@ -54,10 +98,10 @@ public class BoneAnimation {
    * @return The bone animation.
    * @throws IOException If an I/O error occurs
    */
-  public static BoneAnimation parseFrom(RandomAccessFile raf, long animationOffset)
+  public static BoneAnimation parseFrom(RandomAccessFile raf, int animationOffset)
       throws IOException {
     // Read the bone animation header
-    long offset = raf.getFilePointer() - animationOffset;
+    int offset = (int) (raf.getFilePointer() - animationOffset);
     short unknown4 = ByteUtils.readInt16(raf);
     short unknown5 = ByteUtils.readInt16(raf);
     short maybeBoneId = ByteUtils.readInt16(raf);
@@ -217,7 +261,7 @@ public class BoneAnimation {
 
   public static class Builder {
 
-    private long offset;
+    private int offset;
     private short unknown4;
     private short unknown5;
     private short maybeBoneId;
@@ -229,7 +273,7 @@ public class BoneAnimation {
     private String junk1;
     private String junk2;
 
-    public BoneAnimation.Builder offset(long offset) {
+    public BoneAnimation.Builder offset(int offset) {
       this.offset = offset;
       return this;
     }

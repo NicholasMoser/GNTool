@@ -27,16 +27,16 @@ public class GNTAnimation {
   private final int playbackSpeed;
   private final short unknown2;
   private final short numberOfFunctionCurveValues;
-  private final int unknown4;
+  private final float unknown4;
   private final int dataOffset;
-  private final long boneAnimationHeadersOffset;
+  private final int boneAnimationHeadersOffset;
   private final List<Float> functionCurveValues;
   private final String junk;
   private final List<BoneAnimation> boneAnimations;
 
   public GNTAnimation(int id, int numOfBoneAnimations, int unknown1, float bounciness,
       float repeatDelay, int playbackSpeed, short unknown2, short numberOfFunctionCurveValues,
-      int unknown4, int dataOffset, long boneAnimationHeadersOffset,
+      float unknown4, int dataOffset, int boneAnimationHeadersOffset,
       List<Float> functionCurveValues, String junk, List<BoneAnimation> boneAnimations) {
     this.id = id;
     this.numOfBoneAnimations = numOfBoneAnimations;
@@ -52,6 +52,58 @@ public class GNTAnimation {
     this.functionCurveValues = functionCurveValues;
     this.junk = junk;
     this.boneAnimations = boneAnimations;
+  }
+
+  public int getNumOfBoneAnimations() {
+    return numOfBoneAnimations;
+  }
+
+  public int getUnknown1() {
+    return unknown1;
+  }
+
+  public float getBounciness() {
+    return bounciness;
+  }
+
+  public float getRepeatDelay() {
+    return repeatDelay;
+  }
+
+  public int getPlaybackSpeed() {
+    return playbackSpeed;
+  }
+
+  public short getUnknown2() {
+    return unknown2;
+  }
+
+  public short getNumberOfFunctionCurveValues() {
+    return numberOfFunctionCurveValues;
+  }
+
+  public float getUnknown4() {
+    return unknown4;
+  }
+
+  public int getDataOffset() {
+    return dataOffset;
+  }
+
+  public int getBoneAnimationHeadersOffset() {
+    return boneAnimationHeadersOffset;
+  }
+
+  public List<Float> getFunctionCurveValues() {
+    return functionCurveValues;
+  }
+
+  public String getJunk() {
+    return junk;
+  }
+
+  public List<BoneAnimation> getBoneAnimations() {
+    return boneAnimations;
   }
 
   /**
@@ -73,13 +125,13 @@ public class GNTAnimation {
     int playbackSpeed = ByteUtils.readInt32(raf);
     short unknown2 = ByteUtils.readInt16(raf);
     short numberOfFunctionCurveValues = ByteUtils.readInt16(raf);
-    int unknown4 = ByteUtils.readInt32(raf);
+    float unknown4 = ByteUtils.readFloat(raf);
     skipWordPadding(raf);
     int functionCurveValuesOffset = ByteUtils.readInt32(raf);
 
     // Save the spot of the bone animation headers
     ByteUtils.byteAlign(raf, 16);
-    long boneAnimationHeadersOffset = raf.getFilePointer() - animationOffset;
+    int boneAnimationHeadersOffset = (int) (raf.getFilePointer() - animationOffset);
 
     // Parse the function curve values
     raf.seek(animationOffset + functionCurveValuesOffset);
@@ -136,7 +188,7 @@ public class GNTAnimation {
     header.write(ByteUtils.fromInt32(playbackSpeed));
     header.write(ByteUtils.fromUint16(unknown2));
     header.write(ByteUtils.fromUint16(numberOfFunctionCurveValues));
-    header.write(ByteUtils.fromInt32(unknown4));
+    header.write(ByteUtils.fromFloat(unknown4));
     header.write(new byte[4]);
     header.write(ByteUtils.fromInt32(dataOffset)); // TODO: Calculate the offset
     header.write(new byte[12]);
@@ -234,9 +286,9 @@ public class GNTAnimation {
     private int playbackSpeed;
     private short unknown2;
     private short numberOfFunctionCurveValues;
-    private int unknown4;
+    private float unknown4;
     private int functionCurveValuesOffset;
-    private long boneAnimationHeadersOffset;
+    private int boneAnimationHeadersOffset;
     private List<Float> functionCurveValues;
     private String junk;
     private List<BoneAnimation> boneAnimations;
@@ -281,7 +333,7 @@ public class GNTAnimation {
       return this;
     }
 
-    public GNTAnimation.Builder unknown4(int unknown4) {
+    public GNTAnimation.Builder unknown4(float unknown4) {
       this.unknown4 = unknown4;
       return this;
     }
@@ -291,7 +343,7 @@ public class GNTAnimation {
       return this;
     }
 
-    public GNTAnimation.Builder boneAnimationHeadersOffset(long boneAnimationHeadersOffset) {
+    public GNTAnimation.Builder boneAnimationHeadersOffset(int boneAnimationHeadersOffset) {
       this.boneAnimationHeadersOffset = boneAnimationHeadersOffset;
       return this;
     }
