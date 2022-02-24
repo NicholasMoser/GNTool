@@ -4,7 +4,6 @@ import com.github.nicholasmoser.gnt4.seq.ext.SeqEditor;
 import com.github.nicholasmoser.mot.BoneAnimation;
 import com.github.nicholasmoser.mot.Coordinate;
 import com.github.nicholasmoser.mot.GNTAnimation;
-import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
@@ -38,7 +37,7 @@ public class GNTAEditor {
   public TextField offset;
   public TextField flags1;
   public TextField flags2;
-  public TextField maybeBoneId;
+  public TextField boneID;
   public TextField lastFunctionCurveValue;
 
   // Key frame values
@@ -97,9 +96,9 @@ public class GNTAEditor {
     boneAnimations.getSelectionModel().select(0);
     BoneAnimation boneAnim = boneAnims.get(0);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
-    flags1.setText(String.format("0x%X", boneAnim.getFlags1()));
-    flags2.setText(String.format("0x%X", boneAnim.getFlags2()));
-    maybeBoneId.setText(String.format("0x%X", boneAnim.getMaybeBoneId()));
+    flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
+    flags2.setText(String.format("0x%04X", boneAnim.getFlags2()));
+    boneID.setText(String.format("0x%X", boneAnim.getBoneId()));
     lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
     // Fill out key frames pane
@@ -156,9 +155,9 @@ public class GNTAEditor {
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
     BoneAnimation boneAnim = boneAnims.get(index);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
-    flags1.setText(String.format("0x%X", boneAnim.getFlags1()));
-    flags2.setText(String.format("0x%X", boneAnim.getFlags2()));
-    maybeBoneId.setText(String.format("0x%X", boneAnim.getMaybeBoneId()));
+    flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
+    flags2.setText(String.format("0x%04X", boneAnim.getFlags2()));
+    boneID.setText(String.format("0x%X", boneAnim.getBoneId()));
     lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
     // Fill out key frames pane

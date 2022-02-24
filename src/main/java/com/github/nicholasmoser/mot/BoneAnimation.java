@@ -20,7 +20,7 @@ public class BoneAnimation {
   private final int offset;
   private final short flags1;
   private final short flags2;
-  private final short maybeBoneId;
+  private final short boneId;
   private final short numOfKeyFrames;
   private final float lastFunctionCurveValue;
   private final int functionCurveOffset;
@@ -30,14 +30,14 @@ public class BoneAnimation {
   private final String junk1;
   private final String junk2;
 
-  public BoneAnimation(int offset, short flags1, short flags2, short maybeBoneId,
+  public BoneAnimation(int offset, short flags1, short flags2, short boneId,
       short numOfKeyFrames, float lastFunctionCurveValue, int functionCurveOffset,
       int coordinatesOffset, List<Coordinate> coordinates, List<Float> functionCurveValues,
       String junk1, String junk2) {
     this.offset = offset;
     this.flags1 = flags1;
     this.flags2 = flags2;
-    this.maybeBoneId = maybeBoneId;
+    this.boneId = boneId;
     this.numOfKeyFrames = numOfKeyFrames;
     this.lastFunctionCurveValue = lastFunctionCurveValue;
     this.functionCurveOffset = functionCurveOffset;
@@ -60,8 +60,8 @@ public class BoneAnimation {
     return flags2;
   }
 
-  public short getMaybeBoneId() {
-    return maybeBoneId;
+  public short getBoneId() {
+    return boneId;
   }
 
   public short getNumOfKeyFrames() {
@@ -111,7 +111,7 @@ public class BoneAnimation {
     int offset = (int) (raf.getFilePointer() - animationOffset);
     short flags1 = ByteUtils.readInt16(raf);
     short flags2 = ByteUtils.readInt16(raf);
-    short maybeBoneId = ByteUtils.readInt16(raf);
+    short boneId = ByteUtils.readInt16(raf);
     short numOfKeyFrames = ByteUtils.readInt16(raf);
     float lastFunctionCurveValue = ByteUtils.readFloat(raf);
     skipWordPadding(raf);
@@ -153,7 +153,7 @@ public class BoneAnimation {
         .offset(offset)
         .flags1(flags1)
         .flags2(flags2)
-        .maybeBoneId(maybeBoneId)
+        .boneId(boneId)
         .numOfKeyFrames(numOfKeyFrames)
         .lastFunctionCurveValue(lastFunctionCurveValue)
         .functionCurveOffset(functionCurveOffset)
@@ -173,7 +173,7 @@ public class BoneAnimation {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ByteUtils.fromUint16(flags1));
     baos.write(ByteUtils.fromUint16(flags2));
-    baos.write(ByteUtils.fromUint16(maybeBoneId));
+    baos.write(ByteUtils.fromUint16(boneId));
     baos.write(ByteUtils.fromUint16(numOfKeyFrames));
     baos.write(ByteUtils.fromFloat(lastFunctionCurveValue));
     baos.write(new byte[4]);
@@ -257,7 +257,7 @@ public class BoneAnimation {
     }
     BoneAnimation that = (BoneAnimation) o;
     return offset == that.offset && flags1 == that.flags1 && flags2 == that.flags2
-        && maybeBoneId == that.maybeBoneId && numOfKeyFrames == that.numOfKeyFrames
+        && boneId == that.boneId && numOfKeyFrames == that.numOfKeyFrames
         && Float.compare(that.lastFunctionCurveValue, lastFunctionCurveValue) == 0
         && functionCurveOffset == that.functionCurveOffset
         && coordinatesOffset == that.coordinatesOffset && Objects.equals(coordinates,
@@ -267,7 +267,7 @@ public class BoneAnimation {
 
   @Override
   public int hashCode() {
-    return Objects.hash(offset, flags1, flags2, maybeBoneId, numOfKeyFrames,
+    return Objects.hash(offset, flags1, flags2, boneId, numOfKeyFrames,
         lastFunctionCurveValue, functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
   }
 
@@ -276,7 +276,7 @@ public class BoneAnimation {
     private int offset;
     private short flags1;
     private short flags2;
-    private short maybeBoneId;
+    private short boneId;
     private short numOfKeyFrames;
     private float lastFunctionCurveValue;
     private int functionCurveOffset;
@@ -301,8 +301,8 @@ public class BoneAnimation {
       return this;
     }
 
-    public BoneAnimation.Builder maybeBoneId(short maybeBoneId) {
-      this.maybeBoneId = maybeBoneId;
+    public BoneAnimation.Builder boneId(short boneId) {
+      this.boneId = boneId;
       return this;
     }
 
@@ -347,7 +347,7 @@ public class BoneAnimation {
     }
 
     public BoneAnimation create() {
-      return new BoneAnimation(offset, flags1, flags2, maybeBoneId, numOfKeyFrames,
+      return new BoneAnimation(offset, flags1, flags2, boneId, numOfKeyFrames,
           lastFunctionCurveValue, functionCurveOffset, coordinatesOffset, coordinates,
           functionCurveValues, junk1, junk2);
     }
