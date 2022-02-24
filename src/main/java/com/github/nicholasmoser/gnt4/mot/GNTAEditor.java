@@ -61,7 +61,6 @@ public class GNTAEditor {
     this.leftStatus.setText(gntaPath.toAbsolutePath().toString());
     this.gnta = parseGnta(gntaPath);
     updateAllControls();
-    disableUnusedControls();
     boneAnimations.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (newSelection != null) {
         int value = (int) newSelection;
@@ -144,11 +143,11 @@ public class GNTAEditor {
     List<Float> values = boneAnim.getFunctionCurveValues();
     XYChart.Series<Integer, Integer> series = new XYChart.Series();
     for (int i = 0; i < values.size(); i++) {
-      series.getData().add((new XYChart.Data(Integer.toString(i + 1), values.get(i))));
+      series.getData().add((new XYChart.Data(i + 1, values.get(i))));
     }
     series.setName("Function Curve Value");
+    functionCurveChart.getData().clear();
     functionCurveChart.getData().add(series);
-    functionCurveChart.autosize();
   }
 
   private void selectBoneAnimation(int index) {
@@ -180,6 +179,7 @@ public class GNTAEditor {
       z.setText(Short.toString(coordinate.getZ()));
       w.setText(Short.toString(coordinate.getW()));
     }
+    updateFunctionCurveChart();
   }
 
   private void selectKeyFrame(int index) {
@@ -201,11 +201,6 @@ public class GNTAEditor {
       z.setText(Short.toString(coordinate.getZ()));
       w.setText(Short.toString(coordinate.getW()));
     }
-  }
-
-  private void disableUnusedControls() {
-    id.setDisable(true);
-    offset.setDisable(true);
   }
 
   private GNTAnimation parseGnta(Path gntaPath) throws IOException {
