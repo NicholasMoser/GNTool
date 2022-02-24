@@ -4,6 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.ext.SeqEditor;
 import com.github.nicholasmoser.mot.BoneAnimation;
 import com.github.nicholasmoser.mot.Coordinate;
 import com.github.nicholasmoser.mot.GNTAnimation;
+import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
@@ -114,10 +115,10 @@ public class GNTAEditor {
     } else {
       disableCoordinates(false);
       Coordinate coordinate = coordinates.get(0);
-      x.setText(Short.toString(coordinate.getX()));
-      y.setText(Short.toString(coordinate.getY()));
-      z.setText(Short.toString(coordinate.getZ()));
-      w.setText(Short.toString(coordinate.getW()));
+      x.setText(Float.toString(coordinate.getFloatX()));
+      y.setText(Float.toString(coordinate.getFloatY()));
+      z.setText(Float.toString(coordinate.getFloatZ()));
+      w.setText(Float.toString(coordinate.getFloatW()));
     }
 
     // Fill out the function curve chart
@@ -174,10 +175,10 @@ public class GNTAEditor {
     } else {
       disableCoordinates(false);
       Coordinate coordinate = coordinates.get(0);
-      x.setText(Short.toString(coordinate.getX()));
-      y.setText(Short.toString(coordinate.getY()));
-      z.setText(Short.toString(coordinate.getZ()));
-      w.setText(Short.toString(coordinate.getW()));
+      x.setText(Float.toString(coordinate.getFloatX()));
+      y.setText(Float.toString(coordinate.getFloatY()));
+      z.setText(Float.toString(coordinate.getFloatZ()));
+      w.setText(Float.toString(coordinate.getFloatW()));
     }
     updateFunctionCurveChart();
   }
@@ -196,10 +197,10 @@ public class GNTAEditor {
     } else {
       disableCoordinates(false);
       Coordinate coordinate = coordinates.get(index);
-      x.setText(Short.toString(coordinate.getX()));
-      y.setText(Short.toString(coordinate.getY()));
-      z.setText(Short.toString(coordinate.getZ()));
-      w.setText(Short.toString(coordinate.getW()));
+      x.setText(Float.toString(coordinate.getFloatX()));
+      y.setText(Float.toString(coordinate.getFloatY()));
+      z.setText(Float.toString(coordinate.getFloatZ()));
+      w.setText(Float.toString(coordinate.getFloatW()));
     }
   }
 

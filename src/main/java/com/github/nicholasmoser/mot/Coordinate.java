@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.mot;
 
+import com.github.nicholasmoser.utils.ByteUtils;
 import java.util.Objects;
 
 /**
@@ -39,6 +40,28 @@ public class Coordinate {
 
   public short getW() {
     return w;
+  }
+
+  public float getFloatX() {
+    return toFloat(x);
+  }
+
+  public float getFloatY() {
+    return toFloat(y);
+  }
+
+  public float getFloatZ() {
+    return toFloat(z);
+  }
+
+  public float getFloatW() {
+    return toFloat(w);
+  }
+
+  private float toFloat(short value) {
+    int shifted = value << 0x10;
+    byte[] bytes = ByteUtils.fromInt32(shifted);
+    return ByteUtils.toFloat(bytes);
   }
 
   @Override
