@@ -115,6 +115,11 @@ public class GNTAEditor {
         coordinates.set(keyFrameIndex, coordinate);
       }
 
+      // Update the last function curve value if changed
+      if (keyFrameIndex == keyFrames.getItems().size() - 1) {
+        boneAnim.setLastFunctionCurveValue(fcurve);
+      }
+
       // Write the data and update the view
       gnta.writeTo(gntaPath);
       updateAllControls(boneAnimIndex, keyFrameIndex);

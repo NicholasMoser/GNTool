@@ -19,7 +19,6 @@ public class BoneAnimation {
   private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
   private final int offset;
   private final short numOfKeyFrames;
-  private final float lastFunctionCurveValue;
   private final int functionCurveOffset;
   private final int coordinatesOffset;
   private final List<Coordinate> coordinates;
@@ -29,6 +28,7 @@ public class BoneAnimation {
   private short flags1;
   private short flags2;
   private short boneId;
+  private float lastFunctionCurveValue;
 
   public BoneAnimation(int offset, short flags1, short flags2, short boneId,
       short numOfKeyFrames, float lastFunctionCurveValue, int functionCurveOffset,
@@ -86,6 +86,10 @@ public class BoneAnimation {
 
   public void setBoneId(short boneId) {
     this.boneId = boneId;
+  }
+
+  public void setLastFunctionCurveValue(float lastFunctionCurveValue) {
+    this.lastFunctionCurveValue = lastFunctionCurveValue;
   }
 
   /**
