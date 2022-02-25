@@ -3,9 +3,7 @@ package com.github.nicholasmoser.utils;
 import static java.nio.file.Files.copy;
 import static java.nio.file.Files.createDirectories;
 
-import com.google.common.io.CountingInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -13,8 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class FileUtils {
 

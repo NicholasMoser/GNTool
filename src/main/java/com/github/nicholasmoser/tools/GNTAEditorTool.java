@@ -6,7 +6,6 @@ import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.mot.GNTAEditor;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -15,6 +14,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * A tool to launch the GNTAEditor.
+ */
 public class GNTAEditorTool {
 
   private static final Logger LOGGER = Logger.getLogger(GNTAEditorTool.class.getName());

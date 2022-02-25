@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
 
+/**
+ * A tool to launch the MOTUnpacker.
+ */
 public class MOTUnpackerTool {
 
   private static final Logger LOGGER = Logger.getLogger(MOTUnpackerTool.class.getName());
@@ -25,9 +28,6 @@ public class MOTUnpackerTool {
     run();
   }
 
-  /**
-   * Unpacks a MOT file.
-   */
   public static void run() {
     Optional<Path> inputPath = Choosers.getInputMot(currentDirectory);
     if (inputPath.isEmpty()) {

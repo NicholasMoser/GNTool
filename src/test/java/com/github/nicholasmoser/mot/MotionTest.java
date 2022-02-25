@@ -66,35 +66,6 @@ public class MotionTest {
     }
   }
 
-  @Test
-  @Disabled("Used for testing.")
-  public void asd() throws Exception {
-    Map<Integer, Integer> valueToCount = new HashMap<>();
-
-    Path uncompressed = Prereqs.getUncompressedGNT4();
-    List<Path> paths = Files.walk(uncompressed)
-        .filter(MotionTest::isMot)
-        .collect(Collectors.toList());
-    for (Path path : paths) {
-      Motion motion = Motion.parseFromFile(path);
-      for (GNTAnimation anim : motion.getAnimations()) {
-        for (BoneAnimation boneAnim : anim.getBoneAnimations()) {
-          List<Float> values = boneAnim.getFunctionCurveValues();
-          List<Coordinate> coordinates = boneAnim.getCoordinates();
-          if (!coordinates.isEmpty()) {
-            if (values.size() != coordinates.size()) {
-              System.out.println();
-            }
-          }
-        }
-      }
-    }
-
-    for (Entry<Integer, Integer> entry : valueToCount.entrySet()) {
-      System.out.printf("0x%08X %d\n", entry.getKey(), entry.getValue());
-    }
-  }
-
   /**
    * This test compares the results of unpacking a MOT via GNTool to unpacking a MOT via the
    * MOT-Dumping-Tool https://github.com/mitchellhumphrey/MOT-Dumping-Tool/blob/master/MOTTool.py

@@ -14,7 +14,6 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Utility methods for working with bytes.
@@ -323,6 +322,13 @@ public class ByteUtils {
     return toInt32(bytes);
   }
 
+  /**
+   * Reads a big-endian 32-bit float from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The 32-bit float.
+   * @throws IOException If an I/O error occurs.
+   */
   public static float readFloat(RandomAccessFile raf) throws IOException {
     byte[] bytes = new byte[4];
     if (raf.read(bytes) != 4) {
@@ -497,6 +503,13 @@ public class ByteUtils {
     return ByteUtils.bytesToHexString(ByteUtils.fromUint32(value));
   }
 
+  /**
+   * Align a RandomAccessFile to a provided alignment byte-boundary.
+   *
+   * @param raf The RandomAccessFile to align.
+   * @param alignment The number of bytes to align on.
+   * @throws IOException If an I/O error occurs.
+   */
   public static void byteAlign(RandomAccessFile raf, int alignment) throws IOException {
     long offset = raf.getFilePointer();
     if (offset % alignment != 0) {

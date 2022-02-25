@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.ActionEvent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
@@ -22,6 +21,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * A GUI editor for .gnta files. Each .gnta file represent a single animation.
+ */
 public class GNTAEditor {
 
   private static final Logger LOGGER = Logger.getLogger(GNTAEditor.class.getName());
