@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,9 +21,9 @@ import java.util.Objects;
 public class GNTAnimation {
 
   private final int id;
-  private final float bounciness;
-  private final float repeatDelay;
   private final List<BoneAnimation> boneAnimations;
+  private float bounciness;
+  private float repeatDelay;
 
   public GNTAnimation(int id, float bounciness,
       float repeatDelay, List<BoneAnimation> boneAnimations) {
@@ -41,6 +43,14 @@ public class GNTAnimation {
 
   public List<BoneAnimation> getBoneAnimations() {
     return boneAnimations;
+  }
+
+  public void setBounciness(float bounciness) {
+    this.bounciness = bounciness;
+  }
+
+  public void setRepeatDelay(float repeatDelay) {
+    this.repeatDelay = repeatDelay;
   }
 
   /**
@@ -74,6 +84,10 @@ public class GNTAnimation {
         .repeatDelay(repeatDelay)
         .boneAnimations(boneAnimations)
         .create();
+  }
+
+  public void writeTo(Path gntaPath) throws IOException {
+    Files.write(gntaPath, getBytes());
   }
 
   /**

@@ -18,9 +18,6 @@ public class BoneAnimation {
 
   private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
   private final int offset;
-  private final short flags1;
-  private final short flags2;
-  private final short boneId;
   private final short numOfKeyFrames;
   private final float lastFunctionCurveValue;
   private final int functionCurveOffset;
@@ -29,6 +26,9 @@ public class BoneAnimation {
   private final List<Float> functionCurveValues;
   private final String junk1;
   private final String junk2;
+  private short flags1;
+  private short flags2;
+  private short boneId;
 
   public BoneAnimation(int offset, short flags1, short flags2, short boneId,
       short numOfKeyFrames, float lastFunctionCurveValue, int functionCurveOffset,
@@ -64,20 +64,8 @@ public class BoneAnimation {
     return boneId;
   }
 
-  public short getNumOfKeyFrames() {
-    return numOfKeyFrames;
-  }
-
   public float getLastFunctionCurveValue() {
     return lastFunctionCurveValue;
-  }
-
-  public int getFunctionCurveOffset() {
-    return functionCurveOffset;
-  }
-
-  public int getCoordinatesOffset() {
-    return coordinatesOffset;
   }
 
   public List<Coordinate> getCoordinates() {
@@ -88,12 +76,16 @@ public class BoneAnimation {
     return functionCurveValues;
   }
 
-  public String getJunk1() {
-    return junk1;
+  public void setFlags1(short flags1) {
+    this.flags1 = flags1;
   }
 
-  public String getJunk2() {
-    return junk2;
+  public void setFlags2(short flags2) {
+    this.flags2 = flags2;
+  }
+
+  public void setBoneId(short boneId) {
+    this.boneId = boneId;
   }
 
   /**
@@ -327,12 +319,12 @@ public class BoneAnimation {
     }
 
     public BoneAnimation.Builder coordinates(List<Coordinate> coordinates) {
-      this.coordinates = Collections.unmodifiableList(coordinates);
+      this.coordinates = coordinates;
       return this;
     }
 
     public BoneAnimation.Builder functionCurveValues(List<Float> functionCurveValues) {
-      this.functionCurveValues = Collections.unmodifiableList(functionCurveValues);
+      this.functionCurveValues = functionCurveValues;
       return this;
     }
 

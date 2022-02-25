@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.mot;
 
+import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEditor;
 import com.github.nicholasmoser.mot.BoneAnimation;
 import com.github.nicholasmoser.mot.Coordinate;
@@ -8,6 +9,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
@@ -18,6 +21,7 @@ import javafx.stage.Stage;
 
 public class GNTAEditor {
 
+  private static final Logger LOGGER = Logger.getLogger(GNTAEditor.class.getName());
   private Stage stage;
   private Path gntaPath;
   private SeqEditor.Mode mode;
@@ -37,7 +41,7 @@ public class GNTAEditor {
   public TextField offset;
   public TextField flags1;
   public TextField flags2;
-  public TextField boneID;
+  public TextField boneId;
   public TextField lastFunctionCurveValue;
 
   // Key frame values
@@ -60,7 +64,7 @@ public class GNTAEditor {
     this.rightStatus.setText(mode.toString());
     this.leftStatus.setText(gntaPath.toAbsolutePath().toString());
     this.gnta = parseGnta(gntaPath);
-    updateAllControls();
+    updateAllControls(0, 0);
     boneAnimations.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (newSelection != null) {
         int value = (int) newSelection;
@@ -76,13 +80,55 @@ public class GNTAEditor {
   }
 
   public void apply() {
+    try {
+      // First get all values and make sure they are valid
+      float bouncinessVal = Float.parseFloat(bounciness.getText());
+      float repeatDelayVal = Float.parseFloat(repeatDelay.getText());
+      short flags1Val = Short.decode(flags1.getText());
+      short flags2Val = Short.decode(flags2.getText());
+      short boneIdVal = Short.decode(boneId.getText());
+      float fcurve = Float.parseFloat(functionCurve.getText());
+      Coordinate coordinate = null;
+      if (!x.isDisabled()) {
+        // coordinate fields disabled, avoid creating a coordinate
+        float xVal = Float.parseFloat(x.getText());
+        float yVal = Float.parseFloat(y.getText());
+        float zVal = Float.parseFloat(z.getText());
+        float wVal = Float.parseFloat(w.getText());
+        coordinate = new Coordinate(xVal, yVal, zVal, wVal);
+      }
+
+      // Set the new values
+      gnta.setBounciness(bouncinessVal);
+      gnta.setRepeatDelay(repeatDelayVal);
+      List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
+      int boneAnimIndex = boneAnimations.getSelectionModel().getSelectedIndex();
+      BoneAnimation boneAnim = boneAnims.get(boneAnimIndex);
+      boneAnim.setFlags1(flags1Val);
+      boneAnim.setFlags2(flags2Val);
+      boneAnim.setBoneId(boneIdVal);
+      int keyFrameIndex = keyFrames.getSelectionModel().getSelectedIndex();
+      List<Float> fcurveValues = boneAnim.getFunctionCurveValues();
+      fcurveValues.set(keyFrameIndex, fcurve);
+      if (coordinate != null) {
+        List<Coordinate> coordinates = boneAnim.getCoordinates();
+        coordinates.set(keyFrameIndex, coordinate);
+      }
+
+      // Write the data and update the view
+      gnta.writeTo(gntaPath);
+      updateAllControls(boneAnimIndex, keyFrameIndex);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Apply Changes", e);
+      Message.error("Failed to Apply Changes", e.getMessage());
+    }
   }
 
   public void quit() {
     stage.close();
   }
 
-  private void updateAllControls() {
+  private void updateAllControls(int boneAnimIndex, int keyFrameIndex) {
     // Fill out gnta pane
     id.setText(String.format("0x%X", gnta.getId()));
     bounciness.setText(Float.toString(gnta.getBounciness()));
@@ -93,12 +139,12 @@ public class GNTAEditor {
     for (int i = 1; i <= boneAnims.size(); i++) {
       boneAnimations.getItems().add(i);
     }
-    boneAnimations.getSelectionModel().select(0);
-    BoneAnimation boneAnim = boneAnims.get(0);
+    boneAnimations.getSelectionModel().select(boneAnimIndex);
+    BoneAnimation boneAnim = boneAnims.get(boneAnimIndex);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
     flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
     flags2.setText(String.format("0x%04X", boneAnim.getFlags2()));
-    boneID.setText(String.format("0x%X", boneAnim.getBoneId()));
+    boneId.setText(String.format("0x%X", boneAnim.getBoneId()));
     lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
     // Fill out key frames pane
@@ -107,13 +153,13 @@ public class GNTAEditor {
     for (int i = 1; i <= functionCurveValues.size(); i++) {
       keyFrames.getItems().add(i);
     }
-    keyFrames.getSelectionModel().select(0);
-    functionCurve.setText(Float.toString(boneAnim.getFunctionCurveValues().get(0)));
+    keyFrames.getSelectionModel().select(keyFrameIndex);
+    functionCurve.setText(Float.toString(boneAnim.getFunctionCurveValues().get(keyFrameIndex)));
     if (coordinates.isEmpty()) {
       disableCoordinates(true);
     } else {
       disableCoordinates(false);
-      Coordinate coordinate = coordinates.get(0);
+      Coordinate coordinate = coordinates.get(keyFrameIndex);
       x.setText(Float.toString(coordinate.getFloatX()));
       y.setText(Float.toString(coordinate.getFloatY()));
       z.setText(Float.toString(coordinate.getFloatZ()));
@@ -157,7 +203,7 @@ public class GNTAEditor {
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
     flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
     flags2.setText(String.format("0x%04X", boneAnim.getFlags2()));
-    boneID.setText(String.format("0x%X", boneAnim.getBoneId()));
+    boneId.setText(String.format("0x%X", boneAnim.getBoneId()));
     lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
     // Fill out key frames pane
