@@ -23,6 +23,7 @@ import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
 import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
+import com.github.nicholasmoser.gnt4.mot.GNTAEditor;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
@@ -32,6 +33,9 @@ import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
+import com.github.nicholasmoser.tools.GNTAEditorTool;
+import com.github.nicholasmoser.tools.MOTRepackerTool;
+import com.github.nicholasmoser.tools.MOTUnpackerTool;
 import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -53,6 +57,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -1024,6 +1029,21 @@ public class MenuController {
       loadingWindow.close();
     });
     new Thread(task).start();
+  }
+
+  @FXML
+  public void unpackMOT() {
+    MOTUnpackerTool.run(uncompressedFiles.toFile());
+  }
+
+  @FXML
+  public void repackMOT() {
+    MOTRepackerTool.run(uncompressedFiles.toFile());
+  }
+
+  @FXML
+  public void modifyGNTA() {
+    GNTAEditorTool.open(uncompressedFiles.toFile());
   }
 
   @FXML

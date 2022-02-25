@@ -20,7 +20,12 @@ public class GNTAEditorTool {
   private static final Logger LOGGER = Logger.getLogger(GNTAEditorTool.class.getName());
   private static File currentDirectory = GNTool.USER_HOME;
 
-  public static void open() throws IOException {
+  public static void open(File startingDirectory) {
+    currentDirectory = startingDirectory;
+    open();
+  }
+
+  public static void open() {
     Optional<Path> optionalGnta = Choosers.getInputGnta(currentDirectory);
     if (optionalGnta.isEmpty()) {
       return;
@@ -30,7 +35,7 @@ public class GNTAEditorTool {
     open(gntaPath);
   }
 
-  public static void open(Path gntaPath) throws IOException {
+  public static void open(Path gntaPath) {
     try {
       FXMLLoader loader = new FXMLLoader(GNTAEditor.class.getResource("motedit.fxml"));
       Scene scene = new Scene(loader.load());

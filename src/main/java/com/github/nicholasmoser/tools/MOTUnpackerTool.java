@@ -20,6 +20,11 @@ public class MOTUnpackerTool {
 
   private static File currentDirectory = GNTool.USER_HOME;
 
+  public static void run(File startingDirectory) {
+    currentDirectory = startingDirectory;
+    run();
+  }
+
   /**
    * Unpacks a MOT file.
    */
