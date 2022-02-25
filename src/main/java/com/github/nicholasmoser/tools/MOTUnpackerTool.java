@@ -24,7 +24,7 @@ public class MOTUnpackerTool {
    * Unpacks a MOT file.
    */
   public static void run() {
-    Optional<Path> inputPath = Choosers.getInputMot(GNTool.USER_HOME);
+    Optional<Path> inputPath = Choosers.getInputMot(currentDirectory);
     if (inputPath.isEmpty()) {
       return;
     }

@@ -21,11 +21,17 @@ public class MOTRepackerTool {
 
   private static File currentDirectory = GNTool.USER_HOME;
 
+  public static void run(File startingDirectory) {
+    currentDirectory = startingDirectory;
+    run();
+
+  }
+
   /**
    * Repacks a MOT file.
    */
   public static void run() {
-    Optional<Path> inputPath = Choosers.getInputDirectory(GNTool.USER_HOME);
+    Optional<Path> inputPath = Choosers.getInputDirectory(currentDirectory);
     if (inputPath.isEmpty()) {
       return;
     }

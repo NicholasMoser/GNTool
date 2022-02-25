@@ -5,12 +5,14 @@ import com.github.nicholasmoser.gnt4.seq.ext.SeqEditor;
 import com.github.nicholasmoser.mot.BoneAnimation;
 import com.github.nicholasmoser.mot.Coordinate;
 import com.github.nicholasmoser.mot.GNTAnimation;
+import com.github.nicholasmoser.tools.MOTRepackerTool;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.ActionEvent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
@@ -127,6 +129,10 @@ public class GNTAEditor {
       LOGGER.log(Level.SEVERE, "Failed to Apply Changes", e);
       Message.error("Failed to Apply Changes", e.getMessage());
     }
+  }
+
+  public void repackMOT() {
+    MOTRepackerTool.run(gntaPath.getParent().toFile());
   }
 
   public void quit() {
