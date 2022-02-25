@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -28,6 +29,7 @@ public class GNTAEditor {
   private Path gntaPath;
   private SeqEditor.Mode mode;
   private GNTAnimation gnta;
+  private Path currentMot;
   public Label leftStatus;
   public Label rightStatus;
 
@@ -55,14 +57,13 @@ public class GNTAEditor {
   public TextField functionCurve;
 
   public enum Mode {
-    NONE_SELECTED,
     EDIT
   }
 
   public void init(Path gntaPath, Stage stage) throws IOException {
     this.stage = stage;
     this.gntaPath = gntaPath;
-    this.mode = SeqEditor.Mode.NONE_SELECTED;
+    this.mode = SeqEditor.Mode.EDIT;
     this.rightStatus.setText(mode.toString());
     this.leftStatus.setText(gntaPath.toAbsolutePath().toString());
     this.gnta = parseGnta(gntaPath);
@@ -132,7 +133,18 @@ public class GNTAEditor {
   }
 
   public void repackMOT() {
-    MOTRepackerTool.run(gntaPath.getParent().toFile());
+    Optional<Path> output = MOTRepackerTool.run(gntaPath.getParent().toFile());
+    if (output.isPresent()) {
+      currentMot = output.get();
+    }
+  }
+
+  public void repackLastMOT() {
+    if (currentMot != null) {
+      MOTRepackerTool.repack(gntaPath.getParent(), currentMot);
+    } else {
+      Message.info("Repack MOT First", "You must run Repack MOT first.");
+    }
   }
 
   public void quit() {

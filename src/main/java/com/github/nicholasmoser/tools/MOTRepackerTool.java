@@ -5,7 +5,6 @@ import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.mot.Motion;
 import com.github.nicholasmoser.utils.GUIUtils;
-import java.awt.Desktop;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,19 +20,18 @@ public class MOTRepackerTool {
 
   private static File currentDirectory = GNTool.USER_HOME;
 
-  public static void run(File startingDirectory) {
+  public static Optional<Path> run(File startingDirectory) {
     currentDirectory = startingDirectory;
-    run();
-
+    return run();
   }
 
   /**
    * Repacks a MOT file.
    */
-  public static void run() {
+  public static Optional<Path> run() {
     Optional<Path> inputPath = Choosers.getInputDirectory(currentDirectory);
     if (inputPath.isEmpty()) {
-      return;
+      return Optional.empty();
     }
     Path dir = inputPath.get();
     if (!Files.exists(dir.resolve("totalAnimationIds"))) {
@@ -41,13 +39,14 @@ public class MOTRepackerTool {
     }
     Optional<Path> outputPath = Choosers.getOutputMot(dir.toFile());
     if (outputPath.isEmpty()) {
-      return;
+      return Optional.empty();
     }
     currentDirectory = dir.toFile();
     repack(dir, outputPath.get());
+    return outputPath;
   }
 
-  private static void repack(Path inputDir, Path mot) {
+  public static void repack(Path inputDir, Path mot) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() {
