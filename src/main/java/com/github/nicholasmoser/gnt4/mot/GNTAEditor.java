@@ -84,9 +84,9 @@ public class GNTAEditor {
       // First get all values and make sure they are valid
       float bouncinessVal = Float.parseFloat(bounciness.getText());
       float repeatDelayVal = Float.parseFloat(repeatDelay.getText());
-      short flags1Val = Short.decode(flags1.getText());
-      short flags2Val = Short.decode(flags2.getText());
-      short boneIdVal = Short.decode(boneId.getText());
+      short flags1Val = Integer.decode(flags1.getText()).shortValue();
+      short flags2Val = Integer.decode(flags2.getText()).shortValue();
+      short boneIdVal = Integer.decode(boneId.getText()).shortValue();
       float fcurve = Float.parseFloat(functionCurve.getText());
       Coordinate coordinate = null;
       if (!x.isDisabled()) {
@@ -141,6 +141,7 @@ public class GNTAEditor {
 
     // Fill out bone animations pane
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
+    boneAnimations.getItems().clear();
     for (int i = 1; i <= boneAnims.size(); i++) {
       boneAnimations.getItems().add(i);
     }
@@ -155,6 +156,7 @@ public class GNTAEditor {
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
     List<Float> functionCurveValues = boneAnim.getFunctionCurveValues();
+    keyFrames.getItems().clear();
     for (int i = 1; i <= functionCurveValues.size(); i++) {
       keyFrames.getItems().add(i);
     }
@@ -258,6 +260,9 @@ public class GNTAEditor {
     try(RandomAccessFile raf = new RandomAccessFile(gntaPath.toFile(), "r")) {
       String id = gntaPath.getFileName().toString().replace(".gnta", "");
       return GNTAnimation.parseFrom(raf, Integer.decode(id));
+    } catch (NumberFormatException e) {
+      String msg = "GNTA filename invalid: " + gntaPath.getFileName();
+      throw new IllegalArgumentException(msg + "\nFilename must be 0x{hex}.gnta where {hex} is hex values.", e);
     }
   }
 }
