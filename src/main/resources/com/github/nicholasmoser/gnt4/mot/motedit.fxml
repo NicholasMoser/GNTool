@@ -132,7 +132,7 @@
                       <NumberAxis side="LEFT" />
                     </yAxis>
                   </LineChart>
-                  <Button fx:id="apply" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#apply" prefHeight="40.0" prefWidth="383.0" text="Apply" VBox.vgrow="NEVER">
+                  <Button fx:id="apply" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#apply" prefHeight="40.0" prefWidth="383.0" text="Apply" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </VBox.margin></Button>
