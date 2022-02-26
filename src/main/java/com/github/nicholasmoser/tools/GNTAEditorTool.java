@@ -3,7 +3,7 @@ package com.github.nicholasmoser.tools;
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
-import com.github.nicholasmoser.gnt4.mot.GNTAEditor;
+import com.github.nicholasmoser.mot.GNTAEditor;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.io.File;
 import java.nio.file.Path;

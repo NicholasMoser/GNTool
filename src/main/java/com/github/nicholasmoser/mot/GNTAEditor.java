@@ -1,10 +1,7 @@
-package com.github.nicholasmoser.gnt4.mot;
+package com.github.nicholasmoser.mot;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEditor;
-import com.github.nicholasmoser.mot.BoneAnimation;
-import com.github.nicholasmoser.mot.Coordinate;
-import com.github.nicholasmoser.mot.GNTAnimation;
 import com.github.nicholasmoser.tools.MOTRepackerTool;
 import java.io.IOException;
 import java.io.RandomAccessFile;
