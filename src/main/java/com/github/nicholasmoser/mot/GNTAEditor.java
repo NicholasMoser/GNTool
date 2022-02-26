@@ -137,8 +137,8 @@ public class GNTAEditor {
       boneAnim.setTrackFlag(trackFlagVal);
       boneAnim.setBoneId(boneIdVal);
       int keyFrameIndex = keyFrames.getSelectionModel().getSelectedIndex();
-      List<Float> fcurveValues = boneAnim.getFunctionCurveValues();
-      fcurveValues.set(keyFrameIndex, currentFrameFraction);
+      List<Float> timeValues = boneAnim.getTimeValues();
+      timeValues.set(keyFrameIndex, currentFrameFraction);
       if (coordinate != null) {
         List<Coordinate> coordinates = boneAnim.getCoordinates();
         coordinates.set(keyFrameIndex, coordinate);
@@ -215,13 +215,13 @@ public class GNTAEditor {
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
-    List<Float> functionCurveValues = boneAnim.getFunctionCurveValues();
+    List<Float> timeValues = boneAnim.getTimeValues();
     keyFrames.getItems().clear();
-    for (int i = 1; i <= functionCurveValues.size(); i++) {
+    for (int i = 1; i <= timeValues.size(); i++) {
       keyFrames.getItems().add(i);
     }
     keyFrames.getSelectionModel().select(keyFrameIndex);
-    float currentFrameFraction = boneAnim.getFunctionCurveValues().get(keyFrameIndex);
+    float currentFrameFraction = boneAnim.getTimeValues().get(keyFrameIndex);
     frame.setText(Integer.toString(Time.fractionToFrames(currentFrameFraction)));
     if (coordinates.isEmpty()) {
       disableCoordinates(true);
@@ -233,9 +233,7 @@ public class GNTAEditor {
       z.setText(Float.toString(coordinate.getFloatZ()));
       w.setText(Float.toString(coordinate.getFloatW()));
     }
-
-    // Fill out the function curve chart
-    updateFunctionCurveChart();
+    updateKeyFrameProgressionChart();
   }
 
   private void disableCoordinates(boolean value) {
@@ -251,17 +249,17 @@ public class GNTAEditor {
     }
   }
 
-  private void updateFunctionCurveChart() {
+  private void updateKeyFrameProgressionChart() {
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
     BoneAnimation boneAnim = boneAnims.get(boneAnimations.getSelectionModel().getSelectedIndex());
-    List<Float> values = boneAnim.getFunctionCurveValues();
+    List<Float> values = boneAnim.getTimeValues();
     XYChart.Series<Integer, Integer> series = new XYChart.Series();
     for (int i = 0; i < values.size(); i++) {
       float currentFrameFraction = values.get(i);
       int currentFrame = Time.fractionToFrames(currentFrameFraction);
       series.getData().add((new XYChart.Data(i + 1, currentFrame)));
     }
-    series.setName("Function Curve Value");
+    series.setName("Key Frame");
     keyFrameProgression.getData().clear();
     keyFrameProgression.getData().add(series);
   }
@@ -284,13 +282,13 @@ public class GNTAEditor {
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
-    List<Float> functionCurveValues = boneAnim.getFunctionCurveValues();
+    List<Float> timeValues = boneAnim.getTimeValues();
     keyFrames.getItems().clear();
-    for (int i = 1; i <= functionCurveValues.size(); i++) {
+    for (int i = 1; i <= timeValues.size(); i++) {
       keyFrames.getItems().add(i);
     }
     keyFrames.getSelectionModel().selectFirst();
-    float currentFrameFraction = functionCurveValues.get(0);
+    float currentFrameFraction = timeValues.get(0);
     frame.setText(Integer.toString(Time.fractionToFrames(currentFrameFraction)));
     if (coordinates.isEmpty()) {
       disableCoordinates(true);
@@ -302,18 +300,18 @@ public class GNTAEditor {
       z.setText(Float.toString(coordinate.getFloatZ()));
       w.setText(Float.toString(coordinate.getFloatW()));
     }
-    updateFunctionCurveChart();
+    updateKeyFrameProgressionChart();
   }
 
   private void selectKeyFrame(int index) {
     // Get bone animation of this key frame
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
     BoneAnimation boneAnim = boneAnims.get(boneAnimations.getSelectionModel().getSelectedIndex());
-    // Get coordinates and function curve of the bone animation
+    // Get coordinates and times values of the bone animation
     List<Coordinate> coordinates = boneAnim.getCoordinates();
-    List<Float> functionCurveValues = boneAnim.getFunctionCurveValues();
-    // Set the function curve. Set the coordinates if they exist.
-    float currentFrameFraction = functionCurveValues.get(index);
+    List<Float> timeValues = boneAnim.getTimeValues();
+    // Set the time value. Set the coordinates if they exist.
+    float currentFrameFraction = timeValues.get(index);
     frame.setText(Integer.toString(Time.fractionToFrames(currentFrameFraction)));
     if (coordinates.isEmpty()) {
       disableCoordinates(true);

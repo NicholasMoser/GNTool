@@ -103,7 +103,7 @@ public class GNTAnimation {
     ByteArrayOutputStream header = new ByteArrayOutputStream();
     ByteArrayOutputStream data = new ByteArrayOutputStream();
 
-    // Write out the animation header and function curve values
+    // Write out the animation header and time values
     header.write(ByteUtils.fromInt32(boneAnimations.size()));
     header.write(ByteUtils.fromInt32(0x10));
     header.write(ByteUtils.fromFloat(playSpeed));
