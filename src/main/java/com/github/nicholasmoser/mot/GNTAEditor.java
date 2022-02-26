@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -43,9 +44,13 @@ public class GNTAEditor {
   public ListView boneAnimations;
   public TextField offset;
   public TextField flags1;
-  public TextField trackFlag;
   public TextField boneId;
   public TextField totalTimeFrames;
+  public CheckBox translateToggle;
+  public CheckBox scaleToggle;
+  public CheckBox rotateToggle;
+  public CheckBox enabledToggle;
+  public CheckBox disabledToggle;
 
   // Key frame values
   public ListView keyFrames;
@@ -67,18 +72,20 @@ public class GNTAEditor {
     this.leftStatus.setText(gntaPath.toAbsolutePath().toString());
     this.gnta = parseGnta(gntaPath);
     updateAllControls(0, 0);
-    boneAnimations.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      if (newSelection != null) {
-        int value = (int) newSelection;
-        selectBoneAnimation(value - 1); // index starts at 1
-      }
-    });
-    keyFrames.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      if (newSelection != null) {
-        int value = (int) newSelection;
-        selectKeyFrame(value - 1); // index starts at 1
-      }
-    });
+    boneAnimations.getSelectionModel().selectedItemProperty()
+        .addListener((obs, oldSelection, newSelection) -> {
+          if (newSelection != null) {
+            int value = (int) newSelection;
+            selectBoneAnimation(value - 1); // index starts at 1
+          }
+        });
+    keyFrames.getSelectionModel().selectedItemProperty()
+        .addListener((obs, oldSelection, newSelection) -> {
+          if (newSelection != null) {
+            int value = (int) newSelection;
+            selectKeyFrame(value - 1); // index starts at 1
+          }
+        });
   }
 
   public void apply() {
@@ -88,7 +95,6 @@ public class GNTAEditor {
       int endTimeFrames = Integer.parseInt(endTime.getText());
       float endTimeVal = Time.framesToFraction(endTimeFrames);
       short flags1Val = Integer.decode(flags1.getText()).shortValue();
-      short trackFlagVal = Integer.decode(trackFlag.getText()).shortValue();
       short boneIdVal = Integer.decode(boneId.getText()).shortValue();
       float fcurve = Float.parseFloat(functionCurve.getText());
       Coordinate coordinate = null;
@@ -99,6 +105,22 @@ public class GNTAEditor {
         float zVal = Float.parseFloat(z.getText());
         float wVal = Float.parseFloat(w.getText());
         coordinate = new Coordinate(xVal, yVal, zVal, wVal);
+      }
+      short trackFlagVal = 0;
+      if (translateToggle.isSelected()) {
+        trackFlagVal |= TrackFlag.TRANSLATE;
+      }
+      if (scaleToggle.isSelected()) {
+        trackFlagVal |= TrackFlag.SCALE;
+      }
+      if (rotateToggle.isSelected()) {
+        trackFlagVal |= TrackFlag.ROTATE;
+      }
+      if (enabledToggle.isSelected()) {
+        trackFlagVal |= TrackFlag.ENABLED;
+      }
+      if (disabledToggle.isSelected()) {
+        trackFlagVal |= TrackFlag.DISABLED;
       }
 
       // Set the new values
@@ -168,10 +190,15 @@ public class GNTAEditor {
     BoneAnimation boneAnim = boneAnims.get(boneAnimIndex);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
     flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
-    trackFlag.setText(String.format("0x%04X", boneAnim.getTrackFlag()));
     boneId.setText(String.format("0x%X", boneAnim.getBoneId()));
     int totalTime = Time.fractionToFrames(boneAnim.getTotalTime());
     totalTimeFrames.setText(Integer.toString(totalTime));
+    short trackFlag = boneAnim.getTrackFlag();
+    translateToggle.setSelected(TrackFlag.isTranslate(trackFlag));
+    scaleToggle.setSelected(TrackFlag.isScale(trackFlag));
+    rotateToggle.setSelected(TrackFlag.isRotate(trackFlag));
+    enabledToggle.setSelected(TrackFlag.isEnabled(trackFlag));
+    disabledToggle.setSelected(TrackFlag.isDisabled(trackFlag));
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
@@ -229,10 +256,15 @@ public class GNTAEditor {
     BoneAnimation boneAnim = boneAnims.get(index);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
     flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
-    trackFlag.setText(String.format("0x%04X", boneAnim.getTrackFlag()));
     boneId.setText(String.format("0x%X", boneAnim.getBoneId()));
     int totalTime = Time.fractionToFrames(boneAnim.getTotalTime());
     totalTimeFrames.setText(Integer.toString(totalTime));
+    short trackFlag = boneAnim.getTrackFlag();
+    translateToggle.setSelected(TrackFlag.isTranslate(trackFlag));
+    scaleToggle.setSelected(TrackFlag.isScale(trackFlag));
+    rotateToggle.setSelected(TrackFlag.isRotate(trackFlag));
+    enabledToggle.setSelected(TrackFlag.isEnabled(trackFlag));
+    disabledToggle.setSelected(TrackFlag.isDisabled(trackFlag));
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
@@ -278,12 +310,13 @@ public class GNTAEditor {
   }
 
   private GNTAnimation parseGnta(Path gntaPath) throws IOException {
-    try(RandomAccessFile raf = new RandomAccessFile(gntaPath.toFile(), "r")) {
+    try (RandomAccessFile raf = new RandomAccessFile(gntaPath.toFile(), "r")) {
       String id = gntaPath.getFileName().toString().replace(".gnta", "");
       return GNTAnimation.parseFrom(raf, Integer.decode(id));
     } catch (NumberFormatException e) {
       String msg = "GNTA filename invalid: " + gntaPath.getFileName();
-      throw new IllegalArgumentException(msg + "\nFilename must be 0x{hex}.gnta where {hex} is hex values.", e);
+      throw new IllegalArgumentException(
+          msg + "\nFilename must be 0x{hex}.gnta where {hex} is hex values.", e);
     }
   }
 }

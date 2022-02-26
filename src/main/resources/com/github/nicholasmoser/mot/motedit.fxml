@@ -36,6 +36,7 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -174,18 +175,6 @@
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin></TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Track Flag" textAlignment="CENTER" wrapText="false">
-                     <font>
-                        <Font size="18.0" fx:id="x1211" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="trackFlag" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin></TextField>
             <Label alignment="CENTER" style="&#10;" text="Bone ID" textAlignment="CENTER" wrapText="false">
               <font>
                 <Font size="18.0" fx:id="x121" />
@@ -212,6 +201,46 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
+                  <CheckBox fx:id="translateToggle" mnemonicParsing="false" text="Translate">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="scaleToggle" mnemonicParsing="false" text="Scale">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="rotateToggle" mnemonicParsing="false" text="Rotate">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="enabledToggle" mnemonicParsing="false" text="Enabled">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="disabledToggle" mnemonicParsing="false" text="Disabled">
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </CheckBox>
                </children>
             </VBox>
             <VBox prefHeight="200.0" prefWidth="100.0">
