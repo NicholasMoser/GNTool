@@ -5,8 +5,6 @@ import com.google.common.primitives.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,35 +20,35 @@ public class GNTAnimation {
 
   private final int id;
   private final List<BoneAnimation> boneAnimations;
-  private float bounciness;
-  private float repeatDelay;
+  private float playSpeed;
+  private float endTime;
 
-  public GNTAnimation(int id, float bounciness,
-      float repeatDelay, List<BoneAnimation> boneAnimations) {
+  public GNTAnimation(int id, float playSpeed,
+      float endTime, List<BoneAnimation> boneAnimations) {
     this.id = id;
-    this.bounciness = bounciness;
-    this.repeatDelay = repeatDelay;
+    this.playSpeed = playSpeed;
+    this.endTime = endTime;
     this.boneAnimations = boneAnimations;
   }
 
-  public float getBounciness() {
-    return bounciness;
+  public float getPlaySpeed() {
+    return playSpeed;
   }
 
-  public float getRepeatDelay() {
-    return repeatDelay;
+  public float getEndTime() {
+    return endTime;
   }
 
   public List<BoneAnimation> getBoneAnimations() {
     return boneAnimations;
   }
 
-  public void setBounciness(float bounciness) {
-    this.bounciness = bounciness;
+  public void setPlaySpeed(float playSpeed) {
+    this.playSpeed = playSpeed;
   }
 
-  public void setRepeatDelay(float repeatDelay) {
-    this.repeatDelay = repeatDelay;
+  public void setEndTime(float endTime) {
+    this.endTime = endTime;
   }
 
   /**
@@ -71,8 +69,8 @@ public class GNTAnimation {
     if (headerSize != 0x10) {
       throw new IllegalStateException("Header size not 16 bytes, is actually: " + headerSize);
     }
-    float bounciness = ByteUtils.readFloat(raf);
-    float repeatDelay = ByteUtils.readFloat(raf);
+    float playSpeed = ByteUtils.readFloat(raf);
+    float endTime = ByteUtils.readFloat(raf);
 
     List<BoneAnimation> boneAnimations = new ArrayList<>();
     for (int i = 0; i < numOfBoneAnimations; i++) {
@@ -80,8 +78,8 @@ public class GNTAnimation {
     }
     return new Builder()
         .id(id)
-        .bounciness(bounciness)
-        .repeatDelay(repeatDelay)
+        .playSpeed(playSpeed)
+        .endTime(endTime)
         .boneAnimations(boneAnimations)
         .create();
   }
@@ -108,8 +106,8 @@ public class GNTAnimation {
     // Write out the animation header and function curve values
     header.write(ByteUtils.fromInt32(boneAnimations.size()));
     header.write(ByteUtils.fromInt32(0x10));
-    header.write(ByteUtils.fromFloat(bounciness));
-    header.write(ByteUtils.fromFloat(repeatDelay));
+    header.write(ByteUtils.fromFloat(playSpeed));
+    header.write(ByteUtils.fromFloat(endTime));
 
     // Write out each bone animation header and data for them
     for (BoneAnimation boneAnimation : boneAnimations) {
@@ -137,21 +135,21 @@ public class GNTAnimation {
     }
     GNTAnimation that = (GNTAnimation) o;
     return id == that.id
-        && Float.compare(that.bounciness, bounciness) == 0
-        && Float.compare(that.repeatDelay, repeatDelay) == 0
+        && Float.compare(that.playSpeed, playSpeed) == 0
+        && Float.compare(that.endTime, endTime) == 0
         && Objects.equals(boneAnimations, that.boneAnimations);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, bounciness, repeatDelay, boneAnimations);
+    return Objects.hash(id, playSpeed, endTime, boneAnimations);
   }
 
   public static class Builder {
 
     private int id;
-    private float bounciness;
-    private float repeatDelay;
+    private float playSpeed;
+    private float endTime;
     private List<BoneAnimation> boneAnimations;
 
     public GNTAnimation.Builder id(int id) {
@@ -159,13 +157,13 @@ public class GNTAnimation {
       return this;
     }
 
-    public GNTAnimation.Builder bounciness(float bounciness) {
-      this.bounciness = bounciness;
+    public GNTAnimation.Builder playSpeed(float playSpeed) {
+      this.playSpeed = playSpeed;
       return this;
     }
 
-    public GNTAnimation.Builder repeatDelay(float repeatDelay) {
-      this.repeatDelay = repeatDelay;
+    public GNTAnimation.Builder endTime(float endTime) {
+      this.endTime = endTime;
       return this;
     }
 
@@ -175,7 +173,7 @@ public class GNTAnimation {
     }
 
     public GNTAnimation create() {
-      return new GNTAnimation(id, bounciness, repeatDelay, boneAnimations);
+      return new GNTAnimation(id, playSpeed, endTime, boneAnimations);
     }
   }
 }

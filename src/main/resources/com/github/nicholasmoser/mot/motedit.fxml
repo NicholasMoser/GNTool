@@ -98,7 +98,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Bounciness" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="Play Speed" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x142" />
                      </font>
@@ -106,12 +106,12 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="bounciness" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                  <TextField fx:id="playSpeed" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Repeat Delay" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="End Time" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x143" />
                      </font>
@@ -119,7 +119,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="repeatDelay" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                  <TextField fx:id="endTime" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>

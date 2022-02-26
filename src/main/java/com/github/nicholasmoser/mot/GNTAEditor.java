@@ -34,8 +34,8 @@ public class GNTAEditor {
 
   // Gnta values
   public TextField id;
-  public TextField bounciness;
-  public TextField repeatDelay;
+  public TextField playSpeed;
+  public TextField endTime;
   public LineChart functionCurveChart;
   public Button apply;
 
@@ -84,8 +84,8 @@ public class GNTAEditor {
   public void apply() {
     try {
       // First get all values and make sure they are valid
-      float bouncinessVal = Float.parseFloat(bounciness.getText());
-      float repeatDelayVal = Float.parseFloat(repeatDelay.getText());
+      float playSpeedVal = Float.parseFloat(playSpeed.getText());
+      float endTimeVal = Float.parseFloat(endTime.getText());
       short flags1Val = Integer.decode(flags1.getText()).shortValue();
       short flags2Val = Integer.decode(flags2.getText()).shortValue();
       short boneIdVal = Integer.decode(boneId.getText()).shortValue();
@@ -101,8 +101,8 @@ public class GNTAEditor {
       }
 
       // Set the new values
-      gnta.setBounciness(bouncinessVal);
-      gnta.setRepeatDelay(repeatDelayVal);
+      gnta.setPlaySpeed(playSpeedVal);
+      gnta.setEndTime(endTimeVal);
       List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
       int boneAnimIndex = boneAnimations.getSelectionModel().getSelectedIndex();
       BoneAnimation boneAnim = boneAnims.get(boneAnimIndex);
@@ -153,8 +153,8 @@ public class GNTAEditor {
   private void updateAllControls(int boneAnimIndex, int keyFrameIndex) {
     // Fill out gnta pane
     id.setText(String.format("0x%X", gnta.getId()));
-    bounciness.setText(Float.toString(gnta.getBounciness()));
-    repeatDelay.setText(Float.toString(gnta.getRepeatDelay()));
+    playSpeed.setText(Float.toString(gnta.getPlaySpeed()));
+    endTime.setText(Float.toString(gnta.getEndTime()));
 
     // Fill out bone animations pane
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
