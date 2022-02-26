@@ -82,7 +82,7 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.333, 0.666" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.6327212020033389, 0.820534223706177" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
@@ -125,7 +125,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <LineChart fx:id="functionCurveChart" legendVisible="false">
+                  <LineChart fx:id="keyFrameProgression" legendVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="540.0" prefWidth="755.0" title="Key Frame Progression">
                     <xAxis>
                       <NumberAxis side="BOTTOM" />
                     </xAxis>
@@ -306,7 +306,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Function Curve" textAlignment="CENTER" wrapText="false">
+                  <Label alignment="CENTER" style="&#10;" text="Frame" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x131111" />
                      </font>
@@ -314,7 +314,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextField fx:id="functionCurve" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                  <TextField fx:id="frame" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>

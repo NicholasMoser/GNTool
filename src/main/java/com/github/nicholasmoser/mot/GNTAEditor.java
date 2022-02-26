@@ -37,7 +37,7 @@ public class GNTAEditor {
   public TextField id;
   public TextField playSpeed;
   public TextField endTime;
-  public LineChart functionCurveChart;
+  public LineChart keyFrameProgression;
   public Button apply;
 
   // Bone animation values
@@ -58,7 +58,7 @@ public class GNTAEditor {
   public TextField y;
   public TextField z;
   public TextField w;
-  public TextField functionCurve;
+  public TextField frame;
 
   public enum Mode {
     EDIT
@@ -96,7 +96,8 @@ public class GNTAEditor {
       float endTimeVal = Time.framesToFraction(endTimeFrames);
       short flags1Val = Integer.decode(flags1.getText()).shortValue();
       short boneIdVal = Integer.decode(boneId.getText()).shortValue();
-      float fcurve = Float.parseFloat(functionCurve.getText());
+      int currentFrame = Integer.parseInt(frame.getText());
+      float currentFrameFraction = Time.framesToFraction(currentFrame);
       Coordinate coordinate = null;
       if (!x.isDisabled()) {
         // coordinate fields disabled, avoid creating a coordinate
@@ -134,7 +135,7 @@ public class GNTAEditor {
       boneAnim.setBoneId(boneIdVal);
       int keyFrameIndex = keyFrames.getSelectionModel().getSelectedIndex();
       List<Float> fcurveValues = boneAnim.getFunctionCurveValues();
-      fcurveValues.set(keyFrameIndex, fcurve);
+      fcurveValues.set(keyFrameIndex, currentFrameFraction);
       if (coordinate != null) {
         List<Coordinate> coordinates = boneAnim.getCoordinates();
         coordinates.set(keyFrameIndex, coordinate);
@@ -142,7 +143,7 @@ public class GNTAEditor {
 
       // Update the total time if changed
       if (keyFrameIndex == keyFrames.getItems().size() - 1) {
-        boneAnim.setTotalTime(fcurve);
+        boneAnim.setTotalTime(currentFrameFraction);
       }
 
       // Write the data and update the view
@@ -208,7 +209,8 @@ public class GNTAEditor {
       keyFrames.getItems().add(i);
     }
     keyFrames.getSelectionModel().select(keyFrameIndex);
-    functionCurve.setText(Float.toString(boneAnim.getFunctionCurveValues().get(keyFrameIndex)));
+    float currentFrameFraction = boneAnim.getFunctionCurveValues().get(keyFrameIndex);
+    frame.setText(Integer.toString(Time.fractionToFrames(currentFrameFraction)));
     if (coordinates.isEmpty()) {
       disableCoordinates(true);
     } else {
@@ -243,11 +245,13 @@ public class GNTAEditor {
     List<Float> values = boneAnim.getFunctionCurveValues();
     XYChart.Series<Integer, Integer> series = new XYChart.Series();
     for (int i = 0; i < values.size(); i++) {
-      series.getData().add((new XYChart.Data(i + 1, values.get(i))));
+      float currentFrameFraction = values.get(i);
+      int currentFrame = Time.fractionToFrames(currentFrameFraction);
+      series.getData().add((new XYChart.Data(i + 1, currentFrame)));
     }
     series.setName("Function Curve Value");
-    functionCurveChart.getData().clear();
-    functionCurveChart.getData().add(series);
+    keyFrameProgression.getData().clear();
+    keyFrameProgression.getData().add(series);
   }
 
   private void selectBoneAnimation(int index) {
@@ -274,7 +278,8 @@ public class GNTAEditor {
       keyFrames.getItems().add(i);
     }
     keyFrames.getSelectionModel().selectFirst();
-    functionCurve.setText(Float.toString(functionCurveValues.get(0)));
+    float currentFrameFraction = functionCurveValues.get(0);
+    frame.setText(Integer.toString(Time.fractionToFrames(currentFrameFraction)));
     if (coordinates.isEmpty()) {
       disableCoordinates(true);
     } else {
@@ -296,7 +301,8 @@ public class GNTAEditor {
     List<Coordinate> coordinates = boneAnim.getCoordinates();
     List<Float> functionCurveValues = boneAnim.getFunctionCurveValues();
     // Set the function curve. Set the coordinates if they exist.
-    functionCurve.setText(Float.toString(functionCurveValues.get(index)));
+    float currentFrameFraction = functionCurveValues.get(index);
+    frame.setText(Integer.toString(Time.fractionToFrames(currentFrameFraction)));
     if (coordinates.isEmpty()) {
       disableCoordinates(true);
     } else {
