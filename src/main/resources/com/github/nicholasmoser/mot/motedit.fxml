@@ -77,7 +77,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About Seq Editor" />
+            <MenuItem mnemonicParsing="false" onAction="#aboutMotions" text="About Motions" />
           </items>
         </Menu>
       </menus>

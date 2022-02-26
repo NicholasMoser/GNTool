@@ -3,8 +3,10 @@ package com.github.nicholasmoser.mot;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEditor;
 import com.github.nicholasmoser.tools.MOTRepackerTool;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import javafx.stage.Stage;
 public class GNTAEditor {
 
   private static final Logger LOGGER = Logger.getLogger(GNTAEditor.class.getName());
+  private static final String MOTION_INFO_URL = "https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/file_formats/mot.md";
   private Stage stage;
   private Path gntaPath;
   private SeqEditor.Mode mode;
@@ -172,6 +175,15 @@ public class GNTAEditor {
 
   public void quit() {
     stage.close();
+  }
+
+  public void aboutMotions() {
+    try {
+      Desktop.getDesktop().browse(new URI(MOTION_INFO_URL));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Opening Help Page", e);
+      Message.error("Error Opening Help Page", e.getMessage());
+    }
   }
 
   private void updateAllControls(int boneAnimIndex, int keyFrameIndex) {
