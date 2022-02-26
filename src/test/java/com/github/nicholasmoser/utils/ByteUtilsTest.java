@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.primitives.Bytes;
+import java.io.RandomAccessFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -818,5 +819,44 @@ public class ByteUtilsTest {
         new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}));
     assertEquals("00010203 04050607 0809", ByteUtils.bytesToHexStringWords(
         new byte[]{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09}));
+  }
+
+  @Test
+  public void testByteAlign() throws Exception {
+    String testFile = "src/main/resources/com/github/nicholasmoser/gnt4/vanilla_with_fpks.bin";
+    try (RandomAccessFile raf = new RandomAccessFile(testFile, "r")) {
+      // First test at position 0
+      assertEquals(0, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 1);
+      assertEquals(0, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 4);
+      assertEquals(0, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 5);
+      assertEquals(0, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 8);
+      assertEquals(0, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 16);
+      assertEquals(0, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 32);
+      assertEquals(0, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 64);
+      assertEquals(0, raf.getFilePointer());
+
+      // Slowly move it and test various byte alignments
+      raf.skipBytes(4);
+      assertEquals(4, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 4);
+      assertEquals(4, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 8);
+      assertEquals(8, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 16);
+      assertEquals(16, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 8);
+      assertEquals(16, raf.getFilePointer());
+      raf.skipBytes(15);
+      assertEquals(31, raf.getFilePointer());
+      ByteUtils.byteAlign(raf, 16);
+      assertEquals(32, raf.getFilePointer());
+    }
   }
 }
