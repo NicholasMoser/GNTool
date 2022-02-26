@@ -45,7 +45,7 @@ public class GNTAEditor {
   public TextField flags1;
   public TextField trackFlag;
   public TextField boneId;
-  public TextField lastFunctionCurveValue;
+  public TextField totalTimeFrames;
 
   // Key frame values
   public ListView keyFrames;
@@ -85,7 +85,8 @@ public class GNTAEditor {
     try {
       // First get all values and make sure they are valid
       float playSpeedVal = Float.parseFloat(playSpeed.getText());
-      float endTimeVal = Float.parseFloat(endTime.getText());
+      int endTimeFrames = Integer.parseInt(endTime.getText());
+      float endTimeVal = Time.framesToFraction(endTimeFrames);
       short flags1Val = Integer.decode(flags1.getText()).shortValue();
       short trackFlagVal = Integer.decode(trackFlag.getText()).shortValue();
       short boneIdVal = Integer.decode(boneId.getText()).shortValue();
@@ -117,9 +118,9 @@ public class GNTAEditor {
         coordinates.set(keyFrameIndex, coordinate);
       }
 
-      // Update the last function curve value if changed
+      // Update the total time if changed
       if (keyFrameIndex == keyFrames.getItems().size() - 1) {
-        boneAnim.setLastFunctionCurveValue(fcurve);
+        boneAnim.setTotalTime(fcurve);
       }
 
       // Write the data and update the view
@@ -154,7 +155,8 @@ public class GNTAEditor {
     // Fill out gnta pane
     id.setText(String.format("0x%X", gnta.getId()));
     playSpeed.setText(Float.toString(gnta.getPlaySpeed()));
-    endTime.setText(Float.toString(gnta.getEndTime()));
+    int endTimeFrames = Time.fractionToFrames(gnta.getEndTime());
+    endTime.setText(Integer.toString(endTimeFrames));
 
     // Fill out bone animations pane
     List<BoneAnimation> boneAnims = gnta.getBoneAnimations();
@@ -168,7 +170,8 @@ public class GNTAEditor {
     flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
     trackFlag.setText(String.format("0x%04X", boneAnim.getTrackFlag()));
     boneId.setText(String.format("0x%X", boneAnim.getBoneId()));
-    lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
+    int totalTime = Time.fractionToFrames(boneAnim.getTotalTime());
+    totalTimeFrames.setText(Integer.toString(totalTime));
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();
@@ -228,7 +231,8 @@ public class GNTAEditor {
     flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
     trackFlag.setText(String.format("0x%04X", boneAnim.getTrackFlag()));
     boneId.setText(String.format("0x%X", boneAnim.getBoneId()));
-    lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
+    int totalTime = Time.fractionToFrames(boneAnim.getTotalTime());
+    totalTimeFrames.setText(Integer.toString(totalTime));
 
     // Fill out key frames pane
     List<Coordinate> coordinates = boneAnim.getCoordinates();

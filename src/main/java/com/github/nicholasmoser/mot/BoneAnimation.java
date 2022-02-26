@@ -27,10 +27,10 @@ public class BoneAnimation {
   private short flags1;
   private short trackFlag;
   private short boneId;
-  private float lastFunctionCurveValue;
+  private float totalTime;
 
   public BoneAnimation(int offset, short flags1, short trackFlag, short boneId,
-      short numOfKeyFrames, float lastFunctionCurveValue, int functionCurveOffset,
+      short numOfKeyFrames, float totalTime, int functionCurveOffset,
       int coordinatesOffset, List<Coordinate> coordinates, List<Float> functionCurveValues,
       String junk1, String junk2) {
     this.offset = offset;
@@ -38,7 +38,7 @@ public class BoneAnimation {
     this.trackFlag = trackFlag;
     this.boneId = boneId;
     this.numOfKeyFrames = numOfKeyFrames;
-    this.lastFunctionCurveValue = lastFunctionCurveValue;
+    this.totalTime = totalTime;
     this.functionCurveOffset = functionCurveOffset;
     this.coordinatesOffset = coordinatesOffset;
     this.coordinates = coordinates;
@@ -63,8 +63,8 @@ public class BoneAnimation {
     return boneId;
   }
 
-  public float getLastFunctionCurveValue() {
-    return lastFunctionCurveValue;
+  public float getTotalTime() {
+    return totalTime;
   }
 
   public List<Coordinate> getCoordinates() {
@@ -87,8 +87,8 @@ public class BoneAnimation {
     this.boneId = boneId;
   }
 
-  public void setLastFunctionCurveValue(float lastFunctionCurveValue) {
-    this.lastFunctionCurveValue = lastFunctionCurveValue;
+  public void setTotalTime(float totalTime) {
+    this.totalTime = totalTime;
   }
 
   /**
@@ -108,7 +108,7 @@ public class BoneAnimation {
     short trackFlag = ByteUtils.readInt16(raf);
     short boneId = ByteUtils.readInt16(raf);
     short numOfKeyFrames = ByteUtils.readInt16(raf);
-    float lastFunctionCurveValue = ByteUtils.readFloat(raf);
+    float totalTime = ByteUtils.readFloat(raf);
     skipWordPadding(raf);
     int functionCurveOffset = ByteUtils.readInt32(raf);
     int coordinatesOffset = ByteUtils.readInt32(raf);
@@ -150,7 +150,7 @@ public class BoneAnimation {
         .trackFlag(trackFlag)
         .boneId(boneId)
         .numOfKeyFrames(numOfKeyFrames)
-        .lastFunctionCurveValue(lastFunctionCurveValue)
+        .totalTime(totalTime)
         .functionCurveOffset(functionCurveOffset)
         .coordinatesOffset(coordinatesOffset)
         .coordinates(coordinates)
@@ -170,7 +170,7 @@ public class BoneAnimation {
     baos.write(ByteUtils.fromUint16(trackFlag));
     baos.write(ByteUtils.fromUint16(boneId));
     baos.write(ByteUtils.fromUint16(numOfKeyFrames));
-    baos.write(ByteUtils.fromFloat(lastFunctionCurveValue));
+    baos.write(ByteUtils.fromFloat(totalTime));
     baos.write(new byte[4]);
     baos.write(ByteUtils.fromInt32(functionCurveOffset));
     baos.write(ByteUtils.fromInt32(coordinatesOffset));
@@ -253,7 +253,7 @@ public class BoneAnimation {
     BoneAnimation that = (BoneAnimation) o;
     return offset == that.offset && flags1 == that.flags1 && trackFlag == that.trackFlag
         && boneId == that.boneId && numOfKeyFrames == that.numOfKeyFrames
-        && Float.compare(that.lastFunctionCurveValue, lastFunctionCurveValue) == 0
+        && Float.compare(that.totalTime, totalTime) == 0
         && functionCurveOffset == that.functionCurveOffset
         && coordinatesOffset == that.coordinatesOffset && Objects.equals(coordinates,
         that.coordinates) && Objects.equals(junk1, that.junk1) && Objects.equals(
@@ -263,7 +263,7 @@ public class BoneAnimation {
   @Override
   public int hashCode() {
     return Objects.hash(offset, flags1, trackFlag, boneId, numOfKeyFrames,
-        lastFunctionCurveValue, functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
+        totalTime, functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
   }
 
   public static class Builder {
@@ -273,7 +273,7 @@ public class BoneAnimation {
     private short trackFlag;
     private short boneId;
     private short numOfKeyFrames;
-    private float lastFunctionCurveValue;
+    private float totalTime;
     private int functionCurveOffset;
     private int coordinatesOffset;
     private List<Coordinate> coordinates;
@@ -306,8 +306,8 @@ public class BoneAnimation {
       return this;
     }
 
-    public BoneAnimation.Builder lastFunctionCurveValue(float lastFunctionCurveValue) {
-      this.lastFunctionCurveValue = lastFunctionCurveValue;
+    public BoneAnimation.Builder totalTime(float totalTime) {
+      this.totalTime = totalTime;
       return this;
     }
 
@@ -343,7 +343,7 @@ public class BoneAnimation {
 
     public BoneAnimation create() {
       return new BoneAnimation(offset, flags1, trackFlag, boneId, numOfKeyFrames,
-          lastFunctionCurveValue, functionCurveOffset, coordinatesOffset, coordinates,
+          totalTime, functionCurveOffset, coordinatesOffset, coordinates,
           functionCurveValues, junk1, junk2);
     }
   }

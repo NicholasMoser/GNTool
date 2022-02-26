@@ -111,7 +111,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label alignment="CENTER" style="&#10;" text="End Time" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
+                  <Label alignment="CENTER" style="&#10;" text="End Time (Frames)" textAlignment="CENTER" wrapText="false" VBox.vgrow="NEVER">
                      <font>
                         <Font size="18.0" fx:id="x143" />
                      </font>
@@ -199,7 +199,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </TextField>
-            <Label alignment="CENTER" style="&#10;" text="Last Function Curve Value" textAlignment="CENTER" wrapText="false">
+            <Label alignment="CENTER" style="&#10;" text="Total Time (Frames)" textAlignment="CENTER" wrapText="false">
               <font>
                 <Font size="18.0" fx:id="x122" />
               </font>
@@ -207,7 +207,7 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
             </Label>
-                  <TextField fx:id="lastFunctionCurveValue" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                  <TextField fx:id="totalTimeFrames" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
