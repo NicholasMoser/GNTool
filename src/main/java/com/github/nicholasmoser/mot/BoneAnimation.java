@@ -7,7 +7,6 @@ import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,17 +25,17 @@ public class BoneAnimation {
   private final String junk1;
   private final String junk2;
   private short flags1;
-  private short flags2;
+  private short trackFlag;
   private short boneId;
   private float lastFunctionCurveValue;
 
-  public BoneAnimation(int offset, short flags1, short flags2, short boneId,
+  public BoneAnimation(int offset, short flags1, short trackFlag, short boneId,
       short numOfKeyFrames, float lastFunctionCurveValue, int functionCurveOffset,
       int coordinatesOffset, List<Coordinate> coordinates, List<Float> functionCurveValues,
       String junk1, String junk2) {
     this.offset = offset;
     this.flags1 = flags1;
-    this.flags2 = flags2;
+    this.trackFlag = trackFlag;
     this.boneId = boneId;
     this.numOfKeyFrames = numOfKeyFrames;
     this.lastFunctionCurveValue = lastFunctionCurveValue;
@@ -56,8 +55,8 @@ public class BoneAnimation {
     return flags1;
   }
 
-  public short getFlags2() {
-    return flags2;
+  public short getTrackFlag() {
+    return trackFlag;
   }
 
   public short getBoneId() {
@@ -80,8 +79,8 @@ public class BoneAnimation {
     this.flags1 = flags1;
   }
 
-  public void setFlags2(short flags2) {
-    this.flags2 = flags2;
+  public void setTrackFlag(short trackFlag) {
+    this.trackFlag = trackFlag;
   }
 
   public void setBoneId(short boneId) {
@@ -106,7 +105,7 @@ public class BoneAnimation {
     // Read the bone animation header
     int offset = (int) (raf.getFilePointer() - animationOffset);
     short flags1 = ByteUtils.readInt16(raf);
-    short flags2 = ByteUtils.readInt16(raf);
+    short trackFlag = ByteUtils.readInt16(raf);
     short boneId = ByteUtils.readInt16(raf);
     short numOfKeyFrames = ByteUtils.readInt16(raf);
     float lastFunctionCurveValue = ByteUtils.readFloat(raf);
@@ -148,7 +147,7 @@ public class BoneAnimation {
     return new Builder()
         .offset(offset)
         .flags1(flags1)
-        .flags2(flags2)
+        .trackFlag(trackFlag)
         .boneId(boneId)
         .numOfKeyFrames(numOfKeyFrames)
         .lastFunctionCurveValue(lastFunctionCurveValue)
@@ -168,7 +167,7 @@ public class BoneAnimation {
   public byte[] getHeaderBytes() throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ByteUtils.fromUint16(flags1));
-    baos.write(ByteUtils.fromUint16(flags2));
+    baos.write(ByteUtils.fromUint16(trackFlag));
     baos.write(ByteUtils.fromUint16(boneId));
     baos.write(ByteUtils.fromUint16(numOfKeyFrames));
     baos.write(ByteUtils.fromFloat(lastFunctionCurveValue));
@@ -252,7 +251,7 @@ public class BoneAnimation {
       return false;
     }
     BoneAnimation that = (BoneAnimation) o;
-    return offset == that.offset && flags1 == that.flags1 && flags2 == that.flags2
+    return offset == that.offset && flags1 == that.flags1 && trackFlag == that.trackFlag
         && boneId == that.boneId && numOfKeyFrames == that.numOfKeyFrames
         && Float.compare(that.lastFunctionCurveValue, lastFunctionCurveValue) == 0
         && functionCurveOffset == that.functionCurveOffset
@@ -263,7 +262,7 @@ public class BoneAnimation {
 
   @Override
   public int hashCode() {
-    return Objects.hash(offset, flags1, flags2, boneId, numOfKeyFrames,
+    return Objects.hash(offset, flags1, trackFlag, boneId, numOfKeyFrames,
         lastFunctionCurveValue, functionCurveOffset, coordinatesOffset, coordinates, junk1, junk2);
   }
 
@@ -271,7 +270,7 @@ public class BoneAnimation {
 
     private int offset;
     private short flags1;
-    private short flags2;
+    private short trackFlag;
     private short boneId;
     private short numOfKeyFrames;
     private float lastFunctionCurveValue;
@@ -292,8 +291,8 @@ public class BoneAnimation {
       return this;
     }
 
-    public BoneAnimation.Builder flags2(short flags2) {
-      this.flags2 = flags2;
+    public BoneAnimation.Builder trackFlag(short trackFlag) {
+      this.trackFlag = trackFlag;
       return this;
     }
 
@@ -343,7 +342,7 @@ public class BoneAnimation {
     }
 
     public BoneAnimation create() {
-      return new BoneAnimation(offset, flags1, flags2, boneId, numOfKeyFrames,
+      return new BoneAnimation(offset, flags1, trackFlag, boneId, numOfKeyFrames,
           lastFunctionCurveValue, functionCurveOffset, coordinatesOffset, coordinates,
           functionCurveValues, junk1, junk2);
     }

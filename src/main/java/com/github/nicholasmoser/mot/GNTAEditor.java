@@ -43,7 +43,7 @@ public class GNTAEditor {
   public ListView boneAnimations;
   public TextField offset;
   public TextField flags1;
-  public TextField flags2;
+  public TextField trackFlag;
   public TextField boneId;
   public TextField lastFunctionCurveValue;
 
@@ -87,7 +87,7 @@ public class GNTAEditor {
       float playSpeedVal = Float.parseFloat(playSpeed.getText());
       float endTimeVal = Float.parseFloat(endTime.getText());
       short flags1Val = Integer.decode(flags1.getText()).shortValue();
-      short flags2Val = Integer.decode(flags2.getText()).shortValue();
+      short trackFlagVal = Integer.decode(trackFlag.getText()).shortValue();
       short boneIdVal = Integer.decode(boneId.getText()).shortValue();
       float fcurve = Float.parseFloat(functionCurve.getText());
       Coordinate coordinate = null;
@@ -107,7 +107,7 @@ public class GNTAEditor {
       int boneAnimIndex = boneAnimations.getSelectionModel().getSelectedIndex();
       BoneAnimation boneAnim = boneAnims.get(boneAnimIndex);
       boneAnim.setFlags1(flags1Val);
-      boneAnim.setFlags2(flags2Val);
+      boneAnim.setTrackFlag(trackFlagVal);
       boneAnim.setBoneId(boneIdVal);
       int keyFrameIndex = keyFrames.getSelectionModel().getSelectedIndex();
       List<Float> fcurveValues = boneAnim.getFunctionCurveValues();
@@ -166,7 +166,7 @@ public class GNTAEditor {
     BoneAnimation boneAnim = boneAnims.get(boneAnimIndex);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
     flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
-    flags2.setText(String.format("0x%04X", boneAnim.getFlags2()));
+    trackFlag.setText(String.format("0x%04X", boneAnim.getTrackFlag()));
     boneId.setText(String.format("0x%X", boneAnim.getBoneId()));
     lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
@@ -226,7 +226,7 @@ public class GNTAEditor {
     BoneAnimation boneAnim = boneAnims.get(index);
     offset.setText(String.format("0x%X", boneAnim.getOffset()));
     flags1.setText(String.format("0x%04X", boneAnim.getFlags1()));
-    flags2.setText(String.format("0x%04X", boneAnim.getFlags2()));
+    trackFlag.setText(String.format("0x%04X", boneAnim.getTrackFlag()));
     boneId.setText(String.format("0x%X", boneAnim.getBoneId()));
     lastFunctionCurveValue.setText(Float.toString(boneAnim.getLastFunctionCurveValue()));
 
