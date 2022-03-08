@@ -147,6 +147,16 @@ public class ByteUtils {
   }
 
   /**
+   * Converts a 2-byte big-endian byte array to a int16 (as an int).
+   *
+   * @param bytes The bytes to use.
+   * @return The output int16 (as an int).
+   */
+  public static short toInt16(byte[] bytes) {
+    return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getShort();
+  }
+
+  /**
    * Converts a 4-byte big-endian byte array to a int32 (as an int).
    *
    * @param bytes The bytes to use.
@@ -282,6 +292,22 @@ public class ByteUtils {
   }
 
   /**
+   * Reads a big-endian int16 (as an int) from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The int16 (as an int).
+   * @throws IOException If an I/O error occurs.
+   */
+  public static short readInt16(RandomAccessFile raf) throws IOException {
+    byte[] bytes = new byte[2];
+    if (raf.read(bytes) != 2) {
+      long offset = raf.getFilePointer();
+      throw new IOException("Failed to read 2 bytes from file at offset " + offset);
+    }
+    return toInt16(bytes);
+  }
+
+  /**
    * Reads a big-endian int32 (as an int) from a RandomAccessFile.
    *
    * @param raf The RandomAccessFile to read from.
@@ -294,6 +320,21 @@ public class ByteUtils {
       throw new IOException("Failed to read 4 bytes from file");
     }
     return toInt32(bytes);
+  }
+
+  /**
+   * Reads a big-endian 32-bit float from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The 32-bit float.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static float readFloat(RandomAccessFile raf) throws IOException {
+    byte[] bytes = new byte[4];
+    if (raf.read(bytes) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
+    return toFloat(bytes);
   }
 
   /**
@@ -460,5 +501,19 @@ public class ByteUtils {
    */
   public static String fromLong(long value) {
     return ByteUtils.bytesToHexString(ByteUtils.fromUint32(value));
+  }
+
+  /**
+   * Align a RandomAccessFile to a provided alignment byte-boundary.
+   *
+   * @param raf The RandomAccessFile to align.
+   * @param alignment The number of bytes to align on.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static void byteAlign(RandomAccessFile raf, int alignment) throws IOException {
+    long offset = raf.getFilePointer();
+    if (offset % alignment != 0) {
+      raf.skipBytes((int) (alignment - (offset % alignment)));
+    }
   }
 }

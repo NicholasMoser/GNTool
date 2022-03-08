@@ -32,6 +32,9 @@ import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
+import com.github.nicholasmoser.tools.GNTAEditorTool;
+import com.github.nicholasmoser.tools.MOTRepackerTool;
+import com.github.nicholasmoser.tools.MOTUnpackerTool;
 import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -1024,6 +1027,21 @@ public class MenuController {
       loadingWindow.close();
     });
     new Thread(task).start();
+  }
+
+  @FXML
+  public void unpackMOT() {
+    MOTUnpackerTool.run(uncompressedFiles.toFile());
+  }
+
+  @FXML
+  public void repackMOT() {
+    MOTRepackerTool.run(uncompressedFiles.toFile());
+  }
+
+  @FXML
+  public void modifyGNTA() {
+    GNTAEditorTool.open(uncompressedFiles.toFile());
   }
 
   @FXML

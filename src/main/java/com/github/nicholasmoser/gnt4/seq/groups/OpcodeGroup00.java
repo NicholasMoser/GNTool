@@ -26,8 +26,8 @@ public class OpcodeGroup00 {
     byte[] bytes = bs.peekWordBytes();
     int opcode = ByteUtils.toInt32(bytes);
     if ((opcode & 0xFFFF) != 0x0000) {
-      throw new IllegalStateException(
-          "Soft reset should have 0 for third and fourth byte: " + Arrays.toString(bytes));
+      String msg = String.format("Soft reset should have 0 for third and fourth byte: %s at offset 0x%X", Arrays.toString(bytes), bs.offset());
+      throw new IllegalStateException(msg);
     }
     bs.skip(4);
     return new SoftReset(offset);
@@ -38,8 +38,8 @@ public class OpcodeGroup00 {
     byte[] bytes = bs.readBytes(4);
     int opcode = ByteUtils.toInt32(bytes);
     if ((opcode & 0xFFFF) != 0x0000) {
-      throw new IllegalStateException(
-          "Hard reset should have 0 for third and fourth byte: " + Arrays.toString(bytes));
+      String msg = String.format("Hard reset should have 0 for third and fourth byte: %s at offset 0x%X", Arrays.toString(bytes), bs.offset());
+      throw new IllegalStateException(msg);
     }
     return new HardReset(offset);
   }

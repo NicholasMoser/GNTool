@@ -92,7 +92,7 @@
                                        <Font size="16.0" />
                                     </font>
                                  </CheckBox>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#translate" text="Translate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#translate" text="Translate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Translate text in the game to English (by Kosheh)" GridPane.rowIndex="7">
                                     <GridPane.margin>
                                        <Insets left="8.0" />
@@ -140,12 +140,12 @@
                                        <Font size="16.0" />
                                     </font>
                                  </Text>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#maxTimeOut" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxTimeOut" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="6">
                                     <GridPane.margin>
                                        <Insets left="2.0" right="2.0" />
                                     </GridPane.margin>
                                  </Button>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#defaultTimeOut" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultTimeOut" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="6">
                                     <GridPane.margin>
                                        <Insets left="2.0" right="2.0" />
                                     </GridPane.margin>
@@ -225,12 +225,12 @@
                                        <Font size="16.0" />
                                     </font>
                                  </Text>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#defaultCSSModelLoad" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="12">
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSModelLoad" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="12">
                                     <GridPane.margin>
                                        <Insets left="2.0" right="2.0" />
                                     </GridPane.margin>
                                  </Button>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#maxCSSModelLoad" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="12">
+                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSModelLoad" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="12">
                                     <GridPane.margin>
                                        <Insets left="2.0" right="2.0" />
                                     </GridPane.margin>
@@ -314,7 +314,7 @@
                    <RowConstraints vgrow="SOMETIMES" />
                  </rowConstraints>
                   <children>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyZTKDamageMultiplier" prefWidth="217.0" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#applyZTKDamageMultiplier" prefWidth="217.0" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
                         <GridPane.margin>
                            <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
                         </GridPane.margin>
@@ -334,7 +334,7 @@
                         <font>
                            <Font size="16.0" />
                         </font></TextField>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyUkonDamageMultiplier" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#applyUkonDamageMultiplier" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="2">
                         <GridPane.margin>
                            <Insets bottom="4.0" left="4.0" right="8.0" top="4.0" />
                         </GridPane.margin>
@@ -354,7 +354,7 @@
                            <Insets left="8.0" />
                         </GridPane.margin>
                      </Text>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyKabutoScalingFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#applyKabutoScalingFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="3">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -369,7 +369,7 @@
                            <Insets left="8.0" />
                         </GridPane.margin>
                      </Text>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyKisamePhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#applyKisamePhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="4">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -384,7 +384,7 @@
                            <Insets left="8.0" />
                         </GridPane.margin>
                      </Text>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#applyZabuzaPhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#applyZabuzaPhantomSwordFix" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="5">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -437,7 +437,7 @@
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin>
                      </ComboBox>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxExtract" text="Extract" GridPane.rowIndex="8">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#musyxExtract" text="Extract" GridPane.rowIndex="8">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -445,7 +445,7 @@
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxImport" text="Import" GridPane.rowIndex="10">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#musyxImport" text="Import" GridPane.rowIndex="10">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -453,7 +453,7 @@
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#randomizeSoundEffects" text="Randomize" GridPane.rowIndex="9">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#randomizeSoundEffects" text="Randomize" GridPane.rowIndex="9">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -461,7 +461,7 @@
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#soundEffectReplace" text="Create DSP File from Sound Effect" GridPane.rowIndex="4">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#soundEffectReplace" text="Create DSP File from Sound Effect" GridPane.rowIndex="4">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -469,7 +469,7 @@
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxExtractAll" text="Extract All Sound Effects" GridPane.rowIndex="1">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#musyxExtractAll" text="Extract All Sound Effects" GridPane.rowIndex="1">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -477,7 +477,7 @@
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musyxImportAll" text="Import All Sound Effects" GridPane.rowIndex="2">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#musyxImportAll" text="Import All Sound Effects" GridPane.rowIndex="2">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -485,7 +485,7 @@
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#randomizeMusic" text="Randomize All Music" GridPane.rowIndex="5">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#randomizeMusic" text="Randomize All Music" GridPane.rowIndex="5">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -493,7 +493,7 @@
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#musicReplace" text="Create TRK File from Music File" GridPane.rowIndex="3">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#musicReplace" text="Create TRK File from Music File" GridPane.rowIndex="3">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -546,28 +546,28 @@
                      <RowConstraints vgrow="SOMETIMES" />
                  </rowConstraints>
                   <children>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplExtract" text="Extract Texture" GridPane.rowIndex="5">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#txg2tplExtract" text="Extract Texture" GridPane.rowIndex="5">
                         <font>
                            <Font size="16.0" />
                         </font>
                         <GridPane.margin>
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin></Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplImport" text="Import Texture" GridPane.rowIndex="6">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#txg2tplImport" text="Import Texture" GridPane.rowIndex="6">
                         <font>
                            <Font size="16.0" />
                         </font>
                         <GridPane.margin>
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin></Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplExtractAll" text="Extract All Textures" GridPane.rowIndex="1">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#txg2tplExtractAll" text="Extract All Textures" GridPane.rowIndex="1">
                         <font>
                            <Font size="16.0" />
                         </font>
                         <GridPane.margin>
                            <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
                         </GridPane.margin></Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#txg2tplImportAll" text="Import All Textures" GridPane.rowIndex="2">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#txg2tplImportAll" text="Import All Textures" GridPane.rowIndex="2">
                         <font>
                            <Font size="16.0" />
                         </font>
@@ -606,6 +606,69 @@
                </GridPane>
         </AnchorPane>
       </Tab>
+         <Tab text="Animation">
+           <content>
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                       <columnConstraints>
+                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                       </columnConstraints>
+                       <rowConstraints>
+                         <RowConstraints vgrow="SOMETIMES" />
+                         <RowConstraints vgrow="SOMETIMES" />
+                         <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="SOMETIMES" />
+                       </rowConstraints>
+                        <children>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#unpackMOT" text="Unpack MOT File" GridPane.rowIndex="1">
+                              <GridPane.margin>
+                                 <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#repackMOT" text="Repack MOT File" GridPane.rowIndex="2">
+                              <GridPane.margin>
+                                 <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyGNTA" text="Modify GNTA File" GridPane.rowIndex="5">
+                              <GridPane.margin>
+                                 <Insets bottom="4.0" left="8.0" right="4.0" top="4.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Modify an Animation" GridPane.rowIndex="3">
+                              <font>
+                                 <Font name="System Bold" size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets bottom="8.0" left="8.0" top="8.0" />
+                              </GridPane.margin>
+                           </Text>
+                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Animation Utilities">
+                              <font>
+                                 <Font name="System Bold" size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets bottom="8.0" left="8.0" top="8.0" />
+                              </GridPane.margin>
+                           </Text>
+                        </children>
+                     </GridPane>
+                  </children>
+               </AnchorPane>
+           </content>
+         </Tab>
       <Tab text="Sequence">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -631,7 +694,7 @@
                            <Font size="16.0" />
                         </font>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#disassembleSeqToHTML" text="Disassemble SEQ File to HTML" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#disassembleSeqToHTML" text="Disassemble SEQ File to HTML" GridPane.columnIndex="1" GridPane.rowIndex="2">
                         <GridPane.margin>
                            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                         </GridPane.margin>
@@ -639,7 +702,7 @@
                            <Font size="16.0" />
                         </font>
                      </Button>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#disassembleSeqToTXT" text="Disassemble SEQ File to TXT" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#disassembleSeqToTXT" text="Disassemble SEQ File to TXT" GridPane.columnIndex="1" GridPane.rowIndex="3">
                         <GridPane.margin>
                            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                         </GridPane.margin>
@@ -746,7 +809,7 @@
                                  <Insets bottom="4.0" left="8.0" right="4.0" top="8.0" />
                               </GridPane.margin>
                            </TextArea>
-                           <Button fx:id="validateCodes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#checkCodes" text="Validate Codes" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                           <Button fx:id="validateCodes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#checkCodes" text="Validate Codes" GridPane.columnSpan="2" GridPane.rowIndex="7">
                               <GridPane.margin>
                                  <Insets bottom="8.0" left="8.0" right="4.0" top="8.0" />
                               </GridPane.margin>
@@ -754,7 +817,7 @@
                                  <Font size="16.0" />
                               </font>
                            </Button>
-                           <Button fx:id="addCodes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#addCodes" text="Add Codes" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                           <Button fx:id="addCodes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addCodes" text="Add Codes" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="7">
                               <GridPane.margin>
                                  <Insets bottom="8.0" left="4.0" right="4.0" top="8.0" />
                               </GridPane.margin>
@@ -762,7 +825,7 @@
                                  <Font size="16.0" />
                               </font>
                            </Button>
-                           <Button fx:id="removeCode" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#removeCode" text="Remove Code" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                           <Button fx:id="removeCode" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#removeCode" text="Remove Code" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="7">
                               <GridPane.margin>
                                  <Insets bottom="8.0" left="8.0" right="8.0" top="4.0" />
                               </GridPane.margin>

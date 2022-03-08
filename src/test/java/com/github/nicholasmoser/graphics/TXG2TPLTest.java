@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.graphics;
 
+import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,7 +53,7 @@ public class TXG2TPLTest {
       assertTrue(Files.size(newTxg) > 0);
       assertTrue(Files.size(txgPath) > 0);
       TXG2TPL.unpack(newTxg, testDir2);
-      FileUtils.areDirectoriesEqual(testDir, testDir2);
+      assertDirectoriesEqual(testDir, testDir2); // TODO: Fix this
     } finally {
       Files.deleteIfExists(newTxg);
       if (Files.isDirectory(testDir)) {
