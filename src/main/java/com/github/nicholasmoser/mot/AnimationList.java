@@ -7,6 +7,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An object representing the list of animations of a motion. When stored to the file, the first
+ * line is the total number of animation ids, and each line after is the filename in the current
+ * directory of each specific .gnta file.
+ */
 public class AnimationList {
 
   public static final String NAME = "AnimationList.dat";
@@ -26,6 +31,13 @@ public class AnimationList {
     return fileNames;
   }
 
+  /**
+   * If this directory is a valid unpacked motion, that is, if it contains an AnimationList.dat
+   * file.
+   *
+   * @param directory The directory to check.
+   * @return If the directory is valid in regard to having an AnimationList.dat
+   */
   public static boolean isValidDirectory(Path directory) {
     return Files.exists(directory.resolve(NAME));
   }
@@ -46,8 +58,14 @@ public class AnimationList {
     return new AnimationList(totalAnimationIds, fileNames);
   }
 
+  /**
+   * Write this AnimationList object to a file.
+   *
+   * @param outputFile The output file.
+   * @throws IOException If an I/O error occurs.
+   */
   public void writeTo(Path outputFile) throws IOException {
-    try(BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
+    try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
       bw.write(Integer.toString(totalAnimationIds));
       bw.write('\n');
       for (String fileName : fileNames) {
