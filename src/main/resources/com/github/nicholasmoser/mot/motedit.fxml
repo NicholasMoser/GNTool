@@ -127,10 +127,10 @@
                   </TextField>
                   <LineChart fx:id="keyFrameProgression" legendVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="540.0" prefWidth="755.0" title="Key Frame Progression">
                     <xAxis>
-                      <NumberAxis side="BOTTOM" />
+                      <NumberAxis label="Key" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                      <NumberAxis side="LEFT" />
+                      <NumberAxis label="Frame" side="LEFT" />
                     </yAxis>
                   </LineChart>
                   <Button fx:id="apply" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#apply" prefHeight="40.0" prefWidth="383.0" text="Apply" VBox.vgrow="NEVER">
