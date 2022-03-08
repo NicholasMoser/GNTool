@@ -57,7 +57,6 @@ public class TimeTest {
   private void compareConvertFramesFractions(int expectedFloatHex, int frames) {
     byte[] bytes = ByteUtils.fromInt32(expectedFloatHex);
     float expectedFloat = ByteUtils.toFloat(bytes);
-    System.out.printf("0x%X\n", ByteUtils.toInt32(ByteUtils.fromFloat(Time.framesToFraction(frames))));
     assertEquals(expectedFloat, Time.framesToFraction(frames));
   }
 }

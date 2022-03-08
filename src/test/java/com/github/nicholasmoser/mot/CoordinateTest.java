@@ -48,14 +48,6 @@ public class CoordinateTest {
 
     // Test the alternate constructor
     Coordinate otherCoordinate = new Coordinate(float1, float2, float3, float4);
-    System.out.printf("otherCoordinate.getX() 0x%X\n", otherCoordinate.getX());
-    System.out.printf("duplicateCoordinate.getX() 0x%X\n", duplicateCoordinate.getX());
-    System.out.printf("otherCoordinate.getY() 0x%X\n", otherCoordinate.getY());
-    System.out.printf("duplicateCoordinate.getY() 0x%X\n", duplicateCoordinate.getY());
-    System.out.printf("otherCoordinate.getZ() 0x%X\n", otherCoordinate.getZ());
-    System.out.printf("duplicateCoordinate.getZ() 0x%X\n", duplicateCoordinate.getZ());
-    System.out.println(otherCoordinate.getFloatZ());
-    System.out.println(duplicateCoordinate.getFloatZ());
     assertEquals(otherCoordinate, duplicateCoordinate);
 
     // Validate that the alternate constructor also results in precision loss
