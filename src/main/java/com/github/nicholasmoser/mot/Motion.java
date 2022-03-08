@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 public class Motion {
 
-  private final int numOfAnimationIds;
+  private final int totalAnimationIds;
   private final Set<GNTAnimation> animations;
   private final Map<Integer, GNTAnimation> idToAnimation;
 
@@ -33,11 +33,11 @@ public class Motion {
    * the total number of animations. This is likely because some animation ids are unused for
    * certain characters or possibly fallback to a default animation.
    *
-   * @param numOfAnimationIds Total possible number of animations. May not reflect the actual size.
+   * @param totalAnimationIds Total possible number of animations. May not reflect the actual size.
    * @param animations        The actual animations in the animation archive.
    */
-  private Motion(int numOfAnimationIds, Set<GNTAnimation> animations) {
-    this.numOfAnimationIds = numOfAnimationIds;
+  private Motion(int totalAnimationIds, Set<GNTAnimation> animations) {
+    this.totalAnimationIds = totalAnimationIds;
     this.animations = animations;
     this.idToAnimation = Maps.newHashMapWithExpectedSize(animations.size());
     for (GNTAnimation animation : animations) {
@@ -45,8 +45,8 @@ public class Motion {
     }
   }
 
-  public int getNumOfAnimationIds() {
-    return numOfAnimationIds;
+  public int getTotalAnimationIds() {
+    return totalAnimationIds;
   }
 
   public Set<GNTAnimation> getAnimations() {
@@ -117,9 +117,12 @@ public class Motion {
     if (!Files.isDirectory(inputDirectory)) {
       throw new IllegalArgumentException("inputDirectory not a directory: " + inputDirectory);
     }
-    List<Path> files = Files.walk(inputDirectory).filter(Files::isRegularFile)
+    AnimationList animList = AnimationList.parseFrom(inputDirectory);
+    List<Path> files = animList.getFileNames()
+        .stream()
+        .map(name -> inputDirectory.resolve(name))
         .collect(Collectors.toList());
-    int largestId = getLargestId(inputDirectory);
+    int totalAnimationIds = animList.getTotalAnimationIds();
     Set<GNTAnimation> animations = new HashSet<>();
     for (Path file : files) {
       String fileName = file.getFileName().toString();
@@ -127,15 +130,15 @@ public class Motion {
         continue;
       }
       int id = Integer.decode(fileName.replace(".gnta", ""));
-      if (id > largestId) {
-        largestId = id;
+      if (id > totalAnimationIds) {
+        totalAnimationIds = id;
       }
       try (RandomAccessFile raf = new RandomAccessFile(file.toFile(), "r")) {
         GNTAnimation animation = GNTAnimation.parseFrom(raf, id);
         animations.add(animation);
       }
     }
-    return new Motion(largestId, animations);
+    return new Motion(totalAnimationIds, animations);
   }
 
   /**
@@ -151,15 +154,16 @@ public class Motion {
       throw new IllegalArgumentException("should be a directory but is a file: " + directory);
     }
     Files.createDirectories(directory);
+    List<String> fileNames = new ArrayList<>(animations.size());
     for (GNTAnimation animation : animations) {
-      String name = String.format("0x%04X.gnta", animation.getId());
-      Path filePath = directory.resolve(name);
+      String fileName = String.format("0x%04X.gnta", animation.getId());
+      fileNames.add(fileName);
+      Path filePath = directory.resolve(fileName);
       byte[] animationData = animation.getBytes();
       Files.write(filePath, animationData);
     }
-    byte[] totalAnimationIdsBytes = Integer.toString(numOfAnimationIds)
-        .getBytes(StandardCharsets.UTF_8);
-    Files.write(directory.resolve("totalAnimationIds"), totalAnimationIdsBytes);
+    AnimationList animationList = new AnimationList(totalAnimationIds, fileNames);
+    animationList.writeTo(directory.resolve(AnimationList.NAME));
   }
 
   /**
@@ -173,19 +177,19 @@ public class Motion {
     int fileSize = 0;
     try (RandomAccessFile raf = new RandomAccessFile(outputFile.toFile(), "rw")) {
       raf.write(new byte[4]); // padding
-      raf.write(ByteUtils.fromInt32(numOfAnimationIds)); // total animation ids
+      raf.write(ByteUtils.fromInt32(totalAnimationIds)); // total animation ids
       raf.write(new byte[]{0x00, 0x00, 0x00, 0x10}); // header size
       raf.write(new byte[4]); // file size (will be filled out last)
 
       // Header size + 4-byte offsets for each animation id, 16-byte aligned
-      int currentDataOffset = byteAlign(0x10 + (numOfAnimationIds * 4));
+      int currentDataOffset = byteAlign(0x10 + (totalAnimationIds * 4));
       raf.seek(currentDataOffset);
       fileSize += currentDataOffset;
       // The animation offsets that will be reversed before written to the file
       List<Integer> offsets = new ArrayList<>();
 
       // Get the animations and write them to the offsets and data section
-      for (int i = numOfAnimationIds - 1; i >= 0; i--) {
+      for (int i = totalAnimationIds - 1; i >= 0; i--) {
         GNTAnimation animation = idToAnimation.get(i);
         if (animation != null) {
           offsets.add(currentDataOffset);
@@ -223,23 +227,6 @@ public class Motion {
     return number;
   }
 
-  /**
-   * Reads the totalAnimationIds file in the given directory to get the total animation ids. If the
-   * file does not exist returns 0.
-   *
-   * @param inputDirectory The directory of the motion object files.
-   * @return The total animation ids or 0.
-   * @throws IOException If an I/O error occurs
-   */
-  private static int getLargestId(Path inputDirectory) throws IOException {
-    Path totalAnimationIdsPath = inputDirectory.resolve("totalAnimationIds");
-    if (Files.isRegularFile(totalAnimationIdsPath)) {
-      String number = Files.readString(totalAnimationIdsPath);
-      return Integer.valueOf(number);
-    }
-    return 0;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -249,11 +236,11 @@ public class Motion {
       return false;
     }
     Motion motion = (Motion) o;
-    return numOfAnimationIds == motion.numOfAnimationIds && animations.equals(motion.animations);
+    return totalAnimationIds == motion.totalAnimationIds && animations.equals(motion.animations);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(numOfAnimationIds, animations);
+    return Objects.hash(totalAnimationIds, animations);
   }
 }

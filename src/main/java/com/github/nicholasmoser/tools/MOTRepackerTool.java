@@ -3,10 +3,10 @@ package com.github.nicholasmoser.tools;
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
+import com.github.nicholasmoser.mot.AnimationList;
 import com.github.nicholasmoser.mot.Motion;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -29,13 +29,19 @@ public class MOTRepackerTool {
   }
 
   public static Optional<Path> run() {
-    Optional<Path> inputPath = Choosers.getInputDirectory(currentDirectory);
-    if (inputPath.isEmpty()) {
-      return Optional.empty();
-    }
-    Path dir = inputPath.get();
-    if (!Files.exists(dir.resolve("totalAnimationIds"))) {
-      Message.error("Invalid Directory", "Missing totalAnimationIds file.");
+    boolean invalid = true;
+    Path dir = null;
+    while (invalid) {
+      Optional<Path> inputPath = Choosers.getInputDirectory(currentDirectory);
+      if (inputPath.isEmpty()) {
+        return Optional.empty();
+      }
+      dir = inputPath.get();
+      if (!AnimationList.isValidDirectory(dir)) {
+        Message.error("Invalid Directory", "Missing file: " + AnimationList.NAME);
+      } else {
+        invalid = false;
+      }
     }
     Optional<Path> outputPath = Choosers.getOutputMot(dir.toFile());
     if (outputPath.isEmpty()) {
