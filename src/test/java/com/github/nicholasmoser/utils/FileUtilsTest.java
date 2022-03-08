@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.utils;
 
 import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesEqual;
+import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesNotEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -70,8 +71,8 @@ public class FileUtilsTest {
       Files.writeString(testDir3.resolve("456"), "YARLY");
       Files.writeString(testDir2.resolve("789"), "NOWAI");
       Files.writeString(testDir4.resolve("DIFFERENT"), "NOWAI");
-      assertDirectoriesEqual(testDir1, testDir3);
-      assertDirectoriesEqual(testDir2, testDir4);
+      assertDirectoriesNotEqual(testDir1, testDir3);
+      assertDirectoriesNotEqual(testDir2, testDir4);
     } finally {
       if (Files.isDirectory(testDir1)) {
         MoreFiles.deleteRecursively(testDir1, RecursiveDeleteOption.ALLOW_INSECURE);
@@ -104,8 +105,8 @@ public class FileUtilsTest {
       Files.writeString(testDir3.resolve("456"), "YARLY");
       Files.writeString(testDir2.resolve("789"), "DIFFERENT");
       Files.writeString(testDir4.resolve("789"), "NOWAI");
-      assertDirectoriesEqual(testDir1, testDir3);
-      assertDirectoriesEqual(testDir2, testDir4);
+      assertDirectoriesNotEqual(testDir1, testDir3);
+      assertDirectoriesNotEqual(testDir2, testDir4);
     } finally {
       if (Files.isDirectory(testDir1)) {
         MoreFiles.deleteRecursively(testDir1, RecursiveDeleteOption.ALLOW_INSECURE);
@@ -139,8 +140,8 @@ public class FileUtilsTest {
       Files.writeString(testDir2.resolve("789"), "NOWAI");
       Files.writeString(testDir4.resolve("789"), "NOWAI");
       Files.writeString(testDir4.resolve("ANOTHERONE"), "NOWAI");
-      assertDirectoriesEqual(testDir1, testDir3);
-      assertDirectoriesEqual(testDir2, testDir4);
+      assertDirectoriesNotEqual(testDir1, testDir3);
+      assertDirectoriesNotEqual(testDir2, testDir4);
     } finally {
       if (Files.isDirectory(testDir1)) {
         MoreFiles.deleteRecursively(testDir1, RecursiveDeleteOption.ALLOW_INSECURE);
