@@ -54,6 +54,20 @@ public class Choosers {
   }
 
   /**
+   * Asks the user to select an input directory.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input directory. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputDirectory(File initialDirectory) {
+    DirectoryChooser directoryChooser = new DirectoryChooser();
+    directoryChooser.setTitle("Select Input Directory");
+    directoryChooser.setInitialDirectory(initialDirectory);
+    File selection = directoryChooser.showDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
    * Asks the user to select an output workspace directory.
    * 
    * @param initialDirectory The location to set the directory chooser to start at.
@@ -235,6 +249,54 @@ public class Choosers {
   }
 
   /**
+   * Asks the user to select an input MOT file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input MOT. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputMot(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Mot File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Mot File (*.mot)", "*.mot");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an output MOT file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional output MOT. Empty if none is chosen.
+   */
+  public static Optional<Path> getOutputMot(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Mot File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Mot File (*.mot)", "*.mot");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an input GNTA file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input GNTA. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputGnta(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Gnta File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Gnta File (*.gnta)", "*.gnta");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
    * Asks the user to select an output FPK file.
    *
    * @param initialDirectory The location to set the directory chooser to start at.
@@ -278,6 +340,22 @@ public class Choosers {
     fileChooser.setTitle("Select Input TXG File");
     fileChooser.setInitialDirectory(initialDirectory);
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("TXG File (*.txg)", "*.txg");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an input sam file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input sam file. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputSAM(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Input SAM File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("SAM File (*.sam)", "*.sam");
     fileChooser.getExtensionFilters().add(fileExtensions);
     File selection = fileChooser.showOpenDialog(null);
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();

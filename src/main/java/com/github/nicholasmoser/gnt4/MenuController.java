@@ -21,19 +21,27 @@ import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
+import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
+import com.github.nicholasmoser.tools.GNTAEditorTool;
+import com.github.nicholasmoser.tools.MOTRepackerTool;
+import com.github.nicholasmoser.tools.MOTUnpackerTool;
 import com.github.nicholasmoser.tools.SeqDisassemblerTool;
+import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +58,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
@@ -71,87 +80,42 @@ public class MenuController {
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
   private static final int DEFAULT_CSS_MODEL_LOAD_FRAMES = 60;
-  private static final int MAX_CSS_MODEL_LOAD_FRAMES = Integer.MAX_VALUE;
-  private static final String SEE_LOG = "See the log for more information.";
   private static final String DOL = "sys/main.dol";
   private Workspace workspace;
   private Stage stage;
   private Path uncompressedDirectory;
   private Path workspaceDirectory;
+  private Path uncompressedFiles;
   private GNT4Codes codes;
   private List<GeckoCodeGroup> codeGroups;
-
-  @FXML
-  private ListView<String> changedFiles;
-
-  @FXML
-  private ListView<String> missingFiles;
-
-  @FXML
-  private CheckBox audioFixCode;
-
-  @FXML
-  private CheckBox skipCutscenesCode;
-
-  @FXML
-  private CheckBox playAudioWhilePaused;
-
-  @FXML
-  private CheckBox noSlowDownOnKill;
-
-  @FXML
-  private CheckBox unlockAll;
-
-  @FXML
-  private CheckBox enableWidescreen;
-
-  @FXML
-  private CheckBox xDoesNotBreakThrows;
-
-  @FXML
-  private Spinner<Integer> cssInitialSpeed;
-
-  @FXML
-  private Spinner<Integer> cssMaxSpeed;
-
-  @FXML
-  private Spinner<Integer> demoTimeOut;
-
-  @FXML
-  private Spinner<Integer> cssModelLoad;
-
-  @FXML
-  private ComboBox<String> musyxSamFile;
-
-  @FXML
-  private ComboBox<String> txg2tplTexture;
-
-  @FXML
-  private ComboBox<String> mainMenuCharacter;
-
-  @FXML
-  private CheckMenuItem parallelBuild;
-
-  @FXML
-  private CheckMenuItem pushToBackOfISO;
-
-  @FXML
-  private ComboBox<String> seqs;
-
-  @FXML
-  private TextField ztkDamageMultiplier;
-
-  @FXML
-  private TextField ukonDamageMultiplier;
-
-  @FXML
-  private TextArea geckoCodes;
-
-  @FXML
-  private TextField codeName;
-
-  @FXML
-  private ListView<String> addedCodes;
+  private byte[] originalHijackedBytes;
+  public ListView<String> changedFiles;
+  public ListView<String> missingFiles;
+  public CheckBox audioFixCode;
+  public CheckBox skipCutscenesCode;
+  public CheckBox playAudioWhilePaused;
+  public CheckBox noSlowDownOnKill;
+  public CheckBox unlockAll;
+  public CheckBox enableWidescreen;
+  public CheckBox xDoesNotBreakThrows;
+  public Spinner<Integer> cssInitialSpeed;
+  public Spinner<Integer> cssMaxSpeed;
+  public Spinner<Integer> demoTimeOut;
+  public Spinner<Integer> cssModelLoad;
+  public ComboBox<String> musyxSamFile;
+  public ComboBox<String> txg2tplTexture;
+  public ComboBox<String> mainMenuCharacter;
+  public CheckMenuItem parallelBuild;
+  public CheckMenuItem pushToBackOfISO;
+  public ComboBox<String> selectedSeq;
+  public TextField ztkDamageMultiplier;
+  public TextField ukonDamageMultiplier;
+  public TextArea geckoCodes;
+  public TextField codeName;
+  public ListView<String> addedCodes;
+  public Button validateCodes;
+  public Button addCodes;
+  public Button removeCode;
 
   /**
    * Toggles the code for fixing the audio.
@@ -167,7 +131,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Audio Fix Code", e);
-      Message.error("Error Triggering Audio Fix Code", SEE_LOG);
+      Message.error("Error Triggering Audio Fix Code", e.getMessage());
     }
   }
 
@@ -185,7 +149,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Play Audio While Paused Code", e);
-      Message.error("Error Triggering Play Audio While Paused Code", SEE_LOG);
+      Message.error("Error Triggering Play Audio While Paused Code", e.getMessage());
     }
   }
 
@@ -203,7 +167,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering No Slowdown On Kill Code", e);
-      Message.error("Error Triggering No Slowdown On Kill Code", SEE_LOG);
+      Message.error("Error Triggering No Slowdown On Kill Code", e.getMessage());
     }
   }
 
@@ -221,7 +185,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Unlock Everything Code", e);
-      Message.error("Error Triggering Unlock Everything Code", SEE_LOG);
+      Message.error("Error Triggering Unlock Everything Code", e.getMessage());
     }
   }
 
@@ -236,7 +200,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Widescreen Code", e);
-      Message.error("Error Triggering Widescreen Code", SEE_LOG);
+      Message.error("Error Triggering Widescreen Code", e.getMessage());
     }
   }
 
@@ -251,7 +215,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering X Does Not Break Throws Code", e);
-      Message.error("Error Triggering X Does Not Break Throws Code", SEE_LOG);
+      Message.error("Error Triggering X Does Not Break Throws Code", e.getMessage());
     }
   }
 
@@ -269,7 +233,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Triggering Skip Cutscenes Code", e);
-      Message.error("Error Triggering Skip Cutscenes Code", SEE_LOG);
+      Message.error("Error Triggering Skip Cutscenes Code", e.getMessage());
     }
   }
 
@@ -291,7 +255,7 @@ public class MenuController {
       Message.info("Translation Complete", "Translation to English completed.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to translate", e);
-      Message.error("Failed to translate", SEE_LOG);
+      Message.error("Failed to translate", e.getMessage());
     }
   }
 
@@ -302,7 +266,7 @@ public class MenuController {
       Message.info("Patch Applied", "Duplicate characters are now allowed in 4-player mode.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Allow Duplicate Characters in 4-Player Mode", e);
-      Message.error("Failed to apply patch.", SEE_LOG);
+      Message.error("Failed to apply patch.", e.getMessage());
     }
   }
 
@@ -314,7 +278,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.INITIAL_SPEEDS_FFA, value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the CSS Initial Speed", e);
-      Message.error("Failed to Update the CSS Initial Speed", SEE_LOG);
+      Message.error("Failed to Update the CSS Initial Speed", e.getMessage());
     }
   }
 
@@ -326,8 +290,28 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.MAX_SPEEDS_FFA, value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the CSS Max Speed", e);
-      Message.error("Failed to Update the CSS Max Speed", SEE_LOG);
+      Message.error("Failed to Update the CSS Max Speed", e.getMessage());
     }
+  }
+
+  @FXML
+  protected void defaultCSSInitialSpeed() {
+    cssInitialSpeed.getValueFactory().setValue(12);
+  }
+
+  @FXML
+  protected void maxCSSInitialSpeed() {
+    cssInitialSpeed.getValueFactory().setValue(15);
+  }
+
+  @FXML
+  protected void defaultCSSMaxSpeed() {
+    cssMaxSpeed.getValueFactory().setValue(8);
+  }
+
+  @FXML
+  protected void maxCSSMaxSpeed() {
+    cssMaxSpeed.getValueFactory().setValue(15);
   }
 
   @FXML
@@ -337,7 +321,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.DEMO_TIME_OUT, frames);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the Title Demo Timeout", e);
-      Message.error("Failed to Update the Title Demo Timeout", SEE_LOG);
+      Message.error("Failed to Update the Title Demo Timeout", e.getMessage());
     }
   }
 
@@ -349,7 +333,7 @@ public class MenuController {
       codes.setCodeInt(GNT4Codes.CSS_FFA_LOAD_CHR_MODELS, frames);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update the Frames Until CSS Model Load", e);
-      Message.error("Failed to Update the Frames Until CSS Model Load", SEE_LOG);
+      Message.error("Failed to Update the Frames Until CSS Model Load", e.getMessage());
     }
   }
 
@@ -373,7 +357,7 @@ public class MenuController {
 
   @FXML
   public void maxCSSModelLoad() {
-    cssModelLoad.getValueFactory().setValue(MAX_CSS_MODEL_LOAD_FRAMES);
+    cssModelLoad.getValueFactory().setValue(GNT4Codes.CSS_LOAD_CHR_MODELS_MAX);
     setCssModelLoad();
   }
 
@@ -385,7 +369,7 @@ public class MenuController {
       Texture1300.mainCharacterFix(uncompressedDirectory, character);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Main Menu Character", e);
-      Message.error("Failed to Update Main Menu Character", SEE_LOG);
+      Message.error("Failed to Update Main Menu Character", e.getMessage());
     }
   }
 
@@ -400,7 +384,7 @@ public class MenuController {
       Message.error("Invalid Number", multiplier + " is not a valid number.");
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Update ZTK Damage Multiplier", e);
-      Message.error("Failed to Update ZTK Damage Multiplier", SEE_LOG);
+      Message.error("Failed to Update ZTK Damage Multiplier", e.getMessage());
     }
   }
 
@@ -415,79 +399,92 @@ public class MenuController {
       Message.error("Invalid Number", multiplier + " is not a valid number.");
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Update Ukon Damage Multiplier", e);
-      Message.error("Failed to Update Ukon Damage Multiplier", SEE_LOG);
+      Message.error("Failed to Update Ukon Damage Multiplier", e.getMessage());
     }
   }
 
   @FXML
   protected void applyKabutoScalingFix() {
     try {
-      boolean isModified = KabutoScalingFix.isSeqModified(uncompressedDirectory);
-      if (isModified) {
-        String header = "Applying Kabuto Scaling Fix May Break Kabuto";
-        String message = "Kabuto's 0000.seq has been modified and is no longer vanilla. "
-            + "There is a high likelihood applying this fix will break Kabuto's 0000.seq. "
-            + "Are you sure you wish to continue?";
-        boolean confirm = Message.warnConfirmation(header, message);
-        if (!confirm) {
-          return;
-        }
+      Path seqPath = uncompressedDirectory.resolve(Seqs.KAB_0000);
+      if (KabutoScalingFix.isUsingOldFix(seqPath)) {
+        String message = "An old version of this fix has already been applied to this character. ";
+        message += "The older version directly modified the file bytes, whereas the new version ";
+        message += "of this code adds a seq edit using the seq extension section.\n";
+        message += "This code is unable to be reversed. Please get a clean Kabuto 0000.seq and ";
+        message += "try again.";
+        Message.error("Already Using Old Fix", message);
+        return;
+      } else if (KabutoScalingFix.isUsingNewFix(seqPath)) {
+        Message.info("Fix Already Applied", "This fix has already been applied.");
+        return;
       }
-      KabutoScalingFix.apply(uncompressedDirectory);
+      SeqEdit seqEdit = KabutoScalingFix.getSeqEdit(seqPath);
+      SeqExt.addEdit(seqEdit, seqPath);
       String header = "Kabuto Scaling Fix Applied";
       String message = "The Kabuto Scaling Fix has been applied to Kabuto's 0000.seq file.";
       Message.info(header, message);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Kabuto Scaling Fix", e);
-      Message.error("Failed to Apply Kabuto Scaling Fix", SEE_LOG);
+      Message.error("Failed to Apply Kabuto Scaling Fix", e.getMessage());
     }
   }
 
   @FXML
   protected void applyKisamePhantomSwordFix() {
     try {
-      boolean isModified = KisamePhantomSwordFix.isSeqModified(uncompressedDirectory);
-      if (isModified) {
-        String header = "Applying Kisame Phantom Sword Fix May Break Kisame";
-        String message = "Kisame's 0000.seq has been modified and is no longer vanilla. "
-            + "There is a high likelihood applying this fix will break Kisame's 0000.seq. "
-            + "Are you sure you wish to continue?";
-        boolean confirm = Message.warnConfirmation(header, message);
+      Path seqPath = uncompressedDirectory.resolve(Seqs.KIS_0000);
+      if (KisamePhantomSwordFix.isUsingOldFix(seqPath)) {
+        String message = "An old version of this fix has already been applied to this character. ";
+        message += "The older version directly modified the file bytes, whereas the new version ";
+        message += "of this code adds a seq edit using the seq extension section.\n";
+        message += "Do you wish to convert the old code to the new code?";
+        boolean confirm = Message.warnConfirmation("Already Using Old Fix", message);
         if (!confirm) {
           return;
         }
+        KisamePhantomSwordFix.removeOldFix(seqPath);
+      } else if (KisamePhantomSwordFix.isUsingNewFix(seqPath)) {
+        Message.info("Fix Already Applied", "This fix has already been applied.");
+        return;
       }
-      KisamePhantomSwordFix.apply(uncompressedDirectory);
+      SeqEdit seqEdit = KisamePhantomSwordFix.getSeqEdit(seqPath);
+      SeqExt.addEdit(seqEdit, seqPath);
       String header = "Kisame Phantom Sword Fix Applied";
       String message = "The Kisame Phantom Sword Fix has been applied to Kisame's 0000.seq file.";
       Message.info(header, message);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Kisame Phantom Sword Fix", e);
-      Message.error("Failed to Apply Kisame Phantom Sword Fix", SEE_LOG);
+      Message.error("Failed to Apply Kisame Phantom Sword Fix", e.getMessage());
     }
   }
 
   @FXML
   protected void applyZabuzaPhantomSwordFix() {
     try {
-      boolean isModified = ZabuzaPhantomSwordFix.isSeqModified(uncompressedDirectory);
-      if (isModified) {
-        String header = "Applying Zabuza Phantom Sword Fix May Break Zabuza";
-        String message = "Zabuza's 0000.seq has been modified and is no longer vanilla. "
-            + "There is a high likelihood applying this fix will break Zabuza's 0000.seq. "
-            + "Are you sure you wish to continue?";
-        boolean confirm = Message.warnConfirmation(header, message);
+      Path seqPath = uncompressedDirectory.resolve(Seqs.ZAB_0000);
+      if (ZabuzaPhantomSwordFix.isUsingOldFix(seqPath)) {
+        String message = "An old version of this fix has already been applied to this character. ";
+        message += "The older version directly modified the file bytes, whereas the new version ";
+        message += "of this code adds a seq edit using the seq extension section.\n";
+        message += "Do you wish to convert the old code to the new code?";
+        boolean confirm = Message.warnConfirmation("Already Using Old Fix", message);
         if (!confirm) {
           return;
         }
+        ZabuzaPhantomSwordFix.removeOldFix(seqPath);
+      } else if (ZabuzaPhantomSwordFix.isUsingNewFix(seqPath)) {
+        Message.info("Fix Already Applied", "This fix has already been applied.");
+        return;
       }
-      ZabuzaPhantomSwordFix.apply(uncompressedDirectory);
+      SeqEdit seqEdit = ZabuzaPhantomSwordFix.getSeqEdit(seqPath);
+      SeqExt.addEdit(seqEdit, seqPath);
       String header = "Zabuza Phantom Sword Fix Applied";
       String message = "The Zabuza Phantom Sword Fix has been applied to Zabuza's 0000.seq file.";
       Message.info(header, message);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Zabuza Phantom Sword Fix", e);
-      Message.error("Failed to Apply Zabuza Phantom Sword Fix", SEE_LOG);
+      Message.error("Failed to Apply Zabuza Phantom Sword Fix", e.getMessage());
     }
   }
 
@@ -517,7 +514,7 @@ public class MenuController {
       syncRefresh();
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Error Refreshing Workspace", e);
-      Message.error("Error Refreshing Workspace", SEE_LOG);
+      Message.error("Error Refreshing Workspace", e.getMessage());
       return;
     }
 
@@ -594,7 +591,7 @@ public class MenuController {
       asyncRefresh();
     });
     task.setOnFailed(event -> {
-      Message.error("ISO Build Failure", SEE_LOG);
+      Message.error("ISO Build Failure", "See the log for more information");
       loadingWindow.close();
       // Don't save workspace state to make debugging easier
     });
@@ -618,7 +615,7 @@ public class MenuController {
       Desktop.getDesktop().browse(new URI(ABOUT_URL));
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
-      Message.error("Error Opening About Page", SEE_LOG);
+      Message.error("Error Opening About Page", e.getMessage());
     }
   }
 
@@ -631,7 +628,7 @@ public class MenuController {
       Desktop.getDesktop().open(uncompressedDirectory.toFile());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
-      Message.error("Error Opening Workspace Directory", SEE_LOG);
+      Message.error("Error Opening Workspace Directory", e.getMessage());
     }
   }
 
@@ -646,10 +643,25 @@ public class MenuController {
   }
 
   @FXML
+  protected void browseSoundEffect() {
+    Optional<Path> inputSAM = Choosers.getInputSAM(uncompressedFiles.toFile());
+    if (inputSAM.isEmpty()) {
+      return;
+    }
+    musyxSamFile.setValue(inputSAM.get().toString());
+  }
+
+  @FXML
   protected void musyxExtract() {
     try {
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
       Path samFilePath = uncompressedDirectory.resolve(samFile);
+      if (!Files.exists(samFilePath)) {
+        samFilePath = Paths.get(samFile);
+        if (!Files.exists(samFilePath)) {
+          throw new IOException("Unable to find SAM file: " + samFile);
+        }
+      }
       String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
       Path sdiFilePath = Paths.get(sdiFile);
       String name = samFilePath.getFileName().toString().replace(".sam", "/");
@@ -665,7 +677,7 @@ public class MenuController {
       Desktop.getDesktop().open(outputPath.toFile());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
-      Message.error("Error Extracting Audio", "See log for more information");
+      Message.error("Error Extracting Audio", e.getMessage());
     }
   }
 
@@ -690,7 +702,7 @@ public class MenuController {
       Message.info("Extraction Complete", ".dsp files have been created.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
-      Message.error("Error Extracting Audio", "See log for more information");
+      Message.error("Error Extracting Audio", e.getMessage());
     }
   }
 
@@ -699,6 +711,12 @@ public class MenuController {
     try {
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
       Path samFilePath = uncompressedDirectory.resolve(samFile);
+      if (!Files.exists(samFilePath)) {
+        samFilePath = Paths.get(samFile);
+        if (!Files.exists(samFilePath)) {
+          throw new IOException("Unable to find SAM file: " + samFile);
+        }
+      }
       String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
       Path sdiFilePath = Paths.get(sdiFile);
       String directory = samFilePath.getFileName().toString().replace(".sam", "/");
@@ -713,7 +731,7 @@ public class MenuController {
       Message.info("Import Complete", ".sam and .sdi files have been created.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Importing Audio", e);
-      Message.error("Error Importing Audio", "See log for more information");
+      Message.error("Error Importing Audio", e.getMessage());
     }
   }
 
@@ -737,7 +755,7 @@ public class MenuController {
       Message.info("Import Complete", ".sam and .sdi files have been created.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Importing Audio", e);
-      Message.error("Error Importing Audio", "See log for more information");
+      Message.error("Error Importing Audio", e.getMessage());
     }
   }
 
@@ -746,6 +764,12 @@ public class MenuController {
     try {
       String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
       Path samFilePath = uncompressedDirectory.resolve(samFile);
+      if (!Files.exists(samFilePath)) {
+        samFilePath = Paths.get(samFile);
+        if (!Files.exists(samFilePath)) {
+          throw new IOException("Unable to find SAM file: " + samFile);
+        }
+      }
       String directory = samFilePath.getFileName().toString().replace(".sam", "/");
       Path inputPath = samFilePath.getParent().resolve(directory);
       if (!Files.isDirectory(inputPath)) {
@@ -760,7 +784,7 @@ public class MenuController {
       Randomizer.randomizeFiles(files);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error running randomizer", e);
-      Message.error("Error running randomizer", "See log for more information");
+      Message.error("Error running randomizer", e.getMessage());
     }
   }
 
@@ -798,7 +822,7 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Replacing Sound Effect", e);
-      Message.error("Error Replacing Sound Effect", "See log for more information");
+      Message.error("Error Replacing Sound Effect", e.getMessage());
     }
   }
 
@@ -815,7 +839,7 @@ public class MenuController {
       Randomizer.randomizeFiles(shortMusicPaths);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error running randomizer", e);
-      Message.error("Error running randomizer", "See log for more information");
+      Message.error("Error running randomizer", e.getMessage());
     }
   }
 
@@ -850,8 +874,17 @@ public class MenuController {
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Replacing Music", e);
-      Message.error("Error Replacing Music", "See log for more information");
+      Message.error("Error Replacing Music", e.getMessage());
     }
+  }
+
+  @FXML
+  protected void browseTexture() {
+    Optional<Path> inputTXG = Choosers.getInputTXG(uncompressedFiles.toFile());
+    if (inputTXG.isEmpty()) {
+      return;
+    }
+    txg2tplTexture.setValue(inputTXG.get().toString());
   }
 
   @FXML
@@ -859,6 +892,12 @@ public class MenuController {
     try {
       String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
       Path txgFilePath = uncompressedDirectory.resolve(txgFile);
+      if (!Files.exists(txgFilePath)) {
+        txgFilePath = Paths.get(txgFile);
+        if (!Files.exists(txgFilePath)) {
+          throw new IOException("Unable to find TXG file: " + txgFile);
+        }
+      }
       String name = txgFilePath.getFileName().toString().replace(".txg", "/");
       Path outputPath = txgFilePath.getParent().resolve(name);
       if (!Files.isRegularFile(txgFilePath)) {
@@ -873,7 +912,7 @@ public class MenuController {
       Desktop.getDesktop().open(outputPath.toFile());
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Extracting Textures", e);
-      Message.error("Error Extracting Textures", "See log for more information");
+      Message.error("Error Extracting Textures", e.getMessage());
     }
   }
 
@@ -882,6 +921,12 @@ public class MenuController {
     try {
       String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
       Path txgFilePath = uncompressedDirectory.resolve(txgFile);
+      if (!Files.exists(txgFilePath)) {
+        txgFilePath = Paths.get(txgFile);
+        if (!Files.exists(txgFilePath)) {
+          throw new IOException("Unable to find TXG file: " + txgFile);
+        }
+      }
       String name = txgFilePath.getFileName().toString().replace(".txg", "/");
       Path inputPath = txgFilePath.getParent().resolve(name);
       if (!Files.isDirectory(inputPath)) {
@@ -895,7 +940,7 @@ public class MenuController {
       Message.info("Import Complete", ".txg file has been created.");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Importing Texture", e);
-      Message.error("Error Importing Texture", "See log for more information");
+      Message.error("Error Importing Texture", e.getMessage());
     }
   }
 
@@ -985,13 +1030,81 @@ public class MenuController {
   }
 
   @FXML
+  public void unpackMOT() {
+    MOTUnpackerTool.run(uncompressedFiles.toFile());
+  }
+
+  @FXML
+  public void repackMOT() {
+    MOTRepackerTool.run(uncompressedFiles.toFile());
+  }
+
+  @FXML
+  public void modifyGNTA() {
+    GNTAEditorTool.open(uncompressedFiles.toFile());
+  }
+
+  @FXML
   protected void disassembleSeqToHTML() {
-    SeqDisassemblerTool.disassembleToHTML(uncompressedDirectory.resolve("files").toFile());
+    try {
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
+      Path seqPath = uncompressedDirectory.resolve(seq);
+      if (!Files.exists(seqPath)) {
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find SEQ file: " + seqPath);
+        }
+      }
+      SeqDisassemblerTool.disassembleToHTML(uncompressedFiles.toFile(), seqPath);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQ Report", e);
+      Message.error("Error Running SEQ Report", e.getMessage());
+    }
   }
 
   @FXML
   protected void disassembleSeqToTXT() {
-    SeqDisassemblerTool.disassembleToTXT(uncompressedDirectory.resolve("files").toFile());
+    try {
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
+      Path seqPath = uncompressedDirectory.resolve(seq);
+      if (!Files.exists(seqPath)) {
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find SEQ file: " + seqPath);
+        }
+      }
+      SeqDisassemblerTool.disassembleToTXT(uncompressedFiles.toFile(), seqPath);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQ Report", e);
+      Message.error("Error Running SEQ Report", e.getMessage());
+    }
+  }
+
+  @FXML
+  protected void browseSeq() {
+    Optional<Path> inputSeq = Choosers.getInputSeq(uncompressedFiles.toFile());
+    if (inputSeq.isEmpty()) {
+      return;
+    }
+    selectedSeq.setValue(inputSeq.get().toString());
+  }
+
+  @FXML
+  protected void seqEditor() {
+    try {
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
+      Path seqPath = uncompressedDirectory.resolve(seq);
+      if (!Files.exists(seqPath)) {
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find " + seqPath);
+        }
+      }
+      SeqEditorTool.open(seqPath);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQ Editor", e);
+      Message.error("Error Running SEQ Editor", e.getMessage());
+    }
   }
 
   @FXML
@@ -1005,16 +1118,19 @@ public class MenuController {
           return;
         }
       }
-      String seq = seqs.getSelectionModel().getSelectedItem();
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
       Path seqPath = uncompressedDirectory.resolve(seq);
       if (!Files.exists(seqPath)) {
-        LOGGER.log(Level.SEVERE, "Unable to find " + seqPath);
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find " + seqPath);
+        }
       }
       String output = SeqKage.run(seqPath);
       LOGGER.log(Level.INFO, output);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running SEQKage", e);
-      Message.error("Error Running SEQKage", "See log for more information");
+      Message.error("Error Running SEQKage", e.getMessage());
     }
   }
 
@@ -1076,6 +1192,8 @@ public class MenuController {
           .findFirst();
       if (optionalGroup.isPresent()) {
         removeCodeGroup(optionalGroup.get());
+        defragCodeGroups(codeGroups);
+        asyncRefresh();
       } else {
         String message = String.format("Unable to remove code %s, try refreshing?", selected);
         LOGGER.log(Level.SEVERE, message);
@@ -1090,18 +1208,25 @@ public class MenuController {
    * @param workspace The workspace to add.
    * @param stage     The stage for the application.
    */
-  public void init(Workspace workspace, Stage stage) {
+  public void init(Workspace workspace, Stage stage) throws IOException {
     this.workspace = workspace;
     this.stage = stage;
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
+    this.uncompressedFiles = uncompressedDirectory.resolve("files");
     this.codes = new GNT4Codes(uncompressedDirectory);
+    try(InputStream is = DolHijack.class.getResourceAsStream("hijack_original.bin")) {
+      if (is == null) {
+        throw new IllegalStateException("Unable to find resource hijack_original.bin");
+      }
+      this.originalHijackedBytes = is.readAllBytes();
+    }
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
     txg2tplTexture.getSelectionModel().selectFirst();
-    seqs.getItems().setAll(Seqs.ALL);
-    seqs.getSelectionModel().selectFirst();
+    selectedSeq.getItems().setAll(Seqs.ALL);
+    selectedSeq.getSelectionModel().selectFirst();
     mainMenuCharacter.getItems().setAll(GNT4Characters.MAIN_MENU_CHARS);
     mainMenuCharacter.getSelectionModel().select(GNT4Characters.SAKURA);
     asyncRefresh();
@@ -1156,7 +1281,7 @@ public class MenuController {
 
     task.setOnSucceeded(event -> loadingWindow.close());
     task.setOnFailed(event -> {
-      Message.error("Error Refreshing Workspace", SEE_LOG);
+      Message.error("Error Refreshing Workspace", "See the log for more information");
       loadingWindow.close();
     });
     new Thread(task).start();
@@ -1204,7 +1329,7 @@ public class MenuController {
             addedCodes.getItems().add(codeGroup.getName());
           }
         } else {
-          if (DolHijack.handleActiveCodesButNoCodeFile(uncompressedDirectory.resolve(DOL))) {
+          if (DolHijack.handleActiveCodesButNoCodeFile(uncompressedDirectory.resolve(DOL), originalHijackedBytes)) {
             // This ISO has injected codes but no associated JSON code file. The previous method
             // call successfully created one, so now let's parse it.
             codeGroups = GeckoCodeJSON.parseFile(codeFile);
@@ -1220,7 +1345,11 @@ public class MenuController {
           }
         }
       } catch (Exception e) {
+        validateCodes.setDisable(true);
+        addCodes.setDisable(true);
+        removeCode.setDisable(true);
         LOGGER.log(Level.SEVERE, "Error getting list of applied codes.", e);
+        Message.error("Error Reading Codes", e.getMessage());
       }
     });
   }
@@ -1322,7 +1451,7 @@ public class MenuController {
         mainMenuCharacter.getSelectionModel().select(character);
       } catch (Exception e) {
         LOGGER.log(Level.SEVERE, "Error Setting Current Main Menu Character", e);
-        Message.error("Error Setting Main Menu Character", "See log for more information");
+        Message.error("Error Setting Main Menu Character", e.getMessage());
       }
     });
   }
@@ -1454,6 +1583,26 @@ public class MenuController {
   }
 
   /**
+   * Defrags the list of gecko codes. This will update the code objects for any codes that are moved
+   * in the dol as a result. The algorithm used simply iterates over each code and moves it
+   * immediately after the previous code. The first code will be moved to START_RAM_ADDRESS.
+   *
+   * @param codeGroups The code groups to defrag.
+   */
+  private void defragCodeGroups(List<GeckoCodeGroup> codeGroups) {
+    try {
+      Path dolPath = uncompressedDirectory.resolve(DOL);
+      DolDefragger defragger = new DolDefragger(dolPath, codeGroups, originalHijackedBytes);
+      defragger.run();
+      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      GeckoCodeJSON.writeFile(codeGroups, codeFile);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unable to Defrag Codes", e);
+      Message.error("Unable to Defrag Codes", e.getMessage());
+    }
+  }
+
+  /**
    * Removes the given GeckoCodeGroup from the dol. This will write the new codes.json file after
    * removal and will refresh.
    *
@@ -1474,10 +1623,9 @@ public class MenuController {
       codeGroups.remove(group);
       Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
-      asyncRefresh();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Remove Code", e);
-      Message.error("Unable to Remove Code", "Unable to remove code, see log for more details.");
+      Message.error("Unable to Remove Code", e.getMessage());
     }
   }
 

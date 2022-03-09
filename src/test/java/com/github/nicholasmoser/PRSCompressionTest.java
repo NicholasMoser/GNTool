@@ -25,18 +25,10 @@ public class PRSCompressionTest {
   public void testTenZeroes() {
     byte[] originalBytes = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     int originalSize = originalBytes.length;
-    System.out.println(String.format("Original Size: %d", originalSize));
-
     PRSCompressor compressor = new PRSCompressor(originalBytes);
     byte[] compressedBytes = compressor.compress();
-    int compressedSize = compressedBytes.length;
-    System.out.println(String.format("Compressed Size: %d", compressedSize));
-
     PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, originalSize);
     byte[] outputBytes = uncompressor.uncompress();
-    int uncompressedSize = outputBytes.length;
-    System.out.println(String.format("Uncompressed Size: %d", uncompressedSize));
-
     assertArrayEquals(originalBytes, outputBytes);
   }
 
@@ -51,12 +43,8 @@ public class PRSCompressionTest {
       int originalSize = originalBytes.length;
       PRSCompressor compressor = new PRSCompressor(originalBytes);
       byte[] compressedBytes = compressor.compress();
-      int compressedSize = compressedBytes.length;
       PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, originalSize);
       byte[] outputBytes = uncompressor.uncompress();
-      int uncompressedSize = outputBytes.length;
-      System.out
-          .println(String.format("%d -> %d -> %d", originalSize, compressedSize, uncompressedSize));
       assertArrayEquals(originalBytes, outputBytes);
     }
   }
@@ -72,18 +60,10 @@ public class PRSCompressionTest {
     Path randomHexPath = Paths.get("src/test/resources/random_hex.seq");
     byte[] originalBytes = Files.readAllBytes(randomHexPath);
     int originalSize = originalBytes.length;
-    System.out.println(String.format("Original Size: %d", originalSize));
-
     PRSCompressor compressor = new PRSCompressor(originalBytes);
     byte[] compressedBytes = compressor.compress();
-    int compressedSize = compressedBytes.length;
-    System.out.println(String.format("Compressed Size: %d", compressedSize));
-
     PRSUncompressor uncompressor = new PRSUncompressor(compressedBytes, originalSize);
     byte[] outputBytes = uncompressor.uncompress();
-    int uncompressedSize = outputBytes.length;
-    System.out.println(String.format("Uncompressed Size: %d", uncompressedSize));
-
     assertArrayEquals(originalBytes, outputBytes);
   }
 

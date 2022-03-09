@@ -13,9 +13,11 @@ import static j2html.TagCreator.title;
 import static j2html.TagCreator.ul;
 import static j2html.TagCreator.li;
 
+import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SeqEditOpcode;
 import j2html.Config;
 import j2html.tags.ContainerTag;
 import java.io.IOException;
@@ -65,7 +67,8 @@ public class SeqKingHtml {
     ContainerTag subroutine = p();
     for (Opcode opcode : opcodes) {
       subroutine.with(opcode.toHTML());
-      if (opcode instanceof BranchLinkReturn) {
+      if (opcode instanceof BranchLinkReturn ||
+          opcode instanceof SeqEditOpcode) {
         body.with(subroutine);
         subroutine = p();
       }

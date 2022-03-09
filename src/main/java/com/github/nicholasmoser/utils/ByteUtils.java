@@ -147,6 +147,16 @@ public class ByteUtils {
   }
 
   /**
+   * Converts a 2-byte big-endian byte array to a int16 (as an int).
+   *
+   * @param bytes The bytes to use.
+   * @return The output int16 (as an int).
+   */
+  public static short toInt16(byte[] bytes) {
+    return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getShort();
+  }
+
+  /**
    * Converts a 4-byte big-endian byte array to a int32 (as an int).
    *
    * @param bytes The bytes to use.
@@ -275,8 +285,26 @@ public class ByteUtils {
    */
   public static int readUint32LE(RandomAccessFile raf) throws IOException {
     byte[] buffer = new byte[4];
-    raf.read(buffer);
+    if (raf.read(buffer) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
     return ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
+  }
+
+  /**
+   * Reads a big-endian int16 (as an int) from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The int16 (as an int).
+   * @throws IOException If an I/O error occurs.
+   */
+  public static short readInt16(RandomAccessFile raf) throws IOException {
+    byte[] bytes = new byte[2];
+    if (raf.read(bytes) != 2) {
+      long offset = raf.getFilePointer();
+      throw new IOException("Failed to read 2 bytes from file at offset " + offset);
+    }
+    return toInt16(bytes);
   }
 
   /**
@@ -288,8 +316,25 @@ public class ByteUtils {
    */
   public static int readInt32(RandomAccessFile raf) throws IOException {
     byte[] bytes = new byte[4];
-    raf.read(bytes);
+    if (raf.read(bytes) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
     return toInt32(bytes);
+  }
+
+  /**
+   * Reads a big-endian 32-bit float from a RandomAccessFile.
+   *
+   * @param raf The RandomAccessFile to read from.
+   * @return The 32-bit float.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static float readFloat(RandomAccessFile raf) throws IOException {
+    byte[] bytes = new byte[4];
+    if (raf.read(bytes) != 4) {
+      throw new IOException("Failed to read 4 bytes from file");
+    }
+    return toFloat(bytes);
   }
 
   /**
@@ -395,6 +440,24 @@ public class ByteUtils {
   }
 
   /**
+   * Converts a byte array to a hex String. The hex returned will be in uppercase. The bytes will
+   * be returned as 32-bit words.
+   *
+   * @param bytes The bytes to convert.
+   * @return The bytes in hex.
+   */
+  public static String bytesToHexStringWords(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < bytes.length; i++) {
+      sb.append(String.format("%02X", bytes[i]));
+      if (i % 4 == 3 && i != bytes.length - 1) {
+        sb.append(' ');
+      }
+    }
+    return sb.toString();
+  }
+
+  /**
    * Converts a hex String to a byte array.
    *
    * @param hex The hex String.
@@ -438,5 +501,19 @@ public class ByteUtils {
    */
   public static String fromLong(long value) {
     return ByteUtils.bytesToHexString(ByteUtils.fromUint32(value));
+  }
+
+  /**
+   * Align a RandomAccessFile to a provided alignment byte-boundary.
+   *
+   * @param raf The RandomAccessFile to align.
+   * @param alignment The number of bytes to align on.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static void byteAlign(RandomAccessFile raf, int alignment) throws IOException {
+    long offset = raf.getFilePointer();
+    if (offset % alignment != 0) {
+      raf.skipBytes((int) (alignment - (offset % alignment)));
+    }
   }
 }

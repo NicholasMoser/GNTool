@@ -82,8 +82,8 @@ public class GNT4Workspace implements Workspace {
   }
 
   @Override
-  public Optional<GNTFile> getParentFPK(String changedFile) {
-    return gnt4Files.getParentFPK(changedFile);
+  public List<GNTFile> getParentFPKs(String changedFile) {
+    return gnt4Files.getParentFPKs(changedFile);
   }
 
   @Override

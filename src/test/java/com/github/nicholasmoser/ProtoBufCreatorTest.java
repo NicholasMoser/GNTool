@@ -28,12 +28,8 @@ public class ProtoBufCreatorTest {
     Path tempDir = FileUtils.getTempDirectory();
     Path exportFile = tempDir.resolve(UUID.randomUUID().toString());
     Path uncompressed = Prereqs.getUncompressedGNT4();
-
-    System.out.println("Getting allowed workspace files.");
     GNTFiles files = GNT4Files.getVanillaFiles();
     Set<String> allowedFiles = GNT4Files.getAllowedWorkspaceFiles(files);
-
-    System.out.println("Creating diff binary.");
     try {
       GNTFiles gntFiles = ProtobufUtils.createBinary(uncompressed, allowedFiles, false, true);
       try (OutputStream os = Files.newOutputStream(exportFile)) {
@@ -60,12 +56,8 @@ public class ProtoBufCreatorTest {
     Path tempDir = FileUtils.getTempDirectory();
     Path exportFile = tempDir.resolve(UUID.randomUUID().toString());
     Path compressed = Prereqs.getCompressedGNT4();
-
-    System.out.println("Getting allowed workspace files.");
     GNTFiles files = GNT4Files.getVanillaFiles();
     Set<String> allowedFiles = GNT4Files.getAllowedWorkspaceFiles(files);
-
-    System.out.println("Creating diff binary with fpks.");
     try {
       GNTFiles gntFiles = ProtobufUtils.createBinary(compressed, allowedFiles, true, false, true);
       try (OutputStream os = Files.newOutputStream(exportFile)) {

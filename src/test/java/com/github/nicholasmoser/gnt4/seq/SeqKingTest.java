@@ -435,6 +435,16 @@ public class SeqKingTest {
     }
   }
 
+  @Test
+  public void parseIruka0010() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/iru/0010.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
   private void compare(Path seq) throws Exception {
     Path outputPath = null;
     try {

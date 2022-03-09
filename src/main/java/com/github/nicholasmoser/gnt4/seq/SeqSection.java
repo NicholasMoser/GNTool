@@ -1,9 +1,11 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SeqEditOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.base.Charsets;
@@ -22,7 +24,7 @@ public class SeqSection {
    *
    * @param bs The seq ByteStream.
    * @return If the next 4-byte word is the start of a new seq section.
-   * @throws IOException
+   * @throws IOException If an I/O error occurs.
    */
   public static boolean isSeqSectionTitle(ByteStream bs) throws IOException {
     byte[] word = bs.peekWordBytes();
@@ -31,8 +33,21 @@ public class SeqSection {
   }
 
   /**
+   * Returns if the next 4-byte word is the start of the seq extension section.
+   *
+   * @param bs The seq ByteStream.
+   * @return If the next 4-byte word is the start of the seq extension section.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static boolean isSeqExtension(ByteStream bs) throws IOException {
+    byte[] word = bs.peekWordBytes();
+    String startOfTitle = new String(word, Charsets.US_ASCII);
+    return "seq_".equals(startOfTitle);
+  }
+
+  /**
    * Handles the current SEQ section. First reads the section title, which ends with 0x0A and is
-   * 16-byte aligned.
+   * 16-byte aligned. {@link #isSeqSectionTitle(ByteStream)} must be called first.
    *
    * @param bs The seq ByteStream.
    * @throws IOException If an I/O error occurs.
@@ -83,16 +98,62 @@ public class SeqSection {
       case (Seq.CHR_FACE):
       case (Seq.CHR_VISUAL2D):
         return Collections.singletonList(sectionTitle);
+      case (Seq.SEQ_EXT):
+        throw new RuntimeException("Did not call isSeqSectionTitle first");
       default:
         throw new IOException("Unknown seq section: " + title);
     }
+  }
+
+
+  public static List<Opcode> handleSeqExtension(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    byte[] titleBytes = bs.readBytes(8);
+    String title = new String(titleBytes, StandardCharsets.US_ASCII);
+    if (!"seq_ext\n".equals(title)) {
+      throw new IllegalStateException("expected seq_ext\\n but is actually: " + title);
+    }
+    List<Opcode> opcodes = new ArrayList<>();
+    opcodes.add(new SectionTitle(offset, titleBytes, title.strip()));
+    byte[] seqEnd = "seq_end\n".getBytes(StandardCharsets.US_ASCII);
+    while (!Arrays.equals(seqEnd, bs.peekBytes(8))) {
+      offset = bs.offset();
+      String name = new String(SeqHelper.readString(bs), StandardCharsets.UTF_8);
+      name = name.replace("\0", "");
+      int hijackOffset = bs.readWord();
+      byte[] oldBytes = readEditBytes(bs);
+      byte[] newBytes = readEditBytes(bs);
+      byte[] newBytesWithoutBranchBack = Arrays.copyOfRange(newBytes, 0, newBytes.length - 8);
+      SeqEdit edit = new SeqEdit(name, hijackOffset, oldBytes, newBytesWithoutBranchBack);
+      opcodes.add(new SeqEditOpcode(offset, edit));
+    }
+    offset = bs.offset();
+    byte[] endBytes = bs.readBytes(8);
+    opcodes.add(new SectionTitle(offset, endBytes,
+        new String(endBytes, StandardCharsets.US_ASCII).strip()));
+    return opcodes;
+  }
+
+  private static byte[] readEditBytes(ByteStream bs) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte[] buffer = new byte[4];
+    if (bs.read(buffer) != 4) {
+      throw new IOException("Failed to read 4 bytes from seq ext edit bytes.");
+    }
+    while (!Arrays.equals(SeqEdit.STOP, buffer)) {
+      baos.write(buffer);
+      if (bs.read(buffer) != 4) {
+        throw new IOException("Failed to read 4 bytes from seq ext edit bytes.");
+      }
+    }
+    return baos.toByteArray();
   }
 
   /**
    * Parse and return the opcodes associated with the chr_tbl section. This section is composed of
    * action IDs and their associated offsets. It ends with 0xFFFFFFFF.
    *
-   * @param bs The seq ByteStream.
+   * @param bs    The seq ByteStream.
    * @param title The chr_tbl title.
    * @return The list of opcodes associated with chr_tbl.
    * @throws IOException If an I/O error occurs.
@@ -122,7 +183,7 @@ public class SeqSection {
    * Parse and return the opcodes associated with the chr_data section. This section is composed of
    * binary data, that ends with the definition of the next section.
    *
-   * @param bs The seq ByteStream.
+   * @param bs    The seq ByteStream.
    * @param title The chr_data title.
    * @return The list of opcodes associated with chr_data.
    * @throws IOException If an I/O error occurs.
@@ -141,7 +202,7 @@ public class SeqSection {
    * 4 bytes of binary data followed by seq opcodes. The binary will be 0x00000004 0x0000000A
    * 0x0000000A and 0x00000000.
    *
-   * @param bs The seq ByteStream.
+   * @param bs    The seq ByteStream.
    * @param title The chr_shot title.
    * @return The chr_shot title and 4-bytes of binary data.
    * @throws IOException If an I/O error occurs.

@@ -184,6 +184,9 @@ public class GNT4Codes {
       new byte[]{0x70, 0x00, 0x02, 0x30});
 
   // https://github.com/NicholasMoser/GNTool#Frames-Until-Model-is-Loaded-in-Character-Select-Screen
+  // At instruction 0x8009678c in the dol it is compared against 0x7fffff00 and therefore the max
+  // must be lower than that.
+  public static final Integer CSS_LOAD_CHR_MODELS_MAX = 0x7FFFFEFF;
   public static final GNT4Code CSS_LOAD_CHR_MODELS_P1 = new GNT4Code(CSS_SEQ, 0x4DC8);
   public static final GNT4Code CSS_LOAD_CHR_MODELS_P2 = new GNT4Code(CSS_SEQ, 0x8B4C);
   public static final GNT4Code CSS_FFA_LOAD_CHR_MODELS_P1 = new GNT4Code(CSS_4P_SEQ, 0x54C8);

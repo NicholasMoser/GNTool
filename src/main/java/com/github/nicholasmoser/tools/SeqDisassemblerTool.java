@@ -48,6 +48,21 @@ public class SeqDisassemblerTool {
   }
 
   /**
+   * Disassembles the given seq file to html.
+   *
+   * @param initialDirectory The initial directory to start at when selecting the output HTML file.
+   * @param seqPath The path to the seq file to disassemble.
+   */
+  public static void disassembleToHTML(File initialDirectory, Path seqPath) {
+    Optional<Path> outputPath = Choosers.getOutputHTML(initialDirectory);
+    if (outputPath.isEmpty()) {
+      return;
+    }
+    currentDirectory = seqPath.getParent().toFile();
+    runAsync(seqPath, outputPath.get(), true);
+  }
+
+  /**
    * Disassembles a seq file to txt.
    */
   public static void disassembleToTXT() {
@@ -71,6 +86,21 @@ public class SeqDisassemblerTool {
     if (outputPath.isEmpty()) {
       return;
     }
+    runAsync(seqPath, outputPath.get(), false);
+  }
+
+  /**
+   * Disassembles the given seq file to txt.
+   *
+   * @param initialDirectory The initial directory to start at when selecting the output TXT file.
+   * @param seqPath The path to the seq file to disassemble.
+   */
+  public static void disassembleToTXT(File initialDirectory, Path seqPath) {
+    Optional<Path> outputPath = Choosers.getOutputTXT(initialDirectory);
+    if (outputPath.isEmpty()) {
+      return;
+    }
+    currentDirectory = seqPath.getParent().toFile();
     runAsync(seqPath, outputPath.get(), false);
   }
 
@@ -128,7 +158,8 @@ public class SeqDisassemblerTool {
       try {
         Desktop.getDesktop().open(outputFile.toFile());
       } catch (Exception e) {
-        Message.error("Failed to Open File", "See log for more information.");
+        LOGGER.log(Level.SEVERE, "Failed to Open File", e);
+        Message.error("Failed to Open File", e.getMessage());
       }
     }
   }

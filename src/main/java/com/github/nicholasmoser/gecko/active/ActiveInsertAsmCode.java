@@ -10,8 +10,8 @@ import com.github.nicholasmoser.utils.ByteUtils;
 public class ActiveInsertAsmCode extends InsertAsmCode {
 
   private final byte[] replacedBytes;
-  private final long hijackedAddress;
-  private final byte[] hijackedBytes;
+  private long hijackedAddress;
+  private byte[] hijackedBytes;
 
   /**
    * @param bytes           The assembly that the code wishes to insert.
@@ -43,12 +43,30 @@ public class ActiveInsertAsmCode extends InsertAsmCode {
     return hijackedAddress;
   }
 
+  /**
+   * Sets a new hijacked address.
+   *
+   * @param hijackedAddress The new hijacked address to set.
+   */
+  public void setHijackedAddress(long hijackedAddress) {
+    this.hijackedAddress = hijackedAddress;
+  }
+
 
   /**
    * @return The instruction bytes that this code inserts and branches to and returns from.
    */
   public byte[] getHijackedBytes() {
     return hijackedBytes;
+  }
+
+  /**
+   * Sets new hijacked bytes.
+   *
+   * @param hijackedBytes The new hijacked bytes to set.
+   */
+  public void setHijackedBytes(byte[] hijackedBytes) {
+    this.hijackedBytes = hijackedBytes;
   }
 
   @Override

@@ -1,5 +1,66 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup02;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup03;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup04;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup05;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup06;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup08;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup09;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup0B;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup0C;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup0F;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup10;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup11;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup12;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup13;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup14;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup15;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup16;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1A;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1C;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1D;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1E;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup20;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup21;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup22;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup24;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup26;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup27;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup28;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup2A;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup2B;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup31;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup34;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup36;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup37;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup38;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup39;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3A;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3B;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3C;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3D;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup3E;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup40;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup41;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup42;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup43;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup44;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup46;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup47;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup48;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup49;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4A;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4B;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4C;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup4D;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup50;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup56;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup5B;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
@@ -10,8 +71,10 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Push;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
+import j2html.tags.ContainerTag;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -19,8 +82,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class SeqHelper {
+
+  private static final Logger LOGGER = Logger.getLogger(SeqHelper.class.getName());
 
   // Vanilla Combo translation for Oboro: コンボその
   private static final byte[] COMBO_JAPANESE = new byte[]{(byte) 0x83, 0x52, (byte) 0x83, (byte) 0x93, (byte) 0x83};
@@ -32,6 +98,75 @@ public class SeqHelper {
   private static final byte[] CHORD = "Chord".getBytes(StandardCharsets.UTF_8);
   // Kosheh Combo translation for Karasu
   private static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
+
+  public static Opcode getSeqOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
+    return switch (opcodeGroup) {
+      case 0x00 -> OpcodeGroup00.parse(bs, opcode);
+      case 0x01 -> OpcodeGroup01.parse(bs, opcode);
+      case 0x02 -> OpcodeGroup02.parse(bs, opcode);
+      case 0x03 -> OpcodeGroup03.parse(bs, opcode);
+      case 0x04 -> OpcodeGroup04.parse(bs, opcode);
+      case 0x05 -> OpcodeGroup05.parse(bs, opcode);
+      case 0x06 -> OpcodeGroup06.parse(bs, opcode);
+      case 0x08 -> OpcodeGroup08.parse(bs, opcode);
+      case 0x09 -> OpcodeGroup09.parse(bs, opcode);
+      case 0x0B -> OpcodeGroup0B.parse(bs, opcode);
+      case 0x0C -> OpcodeGroup0C.parse(bs, opcode);
+      case 0x0F -> OpcodeGroup0F.parse(bs, opcode);
+      case 0x10 -> OpcodeGroup10.parse(bs, opcode);
+      case 0x11 -> OpcodeGroup11.parse(bs, opcode);
+      case 0x12 -> OpcodeGroup12.parse(bs, opcode);
+      case 0x13 -> OpcodeGroup13.parse(bs, opcode);
+      case 0x14 -> OpcodeGroup14.parse(bs, opcode);
+      case 0x15 -> OpcodeGroup15.parse(bs, opcode);
+      case 0x16 -> OpcodeGroup16.parse(bs, opcode);
+      case 0x1A -> OpcodeGroup1A.parse(bs, opcode);
+      case 0x1C -> OpcodeGroup1C.parse(bs, opcode);
+      case 0x1D -> OpcodeGroup1D.parse(bs, opcode);
+      case 0x1E -> OpcodeGroup1E.parse(bs, opcode);
+      case 0x20 -> OpcodeGroup20.parse(bs, opcode);
+      case 0x21 -> OpcodeGroup21.parse(bs, opcode);
+      case 0x22 -> OpcodeGroup22.parse(bs, opcode);
+      case 0x24 -> OpcodeGroup24.parse(bs, opcode);
+      case 0x26 -> OpcodeGroup26.parse(bs, opcode);
+      case 0x27 -> OpcodeGroup27.parse(bs, opcode);
+      case 0x28 -> OpcodeGroup28.parse(bs, opcode);
+      case 0x2A -> OpcodeGroup2A.parse(bs, opcode);
+      case 0x2B -> OpcodeGroup2B.parse(bs, opcode);
+      case 0x31 -> OpcodeGroup31.parse(bs, opcode);
+      case 0x34 -> OpcodeGroup34.parse(bs, opcode);
+      case 0x36 -> OpcodeGroup36.parse(bs, opcode);
+      case 0x37 -> OpcodeGroup37.parse(bs, opcode);
+      case 0x38 -> OpcodeGroup38.parse(bs, opcode);
+      case 0x39 -> OpcodeGroup39.parse(bs, opcode);
+      case 0x3A -> OpcodeGroup3A.parse(bs, opcode);
+      case 0x3B -> OpcodeGroup3B.parse(bs, opcode);
+      case 0x3C -> OpcodeGroup3C.parse(bs, opcode);
+      case 0x3D -> OpcodeGroup3D.parse(bs, opcode);
+      case 0x3E -> OpcodeGroup3E.parse(bs, opcode);
+      case 0x40 -> OpcodeGroup40.parse(bs, opcode);
+      case 0x41 -> OpcodeGroup41.parse(bs, opcode);
+      case 0x42 -> OpcodeGroup42.parse(bs, opcode);
+      case 0x43 -> OpcodeGroup43.parse(bs, opcode);
+      case 0x44 -> OpcodeGroup44.parse(bs, opcode);
+      case 0x46 -> OpcodeGroup46.parse(bs, opcode);
+      case 0x47 -> OpcodeGroup47.parse(bs, opcode);
+      case 0x48 -> OpcodeGroup48.parse(bs, opcode);
+      case 0x49 -> OpcodeGroup49.parse(bs, opcode);
+      case 0x4A -> OpcodeGroup4A.parse(bs, opcode);
+      case 0x4B -> OpcodeGroup4B.parse(bs, opcode);
+      case 0x4C -> OpcodeGroup4C.parse(bs, opcode);
+      case 0x4D -> OpcodeGroup4D.parse(bs, opcode);
+      case 0x50 -> OpcodeGroup50.parse(bs, opcode);
+      case 0x55 -> OpcodeGroup55.parse(bs, opcode);
+      case 0x56 -> OpcodeGroup56.parse(bs, opcode);
+      case 0x5B -> OpcodeGroup5B.parse(bs, opcode);
+      case 0x61 -> OpcodeGroup61.parse(bs, opcode);
+      case (byte) 0xCC -> SeqHelper.getNullBytes(bs); // Modding specific no-op
+      default -> throw new IllegalStateException(
+          String.format("Unknown opcode group: %02X at offset 0x%X", opcodeGroup, bs.offset()));
+    };
+  }
 
   /**
    * Returns the type of seq file this is.
@@ -142,8 +277,11 @@ public class SeqHelper {
   public static Opcode getBinaryUntilBranchAndLink(ByteStream bs) throws IOException {
     int offset = bs.offset();
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    while (bs.peekWord() != 0x013C0000) {
+    int word = bs.peekWord();
+    // Need to also check for 0x01320000 since that is used by seq editing
+    while (word != 0x013C0000 && word != 0x01320000) {
       baos.write(bs.readBytes(4));
+      word = bs.peekWord();
     }
     return new BinaryData(offset, baos.toByteArray());
   }
@@ -503,6 +641,25 @@ public class SeqHelper {
     return baos.toString(StandardCharsets.US_ASCII);
   }
 
+  public static List<ContainerTag> getOpcodesString(byte[] bytes, int newBytesOffset) throws IOException {
+    // This is a pretty nasty hack to get the offsets in the HTML correct, basically add null bytes
+    // in the byte stream before the start of the new bytes to ensure that they are correct.
+    byte[] fullBytes = new byte[newBytesOffset + bytes.length];
+    System.arraycopy(bytes, 0, fullBytes, newBytesOffset, bytes.length);
+    ByteStream bs = new ByteStream(fullBytes);
+    bs.skip(newBytesOffset);
+
+    List<ContainerTag> tags = new ArrayList<>();
+    while (bs.bytesAreLeft()) {
+      bs.mark();
+      byte opcodeGroup = (byte) bs.read();
+      byte opcode = (byte) bs.read();
+      bs.reset();
+      tags.add(getSeqOpcode(bs, opcodeGroup, opcode).toHTML());
+    }
+    return tags;
+  }
+
   /**
    * Returns null bytes as binary data, where the null bytes are 0xCCCCCCCC. This is currently
    * only used in mods in Super Clash of Ninja 4 (SCON4).
@@ -522,5 +679,38 @@ public class SeqHelper {
       baos.write(bs.readBytes(4));
     }
     return new BinaryData(offset, baos.toByteArray(), " null bytes");
+  }
+
+  /**
+   * Read the string bytes from the byte stream. Reads a word at a time and terminates when any byte
+   * in the word is 0.
+   *
+   * @param bs The byte stream to read from.
+   * @return The string bytes.
+   * @throws IOException If there was a failure parsing the string bytes.
+   */
+  public static byte[] readString(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte[] buffer = new byte[4];
+    do {
+      if (bs.read(buffer) != 4) {
+        throw new IOException("Failed to parse bytes at offset " + offset);
+      }
+      baos.write(buffer);
+    } while(buffer[0] != 0 && buffer [1] != 0 && buffer[2] != 0 && buffer[3] != 0);
+    return baos.toByteArray();
+  }
+
+  /**
+   * Given bytes from {@link #readString(ByteStream)}, return the shift-jis string.
+   *
+   * @param bytes The bytes read from an seq byte stream.
+   * @return The shift-jis string.
+   * @throws UnsupportedEncodingException If shift-jis is not supported.
+   */
+  public static String getString(byte[] bytes) throws UnsupportedEncodingException {
+    String text = new String(bytes, "shift-jis");
+    return text.replace("\0", "").replace("\n", "\\n");
   }
 }

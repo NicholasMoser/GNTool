@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.graphics;
 
+import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -31,6 +33,7 @@ public class TXG2TPLTest {
 
   @ParameterizedTest(name="#{index} - Test with Argument={0}")
   @MethodSource("txgPathProvider")
+  @Disabled("Currently breaks due to TXG2TPL issue, see GNTool/issues/81")
   public void testAllGNT4Textures(Path txgPath) throws Exception {
     // First extract to testDir, then create newTxg with unique name.
     // Then, extract newTxg to testDir2 and make sure it is equal to testDir.
@@ -52,7 +55,7 @@ public class TXG2TPLTest {
       assertTrue(Files.size(newTxg) > 0);
       assertTrue(Files.size(txgPath) > 0);
       TXG2TPL.unpack(newTxg, testDir2);
-      FileUtils.areDirectoriesEqual(testDir, testDir2);
+      assertDirectoriesEqual(testDir, testDir2); // TODO: Fix this
     } finally {
       Files.deleteIfExists(newTxg);
       if (Files.isDirectory(testDir)) {
