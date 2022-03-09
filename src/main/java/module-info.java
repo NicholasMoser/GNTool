@@ -22,5 +22,4 @@ module com.github.nicholasmoser {
   requires javafx.graphics;
 
   requires org.json;
-  requires j2html;
 }
