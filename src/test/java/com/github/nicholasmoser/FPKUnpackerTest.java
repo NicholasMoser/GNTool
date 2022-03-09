@@ -18,8 +18,9 @@ public class FPKUnpackerTest {
   // Performance of fastcopy branch seems to be negligible. In one case it was 1 second faster,
   // in other cases it was 3 seconds slower. In each case I restarted my PC to avoid disk caching.
   // Without the fastcopy branch the full copy + unpack process takes around 24 seconds on my HDD.
+  // Overall, the savings of the fastcopy branch seem to be only 1 second at best.
   // This does make sense, considering that the FPK files are only ~10% of the full bytes of the
-  // ISO, so this only helps for 10% of the total copying time (17 seconds).
+  // ISO. The time to copy is around 17 seconds, and 10% of that is 1.7 seconds.
   @Test
   public void testUnpackFPK() throws Exception {
     Path compressedDir = Prereqs.getCompressedGNT4();
