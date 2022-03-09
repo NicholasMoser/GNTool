@@ -60,10 +60,8 @@ public class GNT4Extractor implements Extractor {
     if (!unpacked) {
       Path compressed = extractionPath.resolve(GNT4Files.COMPRESSED_DIRECTORY);
       Path uncompressed = extractionPath.resolve(GNT4Files.UNCOMPRESSED_DIRECTORY);
-      LOGGER.info(String.format("Copying %s to %s", compressed, uncompressed));
-      FileUtils.copyFolder(compressed, uncompressed);
       Optional<FileNames> gnt4FileNames = Optional.of(new GNT4FileNames());
-      FPKUnpacker unpacker = new FPKUnpacker(uncompressed, gnt4FileNames, false, true);
+      FPKUnpacker unpacker = new FPKUnpacker(compressed, uncompressed, gnt4FileNames, false, true);
       unpacker.unpackDirectory();
       unpacked = true;
     }

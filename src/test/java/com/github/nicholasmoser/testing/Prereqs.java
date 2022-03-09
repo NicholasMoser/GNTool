@@ -82,9 +82,8 @@ public class Prereqs {
     extractor.extract();
     // Create the uncompressed directory
     Files.createDirectories(uncompressed);
-    FileUtils.copyFolder(compressed, uncompressed);
     Optional<FileNames> gnt4FileNames = Optional.of(new GNT4FileNames());
-    FPKUnpacker unpacker = new FPKUnpacker(uncompressed, gnt4FileNames, false, true);
+    FPKUnpacker unpacker = new FPKUnpacker(compressed, uncompressed, gnt4FileNames, false, true);
     unpacker.unpackDirectory();
   }
 }

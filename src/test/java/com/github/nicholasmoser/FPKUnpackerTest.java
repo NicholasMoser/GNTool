@@ -23,11 +23,10 @@ public class FPKUnpackerTest {
     Path unpackDir = tempDir.resolve(UUID.randomUUID().toString());
     try {
       Files.createDirectories(unpackDir);
-      FileUtils.copyFolder(compressedDir, unpackDir);
       Optional<FileNames> gnt4FileNames = Optional.of(new GNT4FileNames());
-      FPKUnpacker unpacker = new FPKUnpacker(unpackDir, gnt4FileNames, false, true);
+      FPKUnpacker unpacker = new FPKUnpacker(compressedDir, unpackDir, gnt4FileNames, false, true);
       unpacker.unpackDirectory();
-      assertDirectoriesEqual(uncompressedDir, unpackDir); // TODO: Fix this
+      assertDirectoriesEqual(uncompressedDir, unpackDir);
     } finally {
       if (Files.isDirectory(unpackDir)) {
         MoreFiles.deleteRecursively(unpackDir, RecursiveDeleteOption.ALLOW_INSECURE);

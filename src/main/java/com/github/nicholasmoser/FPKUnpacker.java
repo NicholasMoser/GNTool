@@ -25,8 +25,9 @@ public class FPKUnpacker {
 
   private static final Logger LOGGER = Logger.getLogger(FPKUnpacker.class.getName());
 
-  private final Path inputDirectory;
-  private final Path filesDirectory;
+  private final Path inputDir;
+  private final Path filesDir;
+  private final Path outputDir;
   private final Optional<FileNames> fileNames;
   private final boolean longPaths;
   private final boolean bigEndian;
@@ -34,40 +35,40 @@ public class FPKUnpacker {
   /**
    * Create a new FPKUnpacker object to unpack an entire directory.
    *
-   * @param inputDirectory The input directory to unpack.
-   * @param fileNames      The optional list of file names to fix for the unpacking.
-   * @param longPaths      If the FPK inner file paths are 32-bytes (instead of 16-bytes).
-   * @param bigEndian      If the FPK is big-endian (instead of little-endian).
+   * @param inputDir  The input directory to unpack.
+   * @param outputDir The output directory to unpack to.
+   * @param fileNames The optional list of file names to fix for the unpacking.
+   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian If the FPK is big-endian (instead of little-endian).
    */
-  public FPKUnpacker(Path inputDirectory, Optional<FileNames> fileNames, boolean longPaths,
-      boolean bigEndian) {
-    if (!Files.isDirectory(inputDirectory)) {
-      throw new IllegalArgumentException(inputDirectory + " is not a directory.");
+  public FPKUnpacker(Path inputDir, Path outputDir, Optional<FileNames> fileNames,
+      boolean longPaths, boolean bigEndian) {
+    if (!Files.isDirectory(inputDir)) {
+      throw new IllegalArgumentException(inputDir + " is not a directory.");
     }
-    this.inputDirectory = inputDirectory;
-    this.filesDirectory = inputDirectory.resolve("files");
+    this.inputDir = inputDir;
+    this.filesDir = outputDir.resolve("files");
+    this.outputDir = outputDir;
     this.fileNames = fileNames;
     this.longPaths = longPaths;
     this.bigEndian = bigEndian;
   }
 
   /**
-   * Unpacks all fpks in the input directory. The contents will be stored in the "files" directory
-   * in the input directory. The "fpack" directory in the "files" directory will be deleted upon
-   * completion.
+   * Copy files from the input directory to the output directory, unpacking all FPK files in the
+   * process. The contents will be stored in the "files" directory in the output directory.
    *
    * @throws IOException If there is an I/O related exception.
    */
   public void unpackDirectory() throws IOException {
     LOGGER.info("Unpacking FPKs...");
-    extractDirectory(inputDirectory);
-    MoreFiles.deleteRecursively(inputDirectory.resolve("files/fpack"),
-        RecursiveDeleteOption.ALLOW_INSECURE);
+    extractDirectory(inputDir);
     LOGGER.info("Finished unpacking FPKs.");
   }
 
   /**
-   * Extracts and uncompresses the files inside an FPK from a given directory recursively.
+   * Copy files from the given directory to the output directory, unpacking all FPK files in the
+   * process. This process will run recursively for each subdirectory.
    *
    * @param directory The directory to search and extract from.
    * @throws IOException If there is an I/O related exception.
@@ -78,10 +79,13 @@ public class FPKUnpacker {
             try {
               if (Files.isDirectory(path)) {
                 extractDirectory(path);
+              } else if (path.toString().toLowerCase().endsWith(".fpk")) {
+                extractFPK(path, filesDir, fileNames, longPaths, bigEndian);
               } else {
-                if (path.toString().toLowerCase().endsWith(".fpk")) {
-                  extractFPK(path, filesDirectory, fileNames, longPaths, bigEndian);
-                }
+                Path relativePath = inputDir.relativize(path);
+                Path outputPath = outputDir.resolve(relativePath);
+                Files.createDirectories(outputPath.getParent());
+                Files.copy(path, outputPath);
               }
             } catch (IOException e) {
               throw new RuntimeException(e);
