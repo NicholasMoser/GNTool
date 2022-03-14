@@ -3,7 +3,7 @@
 - [Audio Fix](#audio-fix)
 - [Skip Cutscenes](#skip-cutscenes)
 - [Unlock Everything](#unlock-everything)
-- [Widescreen 16:9](#widescreen-16:9)
+- [Widescreen 16:9](#widescreen-169)
 - [Main Menu Character](#main-menu-character)
 - [Title Timeout to Demo](#title-timeout-to-demo)
 - [Translate Text in the Game to English](#translate-text-in-the-game-to-english)
