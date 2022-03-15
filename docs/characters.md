@@ -6,7 +6,7 @@
 - [Fix Phantom Sword for Kisame Player 2](#fix-phantom-sword-for-kisame-player-2)
 - [Fix Phantom Sword for Zabuza Player 2](#fix-phantom-sword-for-zabuza-player-2)
 
-![Menu](/docs/characters.png?raw=true "Menu")
+![Characters](/docs/characters.png?raw=true "Characters")
 
 ## ZTK Damage Taken Multiplier
 
