@@ -14,7 +14,7 @@ This will [disassemble](https://en.wikipedia.org/wiki/Disassembler) the selected
 
 ## Modify SEQ
 
-This opens an SEQ Editor that allows you to modify SEQ files. Much like [Gecko Codes](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/general/docs/guides/gecko_codetype_documentation.md), this editor allows you to branch from a certain offset in the SEQ file, run your new bytecode, and branch back.
+This opens an SEQ Editor that allows you to modify SEQ files. Much like [Gecko Codes](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/general/docs/guides/gecko_codetype_documentation.md), these modifications will branch from a certain offset in the SEQ file, run your new bytecode, and branch back.
 
 ![SEQ Editor](/docs/seqeditor.png?raw=true "SEQ Editor")
 
