@@ -18,17 +18,19 @@ This opens an SEQ Editor that allows you to modify SEQ files. Much like [Gecko C
 
 ![SEQ Editor](/docs/seqeditor.png?raw=true "SEQ Editor")
 
-To create a new edit, go to `File->New Edit` or on your keyboard hit `Ctrl + N`. For your code enter:
+To create a new edit, go to `File->New Edit` or press `Ctrl + N`.
+
+Here are the fields to fill out for a new code:
 
 - **Name**: The name/description of your code. There is no size limit.
-- **Offset**: Where in the SEQ file to branch from.
-- **Hijacked Bytes Length**: This is how long the branch opcode should be. It must be a multiple of 4 bytes and a minimum of 8 bytes. This is because a [Branch Instruction](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/guides/opcode_group/01.md#0132---b) is 8 bytes long (e.g. `01320000 00002310`). The reason that more than 8 bytes is allowed here is because SEQ bytecode allows variable length opcodes, so 8 bytes may end in the middle of an opcode. By specifying a larger number, padding is inserted to prevent accidentally parsing an opcode in the middle of the opcode.
-- **New Bytes**: The bytecode to insert (in hex).
+- **Offset**: Where in the SEQ file to branch from. Make sure that it is at the start of an opcode.
+- **Hijacked Bytes Length**: This is how long the branch opcode should be (the branch to your new inserted code). It must be a multiple of 4 bytes and a minimum of 8 bytes. This is because a [Branch Instruction](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/guides/opcode_group/01.md#0132---b) is 8 bytes long (e.g. `01320000 00002310`). The reason that more than 8 bytes is allowed here is because SEQ bytecode allows variable length opcodes, so 8 bytes may end in the middle of an opcode. By specifying a larger number, padding is inserted to prevent accidentally parsing an opcode in the middle of the opcode.
+- **New Bytes**: The SEQ bytecode to insert (in hex).
 
-The **Hijacked Bytes** should what bytes will be overriden based on your **Hijacked Bytes Length**. This will help you make sure you're not ending the branch in the middle of an opcode. The **Opcodes** pane on the right side will show the disassembled view of the new bytes you are inserting in the **New Bytes** field.
+The **Hijacked Bytes** show what bytes will be overriden based on your **Hijacked Bytes Length**. This will help you make sure you're not ending the branch in the middle of an opcode. The **Opcodes** pane on the right side will show the disassembled view of the new bytes you are inserting in the **New Bytes** field.
 
-When your code is done, hit the **Apply** button or on your keyboard press `Ctrl + X` to apply the code. Once it is applied, you can open the code by double clicking it on the left pane or selecting it and pressing `Ctrl + O`. **Reset Changes** will clear all of the fields. To delete a code, right click on it in the left pane and select **Delete Code** or select it and on your keyboard press `Ctrl + D`.
+When you are done writing the code, hit the **Apply** button or press `Ctrl + X` to apply the code. Once it is applied, you can open the code by double clicking it on the left pane or selecting it and pressing `Ctrl + O`. **Reset Changes** will clear all of the fields. To delete a code, right click on it in the left pane and select **Delete Code** or select it and press `Ctrl + D`.
 
 ## Expand SEQ
 
-This will attempt to open the selected SEQ file with [SEQ Kage](https://github.com/mitchellhumphrey/seq-kage/releases). SEQ Kage allows you to expand the SEQ file and add more space near the end of the file to add new bytecode.
+This will attempt to open the selected SEQ file with [SEQ Kage](https://github.com/mitchellhumphrey/seq-kage/releases). SEQ Kage allows you to expand the SEQ file and add more space near the end of the file to add new SEQ bytecode.
