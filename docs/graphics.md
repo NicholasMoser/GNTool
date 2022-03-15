@@ -7,7 +7,7 @@
 
 ![Graphics](/docs/graphics.png?raw=true "Graphics")
 
-Textures for the GNT games are stored in `.txg` files. Each of these files contains one or more `.tpl` files packed inside. `.tpl` files can be opened with [BrawlCrate](https://github.com/soopercool101/BrawlCrate). For more information on graphics, see [TXG Files](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/file_formats/txg.md). Each of the operations involving `.txg` files use [TXG2TPL](https://github.com/Struggleton/TXG2TPL).
+Textures for the GNT games are stored in `.txg` files. Each of these `.txg` files contains one or more `.tpl` files packed inside. `.tpl` files can be opened with [BrawlCrate](https://github.com/soopercool101/BrawlCrate). For more information on graphics, see [TXG Files](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/file_formats/txg.md). Each of the operations involving `.txg` files use [TXG2TPL](https://github.com/Struggleton/TXG2TPL).
 
 ## Extract All Textures
 

@@ -860,7 +860,7 @@ public class MenuController {
         Optional<Path> optionalOutput = Choosers.getTrkAudioFile(bgm.toFile());
         if (optionalOutput.isPresent()) {
           Path audioFilePath = optionalInput.get();
-          String wavName = System.currentTimeMillis() + "temp.wav";
+          String wavName = System.currentTimeMillis() + "temp.wav"; // TODO: Use temp file api
           Path tempWavFilePath = audioFilePath.getParent().resolve(wavName);
           Path output = optionalOutput.get();
           String ffmpegOutput = FFmpeg.prepareMusic(audioFilePath, tempWavFilePath);
@@ -868,7 +868,7 @@ public class MenuController {
           DtkMake.fixWavHeader(tempWavFilePath);
           String trkOutput = DtkMake.run(tempWavFilePath, output);
           LOGGER.log(Level.INFO, trkOutput);
-          Files.deleteIfExists(tempWavFilePath);
+          Files.deleteIfExists(tempWavFilePath); // TODO: Cleanup in finally
           Message.info("Music Replacement Done", "Music Replacement Done.");
         }
       }
