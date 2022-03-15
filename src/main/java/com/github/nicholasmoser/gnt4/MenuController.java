@@ -76,7 +76,7 @@ import javafx.stage.Stage;
 public class MenuController {
 
   private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
-  private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool";
+  private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool#gntool";
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
   private static final int DEFAULT_CSS_MODEL_LOAD_FRAMES = 60;

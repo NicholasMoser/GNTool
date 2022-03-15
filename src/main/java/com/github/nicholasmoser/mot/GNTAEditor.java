@@ -27,7 +27,7 @@ import javafx.stage.Stage;
 public class GNTAEditor {
 
   private static final Logger LOGGER = Logger.getLogger(GNTAEditor.class.getName());
-  private static final String MOTION_INFO_URL = "https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/file_formats/mot.md";
+  private static final String MOTION_INFO_URL = "https://github.com/NicholasMoser/GNTool/blob/master/docs/animation.md#modify-gnta-file";
   private Stage stage;
   private Path gntaPath;
   private SeqEditor.Mode mode;
