@@ -2,7 +2,7 @@
 
 ![GNTool Logo](/docs/logo.png?raw=true "GNTool Logo")
 
-GNTool is an application to help with modding the [Naruto GNT/Clash of Ninja games](https://en.wikipedia.org/wiki/Naruto:_Clash_of_Ninja). Many of the tools will also work with other games created by [Eighting](https://en.wikipedia.org/wiki/Eighting) as well.
+GNTool is an application to help with modding the [Naruto GNT/Clash of Ninja games](https://en.wikipedia.org/wiki/Naruto:_Clash_of_Ninja). Many of the tools will also work with other games created by [Eighting](https://en.wikipedia.org/wiki/Eighting).
 
 ## Table of Contents
 
@@ -30,7 +30,7 @@ To run the tool, download the latest release zip file from the [GNTool releases]
 
 If you click on the wrench button you will access the tools menu. There, you can find many individual tools. For more information on each of the tools please see the [Tools Documentation](/docs/tools.md).
 
-If you plan on making many changes to a game, such as for a mod, it is recommended to create a [**workspace**](/docs/workspace.md). A workspace contains the files from an ISO, including compressed files. Hit **Create Workspace** in the main GNTool menu to create a new workspace.
+If you plan on making many changes to a game, such as for a mod, it is recommended to create a [GNTool Workspace](/docs/workspace.md). A workspace contains the files from an ISO, including uncompressed files. Hit **Create Workspace** in the main GNTool menu to create a new workspace.
 
 ![Workspace Example](/docs/workspace.png?raw=true "Workspace Example")
 

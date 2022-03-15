@@ -1,13 +1,13 @@
 # Audio Options
 
-- [Extract All Sound Effects](#audio)
-- [Import All Sound Effects](#audio)
-- [Create TRK File from Music File](#audio)
-- [Create DSP File from Sound Effects](#audio)
-- [Randomize All Music](#audio)
-- [Extract Sound Effects](#audio)
-- [Randomize Sound Effects](#audio)
-- [Import Sound Effects](#audio)
+- [Extract All Sound Effects](#extract-all-sound-effects)
+- [Import All Sound Effects](#import-all-sound-effects)
+- [Create TRK File from Music File](#create-trk-file-from-music-file)
+- [Create DSP File from Sound Effects](#create-dsp-file-from-sound-effects)
+- [Randomize All Music](#randomize-all-music)
+- [Extract Sound Effects](#extract-sound-effects)
+- [Randomize Sound Effects](#randomize-sound-effects)
+- [Import Sound Effects](#import-sound-effects)
 
 ![Audio](/docs/audio.png?raw=true "Audio")
 

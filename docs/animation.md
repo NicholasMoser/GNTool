@@ -1,5 +1,9 @@
 # Animation Options
 
+- [Unpack MOT File](#unpack-mot-file)
+- [Repack MOT File](#repack-mot-file)
+- [Modify GNTA File](#modify-gnta-file)
+
 ![Animation](/docs/animation.png?raw=true "Animation")
 
 Animations for the GNT games are stored in `.mot` files. Each of these `.mot` files contains one or more `.gnta` files packed inside. Each `.gnta` file is a single animation and is named after its animation ID. For more information on animations, see [MOT Files](https://github.com/NicholasMoser/Naruto-GNT-Modding/blob/master/gnt4/docs/file_formats/mot.md).

@@ -1,9 +1,9 @@
 # Graphics Options
 
 - [Extract All Textures](#extract-all-textures)
-- [Import All Textures](#extract-all-textures)
-- [Extract Texture](#extract-all-textures)
-- [Import Texture](#extract-all-textures)
+- [Import All Textures](#import-all-textures)
+- [Extract Texture](#extract-texture)
+- [Import Texture](#import-texture)
 
 ![Graphics](/docs/graphics.png?raw=true "Graphics")
 
@@ -20,3 +20,7 @@ Imports all `.tpl` files into their respective `.txg` file. The `.tpl files` for
 ## Extract Texture
 
 Extract all `.tpl` textures from a `.txg` file.
+
+## Import Texture
+
+Import `.tpl` textures into a `.txg` file.
