@@ -25,12 +25,12 @@ public class GNT4Codes {
   public static final String CSS_SEQ = "files/maki/char_sel.seq";
   public static final String CSS_4P_SEQ = "files/maki/charsel4.seq";
 
-  // https://github.com/NicholasMoser/GNTool#audio-fix
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#audio-fix
   public static final GNT4Code AUDIO_FIX = new GNT4Code(MAIN_DOL, 0x16CC0C,
       new byte[]{0x41, (byte) 0x82, 0x00, 0x20},
       new byte[]{0x48, 0x00, 0x00, 0x21});
 
-  // https://github.com/NicholasMoser/GNTool#skip-cutscenes
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#skip-cutscenes
   public static final GNT4Code SKIP_CUTSCENES_1 = new GNT4Code(MAIN_DOL, 0x9B14,
       new byte[]{0x48, 0x0B, (byte) 0xF5, 0x41},
       new byte[]{0x60, 0x00, 0x00, 0x00});
@@ -43,7 +43,7 @@ public class GNT4Codes {
   public static final List<GNT4Code> SKIP_CUTSCENES = Arrays
       .asList(SKIP_CUTSCENES_1, SKIP_CUTSCENES_2, SKIP_CUTSCENES_3);
 
-  // https://github.com/NicholasMoser/GNTool#character-selection-speed
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#character-selection-speed
   public static final GNT4Code CSS_INITIAL_SPEED_1V1_1P = new GNT4Code(CSS_SEQ, 0x531C);
   public static final GNT4Code CSS_INITIAL_SPEED_1V1_2P = new GNT4Code(CSS_SEQ, 0x9078);
   public static final GNT4Code CSS_INITIAL_SPEED_FFA_1P = new GNT4Code(CSS_4P_SEQ, 0x82BC);
@@ -67,15 +67,15 @@ public class GNT4Codes {
       .asList(CSS_MAX_SPEED_FFA_1P, CSS_MAX_SPEED_FFA_2P, CSS_MAX_SPEED_FFA_3P,
           CSS_MAX_SPEED_FFA_4P);
 
-  // https://github.com/NicholasMoser/GNTool#title-timeout-to-demo
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#title-timeout-to-demo
   public static final GNT4Code DEMO_TIME_OUT = new GNT4Code(TITLE_SEQ, 0x1B6E4);
 
-  // https://github.com/NicholasMoser/GNTool#main-menu-character
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#main-menu-character
   public static final GNT4Code MAIN_MENU_CHARACTER = new GNT4Code(TITLE_SEQ, 0x1612C);
   public static final GNT4Code MAIN_MENU_CHARACTER_HEIGHT = new GNT4Code(TITLE_SEQ, 0x161C3);
   public static final GNT4Code MAIN_MENU_CHARACTER_SOUND = new GNT4Code(TITLE_SEQ, 0x1BE67);
 
-  // https://github.com/NicholasMoser/GNTool#play-audio-while-paused
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#play-audio-while-paused
   public static final GNT4Code PLAY_AUDIO_WHILE_PAUSED_MISSION_MODE = new GNT4Code(MAIN_DOL,
       0x4412C,
       new byte[]{0x38, 0x60, 0x00, 0x00},
@@ -91,12 +91,12 @@ public class GNT4Codes {
       .asList(PLAY_AUDIO_WHILE_PAUSED_MISSION_MODE, PLAY_AUDIO_WHILE_PAUSED_TRAINING_MODE,
           PLAY_AUDIO_WHILE_PAUSED_OTHER_MODES);
 
-  // https://github.com/NicholasMoser/GNTool#no-slow-down-on-kill
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#no-slow-down-on-kill
   public static final GNT4Code NO_SLOWDOWN_ON_KILL = new GNT4Code(MAIN_DOL, 0x11868,
       new byte[]{(byte) 0xB0, 0x65, 0x00, 0x00},
       new byte[]{0x60, 0x00, 0x00, 0x00});
 
-  // https://github.com/NicholasMoser/GNTool#unlock-all
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#unlock-everything
   public static final GNT4Code UNLOCK_ALL_1 = new GNT4Code(MAIN_DOL, 0x7BB0,
       new byte[]{(byte) 0x80, 0x04, 0x01, 0x60},
       new byte[]{0x38, 0x00, (byte) 0xFF, (byte) 0xFF});
@@ -163,12 +163,12 @@ public class GNT4Codes {
           UNLOCK_CHARACTERS_1, UNLOCK_CHARACTERS_2, UNLOCK_ALL_15, UNLOCK_OPTIONS, UNLOCK_ALL_17,
           UNLOCK_ALL_18, UNLOCK_ALL_19, UNLOCK_ALL_20);
 
-  // https://github.com/NicholasMoser/GNTool#ZTK-Damage-Taken-Multiplier
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/characters.md#ztk-damage-taken-multiplier
   public static final GNT4Code ZTK_DAMAGE_TAKEN_MULTIPLIER = new GNT4Code(MAIN_DOL, 0x220C90);
-  // https://github.com/NicholasMoser/GNTool#Ukon-Damage-Taken-Multiplier
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/characters.md#ukon-damage-taken-multiplier
   public static final GNT4Code UKON_DAMAGE_TAKEN_MULTIPLIER = new GNT4Code(MAIN_DOL, 0x220C94);
 
-  // https://github.com/NicholasMoser/GNTool#Widescreen
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#widescreen-169
   public static final GNT4Code PERSPECTIVE_INSTRUCTION = new GNT4Code(MAIN_DOL, 0x16B15C,
       new byte[]{(byte) 0xff, (byte) 0xa0, 0x10, (byte) 0x90},
       new byte[]{(byte) 0xc3, (byte) 0xa2, (byte) 0xa0, 0x24});
@@ -178,12 +178,12 @@ public class GNT4Codes {
   public static final List<GNT4Code> WIDESCREEN_CODES = Arrays
       .asList(PERSPECTIVE_INSTRUCTION, WIDESCREEN_VALUE);
 
-  // https://github.com/NicholasMoser/GNTool#X-Does-Not-Break-Throws
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#x-does-not-break-throws
   public static final GNT4Code X_DOES_NOT_BREAK_THROWS = new GNT4Code(MAIN_DOL, 0x602F0,
       new byte[]{0x70, 0x00, 0x22, 0x30},
       new byte[]{0x70, 0x00, 0x02, 0x30});
 
-  // https://github.com/NicholasMoser/GNTool#Frames-Until-Model-is-Loaded-in-Character-Select-Screen
+  // https://github.com/NicholasMoser/GNTool/blob/master/docs/menu.md#frames-until-model-is-loaded-in-character-select-screen
   // At instruction 0x8009678c in the dol it is compared against 0x7fffff00 and therefore the max
   // must be lower than that.
   public static final Integer CSS_LOAD_CHR_MODELS_MAX = 0x7FFFFEFF;

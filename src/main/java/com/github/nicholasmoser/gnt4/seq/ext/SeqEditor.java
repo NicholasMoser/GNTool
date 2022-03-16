@@ -4,8 +4,10 @@ import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -34,6 +37,7 @@ import javafx.stage.Stage;
 public class SeqEditor {
 
   private static final Logger LOGGER = Logger.getLogger(SeqEditor.class.getName());
+  private static final String SEQ_EDITOR_INFO_URL = "https://github.com/NicholasMoser/GNTool/blob/master/docs/sequence.md#modify-seq";
   private Path seqPath;
   private Stage stage;
   private Map<String, SeqEdit> editsByName;
@@ -268,6 +272,15 @@ public class SeqEditor {
           }
         }
       }
+    }
+  }
+
+  public void aboutSEQEditor() {
+    try {
+      Desktop.getDesktop().browse(new URI(SEQ_EDITOR_INFO_URL));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Opening Help Page", e);
+      Message.error("Error Opening Help Page", e.getMessage());
     }
   }
 

@@ -76,7 +76,7 @@ import javafx.stage.Stage;
 public class MenuController {
 
   private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
-  private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool";
+  private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool#gntool";
   private static final int DEFAULT_DEMO_TIME_OUT_SECONDS = 10;
   private static final int MAX_DEMO_TIME_OUT_SECONDS = 86400;
   private static final int DEFAULT_CSS_MODEL_LOAD_FRAMES = 60;
@@ -860,7 +860,7 @@ public class MenuController {
         Optional<Path> optionalOutput = Choosers.getTrkAudioFile(bgm.toFile());
         if (optionalOutput.isPresent()) {
           Path audioFilePath = optionalInput.get();
-          String wavName = System.currentTimeMillis() + "temp.wav";
+          String wavName = System.currentTimeMillis() + "temp.wav"; // TODO: Use temp file api
           Path tempWavFilePath = audioFilePath.getParent().resolve(wavName);
           Path output = optionalOutput.get();
           String ffmpegOutput = FFmpeg.prepareMusic(audioFilePath, tempWavFilePath);
@@ -868,7 +868,7 @@ public class MenuController {
           DtkMake.fixWavHeader(tempWavFilePath);
           String trkOutput = DtkMake.run(tempWavFilePath, output);
           LOGGER.log(Level.INFO, trkOutput);
-          Files.deleteIfExists(tempWavFilePath);
+          Files.deleteIfExists(tempWavFilePath); // TODO: Cleanup in finally
           Message.info("Music Replacement Done", "Music Replacement Done.");
         }
       }
