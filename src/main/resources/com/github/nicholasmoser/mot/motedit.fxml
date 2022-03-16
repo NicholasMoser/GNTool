@@ -77,7 +77,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#aboutMotions" text="About Motions" />
+            <MenuItem mnemonicParsing="false" onAction="#aboutMOTEditor" text="About MOT Editor" />
           </items>
         </Menu>
       </menus>

@@ -27,7 +27,7 @@ import javafx.stage.Stage;
 public class GNTAEditor {
 
   private static final Logger LOGGER = Logger.getLogger(GNTAEditor.class.getName());
-  private static final String MOTION_INFO_URL = "https://github.com/NicholasMoser/GNTool/blob/master/docs/animation.md#modify-gnta-file";
+  private static final String MOT_EDITOR_INFO_URL = "https://github.com/NicholasMoser/GNTool/blob/master/docs/animation.md#modify-gnta-file";
   private Stage stage;
   private Path gntaPath;
   private SeqEditor.Mode mode;
@@ -177,9 +177,9 @@ public class GNTAEditor {
     stage.close();
   }
 
-  public void aboutMotions() {
+  public void aboutMOTEditor() {
     try {
-      Desktop.getDesktop().browse(new URI(MOTION_INFO_URL));
+      Desktop.getDesktop().browse(new URI(MOT_EDITOR_INFO_URL));
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening Help Page", e);
       Message.error("Error Opening Help Page", e.getMessage());

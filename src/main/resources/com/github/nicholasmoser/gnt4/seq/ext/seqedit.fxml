@@ -84,7 +84,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About Seq Editor" />
+            <MenuItem mnemonicParsing="false" onAction="#aboutSEQEditor" text="About SEQ Editor" />
           </items>
         </Menu>
       </menus>
