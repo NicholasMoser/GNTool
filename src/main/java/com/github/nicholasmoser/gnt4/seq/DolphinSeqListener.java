@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.Message;
+import com.github.nicholasmoser.utils.MarkableString;
 import com.github.nicholasmoser.utils.Sockets;
 import com.google.common.collect.Queues;
 import java.awt.Desktop;
@@ -15,9 +16,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class DolphinSeqListener {
@@ -29,7 +35,7 @@ public class DolphinSeqListener {
   private static final Logger LOGGER = Logger.getLogger(DolphinSeqListener.class.getName());
   public Label leftStatus;
   public Label rightStatus;
-  public ListView<String> messages;
+  public ListView<MarkableString> messages;
   public TextField bufferSize;
   private Stage stage;
   private int messageCount = 0;
@@ -61,10 +67,43 @@ public class DolphinSeqListener {
     this.stage = stage;
     this.rightStatus.setText("Message Count: " + messageCount);
     this.bufferSize.setText(Integer.toString(DEFAULT_MESSAGE_BUFFER_SIZE));
+    messages.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     startListener();
+    updateMessageListFont();
+  }
+
+  private void updateMessageListFont() {
+    messages.setCellFactory(cell -> new ListCell<>() {
+      @Override
+      protected void updateItem(MarkableString item, boolean empty) {
+        super.updateItem(item, empty);
+        if (item != null) {
+          setText(item.toString());
+          if (item.isMarked()) {
+            setFont(Font.font(null, FontWeight.BOLD, 16));
+            //setTextFill(Paint.valueOf("Red"));
+            setStyle("-fx-text-fill: red");
+          } else {
+            setFont(Font.font(16));
+            setStyle("-fx-text-fill: white");
+          }
+        }
+      }
+    });
   }
 
   public void mark() {
+    List<MarkableString> allItems = messages.getItems();
+    List<MarkableString> selectedItems = messages.getSelectionModel().getSelectedItems();
+    // Mark each selected message
+    for (MarkableString item : selectedItems) {
+      item.toggleMark();
+    }
+    // If no messages selected, mark the last one if it exists
+    if (selectedItems.isEmpty() && !allItems.isEmpty()) {
+      allItems.get(allItems.size() - 1).toggleMark();
+    }
+    messages.refresh();
   }
 
   public void gotoMark() {
@@ -124,11 +163,11 @@ public class DolphinSeqListener {
     consumer = new AnimationTimer() {
       @Override
       public void handle(long now) {
-        List<String> messageList = messages.getItems();
+        List<MarkableString> messageList = messages.getItems();
         String message;
         int num = 0;
         while ((message = queue.poll()) != null && num < MESSAGES_PER_FRAME) {
-          messageList.add(message);
+          messageList.add(new MarkableString(message));
           num++;
           // Make sure we only display message up to the buffer size
           if (messageList.size() > bufferSize) {

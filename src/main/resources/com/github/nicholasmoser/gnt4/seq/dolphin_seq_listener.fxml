@@ -64,8 +64,8 @@
         </Menu>
       </menus>
     </MenuBar>
-      <ListView fx:id="messages" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#selectMessage" prefHeight="765.0" prefWidth="396.0" VBox.vgrow="ALWAYS" />
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <ListView fx:id="messages" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#selectMessage" VBox.vgrow="ALWAYS" />
+      <HBox VBox.vgrow="NEVER">
          <children>
             <Button mnemonicParsing="false" onAction="#mark" text="Mark Line">
                <font>
