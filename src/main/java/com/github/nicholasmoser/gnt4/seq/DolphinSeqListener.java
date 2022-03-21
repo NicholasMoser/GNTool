@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 public class DolphinSeqListener {
 
   public static final int SEQ_LISTENER_PORT = 12198;
+  public static final int DEFAULT_MESSAGE_BUFFER_SIZE = 500;
   private static final Logger LOGGER = Logger.getLogger(DolphinSeqListener.class.getName());
   public Label leftStatus;
   public Label rightStatus;
@@ -30,6 +31,7 @@ public class DolphinSeqListener {
   private ConcurrentLinkedQueue<String> queue = Queues.newConcurrentLinkedQueue();
   private Thread producer;
   private AnimationTimer consumer;
+  private int messageBufferSize = DEFAULT_MESSAGE_BUFFER_SIZE;
 
   public void quit() {
     killListener();
@@ -46,13 +48,7 @@ public class DolphinSeqListener {
     this.stage = stage;
     this.rightStatus.setText("Message Count: " + messageCount);
     this.leftStatus.setText("");
-    if (Sockets.isPortAvailable(SEQ_LISTENER_PORT)) {
-      initMessageProducer();
-      initMessageConsumer();
-    } else {
-      Message.error("Unable to Connect to Dolphin", "Please restart GNTool.");
-      this.leftStatus.setText("Unable to Connect to Dolphin");
-    }
+    startListener();
   }
 
   private void initMessageConsumer() {
@@ -62,10 +58,12 @@ public class DolphinSeqListener {
         List<String> messageList = messages.getItems();
         String message;
         int num = 0;
-        while ((message = queue.poll()) != null) {
+        // Grab messages from the queue until the total buffer size is hit
+        while ((message = queue.poll()) != null && num < messageBufferSize) {
           messageList.add(message);
           num++;
-          if (messageList.size() > 500) {
+          // Make sure we only display message up to the buffer size
+          if (messageList.size() > messageBufferSize) {
             messageList.remove(0);
           }
           messages.scrollTo(messageList.size() - 1);
@@ -81,6 +79,36 @@ public class DolphinSeqListener {
       }
     };
     consumer.start();
+  }
+
+  public void mark() {
+  }
+
+  public void startListener() {
+    if (Sockets.isPortAvailable(SEQ_LISTENER_PORT)) {
+      initMessageProducer();
+      initMessageConsumer();
+    } else {
+      Message.error("Unable to Connect to Dolphin", "Please restart GNTool.");
+      this.leftStatus.setText("Unable to Connect to Dolphin");
+    }
+  }
+
+  public void killListener() {
+    try {
+      if (producer != null) {
+        producer.interrupt();
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to stop Dolphin message producer", e);
+    }
+    try {
+      if (consumer != null) {
+        consumer.stop();
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to stop Dolphin message consumer", e);
+    }
   }
 
   public class InterruptableUDPThread extends Thread{
@@ -120,14 +148,5 @@ public class DolphinSeqListener {
       }
     });
     producer.start();
-  }
-
-  public void killListener() {
-    if (producer != null) {
-      producer.interrupt();
-    }
-    if (consumer != null) {
-      consumer.stop();
-    }
   }
 }
