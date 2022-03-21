@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -23,17 +24,18 @@ public class DolphinSeqListener {
 
   public static final int SEQ_LISTENER_PORT = 12198;
   public static final int DEFAULT_MESSAGE_BUFFER_SIZE = 500;
+  public static final int MESSAGES_PER_FRAME = 500;
   public static final String DOLPHIN_LUA_DOWNLOAD = "https://github.com/NicholasMoser/dolphin/releases/download/lua-dolphin-1.0/Lua-Dolphin.zip";
   private static final Logger LOGGER = Logger.getLogger(DolphinSeqListener.class.getName());
   public Label leftStatus;
   public Label rightStatus;
   public ListView<String> messages;
+  public TextField bufferSize;
   private Stage stage;
   private int messageCount = 0;
   private ConcurrentLinkedQueue<String> queue = Queues.newConcurrentLinkedQueue();
   private Thread producer;
   private AnimationTimer consumer;
-  private int messageBufferSize = DEFAULT_MESSAGE_BUFFER_SIZE;
 
   public void quit() {
     killListener();
@@ -58,6 +60,7 @@ public class DolphinSeqListener {
   public void init(Stage stage) {
     this.stage = stage;
     this.rightStatus.setText("Message Count: " + messageCount);
+    this.bufferSize.setText(Integer.toString(DEFAULT_MESSAGE_BUFFER_SIZE));
     startListener();
   }
 
@@ -72,9 +75,16 @@ public class DolphinSeqListener {
   }
 
   public void startListener() {
+    int bufferSizeValue = DEFAULT_MESSAGE_BUFFER_SIZE;
+    try {
+      bufferSizeValue = Integer.decode(bufferSize.getText());
+    } catch (NumberFormatException e) {
+      Message.error("Error Setting Buffer Size", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Error Setting Buffer Size", e);
+    }
     if (Sockets.isPortAvailable(SEQ_LISTENER_PORT)) {
       initMessageProducer();
-      initMessageConsumer();
+      initMessageConsumer(bufferSizeValue);
       leftStatus.setText("Connected");
     } else {
       Message.error("Failed to Connect to Dolphin", "Please restart GNTool.");
@@ -110,19 +120,18 @@ public class DolphinSeqListener {
     }
   }
 
-  private void initMessageConsumer() {
+  private void initMessageConsumer(int bufferSize) {
     consumer = new AnimationTimer() {
       @Override
       public void handle(long now) {
         List<String> messageList = messages.getItems();
         String message;
         int num = 0;
-        // Grab messages from the queue until the total buffer size is hit
-        while ((message = queue.poll()) != null && num < messageBufferSize) {
+        while ((message = queue.poll()) != null && num < MESSAGES_PER_FRAME) {
           messageList.add(message);
           num++;
           // Make sure we only display message up to the buffer size
-          if (messageList.size() > messageBufferSize) {
+          if (messageList.size() > bufferSize) {
             messageList.remove(0);
           }
           messages.scrollTo(messageList.size() - 1);
