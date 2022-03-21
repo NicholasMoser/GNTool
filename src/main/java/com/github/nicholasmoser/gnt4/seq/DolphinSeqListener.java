@@ -130,6 +130,7 @@ public class DolphinSeqListener {
         if (num > 0) {
           System.out.println("Consumed " + num);
         }
+        messageCount += num;
         rightStatus.setText("Message Count: " + messageCount);
       }
     };
