@@ -58,6 +58,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
+                  <MenuItem mnemonicParsing="false" onAction="#downloadLuaDolphin" text="Download Lua Dolphin" />
             <MenuItem mnemonicParsing="false" onAction="#aboutDolphinSEQListener" text="About Dolphin SEQ Listener" />
           </items>
         </Menu>

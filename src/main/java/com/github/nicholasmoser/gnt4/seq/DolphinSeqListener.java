@@ -3,8 +3,10 @@ package com.github.nicholasmoser.gnt4.seq;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.utils.Sockets;
 import com.google.common.collect.Queues;
+import java.awt.Desktop;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +14,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
@@ -22,13 +23,13 @@ public class DolphinSeqListener {
 
   public static final int SEQ_LISTENER_PORT = 12198;
   public static final int DEFAULT_MESSAGE_BUFFER_SIZE = 500;
+  public static final String DOLPHIN_LUA_DOWNLOAD = "https://github.com/NicholasMoser/dolphin/releases/download/lua-dolphin-1.0/Lua-Dolphin.zip";
   private static final Logger LOGGER = Logger.getLogger(DolphinSeqListener.class.getName());
   public Label leftStatus;
   public Label rightStatus;
   public ListView<String> messages;
   private Stage stage;
   private int messageCount = 0;
-  private String leftStatusMessage = null;
   private ConcurrentLinkedQueue<String> queue = Queues.newConcurrentLinkedQueue();
   private Thread producer;
   private AnimationTimer consumer;
@@ -37,6 +38,15 @@ public class DolphinSeqListener {
   public void quit() {
     killListener();
     stage.close();
+  }
+
+  public void downloadLuaDolphin() {
+    try {
+      Desktop.getDesktop().browse(new URI(DOLPHIN_LUA_DOWNLOAD));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Opening Dolphin Lua Download", e);
+      Message.error("Error Opening Dolphin Lua Download", e.getMessage());
+    }
   }
 
   public void aboutDolphinSEQListener() {
@@ -48,7 +58,6 @@ public class DolphinSeqListener {
   public void init(Stage stage) {
     this.stage = stage;
     this.rightStatus.setText("Message Count: " + messageCount);
-    this.leftStatus.setText("");
     startListener();
   }
 
@@ -68,7 +77,6 @@ public class DolphinSeqListener {
       initMessageConsumer();
       leftStatus.setText("Connected");
     } else {
-      
       Message.error("Failed to Connect to Dolphin", "Please restart GNTool.");
       leftStatus.setText("Failed to Connect to Dolphin");
     }
@@ -76,7 +84,7 @@ public class DolphinSeqListener {
 
   public void killListener() {
     try {
-      if (producer != null) {
+      if (producer != null && !producer.isInterrupted()) {
         producer.interrupt();
       }
     } catch (Exception e) {
@@ -89,45 +97,17 @@ public class DolphinSeqListener {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to stop Dolphin message consumer", e);
     }
-  }
-
-  public class InterruptableUDPThread extends Thread{
-
-    private final DatagramSocket socket;
-
-    public InterruptableUDPThread(DatagramSocket socket){
-      this.socket = socket;
-    }
-    @Override
-    public void interrupt(){
-      super.interrupt();
-      this.socket.close();
-    }
+    leftStatus.setText("Disconnected");
   }
 
   private void initMessageProducer() {
-    producer = new Thread(() -> {
-      byte[] buf = new byte[256];
-      DatagramSocket socket = null;
-      try {
-        socket = new DatagramSocket(SEQ_LISTENER_PORT);
-        while(true) {
-          DatagramPacket packet
-              = new DatagramPacket(buf, buf.length);
-          socket.receive(packet);
-          byte[] bytes = Arrays.copyOf(packet.getData(), packet.getLength());
-          String text = new String(bytes, StandardCharsets.UTF_8);
-          queue.add(text);
-        }
-      } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Error Running Dolphin Listener", e);
-        leftStatusMessage = e.getMessage();
-      } finally {
-        System.out.println("close");
-        socket.close();
-      }
-    });
-    producer.start();
+    try {
+      producer = new ProducerThread(new DatagramSocket(SEQ_LISTENER_PORT));
+      producer.start();
+    } catch (Exception e) {
+      Message.error("Error Running Dolphin Listener", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Error Running Dolphin Listener", e);
+    }
   }
 
   private void initMessageConsumer() {
@@ -150,13 +130,47 @@ public class DolphinSeqListener {
         if (num > 0) {
           System.out.println("Consumed " + num);
         }
-        // Update left status
-        if (leftStatusMessage != null) {
-          leftStatus.setText(leftStatusMessage);
-        }
         rightStatus.setText("Message Count: " + messageCount);
       }
     };
     consumer.start();
+  }
+
+  /**
+   * A thread with a UDP socket that will close the socket upon interruption. It will consume
+   * UDP packets and produce messages from them that will be stored in the {@link #queue}.
+   */
+  private class ProducerThread extends Thread {
+
+    private final DatagramSocket socket;
+    private final byte[] buf;
+
+    public ProducerThread(DatagramSocket socket) {
+      this.socket = socket;
+      this.buf = new byte[256];
+    }
+
+    @Override
+    public void run() {
+      try {
+        while (true) {
+          DatagramPacket packet = new DatagramPacket(buf, buf.length);
+          socket.receive(packet);
+          byte[] bytes = Arrays.copyOf(packet.getData(), packet.getLength());
+          String text = new String(bytes, StandardCharsets.UTF_8);
+          queue.add(text);
+        }
+      } catch (Exception e) {
+        LOGGER.log(Level.INFO,
+            "Producer thread threw an exception, this is expected in most cases due to interrupts",
+            e);
+      }
+    }
+
+    @Override
+    public void interrupt() {
+      super.interrupt();
+      this.socket.close();
+    }
   }
 }
