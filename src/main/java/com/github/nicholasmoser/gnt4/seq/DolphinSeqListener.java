@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
@@ -51,46 +52,25 @@ public class DolphinSeqListener {
     startListener();
   }
 
-  private void initMessageConsumer() {
-    consumer = new AnimationTimer() {
-      @Override
-      public void handle(long now) {
-        List<String> messageList = messages.getItems();
-        String message;
-        int num = 0;
-        // Grab messages from the queue until the total buffer size is hit
-        while ((message = queue.poll()) != null && num < messageBufferSize) {
-          messageList.add(message);
-          num++;
-          // Make sure we only display message up to the buffer size
-          if (messageList.size() > messageBufferSize) {
-            messageList.remove(0);
-          }
-          messages.scrollTo(messageList.size() - 1);
-        }
-        if (num > 0) {
-          System.out.println("Consumed " + num);
-        }
-        // Update left status
-        if (leftStatusMessage != null) {
-          leftStatus.setText(leftStatusMessage);
-        }
-        rightStatus.setText("Message Count: " + messageCount);
-      }
-    };
-    consumer.start();
+  public void mark() {
   }
 
-  public void mark() {
+  public void gotoMark() {
+  }
+
+  public void clear() {
+    messages.getItems().clear();
   }
 
   public void startListener() {
     if (Sockets.isPortAvailable(SEQ_LISTENER_PORT)) {
       initMessageProducer();
       initMessageConsumer();
+      leftStatus.setText("Connected");
     } else {
-      Message.error("Unable to Connect to Dolphin", "Please restart GNTool.");
-      this.leftStatus.setText("Unable to Connect to Dolphin");
+      
+      Message.error("Failed to Connect to Dolphin", "Please restart GNTool.");
+      leftStatus.setText("Failed to Connect to Dolphin");
     }
   }
 
@@ -148,5 +128,35 @@ public class DolphinSeqListener {
       }
     });
     producer.start();
+  }
+
+  private void initMessageConsumer() {
+    consumer = new AnimationTimer() {
+      @Override
+      public void handle(long now) {
+        List<String> messageList = messages.getItems();
+        String message;
+        int num = 0;
+        // Grab messages from the queue until the total buffer size is hit
+        while ((message = queue.poll()) != null && num < messageBufferSize) {
+          messageList.add(message);
+          num++;
+          // Make sure we only display message up to the buffer size
+          if (messageList.size() > messageBufferSize) {
+            messageList.remove(0);
+          }
+          messages.scrollTo(messageList.size() - 1);
+        }
+        if (num > 0) {
+          System.out.println("Consumed " + num);
+        }
+        // Update left status
+        if (leftStatusMessage != null) {
+          leftStatus.setText(leftStatusMessage);
+        }
+        rightStatus.setText("Message Count: " + messageCount);
+      }
+    };
+    consumer.start();
   }
 }

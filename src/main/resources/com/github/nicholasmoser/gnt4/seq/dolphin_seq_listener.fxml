@@ -71,15 +71,31 @@
                   <Font size="18.0" />
                </font>
                <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
                </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#gotoMark" text="Goto Mark">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#clear" text="Clear">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="18.0" />
+               </font>
             </Button>
             <Button mnemonicParsing="false" onAction="#startListener" text="Start">
                <font>
                   <Font size="18.0" />
                </font>
                <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
                </HBox.margin>
             </Button>
             <Button mnemonicParsing="false" onAction="#killListener" text="Stop">
@@ -87,18 +103,18 @@
                   <Font size="18.0" />
                </font>
                <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
                </HBox.margin>
             </Button>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Buffer Size" styleClass="text-id">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Buffer Size">
                <font>
                   <Font size="18.0" />
                </font>
                <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
                </HBox.margin>
             </Text>
-            <TextField>
+            <TextField fx:id="bufferSize">
                <font>
                   <Font size="18.0" />
                </font>
