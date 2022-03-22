@@ -113,8 +113,8 @@ public class DolphinSeqListener {
       int offset = Integer.decode("0x" + message.substring(0, 8));
       System.out.printf("%08X\n", offset);
     } catch (Exception e) {
-      Message.error("Error Opening Line", e.getMessage());
       LOGGER.log(Level.SEVERE, "Error Opening Line", e);
+      Message.error("Error Opening Line", e.getMessage());
     }
   }
 
@@ -186,16 +186,16 @@ public class DolphinSeqListener {
     try {
       bufferSizeValue = Integer.decode(bufferSize.getText());
     } catch (NumberFormatException e) {
-      Message.error("Error Setting Buffer Size", e.getMessage());
       LOGGER.log(Level.SEVERE, "Error Setting Buffer Size", e);
+      Message.error("Error Setting Buffer Size", e.getMessage());
     }
     if (Sockets.isPortAvailable(SEQ_LISTENER_PORT)) {
       initMessageProducer();
       initMessageConsumer(bufferSizeValue);
       leftStatus.setText("Connected");
     } else {
-      Message.error("Failed to Connect to Dolphin", "Please restart GNTool.");
       leftStatus.setText("Failed to Connect to Dolphin");
+      Message.error("Failed to Connect to Dolphin", "Please restart GNTool.");
     }
   }
 
@@ -222,8 +222,8 @@ public class DolphinSeqListener {
       producer = new ProducerThread(new DatagramSocket(SEQ_LISTENER_PORT));
       producer.start();
     } catch (Exception e) {
-      Message.error("Error Running Dolphin Listener", e.getMessage());
       LOGGER.log(Level.SEVERE, "Error Running Dolphin Listener", e);
+      Message.error("Error Running Dolphin Listener", e.getMessage());
     }
   }
 
