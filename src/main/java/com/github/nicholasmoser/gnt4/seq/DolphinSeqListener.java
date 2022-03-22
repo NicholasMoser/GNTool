@@ -21,7 +21,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -80,11 +79,10 @@ public class DolphinSeqListener {
         if (item != null) {
           setText(item.toString());
           if (item.isMarked()) {
-            setFont(Font.font(null, FontWeight.BOLD, 16));
-            //setTextFill(Paint.valueOf("Red"));
-            setStyle("-fx-text-fill: red");
+            setFont(Font.font("Monospaced", FontWeight.BOLD, 16));
+            setStyle("-fx-text-fill: #BB86FC");
           } else {
-            setFont(Font.font(16));
+            setFont(Font.font("Monospaced", 16));
             setStyle("-fx-text-fill: white");
           }
         }
@@ -107,6 +105,20 @@ public class DolphinSeqListener {
   }
 
   public void gotoMark() {
+    List<MarkableString> allItems = messages.getItems();
+    int startingIndex = messages.getSelectionModel().getSelectedIndex() - 1;
+    if (startingIndex < 0) {
+      startingIndex = allItems.size() - 1;
+    }
+    for (int i = startingIndex; i >= 0; i--) {
+      MarkableString item = allItems.get(i);
+      if (item.isMarked()) {
+        messages.getSelectionModel().clearSelection();
+        messages.getSelectionModel().select(i);
+        messages.scrollTo(i);
+        break;
+      }
+    }
   }
 
   public void clear() {
@@ -205,8 +217,7 @@ public class DolphinSeqListener {
         while (true) {
           DatagramPacket packet = new DatagramPacket(buf, buf.length);
           socket.receive(packet);
-          byte[] bytes = Arrays.copyOf(packet.getData(), packet.getLength());
-          String text = new String(bytes, StandardCharsets.UTF_8);
+          String text = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
           queue.add(text);
         }
       } catch (Exception e) {
