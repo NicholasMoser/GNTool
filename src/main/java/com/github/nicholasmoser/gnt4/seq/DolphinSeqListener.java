@@ -15,14 +15,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.event.EventTarget;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class DolphinSeqListener {
@@ -59,7 +66,56 @@ public class DolphinSeqListener {
   public void aboutDolphinSEQListener() {
   }
 
+  public void gotoLine() {
+    MarkableString message = messages.getSelectionModel().getSelectedItem();
+    if (message == null) {
+      Message.info("No Message Selected", "Please select a message.");
+      return;
+    }
+    gotoLine(message.toString());
+  }
+
   public void selectMessage(MouseEvent mouseEvent) {
+    EventTarget target =  mouseEvent.getTarget();
+    if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+      // Left click (double click)
+      if(mouseEvent.getClickCount() == 2) {
+        if (target instanceof Labeled) {
+          Labeled label = (Labeled) target;
+          gotoLine(label.getText());
+        }
+        else if (target instanceof Text) {
+          Text text = (Text) target;
+          gotoLine(text.getText());
+        }
+      }
+    } else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+      // Right click (context menu)
+      ContextMenu menu = new ContextMenu();
+      MenuItem gotoLine = new MenuItem("Goto Line");
+      gotoLine.setOnAction(event -> {
+        if (target instanceof Labeled) {
+          Labeled label = (Labeled) target;
+          gotoLine(label.getText());
+        }
+        else if (target instanceof Text) {
+          Text text = (Text) target;
+          gotoLine(text.getText());
+        }
+      });
+      menu.getItems().add(gotoLine);
+      menu.show(stage, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+    }
+  }
+
+  private void gotoLine(String message) {
+    try {
+      int offset = Integer.decode("0x" + message.substring(0, 8));
+      System.out.printf("%08X\n", offset);
+    } catch (Exception e) {
+      Message.error("Error Opening Line", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Error Opening Line", e);
+    }
   }
 
   public void init(Stage stage) {
