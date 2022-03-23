@@ -33,6 +33,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
@@ -95,6 +97,14 @@ public class DolphinSeqListener {
     gotoLine(message.toString());
   }
 
+  public void copy() {
+    MarkableString message = messages.getSelectionModel().getSelectedItem();
+    if (message == null) {
+      return;
+    }
+    copy(message.toString());
+  }
+
   public void selectMessage(MouseEvent mouseEvent) {
     EventTarget target = mouseEvent.getTarget();
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
@@ -117,57 +127,16 @@ public class DolphinSeqListener {
           gotoLine(text.getText());
         }
       });
-      menu.getItems().add(gotoLine);
+      MenuItem copy = new MenuItem("Copy");
+      copy.setOnAction(event -> {
+        if (target instanceof Labeled label) {
+          copy(label.getText());
+        } else if (target instanceof Text text) {
+          copy(text.getText());
+        }
+      });
+      menu.getItems().addAll(gotoLine, copy);
       menu.show(stage, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-    }
-  }
-
-  /**
-   * Opens the disassembled HTML report of the seq of a message and jumps to the offset from that
-   * message.
-   *
-   * @param message The message to parse and go to.
-   */
-  private void gotoLine(String message) {
-    try {
-      // Get path to seq files
-      if (gnt4Files == null) {
-        Message.info("Select Workspace", "Please select a GNTool workspace directory.");
-        Optional<Path> path = Choosers.getInputWorkspaceDirectory(GNTool.USER_HOME);
-        if (path.isEmpty()) {
-          return;
-        }
-        gnt4Files = path.get().resolve("uncompressed/files");
-      }
-      // Get path to input SEQ file
-      GNT4FileNames fileNames = new GNT4FileNames();
-      String brokenName = message.substring(27);
-      if (brokenName.isBlank()) {
-        throw new IOException("Unknown file name!");
-      }
-      String seqName = fileNames.fix(brokenName);
-      Path seqPath = gnt4Files.resolve(seqName);
-      if (!Files.exists(seqPath)) {
-        throw new IOException(seqPath + " does not exist.");
-      }
-      // See if the output HTML is already cached
-      Path outputHTML = seqToSeqReport.get(seqName);
-      if (outputHTML == null) {
-        // Get path to output HTML file and generate it
-        Optional<Path> output = Choosers.getOutputHTML(gnt4Files.toFile());
-        if (output.isEmpty()) {
-          return;
-        }
-        outputHTML = output.get();
-        seqToSeqReport.put(seqName, outputHTML);
-        SeqKing.generateHTML(seqPath, outputHTML, false);
-      }
-      int offset = Integer.decode("0x" + message.substring(0, 8));
-      String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
-      Browser.open(fileUri);
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Opening Line", e);
-      Message.error("Error Opening Line", e.getMessage());
     }
   }
 
@@ -250,6 +219,62 @@ public class DolphinSeqListener {
       LOGGER.log(Level.SEVERE, "Failed to stop Dolphin message consumer", e);
     }
     leftStatus.setText("Disconnected");
+  }
+
+  /**
+   * Opens the disassembled HTML report of the seq of a message and jumps to the offset from that
+   * message.
+   *
+   * @param message The message to parse and go to.
+   */
+  private void gotoLine(String message) {
+    try {
+      // Get path to seq files
+      if (gnt4Files == null) {
+        Message.info("Select Workspace", "Please select a GNTool workspace directory.");
+        Optional<Path> path = Choosers.getInputWorkspaceDirectory(GNTool.USER_HOME);
+        if (path.isEmpty()) {
+          return;
+        }
+        gnt4Files = path.get().resolve("uncompressed/files");
+      }
+      // Get path to input SEQ file
+      GNT4FileNames fileNames = new GNT4FileNames();
+      String brokenName = message.substring(27);
+      if (brokenName.isBlank()) {
+        throw new IOException("Unknown file name!");
+      }
+      String seqName = fileNames.fix(brokenName);
+      Path seqPath = gnt4Files.resolve(seqName);
+      if (!Files.exists(seqPath)) {
+        throw new IOException(seqPath + " does not exist.");
+      }
+      // See if the output HTML is already cached
+      Path outputHTML = seqToSeqReport.get(seqName);
+      if (outputHTML == null) {
+        // Get path to output HTML file and generate it
+        Optional<Path> output = Choosers.getOutputHTML(gnt4Files.toFile());
+        if (output.isEmpty()) {
+          return;
+        }
+        outputHTML = output.get();
+        seqToSeqReport.put(seqName, outputHTML);
+        SeqKing.generateHTML(seqPath, outputHTML, false);
+      }
+      int offset = Integer.decode("0x" + message.substring(0, 8));
+      String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
+      Browser.open(fileUri);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Opening Line", e);
+      Message.error("Error Opening Line", e.getMessage());
+    }
+  }
+
+  private void copy(String text) {
+    Clipboard clipboard = Clipboard.getSystemClipboard();
+    Map<DataFormat, Object> output = new HashMap<>();
+    output.put(DataFormat.PLAIN_TEXT,text);
+    clipboard.setContent(output);
   }
 
   private void updateMessageListFont() {
