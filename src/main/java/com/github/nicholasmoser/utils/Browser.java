@@ -14,6 +14,12 @@ import java.util.logging.Logger;
 public class Browser {
   private static final Logger LOGGER = Logger.getLogger(Browser.class.getName());
 
+  /**
+   * Open the given path with a web browser. First will try Firefox and then Chrome.
+   *
+   * @param path The path to open.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static void open(String path) throws IOException {
     String browser = findFirefox();
     if (browser == null) {
@@ -34,6 +40,11 @@ public class Browser {
     }
   }
 
+  /**
+   * Attempts to find Chrome in Program Files.
+   *
+   * @return The path to Chrome or null if it cannot be found.
+   */
   private static String findChrome() {
     Path firstTry = Paths.get("C:/Program Files/Google/Chrome/Application/chrome.exe");
     if (Files.exists(firstTry)) {
@@ -46,6 +57,11 @@ public class Browser {
     return null;
   }
 
+  /**
+   * Attempts to find Firefox in Program Files.
+   *
+   * @return The path to Firefox or null if it cannot be found.
+   */
   private static String findFirefox() {
     Path firstTry = Paths.get("C:/Program Files/Mozilla Firefox/firefox.exe");
     if (Files.exists(firstTry)) {

@@ -40,12 +40,16 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * A GUI to listen for SEQ position messages from Lua Dolphin using the udp_gnt4.lua script.
+ */
 public class DolphinSeqListener {
 
   public static final int SEQ_LISTENER_PORT = 12198;
   public static final int DEFAULT_MESSAGE_BUFFER_SIZE = 500;
   public static final int MESSAGES_PER_FRAME = 500;
   public static final String DOLPHIN_LUA_DOWNLOAD = "https://github.com/NicholasMoser/dolphin/releases/download/lua-dolphin-1.0/Lua-Dolphin.zip";
+  private static final String ABOUT_URL = "https://github.com/NicholasMoser/GNTool/blob/master/docs/seq_listener.md";
   private static final Logger LOGGER = Logger.getLogger(DolphinSeqListener.class.getName());
   private final ConcurrentLinkedQueue<String> queue = Queues.newConcurrentLinkedQueue();
   private final Map<String, Path> seqToSeqReport = new HashMap<>();
@@ -74,6 +78,12 @@ public class DolphinSeqListener {
   }
 
   public void aboutDolphinSEQListener() {
+    try {
+      Desktop.getDesktop().browse(new URI(ABOUT_URL));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
+      Message.error("Error Opening About Page", e.getMessage());
+    }
   }
 
   public void gotoLine() {
@@ -90,11 +100,9 @@ public class DolphinSeqListener {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       // Left click (double click)
       if (mouseEvent.getClickCount() == 2) {
-        if (target instanceof Labeled) {
-          Labeled label = (Labeled) target;
+        if (target instanceof Labeled label) {
           gotoLine(label.getText());
-        } else if (target instanceof Text) {
-          Text text = (Text) target;
+        } else if (target instanceof Text text) {
           gotoLine(text.getText());
         }
       }
@@ -103,11 +111,9 @@ public class DolphinSeqListener {
       ContextMenu menu = new ContextMenu();
       MenuItem gotoLine = new MenuItem("Goto Line");
       gotoLine.setOnAction(event -> {
-        if (target instanceof Labeled) {
-          Labeled label = (Labeled) target;
+        if (target instanceof Labeled label) {
           gotoLine(label.getText());
-        } else if (target instanceof Text) {
-          Text text = (Text) target;
+        } else if (target instanceof Text text) {
           gotoLine(text.getText());
         }
       });
@@ -116,6 +122,12 @@ public class DolphinSeqListener {
     }
   }
 
+  /**
+   * Opens the disassembled HTML report of the seq of a message and jumps to the offset from that
+   * message.
+   *
+   * @param message The message to parse and go to.
+   */
   private void gotoLine(String message) {
     try {
       // Get path to seq files
@@ -167,25 +179,6 @@ public class DolphinSeqListener {
     messages.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     startListener();
     updateMessageListFont();
-  }
-
-  private void updateMessageListFont() {
-    messages.setCellFactory(cell -> new ListCell<>() {
-      @Override
-      protected void updateItem(MarkableString item, boolean empty) {
-        super.updateItem(item, empty);
-        if (item != null) {
-          setText(item.toString());
-          if (item.isMarked()) {
-            setFont(Font.font("Monospaced", FontWeight.BOLD, 16));
-            setStyle("-fx-text-fill: #BB86FC");
-          } else {
-            setFont(Font.font("Monospaced", 16));
-            setStyle("-fx-text-fill: white");
-          }
-        }
-      }
-    });
   }
 
   public void mark() {
@@ -259,6 +252,25 @@ public class DolphinSeqListener {
     leftStatus.setText("Disconnected");
   }
 
+  private void updateMessageListFont() {
+    messages.setCellFactory(cell -> new ListCell<>() {
+      @Override
+      protected void updateItem(MarkableString item, boolean empty) {
+        super.updateItem(item, empty);
+        if (item != null) {
+          setText(item.toString());
+          if (item.isMarked()) {
+            setFont(Font.font("Monospaced", FontWeight.BOLD, 16));
+            setStyle("-fx-text-fill: #BB86FC");
+          } else {
+            setFont(Font.font("Monospaced", 16));
+            setStyle("-fx-text-fill: white");
+          }
+        }
+      }
+    });
+  }
+
   private void initMessageProducer() {
     try {
       producer = new ProducerThread(new DatagramSocket(SEQ_LISTENER_PORT));
@@ -269,6 +281,12 @@ public class DolphinSeqListener {
     }
   }
 
+  /**
+   * An animation timer that runs each frame to consume and update the message list with new
+   * messages.
+   *
+   * @param bufferSize The size of the message buffer.
+   */
   private void initMessageConsumer(int bufferSize) {
     consumer = new AnimationTimer() {
       @Override
@@ -284,9 +302,6 @@ public class DolphinSeqListener {
             messageList.remove(0);
           }
           messages.scrollTo(messageList.size() - 1);
-        }
-        if (num > 0) {
-          System.out.println("Consumed " + num);
         }
         messageCount += num;
         rightStatus.setText("Message Count: " + messageCount);
