@@ -1,21 +1,29 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.Choosers;
+import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
+import com.github.nicholasmoser.gnt4.GNT4FileNames;
+import com.github.nicholasmoser.utils.Browser;
 import com.github.nicholasmoser.utils.MarkableString;
 import com.github.nicholasmoser.utils.Sockets;
 import com.google.common.collect.Queues;
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -39,15 +47,17 @@ public class DolphinSeqListener {
   public static final int MESSAGES_PER_FRAME = 500;
   public static final String DOLPHIN_LUA_DOWNLOAD = "https://github.com/NicholasMoser/dolphin/releases/download/lua-dolphin-1.0/Lua-Dolphin.zip";
   private static final Logger LOGGER = Logger.getLogger(DolphinSeqListener.class.getName());
+  private final ConcurrentLinkedQueue<String> queue = Queues.newConcurrentLinkedQueue();
+  private final Map<String, Path> seqToSeqReport = new HashMap<>();
   public Label leftStatus;
   public Label rightStatus;
   public ListView<MarkableString> messages;
   public TextField bufferSize;
-  private Stage stage;
   private int messageCount = 0;
-  private ConcurrentLinkedQueue<String> queue = Queues.newConcurrentLinkedQueue();
   private Thread producer;
   private AnimationTimer consumer;
+  private Stage stage;
+  private Path gnt4Files;
 
   public void quit() {
     killListener();
@@ -76,15 +86,14 @@ public class DolphinSeqListener {
   }
 
   public void selectMessage(MouseEvent mouseEvent) {
-    EventTarget target =  mouseEvent.getTarget();
-    if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+    EventTarget target = mouseEvent.getTarget();
+    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       // Left click (double click)
-      if(mouseEvent.getClickCount() == 2) {
+      if (mouseEvent.getClickCount() == 2) {
         if (target instanceof Labeled) {
           Labeled label = (Labeled) target;
           gotoLine(label.getText());
-        }
-        else if (target instanceof Text) {
+        } else if (target instanceof Text) {
           Text text = (Text) target;
           gotoLine(text.getText());
         }
@@ -97,8 +106,7 @@ public class DolphinSeqListener {
         if (target instanceof Labeled) {
           Labeled label = (Labeled) target;
           gotoLine(label.getText());
-        }
-        else if (target instanceof Text) {
+        } else if (target instanceof Text) {
           Text text = (Text) target;
           gotoLine(text.getText());
         }
@@ -110,16 +118,50 @@ public class DolphinSeqListener {
 
   private void gotoLine(String message) {
     try {
+      // Get path to seq files
+      if (gnt4Files == null) {
+        Message.info("Select Workspace", "Please select a GNTool workspace directory.");
+        Optional<Path> path = Choosers.getInputWorkspaceDirectory(GNTool.USER_HOME);
+        if (path.isEmpty()) {
+          return;
+        }
+        gnt4Files = path.get().resolve("uncompressed/files");
+      }
+      // Get path to input SEQ file
+      GNT4FileNames fileNames = new GNT4FileNames();
+      String brokenName = message.substring(27);
+      if (brokenName.isBlank()) {
+        throw new IOException("Unknown file name!");
+      }
+      String seqName = fileNames.fix(brokenName);
+      Path seqPath = gnt4Files.resolve(seqName);
+      if (!Files.exists(seqPath)) {
+        throw new IOException(seqPath + " does not exist.");
+      }
+      // See if the output HTML is already cached
+      Path outputHTML = seqToSeqReport.get(seqName);
+      if (outputHTML == null) {
+        // Get path to output HTML file and generate it
+        Optional<Path> output = Choosers.getOutputHTML(gnt4Files.toFile());
+        if (output.isEmpty()) {
+          return;
+        }
+        outputHTML = output.get();
+        seqToSeqReport.put(seqName, outputHTML);
+        SeqKing.generateHTML(seqPath, outputHTML, false);
+      }
       int offset = Integer.decode("0x" + message.substring(0, 8));
-      System.out.printf("%08X\n", offset);
+      String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
+      Browser.open(fileUri);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening Line", e);
       Message.error("Error Opening Line", e.getMessage());
     }
   }
 
-  public void init(Stage stage) {
+  public void init(Stage stage, Path uncompressedFiles) {
     this.stage = stage;
+    this.gnt4Files = uncompressedFiles;
     this.rightStatus.setText("Message Count: " + messageCount);
     this.bufferSize.setText(Integer.toString(DEFAULT_MESSAGE_BUFFER_SIZE));
     messages.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -254,8 +296,8 @@ public class DolphinSeqListener {
   }
 
   /**
-   * A thread with a UDP socket that will close the socket upon interruption. It will consume
-   * UDP packets and produce messages from them that will be stored in the {@link #queue}.
+   * A thread with a UDP socket that will close the socket upon interruption. It will consume UDP
+   * packets and produce messages from them that will be stored in the {@link #queue}.
    */
   private class ProducerThread extends Thread {
 

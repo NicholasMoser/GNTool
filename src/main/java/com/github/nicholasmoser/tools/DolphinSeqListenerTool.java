@@ -17,7 +17,7 @@ public class DolphinSeqListenerTool {
     DolphinSeqListener seqEditor = loader.getController();
     Stage stage = new Stage();
     GUIUtils.setIcons(stage);
-    seqEditor.init(stage);
+    seqEditor.init(stage, null);
     stage.setScene(scene);
     stage.setTitle("SEQ Dolphin Listener");
     stage.centerOnScreen();
