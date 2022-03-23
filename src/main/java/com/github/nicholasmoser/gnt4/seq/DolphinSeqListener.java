@@ -5,6 +5,7 @@ import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.GNT4FileNames;
 import com.github.nicholasmoser.utils.Browser;
+import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.utils.MarkableString;
 import com.github.nicholasmoser.utils.Sockets;
 import com.google.common.collect.Queues;
@@ -25,6 +26,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventTarget;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
@@ -37,6 +40,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -64,6 +68,7 @@ public class DolphinSeqListener {
   private AnimationTimer consumer;
   private Stage stage;
   private Path gnt4Files;
+  private String lastSearch = "";
 
   public void quit() {
     killListener();
@@ -103,6 +108,56 @@ public class DolphinSeqListener {
       return;
     }
     copy(message.toString());
+  }
+
+  /**
+   * Open a popup to search for a specific offset in the message list.
+   */
+  public void search() {
+    try {
+      Stage popup = new Stage();
+      Text text = new Text("Offset: ");
+      text.setFont(Font.font(18));;
+      text.getStyleClass().add("text-id");
+      TextField search = new TextField();
+      search.setText(lastSearch);
+      search.setFont(Font.font(18));
+      Button button = new Button("Search");
+      button.setFont(Font.font(18));
+      button.setOnAction(event -> {
+        lastSearch = search.getText();
+        int offset = Integer.decode("0x" + search.getText());
+        List<MarkableString> allItems = messages.getItems();
+        int startingIndex = messages.getSelectionModel().getSelectedIndex() - 1;
+        if (startingIndex < 0) {
+          startingIndex = allItems.size() - 1;
+        }
+        for (int i = startingIndex; i >= 0; i--) {
+          MarkableString item = allItems.get(i);
+          int currentOffset = Integer.decode("0x" + item.toString().substring(0, 8));
+          if (currentOffset == offset) {
+            messages.getSelectionModel().clearSelection();
+            messages.getSelectionModel().select(i);
+            messages.scrollTo(i);
+            break;
+          }
+        }
+      });
+      GridPane searchPane = new GridPane();
+      searchPane.add(text, 0, 0);
+      searchPane.add(search, 1, 0);
+      searchPane.add(button, 2, 0);
+      Scene scene = new Scene(searchPane);
+      GUIUtils.initDarkMode(scene);
+      GUIUtils.setIcons(popup);
+      popup.setScene(scene);
+      popup.setTitle("Search Offset");
+      popup.centerOnScreen();
+      popup.show();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to search", e);
+      Message.error("Failed to search", e.getMessage());
+    }
   }
 
   public void selectMessage(MouseEvent mouseEvent) {
