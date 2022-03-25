@@ -121,7 +121,7 @@ public class DolphinSeqListener {
     try {
       Stage popup = new Stage();
       Text text = new Text("Offset: ");
-      text.setFont(Font.font(18));;
+      text.setFont(Font.font(18));
       text.getStyleClass().add("text-id");
       TextField search = new TextField();
       search.setText(lastSearch);
@@ -355,9 +355,13 @@ public class DolphinSeqListener {
     });
   }
 
+  /**
+   * Initialize a {@link ProducerThread} as a daemon thread and start it.
+   */
   private void initMessageProducer() {
     try {
       producer = new ProducerThread(new DatagramSocket(SEQ_LISTENER_PORT));
+      producer.setDaemon(true);
       producer.start();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running Dolphin Listener", e);
@@ -366,8 +370,8 @@ public class DolphinSeqListener {
   }
 
   /**
-   * An animation timer that runs each frame to consume and update the message list with new
-   * messages.
+   * Initialize an animation timer that runs each frame to consume and update the message list with
+   * new messages.
    *
    * @param bufferSize The size of the message buffer.
    */

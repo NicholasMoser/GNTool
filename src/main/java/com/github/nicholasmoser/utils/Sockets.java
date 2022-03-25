@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 
+/**
+ * Helper methods relating to the usage of sockets.
+ */
 public class Sockets {
 
   public static final int MIN_PORT_NUMBER = 1100;
@@ -18,8 +21,6 @@ public class Sockets {
    * @param port the port to check for availability
    */
   public static boolean isPortAvailable(int port) {
-
-
     if (port < MIN_PORT_NUMBER || port > MAX_PORT_NUMBER) {
       throw new IllegalArgumentException("Invalid start port: " + port);
     }

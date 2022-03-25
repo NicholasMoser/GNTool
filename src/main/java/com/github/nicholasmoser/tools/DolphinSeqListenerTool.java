@@ -10,8 +10,8 @@ import javafx.stage.Stage;
 public class DolphinSeqListenerTool {
 
   public static void run() throws IOException {
-
-    FXMLLoader loader = new FXMLLoader(DolphinSeqListener.class.getResource("dolphin_seq_listener.fxml"));
+    FXMLLoader loader = new FXMLLoader(
+        DolphinSeqListener.class.getResource("dolphin_seq_listener.fxml"));
     Scene scene = new Scene(loader.load());
     GUIUtils.initDarkMode(scene);
     DolphinSeqListener seqEditor = loader.getController();
@@ -21,9 +21,7 @@ public class DolphinSeqListenerTool {
     stage.setScene(scene);
     stage.setTitle("SEQ Dolphin Listener");
     stage.centerOnScreen();
-    stage.setOnCloseRequest(event -> {
-      seqEditor.killListener();
-    });
+    stage.setOnCloseRequest(event -> seqEditor.killListener());
     stage.show();
   }
 }

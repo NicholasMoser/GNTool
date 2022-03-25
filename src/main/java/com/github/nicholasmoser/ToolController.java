@@ -80,12 +80,10 @@ public class ToolController {
     if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
       if(mouseEvent.getClickCount() == 2) {
         EventTarget target =  mouseEvent.getTarget();
-        if (target instanceof Labeled) {
-          Labeled label = (Labeled) target;
+        if (target instanceof Labeled label) {
           runTool(label.getText());
         }
-        else if (target instanceof Text) {
-          Text text = (Text) target;
+        else if (target instanceof Text text) {
           runTool(text.getText());
         }
       }
