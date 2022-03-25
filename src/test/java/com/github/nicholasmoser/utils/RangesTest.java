@@ -37,5 +37,9 @@ public class RangesTest {
     assertFalse(Ranges.haveOverlap(0, 5, -5, 0));
     assertFalse(Ranges.haveOverlap(Integer.MIN_VALUE, 0, 0, Integer.MAX_VALUE));
     assertFalse(Ranges.haveOverlap(0, Integer.MAX_VALUE, Integer.MIN_VALUE, 0));
+
+    // Known failure case for PR-84
+    assertFalse(Ranges.haveOverlap(125220, 125228, 123592, 123600));
+    assertFalse(Ranges.haveOverlap(123592, 123600, 125220, 125228));
   }
 }
