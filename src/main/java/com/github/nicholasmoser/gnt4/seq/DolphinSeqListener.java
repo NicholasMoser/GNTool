@@ -199,9 +199,9 @@ public class DolphinSeqListener {
     }
   }
 
-  public void init(Stage stage, Path uncompressedFiles) {
+  public void init(Stage stage, Path gnt4Files) {
     this.stage = stage;
-    this.gnt4Files = uncompressedFiles;
+    this.gnt4Files = gnt4Files;
     this.rightStatus.setText("Message Count: " + messageCount);
     this.bufferSize.setText(Integer.toString(DEFAULT_MESSAGE_BUFFER_SIZE));
     messages.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
