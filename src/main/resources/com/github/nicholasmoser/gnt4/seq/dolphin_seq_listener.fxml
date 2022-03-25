@@ -56,7 +56,7 @@
           <items>
                   <MenuItem mnemonicParsing="false" onAction="#disassembleLine" text="Disassemble Line">
                      <accelerator>
-                        <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false" onAction="#copy" text="Copy">
