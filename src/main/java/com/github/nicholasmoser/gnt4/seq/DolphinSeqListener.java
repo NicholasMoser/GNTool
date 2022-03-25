@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventTarget;
 import javafx.scene.Scene;
@@ -103,11 +104,14 @@ public class DolphinSeqListener {
   }
 
   public void copy() {
-    MarkableString message = messages.getSelectionModel().getSelectedItem();
-    if (message == null) {
+    List<MarkableString> selected = messages.getSelectionModel().getSelectedItems();
+    if (selected.isEmpty()) {
       return;
     }
-    copy(message.toString());
+    String text = selected.stream()
+        .map(MarkableString::toString)
+        .collect(Collectors.joining("\n"));
+    copy(text);
   }
 
   /**
