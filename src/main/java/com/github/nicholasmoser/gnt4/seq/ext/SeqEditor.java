@@ -4,6 +4,7 @@ import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
+import com.github.nicholasmoser.utils.Ranges;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -523,8 +524,7 @@ public class SeqEditor {
         int existingEnd = existingStart + existingEdit.getOldBytes().length;
         int newStart = offset;
         int newEnd = offset + hijackedBytesLength;
-        boolean hasNoOverlap = (existingStart <= newEnd) && (existingEnd <= newStart);
-        if (!hasNoOverlap) {
+        if (Ranges.haveOverlap(existingStart, existingEnd, newStart, newEnd)) {
           throw new IllegalStateException(
               "New edit location conflicts with existing edit: " + existingEdit.getName());
         }
