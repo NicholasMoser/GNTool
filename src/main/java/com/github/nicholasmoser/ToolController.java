@@ -1,5 +1,6 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.tools.DolphinSeqListenerTool;
 import com.github.nicholasmoser.tools.FPKRepackerTool;
 import com.github.nicholasmoser.tools.FPKUnpackerTool;
 import com.github.nicholasmoser.tools.GNTAEditorTool;
@@ -45,6 +46,7 @@ public class ToolController {
   private static final String MOT_UNPACKER = "MOT Unpacker";
   private static final String MOT_REPACKER = "MOT Repacker";
   private static final String GNTA_EDITOR = "GNTA Editor";
+  private static final String DOLPHIN_SEQ_LISTENER = "Dolphin SEQ Listener";
 
   @FXML
   private ListView<String> tools;
@@ -70,6 +72,7 @@ public class ToolController {
     items.add(MOT_UNPACKER);
     items.add(MOT_REPACKER);
     items.add(GNTA_EDITOR);
+    items.add(DOLPHIN_SEQ_LISTENER);
   }
 
   @FXML
@@ -77,12 +80,10 @@ public class ToolController {
     if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
       if(mouseEvent.getClickCount() == 2) {
         EventTarget target =  mouseEvent.getTarget();
-        if (target instanceof Labeled) {
-          Labeled label = (Labeled) target;
+        if (target instanceof Labeled label) {
           runTool(label.getText());
         }
-        else if (target instanceof Text) {
-          Text text = (Text) target;
+        else if (target instanceof Text text) {
           runTool(text.getText());
         }
       }
@@ -113,6 +114,7 @@ public class ToolController {
         case MOT_UNPACKER -> MOTUnpackerTool.run();
         case MOT_REPACKER -> MOTRepackerTool.run();
         case GNTA_EDITOR -> GNTAEditorTool.open();
+        case DOLPHIN_SEQ_LISTENER -> DolphinSeqListenerTool.run();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);

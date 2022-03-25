@@ -13,13 +13,15 @@ import static j2html.TagCreator.title;
 import static j2html.TagCreator.ul;
 import static j2html.TagCreator.li;
 
-import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SeqEditOpcode;
 import j2html.Config;
 import j2html.tags.ContainerTag;
+import j2html.tags.specialized.DivTag;
+import j2html.tags.specialized.PTag;
+import j2html.tags.specialized.UlTag;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,12 +61,10 @@ public class SeqKingHtml {
    * @return The HTML body.
    */
   private static ContainerTag getBody(List<Opcode> opcodes) {
-    ContainerTag body = div();
+    ContainerTag<DivTag> body = div();
     Optional<ContainerTag> toc = getTableOfContents(opcodes);
-    if (toc.isPresent()) {
-      body.with(toc.get());
-    }
-    ContainerTag subroutine = p();
+    toc.ifPresent(body::with);
+    ContainerTag<PTag> subroutine = p();
     for (Opcode opcode : opcodes) {
       subroutine.with(opcode.toHTML());
       if (opcode instanceof BranchLinkReturn ||
@@ -97,16 +97,13 @@ public class SeqKingHtml {
    */
   private static Optional<ContainerTag> getTableOfContents(List<Opcode> opcodes) {
     boolean hasSection = opcodes.stream()
-        .filter(SectionTitle.class::isInstance)
-        .findAny()
-        .isPresent();
+        .anyMatch(SectionTitle.class::isInstance);
     if (!hasSection) {
       return Optional.empty();
     }
-    ContainerTag list = ul();
+    ContainerTag<UlTag> list = ul();
     for (Opcode opcode : opcodes) {
-      if (opcode instanceof SectionTitle) {
-        SectionTitle sectionTitle = (SectionTitle) opcode;
+      if (opcode instanceof SectionTitle sectionTitle) {
         String text = String.format("0x%05X %s", sectionTitle.getOffset(), sectionTitle.getTitle());
         String dest = String.format("#%X", sectionTitle.getOffset());
         ContainerTag entry = a(text).withHref(dest);
@@ -120,30 +117,32 @@ public class SeqKingHtml {
    * @return The CSS for the entire document.
    */
   private static String getCSS() {
-    return "body {\n"
-        + "background-color: #1E1E1E;\n"
-        + "color: #D4D4D4;\n"
-        + "font-family: Lucida Console;\n"
-        + "padding-left: 10%;\n"
-        + "}\n"
-        + "h1 {\n"
-        + "text-align: center;\n"
-        + "padding-left: 0;\n"
-        + "}\n"
-        + ".focus {\n"
-        + "background-color: #264F78;\n"
-        + "}\n"
-        + "a:link {"
-        + "color: #4E94C3;"
-        + "}"
-        + "a:visited {"
-        + "color: #4E94C3;"
-        + "}"
-        + ".tooltip {\n"
-        + "  position: relative;\n"
-        + "  display: inline-block;\n"
-        + "  border-bottom: 1px dotted black;\n"
-        + "}\n";
+    return """
+        body {
+          background-color: #1E1E1E;
+          color: #D4D4D4;
+          font-family: Lucida Console;
+          padding-left: 10%;
+        }
+        h1 {
+          text-align: center;
+          padding-left: 0;
+        }
+        .focus {
+          background-color: #264F78;
+        }
+        a:link {
+          color: #4E94C3;
+        }
+        a:visited {
+          color: #4E94C3;
+        }
+        .tooltip {
+          position: relative;
+          display: inline-block;
+          border-bottom: 1px dotted black;
+        }
+        """;
   }
 
   /**

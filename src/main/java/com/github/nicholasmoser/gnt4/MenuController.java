@@ -32,6 +32,7 @@ import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
+import com.github.nicholasmoser.tools.DolphinSeqListenerTool;
 import com.github.nicholasmoser.tools.GNTAEditorTool;
 import com.github.nicholasmoser.tools.MOTRepackerTool;
 import com.github.nicholasmoser.tools.MOTUnpackerTool;
@@ -56,6 +57,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -635,8 +637,7 @@ public class MenuController {
   @FXML
   protected void changedFileSelected(MouseEvent event) {
     EventTarget result = event.getTarget();
-    if (event.getButton() == MouseButton.SECONDARY && result instanceof Text) {
-      Text text = (Text) result;
+    if (event.getButton() == MouseButton.SECONDARY && result instanceof Text text) {
       ContextMenu menu = getChangedFileContextMenu(text.getText());
       menu.show(stage, event.getScreenX(), event.getScreenY());
     }
@@ -1131,6 +1132,15 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running SEQKage", e);
       Message.error("Error Running SEQKage", e.getMessage());
+    }
+  }
+
+  public void dolphinSEQListener() {
+    try {
+      DolphinSeqListenerTool.run(uncompressedFiles);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running Dolphin SEQ Listener", e);
+      Message.error("Error Running Dolphin SEQ Listener", e.getMessage());
     }
   }
 

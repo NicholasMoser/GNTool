@@ -673,9 +673,9 @@
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                  <columnConstraints>
+                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="80.0" />
                  </columnConstraints>
                  <rowConstraints>
                      <RowConstraints vgrow="SOMETIMES" />
@@ -683,6 +683,7 @@
                    <RowConstraints vgrow="SOMETIMES" />
                    <RowConstraints vgrow="SOMETIMES" />
                    <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
                      <RowConstraints vgrow="SOMETIMES" />
                  </rowConstraints>
                   <children>
@@ -771,6 +772,22 @@
                            <Insets bottom="8.0" left="8.0" top="8.0" />
                         </GridPane.margin>
                      </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="View SEQ File Execution from Dolphin" GridPane.rowIndex="6">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#dolphinSEQListener" text="Launch Dolphin SEQ Listener" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
                   </children>
                </GridPane>
         </AnchorPane>

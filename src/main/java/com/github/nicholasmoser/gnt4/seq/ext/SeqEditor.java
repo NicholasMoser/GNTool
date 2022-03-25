@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -45,7 +44,7 @@ public class SeqEditor {
   private Mode mode;
   private SeqEdit selectedEdit;
 
-  public ListView editList;
+  public ListView<String> editList;
   public TextArea nameTextArea;
   public TextField offsetTextField;
   public TextField hijackedBytesLengthTextField;
@@ -368,11 +367,9 @@ public class SeqEditor {
    * @return If the event target is targeting the given edit name.
    */
   private boolean targetingSelectedListItem(EventTarget target, String editName) {
-    if (target instanceof Labeled) {
-      Labeled labeled = (Labeled) target;
+    if (target instanceof Labeled labeled) {
       return editName.equals(labeled.getText());
-    } else if (target instanceof Text) {
-      Text text = (Text) target;
+    } else if (target instanceof Text text) {
       return editName.equals(text.getText());
     }
     return false;
@@ -386,7 +383,7 @@ public class SeqEditor {
     if (index < 0) {
       return Optional.empty();
     }
-    return Optional.of((String) editList.getItems().get(index));
+    return Optional.of(editList.getItems().get(index));
   }
 
   /**

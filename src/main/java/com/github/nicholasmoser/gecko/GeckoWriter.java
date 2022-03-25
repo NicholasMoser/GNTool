@@ -46,12 +46,10 @@ public class GeckoWriter {
     List<GeckoCode> newCodes = new ArrayList<>(codes.size());
     try (RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "rw")) {
       for (GeckoCode code : codes) {
-        if (code instanceof Write32BitsCode) {
-          Write32BitsCode write32BitsCode = (Write32BitsCode) code;
+        if (code instanceof Write32BitsCode write32BitsCode) {
           ActiveWrite32BitsCode newCode = writeWrite32BitsCode(write32BitsCode, raf);
           newCodes.add(newCode);
-        } else if (code instanceof InsertAsmCode) {
-          InsertAsmCode insertAsmCode = (InsertAsmCode) code;
+        } else if (code instanceof InsertAsmCode insertAsmCode) {
           ActiveInsertAsmCode newCode = writeInsertAsmCode(insertAsmCode, raf, hijackAddress);
           hijackAddress += newCode.getHijackedBytes().length;
           newCodes.add(newCode);
@@ -118,7 +116,7 @@ public class GeckoWriter {
     byte[] hijackedBytes = new byte[hijackLength];
     if (raf.read(hijackedBytes) != hijackLength) {
       throw new IOException(
-          String.format("Could not read %d hijacked bytes for %s", hijackLength, code.toString()));
+          String.format("Could not read %d hijacked bytes for %s", hijackLength, code));
     }
     raf.seek(dolHijackOffset);
     // Add branch backwards to hijacked code
@@ -153,13 +151,11 @@ public class GeckoWriter {
     try (RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "rw")) {
       List<GeckoCode> codes = group.getCodes();
       for (GeckoCode code : codes) {
-        if (code instanceof ActiveWrite32BitsCode) {
-          ActiveWrite32BitsCode writeCode = (ActiveWrite32BitsCode) code;
+        if (code instanceof ActiveWrite32BitsCode writeCode) {
           long dolOffset = DolUtil.ram2dol(writeCode.getTargetAddress());
           raf.seek(dolOffset);
           raf.write(writeCode.getReplacedBytes());
-        } else if (code instanceof ActiveInsertAsmCode) {
-          ActiveInsertAsmCode insertCode = (ActiveInsertAsmCode) code;
+        } else if (code instanceof ActiveInsertAsmCode insertCode) {
           long dolOffset = DolUtil.ram2dol(insertCode.getTargetAddress());
           raf.seek(dolOffset);
           raf.write(insertCode.getReplacedBytes());
