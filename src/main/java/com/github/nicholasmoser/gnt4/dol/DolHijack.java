@@ -65,8 +65,7 @@ public class DolHijack {
     long bytesLeft = DolHijack.END_RAM_ADDRESS - furthestEnd;
     long totalBytes = 0;
     for (GeckoCode code : newCodes) {
-      if (code instanceof InsertAsmCode) {
-        InsertAsmCode insertCode = (InsertAsmCode) code;
+      if (code instanceof InsertAsmCode insertCode) {
         totalBytes += insertCode.getBytes().length;
       }
     }
@@ -90,8 +89,7 @@ public class DolHijack {
     long furthestEnd = DolHijack.START_RAM_ADDRESS;
     for (GeckoCodeGroup group : existingCodeGroups) {
       for (GeckoCode code : group.getCodes()) {
-        if (code instanceof ActiveInsertAsmCode) {
-          ActiveInsertAsmCode insertCode = (ActiveInsertAsmCode) code;
+        if (code instanceof ActiveInsertAsmCode insertCode) {
           long hijackedAddress = insertCode.getHijackedAddress();
           int length = insertCode.getHijackedBytes().length;
           long end = hijackedAddress + length;

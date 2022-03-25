@@ -637,8 +637,7 @@ public class MenuController {
   @FXML
   protected void changedFileSelected(MouseEvent event) {
     EventTarget result = event.getTarget();
-    if (event.getButton() == MouseButton.SECONDARY && result instanceof Text) {
-      Text text = (Text) result;
+    if (event.getButton() == MouseButton.SECONDARY && result instanceof Text text) {
       ContextMenu menu = getChangedFileContextMenu(text.getText());
       menu.show(stage, event.getScreenX(), event.getScreenY());
     }

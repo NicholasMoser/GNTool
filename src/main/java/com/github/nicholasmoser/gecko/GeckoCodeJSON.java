@@ -80,13 +80,11 @@ public class GeckoCodeJSON {
   private static JSONObject getJSONFromGeckoCode(GeckoCode code) throws IOException {
     JSONObject codeObject = new JSONObject();
     codeObject.put("targetAddress", ByteUtils.fromLong(code.getTargetAddress()));
-    if (code instanceof ActiveWrite32BitsCode) {
-      ActiveWrite32BitsCode writeCode = (ActiveWrite32BitsCode) code;
+    if (code instanceof ActiveWrite32BitsCode writeCode) {
       codeObject.put("type", "04");
       codeObject.put("bytes", ByteUtils.bytesToHexString(writeCode.getBytes()));
       codeObject.put("replacedBytes", ByteUtils.bytesToHexString(writeCode.getReplacedBytes()));
-    } else if (code instanceof ActiveInsertAsmCode) {
-      ActiveInsertAsmCode insertCode = (ActiveInsertAsmCode) code;
+    } else if (code instanceof ActiveInsertAsmCode insertCode) {
       codeObject.put("type", "C2");
       codeObject.put("bytes", ByteUtils.bytesToHexString(insertCode.getBytes()));
       codeObject.put("replacedBytes", ByteUtils.bytesToHexString(insertCode.getReplacedBytes()));
