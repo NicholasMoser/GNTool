@@ -24,14 +24,14 @@ If you press the **Mark Line** button, it will mark the currently selected lines
 
 ![Mark](/docs/mark.png?raw=true "Mark")
 
-## Goto Line
+## Disassemble Line
 
 You can jump to the disassembled line of any row by either:
 
 - Double clicking on a row.
-- Right clicking on a row and selecting **Goto Line**
-- Hitting **Goto Line** in the file menu.
+- Right clicking on a row and selecting **Disassemble Line**
+- Hitting **Disassemble Line** in the file menu.
 
 This will attempt to disassemble the SEQ file of that row, open the HTML report, and jump to the line of the row you selected.
 
-![Goto Line](/docs/goto_line.png?raw=true "Goto Line")
+![Disassemble Line](/docs/disassemble_line.png?raw=true "Disassemble Line")

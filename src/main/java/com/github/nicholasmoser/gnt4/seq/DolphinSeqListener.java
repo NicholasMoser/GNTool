@@ -94,13 +94,13 @@ public class DolphinSeqListener {
     }
   }
 
-  public void gotoLine() {
+  public void disassembleLine() {
     MarkableString message = messages.getSelectionModel().getSelectedItem();
     if (message == null) {
       Message.info("No Message Selected", "Please select a message.");
       return;
     }
-    gotoLine(message.toString());
+    disassembleLine(message.toString());
   }
 
   public void copy() {
@@ -170,20 +170,20 @@ public class DolphinSeqListener {
       // Left click (double click)
       if (mouseEvent.getClickCount() == 2) {
         if (target instanceof Labeled label) {
-          gotoLine(label.getText());
+          disassembleLine(label.getText());
         } else if (target instanceof Text text) {
-          gotoLine(text.getText());
+          disassembleLine(text.getText());
         }
       }
     } else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
       // Right click (context menu)
       ContextMenu menu = new ContextMenu();
-      MenuItem gotoLine = new MenuItem("Goto Line");
+      MenuItem gotoLine = new MenuItem("Disassemble Line");
       gotoLine.setOnAction(event -> {
         if (target instanceof Labeled label) {
-          gotoLine(label.getText());
+          disassembleLine(label.getText());
         } else if (target instanceof Text text) {
-          gotoLine(text.getText());
+          disassembleLine(text.getText());
         }
       });
       MenuItem copy = new MenuItem("Copy");
@@ -286,7 +286,7 @@ public class DolphinSeqListener {
    *
    * @param message The message to parse and go to.
    */
-  private void gotoLine(String message) {
+  private void disassembleLine(String message) {
     try {
       // Get path to seq files
       if (gnt4Files == null) {
