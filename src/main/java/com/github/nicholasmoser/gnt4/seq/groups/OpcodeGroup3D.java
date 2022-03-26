@@ -12,6 +12,7 @@ public class OpcodeGroup3D {
       case 0x02 -> UnknownOpcode.of(0x3D, 0x02, 0x18, bs);
       case 0x0A -> UnknownOpcode.of(0x3D, 0x0A, 0x4, bs);
       case 0x0B -> UnknownOpcode.of(0x3D, 0x0B, 0x18, bs);
+      case 0x0F -> UnknownOpcode.of(0x3D, 0x0F, 0x8, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

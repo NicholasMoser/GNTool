@@ -86,8 +86,6 @@ import java.util.logging.Logger;
 
 public class SeqHelper {
 
-  private static final Logger LOGGER = Logger.getLogger(SeqHelper.class.getName());
-
   // Vanilla Combo translation for Oboro: コンボその
   private static final byte[] COMBO_JAPANESE = new byte[]{(byte) 0x83, 0x52, (byte) 0x83, (byte) 0x93, (byte) 0x83};
   // Vanilla Combo text for all other characters: 連打

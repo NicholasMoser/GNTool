@@ -16,6 +16,7 @@ public class OpcodeGroup36 {
     return switch (opcodeByte) {
       case 0x00 -> UnknownOpcode.of(0x36, 0x00, 0x4, bs);
       case 0x01 -> UnknownOpcode.of(0x36, 0x01, 0x4, bs);
+      case 0x04 -> UnknownOpcode.of(0x36, 0x04, 0x4, bs);
       case 0x05 -> loadTexture(bs);
       case 0x06 -> UnknownOpcode.of(0x36, 0x06, 0x8, bs);
       case 0x07 -> op_3607(bs);

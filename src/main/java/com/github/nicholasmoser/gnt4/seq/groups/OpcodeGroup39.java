@@ -9,7 +9,9 @@ public class OpcodeGroup39 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
       case 0x00 -> UnknownOpcode.of(0x39, 0x00, 0x14, bs);
+      case 0x05 -> UnknownOpcode.of(0x39, 0x05, 0xc, bs);
       case 0x0C -> UnknownOpcode.of(0x39, 0x0C, 0x14, bs);
+      case 0x0F -> UnknownOpcode.of(0x39, 0x0F, 0x10, bs);
       case 0x12 -> UnknownOpcode.of(0x39, 0x12, 0xc, bs);
       case 0x16 -> UnknownOpcode.of(0x39, 0x16, 0x10, bs);
       case 0x17 -> UnknownOpcode.of(0x39, 0x17, 0x10, bs);

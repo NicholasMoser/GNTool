@@ -176,6 +176,14 @@ public class SeqKing {
       binaryOffsetToSize.put(0x2C34, 0x200);
       binaryOffsetToSize.put(0x2EE8, 0x18);
       binaryOffsetToSize.put(0x2F08, 0x10);
+    } else if (path.endsWith("game/player00.seq")) {
+      binaryOffsetToSize.put(0x70, 0x10);
+    } else if (path.endsWith("game/camera01.seq")) {
+      binaryOffsetToSize.put(0x3E0, 0x10);
+    } else if (path.endsWith("furu/f_camera.seq")) {
+      binaryOffsetToSize.put(0x4C0, 0x10);
+    } else if (path.endsWith("chr/cmn/1000.seq")) {
+      binaryOffsetToSize.put(0x1430, 0x3BF0); // TODO: Is this all REALLY binary data???
     }
     return binaryOffsetToSize;
   }
