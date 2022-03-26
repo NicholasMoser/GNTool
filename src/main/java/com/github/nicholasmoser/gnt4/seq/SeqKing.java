@@ -176,6 +176,40 @@ public class SeqKing {
       binaryOffsetToSize.put(0x2C34, 0x200);
       binaryOffsetToSize.put(0x2EE8, 0x18);
       binaryOffsetToSize.put(0x2F08, 0x10);
+    } else if (path.endsWith("game/player00.seq")) {
+      binaryOffsetToSize.put(0x70, 0x10);
+    } else if (path.endsWith("game/camera01.seq")) {
+      binaryOffsetToSize.put(0x3E0, 0x10);
+    } else if (path.endsWith("furu/f_camera.seq")) {
+      binaryOffsetToSize.put(0x4C0, 0x10);
+    } else if (path.endsWith("chr/cmn/1000.seq")) {
+      binaryOffsetToSize.put(0x1430, 0x3BF0); // TODO: Is this all REALLY binary data???
+    } else if (path.endsWith("game/game00.seq")) {
+      binaryOffsetToSize.put(0x18, 0x18);
+      binaryOffsetToSize.put(0x9E04, 0xE6C);
+      binaryOffsetToSize.put(0xAC70, 0x80); // array of strings
+      binaryOffsetToSize.put(0xACF0, 0x3F0);
+      binaryOffsetToSize.put(0xBFD0, 0x10);
+      binaryOffsetToSize.put(0xBFF8, 0x10);
+      binaryOffsetToSize.put(0xC020, 0x10);
+      binaryOffsetToSize.put(0xC048, 0x10);
+      binaryOffsetToSize.put(0xC070, 0x10);
+      binaryOffsetToSize.put(0xC098, 0x10);
+      binaryOffsetToSize.put(0xC710, 0x38); // array of strings
+      binaryOffsetToSize.put(0xD7AC, 0x34); // array of offsets
+      binaryOffsetToSize.put(0x11A68, 0x34); // array of offsets
+      binaryOffsetToSize.put(0x12FDC, 0x34); // array of offsets
+      binaryOffsetToSize.put(0x15C58, 0x10);
+    } else if (path.endsWith("maki/m_title.seq")) {
+      binaryOffsetToSize.put(0x6EC0, 0x30);
+      binaryOffsetToSize.put(0x11A00, 0x3A8);
+      binaryOffsetToSize.put(0x11DA8, 0x70); // array of offsets
+      binaryOffsetToSize.put(0x11E18, 0x338);
+      binaryOffsetToSize.put(0x12150, 0x70); // array of offsets
+      binaryOffsetToSize.put(0x121C0, 0x17A0);
+      binaryOffsetToSize.put(0x1C040, 0xF0); // array of offsets?
+      binaryOffsetToSize.put(0x1C130, 0x162E0);
+      binaryOffsetToSize.put(0x32410, 0x8C0); // array of offsets?
     }
     return binaryOffsetToSize;
   }

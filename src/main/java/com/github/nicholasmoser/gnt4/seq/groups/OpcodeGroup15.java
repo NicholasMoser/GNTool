@@ -8,12 +8,26 @@ import java.io.IOException;
 
 public class OpcodeGroup15 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
-    switch(opcodeByte) {
-      case 0x0B:
-        return op_150B(bs);
-      default:
-        throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
-    }
+    return switch (opcodeByte) {
+      case 0x03 -> op_1503(bs);
+      case 0x0A -> op_150A(bs);
+      case 0x0B -> op_150B(bs);
+      default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
+    };
+  }
+
+  private static Opcode op_1503(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_150A(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   private static Opcode op_150B(ByteStream bs) throws IOException {

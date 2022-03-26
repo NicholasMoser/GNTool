@@ -12,8 +12,88 @@ public class SeqKingTest {
 
   // For unit testing: compare mode is off, verbose is off, and output files are deleted
   private static final boolean COMPARE_MODE = false;
-  private static final boolean VERBOSE = false;
-  private static final boolean DELETE_FILE = true;
+  private static final boolean VERBOSE = true;
+  private static final boolean DELETE_FILE = false;
+
+  @Test
+  public void parseTitle() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/maki/m_title.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseGame00() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/game00.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseChrCmn() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/cmn/1000.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseLoading() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/kuro/loading.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseFCamera() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/furu/f_camera.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseCamera00() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/camera00.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseCamera01() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/camera01.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parsePlayer00() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/player00.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
 
   @Test
   public void parseCharSel() throws Exception {

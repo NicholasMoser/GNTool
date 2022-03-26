@@ -13,6 +13,8 @@ public class OpcodeGroup44 {
     return switch (opcodeByte) {
       case 0x00 -> op_4400(bs);
       case 0x01 -> op_4401(bs);
+      case 0x03 -> UnknownOpcode.of(0x44, 0x03, 0x4, bs);
+      case 0x04 -> UnknownOpcode.of(0x44, 0x04, 0x4, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

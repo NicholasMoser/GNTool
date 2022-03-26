@@ -35,6 +35,7 @@ public class OpcodeGroup01 {
       case 0x01 -> op_0101(bs);
       case 0x02 -> UnknownOpcode.of(0x01, 0x02, 8, bs);
       case 0x04 -> UnknownOpcode.of(0x01, 0x04, 4, bs);
+      case 0x05 -> op_0105(bs);
       case 0x08 -> UnknownOpcode.of(0x01, 0x08, 4, bs);
       case 0x32 -> branch(bs);
       case 0x33 -> branchEqualToZero(bs);
@@ -57,11 +58,19 @@ public class OpcodeGroup01 {
       case 0x4A -> branchLinkReturnLessThanZero(bs);
       case 0x4B -> branchLinkReturnLessThanEqualZero(bs);
       case 0x50 -> op_0150(bs);
+      case 0x51 -> op_0151(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
 
   private static Opcode op_0101(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  private static Opcode op_0105(ByteStream bs) throws IOException {
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);
     String info = String.format(" %s", ea.getDescription());
@@ -242,6 +251,23 @@ public class OpcodeGroup01 {
   }
 
   private static Opcode op_0150(ByteStream bs) throws IOException {
+    // Likely some kind of switch-case
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(ea.getBytes());
+    int word = bs.peekWord();
+    // After opcode 0150 is an array of SEQ offsets. Almost every opcode is larger than Seq.MAX_SIZE
+    // so this should almost always be fine.
+    while (word < Seq.MAX_SIZE) {
+      baos.write(bs.readBytes(4));
+      word = bs.peekWord();
+    }
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, baos.toByteArray(), info);
+  }
+
+  private static Opcode op_0151(ByteStream bs) throws IOException {
     // Likely some kind of switch-case
     int offset = bs.offset();
     EffectiveAddress ea = EffectiveAddress.get(bs);

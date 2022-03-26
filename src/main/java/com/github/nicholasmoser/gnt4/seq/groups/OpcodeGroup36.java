@@ -16,11 +16,14 @@ public class OpcodeGroup36 {
     return switch (opcodeByte) {
       case 0x00 -> UnknownOpcode.of(0x36, 0x00, 0x4, bs);
       case 0x01 -> UnknownOpcode.of(0x36, 0x01, 0x4, bs);
+      case 0x04 -> UnknownOpcode.of(0x36, 0x04, 0x4, bs);
       case 0x05 -> loadTexture(bs);
       case 0x06 -> UnknownOpcode.of(0x36, 0x06, 0x8, bs);
       case 0x07 -> op_3607(bs);
       case 0x08 -> op_3608(bs);
-      case 0x0a -> seqInit(bs);
+      case 0x0A -> seqInit(bs);
+      case 0x0C -> op_360C(bs);
+      case 0x0D -> op_360D(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -78,5 +81,20 @@ public class OpcodeGroup36 {
     info.append(fileName);
     info.append('"');
     return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
+  }
+
+  public static Opcode op_360C(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  public static Opcode op_360D(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddress ea = EffectiveAddress.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 }

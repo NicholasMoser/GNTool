@@ -6,12 +6,14 @@ import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
+import com.google.common.primitives.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class OpcodeGroup02 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
+      case 0x01 -> op_0201(bs);
       case 0x03 -> op_0203(bs);
       case 0x05 -> op_0205(bs);
       case 0x06 -> op_0206(bs);
@@ -19,6 +21,14 @@ public class OpcodeGroup02 {
       case 0x08 -> op_0208(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
+  }
+
+  private static Opcode op_0201(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
   }
 
   private static Opcode op_0203(ByteStream bs) throws IOException {

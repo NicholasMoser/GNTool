@@ -43,9 +43,12 @@ public class OpcodeGroup20 {
       case 0x1F -> op_201F(bs);
       case 0x20 -> op_2020(bs);
       case 0x21 -> op_2021(bs);
+      case 0x22 -> UnknownOpcode.of(0x20, 0x22, 0x4, bs);
       case 0x23 -> op_2023(bs);
       case 0x24 -> op_2024(bs);
+      case 0x25 -> UnknownOpcode.of(0x20, 0x25, 0x4, bs);
       case 0x26 -> UnknownOpcode.of(0x20, 0x26, 0x4, bs);
+      case 0x27 -> UnknownOpcode.of(0x20, 0x27, 0x4, bs);
       case 0x28 -> op_2028(bs);
       case 0x29 -> op_2029(bs);
       case 0x2A -> op_202A(bs);
