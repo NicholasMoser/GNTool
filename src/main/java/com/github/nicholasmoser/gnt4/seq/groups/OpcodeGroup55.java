@@ -15,7 +15,7 @@ public class OpcodeGroup55 {
       case 0x00 -> op_5500(bs);
       case 0x01 -> op_5501(bs);
       case 0x02 -> op_5502(bs);
-      case 0x03 -> UnknownOpcode.of(0x55, 0x03, 0x4, bs);
+      case 0x03 -> UnknownOpcode.of(0x4, bs);
       case 0x05 -> op_5505(bs);
       case 0x06 -> op_5506(bs);
       case 0x07 -> op_5507(bs);

@@ -11,7 +11,7 @@ public class OpcodeGroup34 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     switch (opcodeByte) {
       case 0x0C:
-        return UnknownOpcode.of(0x34, 0x0C, 0x4, bs);
+        return UnknownOpcode.of(0x4, bs);
       case 0x0D:
         return op_340D(bs);
       default:

@@ -31,7 +31,7 @@ public class OpcodeGroup22 {
       case 0x14 -> op_2214(bs);
       case 0x15 -> op_2215(bs);
       case 0x16 -> op_2216(bs);
-      case 0x1C -> UnknownOpcode.of(0x22, 0x1C, 8, bs);
+      case 0x1C -> UnknownOpcode.of(8, bs);
       case 0x1E -> op_221E(bs);
       case 0x1F -> op_221F(bs);
       case 0x20 -> op_2220(bs);

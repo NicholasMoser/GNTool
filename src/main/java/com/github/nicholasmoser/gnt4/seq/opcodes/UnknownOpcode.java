@@ -25,17 +25,15 @@ public class UnknownOpcode implements Opcode {
     this.info = info;
   }
 
-  public static UnknownOpcode of(int byteOne, int byteTwo, int bytesLength, ByteStream bs) throws IOException {
-    return of(byteOne, byteTwo, bytesLength, bs, "");
+  public static UnknownOpcode of(int bytesLength, ByteStream bs) throws IOException {
+    return of(bytesLength, bs, "");
   }
 
-  public static UnknownOpcode of(int byteOne, int byteTwo, int bytesLength, ByteStream bs, String info) throws IOException {
+  public static UnknownOpcode of(int bytesLength, ByteStream bs, String info) throws IOException {
     byte[] bytes = new byte[bytesLength];
     if (bs.read(bytes) != bytesLength) {
       throw new IOException("Failed to read bytes for opcode");
     }
-    bytes[0] = (byte) byteOne;
-    bytes[1] = (byte) byteTwo;
     return new UnknownOpcode(bs.offset() - bytesLength, bytes, info);
   }
 

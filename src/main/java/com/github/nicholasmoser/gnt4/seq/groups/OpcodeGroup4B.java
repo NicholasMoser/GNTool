@@ -11,11 +11,11 @@ public class OpcodeGroup4B {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x00 -> UnknownOpcode.of(0x4B, 0x00, 0xC, bs);
-      case 0x01 -> UnknownOpcode.of(0x4B, 0x01, 0x8, bs);
+      case 0x00 -> UnknownOpcode.of(0xC, bs);
+      case 0x01 -> UnknownOpcode.of(0x8, bs);
       case 0x04 -> op_4B04(bs);
       case 0x05 -> op_4B05(bs);
-      case 0x06 -> UnknownOpcode.of(0x4B, 0x06, 0x4, bs);
+      case 0x06 -> UnknownOpcode.of(0x4, bs);
       case 0x07 -> op_4B07(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };

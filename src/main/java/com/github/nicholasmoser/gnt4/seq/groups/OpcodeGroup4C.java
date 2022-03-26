@@ -26,15 +26,15 @@ public class OpcodeGroup4C {
       case 0x0E -> op_4C0E(bs);
       case 0x13 -> op_4C13(bs);
       case 0x14 -> op_4C14(bs);
-      case 0x1E -> UnknownOpcode.of(0x4C, 0x1E, 0x4, bs);
-      case 0x1F -> UnknownOpcode.of(0x4C, 0x1F, 0xC, bs);
-      case 0x20 -> UnknownOpcode.of(0x4C, 0x20, 0x4, bs);
-      case 0x21 -> UnknownOpcode.of(0x4C, 0x21, 0xC, bs);
-      case 0x22 -> UnknownOpcode.of(0x4C, 0x22, 0x14, bs);
+      case 0x1E -> UnknownOpcode.of(0x4, bs);
+      case 0x1F -> UnknownOpcode.of(0xC, bs);
+      case 0x20 -> UnknownOpcode.of(0x4, bs);
+      case 0x21 -> UnknownOpcode.of(0xC, bs);
+      case 0x22 -> UnknownOpcode.of(0x14, bs);
       case 0x24 -> op_4C24(bs);
-      case 0x2B -> UnknownOpcode.of(0x4C, 0x2B, 0x14, bs);
-      case 0x2D -> UnknownOpcode.of(0x4C, 0x2D, 0xC, bs);
-      case 0x2E -> UnknownOpcode.of(0x4C, 0x2E, 0xC, bs);
+      case 0x2B -> UnknownOpcode.of(0x14, bs);
+      case 0x2D -> UnknownOpcode.of(0xC, bs);
+      case 0x2E -> UnknownOpcode.of(0xC, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

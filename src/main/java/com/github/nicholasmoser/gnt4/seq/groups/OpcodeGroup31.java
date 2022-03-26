@@ -19,7 +19,7 @@ public class OpcodeGroup31 {
       case 0x06 -> op_3106(bs);
       case 0x0B -> op_310B(bs);
       case 0x1B -> op_311B(bs);
-      case 0x1C -> UnknownOpcode.of(0x31, 0x1C, 0x4, bs);
+      case 0x1C -> UnknownOpcode.of(0x4, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

@@ -19,8 +19,8 @@ public class OpcodeGroup0F {
       case 0x0F -> op_0F0F(bs);
       case 0x10 -> op_0F10(bs);
       case 0x11 -> op_0F11(bs);
-      case 0x12 -> UnknownOpcode.of(0x0F, 0x12, 0x4, bs);
-      case 0x13 -> UnknownOpcode.of(0x0F, 0x13, 0x4, bs);
+      case 0x12 -> UnknownOpcode.of(0x4, bs);
+      case 0x13 -> UnknownOpcode.of(0x4, bs);
       case 0x14 -> op_0F14(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };

@@ -16,7 +16,7 @@ public class OpcodeGroup2B {
     return switch (opcodeByte) {
       case 0x00 -> op_2B00(bs);
       case 0x01 -> op_2B01(bs);
-      case 0x03 -> UnknownOpcode.of(0x2B, 0x03, 0x4, bs);
+      case 0x03 -> UnknownOpcode.of(0x4, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

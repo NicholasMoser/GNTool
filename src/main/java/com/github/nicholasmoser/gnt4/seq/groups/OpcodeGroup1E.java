@@ -11,7 +11,7 @@ public class OpcodeGroup1E {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
       case 0x02 -> op_1E02(bs);
-      case 0x05 -> UnknownOpcode.of(0x1E, 0x05, 0x4, bs);
+      case 0x05 -> UnknownOpcode.of(0x4, bs);
       case 0x06 -> op_1E06(bs);
       case 0x07 -> op_1E07(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));

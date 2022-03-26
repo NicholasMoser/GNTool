@@ -10,7 +10,7 @@ public class OpcodeGroup56 {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x00 -> UnknownOpcode.of(0x56, 0x00, 0x4, bs);
+      case 0x00 -> UnknownOpcode.of(0x4, bs);
       case 0x20 -> op_5620(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };

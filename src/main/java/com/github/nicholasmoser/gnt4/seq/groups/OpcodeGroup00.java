@@ -15,8 +15,8 @@ public class OpcodeGroup00 {
     return switch (opcodeByte) {
       case 0x00 -> softReset(bs);
       case 0x01 -> hardReset(bs);
-      case 0x02 -> UnknownOpcode.of(0x00, 0x02, 0x4, bs);
-      case 0x07 -> UnknownOpcode.of(0x00, 0x07, 0x4, bs);
+      case 0x02 -> UnknownOpcode.of(0x4, bs);
+      case 0x07 -> UnknownOpcode.of(0x4, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

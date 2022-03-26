@@ -26,7 +26,7 @@ public class OpcodeGroup12 {
       case 0x1B -> op_121B(bs);
       case 0x1D -> op_121D(bs);
       case 0x1E -> op_121E(bs);
-      case 0x20 -> UnknownOpcode.of(0x12, 0x20, 0x4, bs);
+      case 0x20 -> UnknownOpcode.of(0x4, bs);
       case 0x22 -> op_1222(bs);
       case 0x24 -> op_1224(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));

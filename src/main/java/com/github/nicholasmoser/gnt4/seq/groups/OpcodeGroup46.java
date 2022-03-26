@@ -12,8 +12,8 @@ public class OpcodeGroup46 {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x00 -> UnknownOpcode.of(0x46, 0x00, 0x4, bs);
-      case 0x01 -> UnknownOpcode.of(0x46, 0x01, 0x4, bs);
+      case 0x00 -> UnknownOpcode.of(0x4, bs);
+      case 0x01 -> UnknownOpcode.of(0x4, bs);
       case 0x02 -> op_4602(bs);
       case 0x03 -> op_4603(bs);
       case 0x04 -> op_4604(bs);
