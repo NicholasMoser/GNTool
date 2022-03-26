@@ -200,6 +200,16 @@ public class SeqKing {
       binaryOffsetToSize.put(0x11A68, 0x34); // array of offsets
       binaryOffsetToSize.put(0x12FDC, 0x34); // array of offsets
       binaryOffsetToSize.put(0x15C58, 0x10);
+    } else if (path.endsWith("maki/m_title.seq")) {
+      binaryOffsetToSize.put(0x6EC0, 0x30);
+      binaryOffsetToSize.put(0x11A00, 0x3A8);
+      binaryOffsetToSize.put(0x11DA8, 0x70); // array of offsets
+      binaryOffsetToSize.put(0x11E18, 0x338);
+      binaryOffsetToSize.put(0x12150, 0x70); // array of offsets
+      binaryOffsetToSize.put(0x121C0, 0x17A0);
+      binaryOffsetToSize.put(0x1C040, 0xF0); // array of offsets?
+      binaryOffsetToSize.put(0x1C130, 0x162E0);
+      binaryOffsetToSize.put(0x32410, 0x8C0); // array of offsets?
     }
     return binaryOffsetToSize;
   }

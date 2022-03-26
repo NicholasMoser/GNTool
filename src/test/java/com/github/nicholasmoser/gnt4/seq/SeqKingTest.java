@@ -16,6 +16,16 @@ public class SeqKingTest {
   private static final boolean DELETE_FILE = false;
 
   @Test
+  public void parseTitle() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve("files/maki/m_title.seq");
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
   public void parseGame00() throws Exception {
     Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/game00.seq");
     if (COMPARE_MODE) {
