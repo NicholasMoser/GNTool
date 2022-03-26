@@ -184,6 +184,22 @@ public class SeqKing {
       binaryOffsetToSize.put(0x4C0, 0x10);
     } else if (path.endsWith("chr/cmn/1000.seq")) {
       binaryOffsetToSize.put(0x1430, 0x3BF0); // TODO: Is this all REALLY binary data???
+    } else if (path.endsWith("game/game00.seq")) {
+      binaryOffsetToSize.put(0x18, 0x18);
+      binaryOffsetToSize.put(0x9E04, 0xE6C);
+      binaryOffsetToSize.put(0xAC70, 0x80); // array of strings
+      binaryOffsetToSize.put(0xACF0, 0x3F0);
+      binaryOffsetToSize.put(0xBFD0, 0x10);
+      binaryOffsetToSize.put(0xBFF8, 0x10);
+      binaryOffsetToSize.put(0xC020, 0x10);
+      binaryOffsetToSize.put(0xC048, 0x10);
+      binaryOffsetToSize.put(0xC070, 0x10);
+      binaryOffsetToSize.put(0xC098, 0x10);
+      binaryOffsetToSize.put(0xC710, 0x38); // array of strings
+      binaryOffsetToSize.put(0xD7AC, 0x34); // array of offsets
+      binaryOffsetToSize.put(0x11A68, 0x34); // array of offsets
+      binaryOffsetToSize.put(0x12FDC, 0x34); // array of offsets
+      binaryOffsetToSize.put(0x15C58, 0x10);
     }
     return binaryOffsetToSize;
   }

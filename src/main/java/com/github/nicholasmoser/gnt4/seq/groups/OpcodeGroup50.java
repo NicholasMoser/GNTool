@@ -17,6 +17,9 @@ public class OpcodeGroup50 {
       case 0x04 -> UnknownOpcode.of(0x50, 0x04, 0x4, bs);
       case 0x05 -> op_5005(bs);
       case 0x06 -> UnknownOpcode.of(0x50, 0x06, 0x8, bs);
+      case 0x08 -> op_5008(bs);
+      case 0x09 -> op_5009(bs);
+      case 0x0A -> UnknownOpcode.of(0x50, 0x0A, 0x4, bs);
       case 0x0B -> UnknownOpcode.of(0x50, 0x0B, 0x4, bs);
       case 0x0D -> op_500D(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
@@ -29,6 +32,20 @@ public class OpcodeGroup50 {
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+  }
+
+  public static Opcode op_5008(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
+  }
+
+  public static Opcode op_5009(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    String info = String.format(" %s", ea.getDescription());
+    return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   public static Opcode op_500D(ByteStream bs) throws IOException {
