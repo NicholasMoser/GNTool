@@ -14,57 +14,43 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Class that mimics the functionality of the function in GNT4 at address 0x800c92e8,
- * get_effective_addresses. There are four types of effective addresses:
- * * <ul>
- * *   <li>General purpose register addresses and values</li>
- * *   <li>Seq stored addresses and values</li>
- * *   <li>Global addresses</li>
- * *   <li>Immediate values</li>
- * * </ul>
+ * Class that mimics the functionality of the function SEQ_RegCMD2. This function retrieves two
+ * instruction operands for an opcode. There are four types of operands:
+ * <ul>
+ *   <li>General purpose register addresses and values</li>
+ *   <li>Seq stored addresses and values</li>
+ *   <li>Global addresses</li>
+ *   <li>Immediate values</li>
+ * </ul>
  */
-public class EffectiveAddresses {
+public class SEQ_RegCMD2 {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
   private final List<Operand> operands;
   private int opcode;
 
-  /**
-   * Private constructor of EffectiveAddresses. To create one you must call {@link
-   * #get(ByteStream)}.
-   *
-   * @param bs The byte stream of the seq.
-   */
-  private EffectiveAddresses(ByteStream bs) {
+  private SEQ_RegCMD2(ByteStream bs) {
     this.bs = bs;
     this.bytes = new ByteArrayOutputStream();
     this.operands = new ArrayList<>(2);
   }
 
   /**
-   * Parses the current opcode in a seq byte stream and calls <code>get_effective_addresses</code>.
-   * This will iterate the byte stream and return an object with the results of calling
-   * <code>get_effective_addresses</code>. This will not close the byte stream.
+   * Parses the current opcode in a seq byte stream and returns an object containing the two
+   * instruction operands.
    *
    * @param bs The seq byte stream to read from.
-   * @return The get_effective_addresses result.
+   * @return The SEQ_RegCMD2 result.
    * @throws IOException If an I/O error occurs.
    */
-  public static EffectiveAddresses get(ByteStream bs) throws IOException {
-    EffectiveAddresses ea = new EffectiveAddresses(bs);
-    ea.parse();
-    return ea;
+  public static SEQ_RegCMD2 get(ByteStream bs) throws IOException {
+    SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs);
+    operands.parse();
+    return operands;
   }
 
-  /**
-   * Parses an opcode that calls <code>get_effective_addresses</code> and returns the result of that
-   * method.
-   *
-   * @throws IOException If an I/O error occurs.
-   */
   private void parse() throws IOException {
-    Operand operand;
     this.opcode = bs.peekWord();
     // Get third 8 bits (1111_1111)
     byte first_address_byte = (byte) ((opcode >> 0x8) & 0xff);
@@ -81,7 +67,7 @@ public class EffectiveAddresses {
           operands.add(new SeqOperand(first_address_byte - 0x18, true));
           second_address_byte = (byte) (opcode & 0xff);
         } else {
-          operands.add(loadOperand(first_address_byte, true));
+          operands.add(getOperandType(first_address_byte, true));
           pushWord(bs.readWord());
           second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
         }
@@ -91,18 +77,19 @@ public class EffectiveAddresses {
       }
     } else {
       // Load effective address with offset
+      Operand firstOperand;
       byte lastSixBits = (byte) (first_address_byte & 0x3f);
       if (lastSixBits < 0x18) {
-        operand = new GPROperand(lastSixBits, false);
+        firstOperand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        operand = new SeqOperand(lastSixBits * 4, false);
+        firstOperand = new SeqOperand(lastSixBits * 4, false);
       } else {
-        operand = loadOperand(lastSixBits, false);
+        firstOperand = getOperandType(lastSixBits, false);
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      operand.addInfo(String.format(" + offset 0x%08X", word));
-      operands.add(operand);
+      firstOperand.addInfo(String.format(" + offset 0x%08X", word));
+      operands.add(firstOperand);
       pushWord(word);
       second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
     }
@@ -120,18 +107,19 @@ public class EffectiveAddresses {
           pushWord(bs.readWord());
           operands.add(new SeqOperand(second_address_byte - 0x18, true));
         } else {
-          operands.add(loadOperand(second_address_byte, true));
+          operands.add(getOperandType(second_address_byte, true));
           pushWord(bs.readWord());
         }
       } else {
         // Load effective address sum with offset
+        Operand secondOperand;
         byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
         if (lastSixBits2 < 0x18) {
-          operand = new GPROperand(lastSixBits2, false);
+          secondOperand = new GPROperand(lastSixBits2, false);
         } else if (lastSixBits2 < 0x30) {
-          operand = new SeqOperand(lastSixBits2 * 4, false);
+          secondOperand = new SeqOperand(lastSixBits2 * 4, false);
         } else {
-          operand = loadOperand(lastSixBits2, false);
+          secondOperand = getOperandType(lastSixBits2, false);
         }
         pushWord(bs.readWord());
         int word = bs.readWord();
@@ -139,27 +127,28 @@ public class EffectiveAddresses {
         int bottomTwoBytes = word & 0xffff;
         int topTwoBytes = word >> 0x10;
         if (bottomTwoBytes < 0x18) {
-          operand.addInfo(String.format(" + *gpr%d", bottomTwoBytes));
+          secondOperand.addInfo(String.format(" + *gpr%d", bottomTwoBytes));
         } else {
-          operand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+          secondOperand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
         }
-        operand.addInfo(String.format(" + %04x", topTwoBytes));
-        operands.add(operand);
+        secondOperand.addInfo(String.format(" + %04x", topTwoBytes));
+        operands.add(secondOperand);
       }
     } else {
       // Load effective address with offset
+      Operand secondOperand;
       byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
       if (lastSixBits2 < 0x18) {
-        operand = new GPROperand(lastSixBits2, false);
+        secondOperand = new GPROperand(lastSixBits2, false);
       } else if (lastSixBits2 < 0x30) {
-        operand = new SeqOperand(lastSixBits2 * 4, false);
+        secondOperand = new SeqOperand(lastSixBits2 * 4, false);
       } else {
-        operand = loadOperand(lastSixBits2, false);
+        secondOperand = getOperandType(lastSixBits2, false);
       }
       pushWord(bs.readWord());
       int word2 = bs.readWord();
-      operand.addInfo(String.format(" + offset 0x%08X", word2));
-      operands.add(operand);
+      secondOperand.addInfo(String.format(" + offset 0x%08X", word2));
+      operands.add(secondOperand);
       pushWord(word2);
     }
     if (operands.size() != 2) {
@@ -175,14 +164,14 @@ public class EffectiveAddresses {
   }
 
   /**
-   * @return The opcode bytes plus any bytes read by get_effective_addresses.
+   * @return The opcode bytes plus any bytes read by SEQ_RegCMD2.
    */
   public byte[] getBytes() {
     return bytes.toByteArray();
   }
 
   /**
-   * @return A description of the result of get_effective_addresses.
+   * @return A description of the result of SEQ_RegCMD2.
    */
   public String getDescription() {
     return operands.stream()
@@ -203,8 +192,7 @@ public class EffectiveAddresses {
   }
 
   /**
-   * Pushes the given word to bytes array. This keeps track of what bytes have been read by
-   * <code>get_effective_addresses</code>.
+   * Pushes the given word to bytes array. Keeps track of what bytes have been read.
    *
    * @param word The word to push.
    * @throws IOException If an I/O error occurs.
@@ -214,11 +202,14 @@ public class EffectiveAddresses {
   }
 
   /**
+   * Checks the type of Operand and returns it.
+   *
    * @param bitFlag  The bits to check for what to return.
    * @param returnPc If the program counter should be returned.
+   * @return The Operand.
    * @throws IOException If an I/O error occurs.
    */
-  private Operand loadOperand(byte bitFlag, boolean returnPc) throws IOException {
+  private Operand getOperandType(byte bitFlag, boolean returnPc) throws IOException {
     return switch (bitFlag) {
       case 0x30 ->
           // Appears to be a matrix identity used for matrix multiplication of attacking hitbox

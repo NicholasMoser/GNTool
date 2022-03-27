@@ -1,6 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FloatCompare;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FloatDivide;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FloatMove;
@@ -25,35 +25,35 @@ public class OpcodeGroup08 {
 
   private static Opcode f_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new FloatMove(offset, ea.getBytes(), info);
   }
 
   private static Opcode f_sub(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new FloatSubtract(offset, ea.getBytes(), info);
   }
 
   private static Opcode f_mul(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new FloatMultiply(offset, ea.getBytes(), info);
   }
 
   private static Opcode f_div(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new FloatDivide(offset, ea.getBytes(), info);
   }
 
   private static Opcode f_com(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new FloatCompare(offset, ea.getBytes(), info);
   }
