@@ -14,7 +14,7 @@ import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import org.junit.jupiter.api.Test;
 
-public class EffectiveAddressTest {
+public class SEQRegCMD1Test {
 
   /**
    * Tests calling opcode 13040013.
@@ -27,7 +27,7 @@ public class EffectiveAddressTest {
   public void testGpr_1() throws Exception {
     byte[] bytes = new byte[]{0x13, 0x04, 0x00, 0x13};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: gpr19", ea.getDescription());
@@ -49,7 +49,7 @@ public class EffectiveAddressTest {
   public void testGpr_2() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x03};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: gpr3", ea.getDescription());
@@ -71,7 +71,7 @@ public class EffectiveAddressTest {
   public void testSeq_1() throws Exception {
     byte[] bytes = new byte[]{0x13, 0x06, 0x00, 0x22};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: seq_p_sp->field_0x0a", ea.getDescription());
@@ -96,7 +96,7 @@ public class EffectiveAddressTest {
   public void testSeq_2() throws Exception {
     byte[] bytes = new byte[]{0x21, 0x06, 0x00, 0x26};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: seq_p_sp->field_0x0e", ea.getDescription());
@@ -118,7 +118,7 @@ public class EffectiveAddressTest {
   public void testGlobal_1() throws Exception {
     byte[] bytes = new byte[]{0x06, 0x06, 0x00, 0x32};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: CONTROLLERS", ea.getDescription());
@@ -141,7 +141,7 @@ public class EffectiveAddressTest {
   public void testGlobal_2() throws Exception {
     byte[] bytes = new byte[]{0x06, 0x06, 0x00, 0x39};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: SAVE_DATA", ea.getDescription());
@@ -165,7 +165,7 @@ public class EffectiveAddressTest {
     byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3e, 0x00, 0x00, 0x01, 0x00, 0x7f, 0x7f,
         0x7f, 0x7f};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: Immediate value offset 0x4 (0x00000100)", ea.getDescription());
@@ -187,7 +187,7 @@ public class EffectiveAddressTest {
   public void testPeekImmediate() throws Exception {
     byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3f, 0x00, 0x00, 0x01, 0x00};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: Immediate value offset 0x4 (0x00000100)", ea.getDescription());
@@ -209,7 +209,7 @@ public class EffectiveAddressTest {
   public void testGprSumGpr() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, (byte) 0x80, 0x00, 0x00, 0x00, 0x17};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: *gpr0 + *gpr23 + 0000", ea.getDescription());
@@ -231,7 +231,7 @@ public class EffectiveAddressTest {
   public void testSeqSumGpr() throws Exception {
     byte[] bytes = new byte[]{0x21, 0x06, 0x00, (byte) 0xaf, 0x00, 0x00, 0x00, 0x17};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: *seq_p_sp->field_0xbc + *gpr23 + 0000", ea.getDescription());
@@ -253,7 +253,7 @@ public class EffectiveAddressTest {
   public void testGlobalSumSeq() throws Exception {
     byte[] bytes = new byte[]{0x06, 0x06, 0x00, (byte) 0xb4, 0x00, 0x00, 0x00, (byte) 0x24};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: DISPLAY + *seq_p_sp->field_0x90 + 0000", ea.getDescription());
@@ -277,7 +277,7 @@ public class EffectiveAddressTest {
     byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbe, 0x12, 0x34, 0x00, 0x04, 0x00,
         0x00, 0x30, 0x00};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbe, 0x12, 0x34, 0x00, 0x04},
         ea.getBytes());
@@ -302,7 +302,7 @@ public class EffectiveAddressTest {
     byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbf, 0x12, 0x34, 0x00, 0x04, 0x00,
         0x00, 0x30, 0x00};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbf, 0x12, 0x34, 0x00, 0x04},
         ea.getBytes());
@@ -326,7 +326,7 @@ public class EffectiveAddressTest {
   public void testGprPlusOffset_1() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x42, 0x00, 0x00, 0x00, 0x00};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: *gpr2 + offset 0x00000000", ea.getDescription());
@@ -348,7 +348,7 @@ public class EffectiveAddressTest {
   public void testGprPlusOffset_2() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x53, 0x00, 0x00, 0x00, 0x04};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: *gpr19 + offset 0x00000004", ea.getDescription());
@@ -370,7 +370,7 @@ public class EffectiveAddressTest {
   public void testSeqPlusOffset_1() throws Exception {
     byte[] bytes = new byte[]{0x01, 0x50, 0x00, 0x68, 0x00, 0x00, 0x00, 0x5c};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: *seq_p_sp->field_0xa0 + offset 0x0000005C", ea.getDescription());
@@ -392,7 +392,7 @@ public class EffectiveAddressTest {
   public void testSeqPlusOffset_2() throws Exception {
     byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x66, 0x00, 0x00, 0x00, 0x20};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: *seq_p_sp->field_0x98 + offset 0x00000020", ea.getDescription());
@@ -414,7 +414,7 @@ public class EffectiveAddressTest {
   public void testGlobalPlusOffset_1() throws Exception {
     byte[] bytes = new byte[]{0x01, 0x50, 0x00, 0x70, 0x00, 0x00, 0x00, 0x60};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: HITBOX_IDENTITY_MATRIX + offset 0x00000060", ea.getDescription());
@@ -437,7 +437,7 @@ public class EffectiveAddressTest {
   public void testGlobalPlusOffset_2() throws Exception {
     byte[] bytes = new byte[]{0x3e, 0x02, 0x00, 0x79, 0x00, 0x00, 0x01, (byte) 0xb6};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
     assertEquals("EA: SAVE_DATA + offset 0x000001B6", ea.getDescription());
@@ -461,7 +461,7 @@ public class EffectiveAddressTest {
     byte[] bytes = new byte[]{0x0f, 0x0d, 0x00, 0x7e, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00,
         0x00};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7e, 0x00, 0x00, 0x10, 0x00}, ea.getBytes());
     assertEquals("EA: Immediate value offset 0x8 (0x00000000) + offset 0x00001000",
@@ -485,7 +485,7 @@ public class EffectiveAddressTest {
     byte[] bytes = new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89, 0x0f, 0x0e,
         0x00, 0x3f};
     ByteStream bs = new ByteStream(bytes);
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89},
         ea.getBytes());
