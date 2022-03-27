@@ -1,6 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZeroLink;
@@ -31,12 +31,12 @@ import java.io.IOException;
 public class OpcodeGroup01 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x00 -> UnknownOpcode.of(0x01, 0x00, 4, bs);
+      case 0x00 -> UnknownOpcode.of(4, bs);
       case 0x01 -> op_0101(bs);
-      case 0x02 -> UnknownOpcode.of(0x01, 0x02, 8, bs);
-      case 0x04 -> UnknownOpcode.of(0x01, 0x04, 4, bs);
+      case 0x02 -> UnknownOpcode.of(8, bs);
+      case 0x04 -> UnknownOpcode.of(4, bs);
       case 0x05 -> op_0105(bs);
-      case 0x08 -> UnknownOpcode.of(0x01, 0x08, 4, bs);
+      case 0x08 -> UnknownOpcode.of(4, bs);
       case 0x32 -> branch(bs);
       case 0x33 -> branchEqualToZero(bs);
       case 0x34 -> branchNotEqualToZero(bs);
@@ -65,14 +65,14 @@ public class OpcodeGroup01 {
 
   private static Opcode op_0101(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   private static Opcode op_0105(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
@@ -253,7 +253,7 @@ public class OpcodeGroup01 {
   private static Opcode op_0150(ByteStream bs) throws IOException {
     // Likely some kind of switch-case
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
     int word = bs.peekWord();
@@ -270,7 +270,7 @@ public class OpcodeGroup01 {
   private static Opcode op_0151(ByteStream bs) throws IOException {
     // Likely some kind of switch-case
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
     int word = bs.peekWord();

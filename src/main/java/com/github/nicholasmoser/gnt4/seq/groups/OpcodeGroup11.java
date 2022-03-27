@@ -1,7 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -18,14 +18,14 @@ public class OpcodeGroup11 {
 
   private static Opcode op_1106(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   private static Opcode op_1107(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }

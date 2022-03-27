@@ -1,7 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -26,7 +26,7 @@ public class OpcodeGroup10 {
 
   private static Opcode op_1000(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
@@ -34,28 +34,28 @@ public class OpcodeGroup10 {
 
   private static Opcode op_1004(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   private static Opcode op_1005(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   private static Opcode op_1007(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
 
   private static Opcode op_1009(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
@@ -63,7 +63,7 @@ public class OpcodeGroup10 {
 
   private static Opcode op_100D(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
@@ -71,7 +71,7 @@ public class OpcodeGroup10 {
 
   private static Opcode op_101A(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(8);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
@@ -79,7 +79,7 @@ public class OpcodeGroup10 {
 
   private static Opcode op_101C(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(8);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);

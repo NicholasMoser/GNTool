@@ -1,7 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -24,7 +24,7 @@ public class OpcodeGroup3E {
 
   private static Opcode op_3E00(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
@@ -33,7 +33,7 @@ public class OpcodeGroup3E {
 
   private static Opcode op_3E01(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
@@ -42,7 +42,7 @@ public class OpcodeGroup3E {
 
   private static Opcode op_3E02(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
@@ -51,7 +51,7 @@ public class OpcodeGroup3E {
 
   private static Opcode op_3E03(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
@@ -60,7 +60,7 @@ public class OpcodeGroup3E {
 
   private static Opcode op_3E04(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(8);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
@@ -69,7 +69,7 @@ public class OpcodeGroup3E {
 
   private static Opcode op_3E05(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);

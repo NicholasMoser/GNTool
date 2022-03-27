@@ -11,8 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Class that mimics the functionality of the function in GNT4 at address 0x800c95e4,
- * get_effective_address. There are four types of effective addresses:
+ * Class that mimics the functionality of the function SEQ_RegCMD1. This function retrieves one
+ * instruction operand for an opcode. There are four types of operands:
  * <ul>
  *   <li>General purpose register addresses and values</li>
  *   <li>Seq stored addresses and values</li>
@@ -20,36 +20,30 @@ import java.io.IOException;
  *   <li>Immediate values</li>
  * </ul>
  */
-public class EffectiveAddress {
+public class SEQ_RegCMD1 {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
   private Operand operand;
   private int opcode;
 
-  /**
-   * Private constructor of EffectiveAddress. To create one you must call {@link #get(ByteStream)}.
-   *
-   * @param bs The byte stream of the seq.
-   */
-  private EffectiveAddress(ByteStream bs) {
+  private SEQ_RegCMD1(ByteStream bs) {
     this.bs = bs;
     this.bytes = new ByteArrayOutputStream();
   }
 
   /**
-   * Parses the current opcode in a seq byte stream and calls <code>get_effective_address</code>.
-   * This will iterate the byte stream and return an object with the results of calling
-   * <code>get_effective_address</code>. This will not close the byte stream.
+   * Parses the current opcode in a seq byte stream and returns an object containing the one
+   * instruction operand.
    *
    * @param bs The seq byte stream to read from.
-   * @return The get_effective_address result.
+   * @return The SEQ_RegCMD1 result.
    * @throws IOException If an I/O error occurs.
    */
-  public static EffectiveAddress get(ByteStream bs) throws IOException {
-    EffectiveAddress ea = new EffectiveAddress(bs);
-    ea.parse();
-    return ea;
+  public static SEQ_RegCMD1 get(ByteStream bs) throws IOException {
+    SEQ_RegCMD1 operand = new SEQ_RegCMD1(bs);
+    operand.parse();
+    return operand;
   }
 
   /**
@@ -60,14 +54,14 @@ public class EffectiveAddress {
   }
 
   /**
-   * @return The opcode bytes plus any bytes read by get_effective_address.
+   * @return The opcode bytes plus any bytes read by SEQ_RegCMD1.
    */
   public byte[] getBytes() {
     return bytes.toByteArray();
   }
 
   /**
-   * @return A description of the result of get_effective_address.
+   * @return A description of the result of SEQ_RegCMD1.
    */
   public String getDescription() {
     return operand.toString();
@@ -78,8 +72,7 @@ public class EffectiveAddress {
   }
 
   /**
-   * Pushes the given word to bytes array. This keeps track of what bytes have been read by
-   * <code>get_effective_address</code>.
+   * Pushes the given word to bytes array. This keeps track of what bytes have been read.
    *
    * @param word The word to push.
    * @throws IOException If an I/O error occurs.
@@ -88,12 +81,6 @@ public class EffectiveAddress {
     bytes.write(ByteUtils.fromInt32(word));
   }
 
-  /**
-   * Parses an opcode that calls <code>get_effective_address</code> and returns the result of that
-   * method.
-   *
-   * @throws IOException If an I/O error occurs.
-   */
   private void parse() throws IOException {
     this.opcode = bs.peekWord();
     // Get last 8 bits (1111_1111)
@@ -153,8 +140,11 @@ public class EffectiveAddress {
   }
 
   /**
+   * Checks the type of Operand and returns it.
+   *
    * @param bitFlag  The bits to check for what to return.
    * @param returnPc If the program counter should be returned.
+   * @return The Operand.
    * @throws IOException If an I/O error occurs.
    */
   private Operand loadOperand(byte bitFlag, boolean returnPc) throws IOException {

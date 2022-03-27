@@ -1,7 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddress;
-import com.github.nicholasmoser.gnt4.seq.EffectiveAddresses;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
+import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
@@ -14,11 +14,11 @@ import java.io.IOException;
 public class OpcodeGroup36 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x00 -> UnknownOpcode.of(0x36, 0x00, 0x4, bs);
-      case 0x01 -> UnknownOpcode.of(0x36, 0x01, 0x4, bs);
-      case 0x04 -> UnknownOpcode.of(0x36, 0x04, 0x4, bs);
+      case 0x00 -> UnknownOpcode.of(0x4, bs);
+      case 0x01 -> UnknownOpcode.of(0x4, bs);
+      case 0x04 -> UnknownOpcode.of(0x4, bs);
       case 0x05 -> loadTexture(bs);
-      case 0x06 -> UnknownOpcode.of(0x36, 0x06, 0x8, bs);
+      case 0x06 -> UnknownOpcode.of(0x8, bs);
       case 0x07 -> op_3607(bs);
       case 0x08 -> op_3608(bs);
       case 0x0A -> seqInit(bs);
@@ -46,7 +46,7 @@ public class OpcodeGroup36 {
 
   public static Opcode op_3607(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
     baos.write(bs.readBytes(4));
@@ -62,7 +62,7 @@ public class OpcodeGroup36 {
 
   public static Opcode op_3608(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
@@ -70,7 +70,7 @@ public class OpcodeGroup36 {
 
   private static Opcode seqInit(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
     StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
@@ -85,7 +85,7 @@ public class OpcodeGroup36 {
 
   public static Opcode op_360C(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddresses ea = EffectiveAddresses.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
@@ -93,7 +93,7 @@ public class OpcodeGroup36 {
 
   public static Opcode op_360D(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    EffectiveAddress ea = EffectiveAddress.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     String info = String.format(" %s", ea.getDescription());
     return new UnknownOpcode(offset, ea.getBytes(), info);
   }
