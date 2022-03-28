@@ -134,7 +134,7 @@ public class SEQ_RegCMD1 {
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      operand.addInfo(String.format(" + offset 0x%08X", word));
+      operand.addInfo(String.format(" + offset 0x%X", word));
       pushWord(word);
     }
   }
