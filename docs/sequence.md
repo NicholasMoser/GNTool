@@ -6,6 +6,7 @@
   - [Usage](#usage)
   - [References](#references)
 - [Expand SEQ](#expand-seq)
+- [Dolphin SEQ Listener](#dolphin-seq-listener)
 
 ![Sequence](/docs/sequence.png?raw=true "Sequence")
 
@@ -66,3 +67,7 @@ An example of the binary can be seen here:
 ## Expand SEQ
 
 This will attempt to open the selected SEQ file with [SEQ Kage](https://github.com/mitchellhumphrey/seq-kage/releases). SEQ Kage allows you to expand the SEQ file and add more space near the end of the file to add new SEQ bytecode.
+
+## Dolphin SEQ Listener
+
+This tool allows you to observe exactly what SEQ commands in which files GNT4 executes while it is playing. For more information on how it works, see the accompanying [Dolphin SEQ Listener Documentation](/docs/seq_listener.md).
