@@ -40,7 +40,7 @@ public class Branch implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);
     return div(attrs(id))
-        .with(span(String.format("%05X | b ", offset)).attr("class=\"b\""))
+        .with(span(String.format("%05X | b ", offset)))
         .with(a(String.format("0x%X", destination)).withHref(dest))
         .with(span(String.format(" {01320000 %08X}", destination)));
   }

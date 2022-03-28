@@ -81,11 +81,13 @@ public class SeqKingHtml {
    * @return The HTML head of the document.
    */
   private static ContainerTag getHead() {
-    String css = getCSS() + getTooltipCSS("b");
+    // Tooltip no longer used for better performance
+    String css = getCSS(); // + getTooltipCSS("b");
     return head(
         title("SEQ Report"),
-        style(css),
-        script(getTooltipJavascript("b", "Unconditional branch to an offset."))
+        style(css)
+        // Tooltip no longer used for better performance
+        //script(getTooltipJavascript("b", "Unconditional branch to an offset."))
     );
   }
 
