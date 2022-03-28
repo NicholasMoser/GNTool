@@ -34,6 +34,6 @@ public class SeqOperand implements Operand {
   @Override
   public String toString() {
     String prefix = pointer ? "" : "*";
-    return String.format("EA: %sseq_p_sp->field_0x%02x%s", prefix, index, infoBuilder);
+    return String.format("%sseq_p_sp->field_0x%02x%s", prefix, index, infoBuilder);
   }
 }

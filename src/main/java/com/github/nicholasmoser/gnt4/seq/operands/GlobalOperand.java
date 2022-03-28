@@ -52,6 +52,6 @@ public class GlobalOperand implements Operand {
 
   @Override
   public String toString() {
-    return String.format("EA: %s%s", getName(), infoBuilder);
+    return String.format("%s%s", getName(), infoBuilder);
   }
 }

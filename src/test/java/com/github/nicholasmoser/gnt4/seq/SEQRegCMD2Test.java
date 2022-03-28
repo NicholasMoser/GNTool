@@ -33,7 +33,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x4, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr2; EA: gpr19", ea.getDescription());
+    assertEquals("gpr2; gpr19", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -63,7 +63,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x4, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr19; EA: seq_p_sp->field_0x17", ea.getDescription());
+    assertEquals("gpr19; seq_p_sp->field_0x17", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -93,7 +93,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr21; EA: PAUSE_GAME + offset 0x00000000", ea.getDescription());
+    assertEquals("gpr21; PAUSE_GAME + offset 0x00000000", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -124,7 +124,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x4, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: seq_p_sp->field_0x0e; EA: gpr2", ea.getDescription());
+    assertEquals("seq_p_sp->field_0x0e; gpr2", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -154,7 +154,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x4, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: seq_p_sp->field_0x0e; EA: seq_p_sp->field_0x08", ea.getDescription());
+    assertEquals("seq_p_sp->field_0x0e; seq_p_sp->field_0x08", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -184,7 +184,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: seq_p_sp->field_0x02; EA: Immediate value offset 0x4 (0x00000001)", ea.getDescription());
+    assertEquals("seq_p_sp->field_0x02; Immediate value offset 0x4 (0x00000001)", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -214,7 +214,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: seq_p_sp->field_0x05; EA: Immediate value offset 0x4 (0x0001bf24)", ea.getDescription());
+    assertEquals("seq_p_sp->field_0x05; Immediate value offset 0x4 (0x0001bf24)", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -246,7 +246,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x10, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: Immediate value offset 0x4 (0x0000000c); EA: Immediate value offset 0xc (0x00000000)", ea.getDescription());
+    assertEquals("Immediate value offset 0x4 (0x0000000c); Immediate value offset 0xc (0x00000000)", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof ImmediateOperand);
     ImmediateOperand immediateOperand = (ImmediateOperand) operand;
@@ -277,7 +277,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x10, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *gpr4 + offset 0x00000024; EA: Immediate value offset 0xc (0x00020004)", ea.getDescription());
+    assertEquals("*gpr4 + offset 0x00000024; Immediate value offset 0xc (0x00020004)", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -308,7 +308,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x10, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *gpr19 + offset 0x00000068; EA: GAME_INFO + offset 0x0000221C", ea.getDescription());
+    assertEquals("*gpr19 + offset 0x00000068; GAME_INFO + offset 0x0000221C", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -340,7 +340,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x10, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *seq_p_sp->field_0x98 + offset 0x00000018; EA: Immediate value offset 0xc (0x00001734)", ea.getDescription());
+    assertEquals("*seq_p_sp->field_0x98 + offset 0x00000018; Immediate value offset 0xc (0x00001734)", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -371,7 +371,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x10, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *seq_p_sp->field_0x98 + offset 0x0000005C; EA: Immediate value offset 0xc (0x3f000000)", ea.getDescription());
+    assertEquals("*seq_p_sp->field_0x98 + offset 0x0000005C; Immediate value offset 0xc (0x3f000000)", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -402,7 +402,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x10, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: GAME_INFO + offset 0x00000000; EA: Immediate value offset 0xc (0x00000200)", ea.getDescription());
+    assertEquals("GAME_INFO + offset 0x00000000; Immediate value offset 0xc (0x00000200)", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GlobalOperand);
     GlobalOperand globalOperand = (GlobalOperand) operand;
@@ -434,7 +434,7 @@ public class SEQRegCMD2Test {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr2; EA: *gpr19 + *gpr2 + 0000", ea.getDescription());
+    assertEquals("gpr2; *gpr19 + *gpr2 + 0000", ea.getDescription());
     Operand operand = ea.getFirstOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;

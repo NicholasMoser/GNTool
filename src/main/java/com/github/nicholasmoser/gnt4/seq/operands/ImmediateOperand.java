@@ -27,6 +27,6 @@ public class ImmediateOperand implements Operand {
 
   @Override
   public String toString() {
-    return String.format("EA: Immediate value offset 0x%x (0x%08x)%s", offset, word, infoBuilder);
+    return String.format("Immediate value offset 0x%x (0x%08x)%s", offset, word, infoBuilder);
   }
 }
