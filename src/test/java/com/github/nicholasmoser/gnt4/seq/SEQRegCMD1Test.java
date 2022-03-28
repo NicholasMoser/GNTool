@@ -168,7 +168,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("Immediate value offset 0x4 (0x00000100)", ea.getDescription());
+    assertEquals("0x100", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
     ImmediateOperand immediateOperand = (ImmediateOperand) operand;
@@ -190,7 +190,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("Immediate value offset 0x4 (0x00000100)", ea.getDescription());
+    assertEquals("0x100", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
     ImmediateOperand immediateOperand = (ImmediateOperand) operand;
@@ -281,7 +281,7 @@ public class SEQRegCMD1Test {
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbe, 0x12, 0x34, 0x00, 0x04},
         ea.getBytes());
-    assertEquals("Immediate value offset 0x8 (0x00003000) + *gpr4 + 1234",
+    assertEquals("0x3000 + *gpr4 + 1234",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
@@ -306,7 +306,7 @@ public class SEQRegCMD1Test {
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbf, 0x12, 0x34, 0x00, 0x04},
         ea.getBytes());
-    assertEquals("Immediate value offset 0x8 (0x00003000) + *gpr4 + 1234",
+    assertEquals("0x3000 + *gpr4 + 1234",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
@@ -464,7 +464,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7e, 0x00, 0x00, 0x10, 0x00}, ea.getBytes());
-    assertEquals("Immediate value offset 0x8 (0x00000000) + offset 0x00001000",
+    assertEquals("0x0 + offset 0x00001000",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
@@ -489,7 +489,7 @@ public class SEQRegCMD1Test {
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89},
         ea.getBytes());
-    assertEquals("Immediate value offset 0x8 (0x0f0e003f) + offset 0x00000089",
+    assertEquals("0xF0E003F + offset 0x00000089",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
