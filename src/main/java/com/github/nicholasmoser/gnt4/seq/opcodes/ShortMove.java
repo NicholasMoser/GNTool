@@ -29,7 +29,7 @@ public class ShortMove implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | s_mov %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | s_mov %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

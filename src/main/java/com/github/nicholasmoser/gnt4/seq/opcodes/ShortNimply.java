@@ -29,7 +29,7 @@ public class ShortNimply implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | s_nimply %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | s_nimply %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

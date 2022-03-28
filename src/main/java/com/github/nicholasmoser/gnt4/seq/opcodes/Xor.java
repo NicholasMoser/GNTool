@@ -29,7 +29,7 @@ public class Xor implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | xor %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | xor %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

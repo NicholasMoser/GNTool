@@ -29,7 +29,7 @@ public class Pop implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | pop %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | pop %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

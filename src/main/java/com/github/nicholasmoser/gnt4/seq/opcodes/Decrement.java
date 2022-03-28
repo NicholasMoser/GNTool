@@ -29,7 +29,7 @@ public class Decrement implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | dec %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | dec %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

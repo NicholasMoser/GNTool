@@ -29,7 +29,7 @@ public class Subws implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | subws %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | subws %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

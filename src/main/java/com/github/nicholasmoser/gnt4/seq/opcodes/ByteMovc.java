@@ -29,7 +29,7 @@ public class ByteMovc implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | b_movc %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | b_movc %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

@@ -29,7 +29,7 @@ public class FloatSubtract implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | f_sub %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | f_sub %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

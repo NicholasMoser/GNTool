@@ -29,7 +29,7 @@ public class ShortOr implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | s_or %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | s_or %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

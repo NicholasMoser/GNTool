@@ -32,7 +32,7 @@ public class SynchronousTimer implements Opcode {
   @Override
   public String toString() {
     int frames = ByteUtils.toInt32(Arrays.copyOfRange(bytes, 4, 8));
-    return String.format("%05X | sync_timer (%d frames) %s %s", offset, frames, formatRawBytes(bytes), info);
+    return String.format("%05X | sync_timer (%d frames) %s %s", offset, frames, info, formatRawBytes(bytes));
   }
 
   @Override

@@ -29,7 +29,7 @@ public class Increment implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | inc %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | inc %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

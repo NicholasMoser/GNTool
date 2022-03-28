@@ -29,7 +29,7 @@ public class Multiply implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | mul %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | mul %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

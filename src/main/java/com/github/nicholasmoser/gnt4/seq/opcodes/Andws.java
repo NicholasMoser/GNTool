@@ -29,7 +29,7 @@ public class Andws implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | andws %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | andws %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

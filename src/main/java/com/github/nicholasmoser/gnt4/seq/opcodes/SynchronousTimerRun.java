@@ -31,7 +31,7 @@ public class SynchronousTimerRun implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | sync_timer_run %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | sync_timer_run %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override
