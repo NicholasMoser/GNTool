@@ -34,7 +34,7 @@ public class OpcodeGroup36 {
     baos.write(bs.readBytes(4));
     byte[] firstWord = bs.readBytes(4);
     baos.write(firstWord);
-    StringBuilder info = new StringBuilder(String.format(" Use index 0x%x", ByteUtils.toInt32(firstWord)));
+    StringBuilder info = new StringBuilder(String.format("Use index 0x%x", ByteUtils.toInt32(firstWord)));
     byte[] textBytes = SeqHelper.readString(bs);
     baos.write(textBytes);
     String fileName = SeqHelper.getString(textBytes);
@@ -50,7 +50,7 @@ public class OpcodeGroup36 {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
     baos.write(bs.readBytes(4));
-    StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
+    StringBuilder info = new StringBuilder(ea.getDescription());
     byte[] textBytes = SeqHelper.readString(bs);
     baos.write(textBytes);
     String fileName = SeqHelper.getString(textBytes);
@@ -63,9 +63,8 @@ public class OpcodeGroup36 {
   public static Opcode op_3608(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
   }
 
   private static Opcode seqInit(ByteStream bs) throws IOException {
@@ -73,7 +72,7 @@ public class OpcodeGroup36 {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
-    StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
+    StringBuilder info = new StringBuilder(ea.getDescription());
     byte[] textBytes = SeqHelper.readString(bs);
     baos.write(textBytes);
     String fileName = SeqHelper.getString(textBytes);
@@ -86,15 +85,13 @@ public class OpcodeGroup36 {
   public static Opcode op_360C(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
   }
 
   public static Opcode op_360D(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 }

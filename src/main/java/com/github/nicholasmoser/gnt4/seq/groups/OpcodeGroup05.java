@@ -18,7 +18,6 @@ public class OpcodeGroup05 {
   private static Opcode b_movc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ByteMovc(offset, ea.getBytes(), info);
+    return new ByteMovc(offset, ea.getBytes(), ea.getDescription());
   }
 }

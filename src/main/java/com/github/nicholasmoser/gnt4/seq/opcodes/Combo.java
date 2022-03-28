@@ -29,7 +29,7 @@ public class Combo implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | combo_list: %s%s", offset, info, formatRawBytes(bytes));
+    return String.format("%05X | combo_list: %s %s", offset, info, formatRawBytes(bytes));
   }
 
   @Override

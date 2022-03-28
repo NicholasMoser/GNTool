@@ -26,35 +26,30 @@ public class OpcodeGroup08 {
   private static Opcode f_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new FloatMove(offset, ea.getBytes(), info);
+    return new FloatMove(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode f_sub(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new FloatSubtract(offset, ea.getBytes(), info);
+    return new FloatSubtract(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode f_mul(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new FloatMultiply(offset, ea.getBytes(), info);
+    return new FloatMultiply(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode f_div(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new FloatDivide(offset, ea.getBytes(), info);
+    return new FloatDivide(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode f_com(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new FloatCompare(offset, ea.getBytes(), info);
+    return new FloatCompare(offset, ea.getBytes(), ea.getDescription());
   }
 }

@@ -35,7 +35,7 @@ public class BinaryData implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | binary data, 0x%x bytes %s%s", offset, bytes.length, formatRawBytes(bytes), info);
+    return String.format("%05X | binary data, 0x%x bytes %s %s", offset, bytes.length, formatRawBytes(bytes), info);
   }
 
   @Override

@@ -66,15 +66,13 @@ public class OpcodeGroup01 {
   private static Opcode op_0101(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0105(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   public static Opcode branch(ByteStream bs) throws IOException {
@@ -263,8 +261,7 @@ public class OpcodeGroup01 {
       baos.write(bs.readBytes(4));
       word = bs.peekWord();
     }
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, baos.toByteArray(), info);
+    return new UnknownOpcode(offset, baos.toByteArray(), ea.getDescription());
   }
 
   private static Opcode op_0151(ByteStream bs) throws IOException {
@@ -280,7 +277,6 @@ public class OpcodeGroup01 {
       baos.write(bs.readBytes(4));
       word = bs.peekWord();
     }
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, baos.toByteArray(), info);
+    return new UnknownOpcode(offset, baos.toByteArray(), ea.getDescription());
   }
 }
