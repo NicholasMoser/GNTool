@@ -19,7 +19,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 13040013.
    * <p>
-   * Effective address is a general purpose register value.
+   * Operand is a general purpose register value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -41,7 +41,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030003.
    * <p>
-   * Effective address is a general purpose register value.
+   * Operand is a general purpose register value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -63,7 +63,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 13060022.
    * <p>
-   * Effective address is a seq stored value.
+   * Operand is a seq stored value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -85,7 +85,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 21060026.
    * <p>
-   * Effective address is a seq stored value.
+   * Operand is a seq stored value.
    * <p>
    * This is called for getting this seq's chr_p +4 bytes appears to be the opponent chr_p
    * TODO: Is that true?
@@ -110,7 +110,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 06060032.
    * <p>
-   * Effective address is a global value.
+   * Operand is a global value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -133,7 +133,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 06060039.
    * <p>
-   * Effective address is a global value.
+   * Operand is a global value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -156,7 +156,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 0206003e.
    * <p>
-   * Effective address is an immediate value plus offset.
+   * Operand is an immediate value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -179,7 +179,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 0206003f.
    * <p>
-   * Effective address is an immediate value plus offset.
+   * Operand is an immediate value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -201,7 +201,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030080.
    * <p>
-   * Effective address is a general purpose register value plus general purpose register value
+   * Operand is a general purpose register value plus general purpose register value
    *
    * @throws Exception If any Exception occurs
    */
@@ -223,7 +223,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 210600af.
    * <p>
-   * Effective address is a seq stored value plus general purpose register value.
+   * Operand is a seq stored value plus general purpose register value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -245,7 +245,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 060600b4.
    * <p>
-   * Effective address is a global value plus seq stored value.
+   * Operand is a global value plus seq stored value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -268,7 +268,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 020600be.
    * <p>
-   * Effective address is a read immediate value plus seq stored value plus offset.
+   * Operand is a read immediate value plus seq stored value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -293,7 +293,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 020600bf.
    * <p>
-   * Effective address is a peek immediate value plus general purpose register value plus offset.
+   * Operand is a peek immediate value plus general purpose register value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -318,7 +318,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030042.
    * <p>
-   * Effective address is a general purpose register value plus offset.
+   * Operand is a general purpose register value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -340,7 +340,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030053.
    * <p>
-   * Effective address is a general purpose register value plus offset.
+   * Operand is a general purpose register value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -362,7 +362,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 01500068.
    * <p>
-   * Effective address is a seq stored value plus offset.
+   * Operand is a seq stored value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -384,7 +384,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030066.
    * <p>
-   * Effective address is a seq stored value plus offset.
+   * Operand is a seq stored value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -406,7 +406,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 01500070.
    * <p>
-   * Effective address is a global value plus offset.
+   * Operand is a global value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -429,7 +429,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 3e020079.
    * <p>
-   * Effective address is a global value plus offset.
+   * Operand is a global value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -452,7 +452,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 0f0d007e.
    * <p>
-   * Effective address is a read immediate value plus offset.
+   * Operand is a read immediate value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -476,7 +476,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 0f0d007f.
    * <p>
-   * Effective address is a peeked immediate value plus offset.
+   * Operand is a peeked immediate value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
