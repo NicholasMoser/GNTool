@@ -77,21 +77,25 @@ public class DolphinSeqListener {
   }
 
   public void downloadLuaDolphin() {
-    try {
-      Desktop.getDesktop().browse(new URI(DOLPHIN_LUA_DOWNLOAD));
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Opening Dolphin Lua Download", e);
-      Message.error("Error Opening Dolphin Lua Download", e.getMessage());
-    }
+    new Thread(() -> {
+      try {
+        Desktop.getDesktop().browse(new URI(DOLPHIN_LUA_DOWNLOAD));
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Error Opening Dolphin Lua Download", e);
+        Message.error("Error Opening Dolphin Lua Download", e.getMessage());
+      }
+    }).start();
   }
 
   public void aboutDolphinSEQListener() {
-    try {
-      Desktop.getDesktop().browse(new URI(ABOUT_URL));
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
-      Message.error("Error Opening About Page", e.getMessage());
-    }
+    new Thread(() -> {
+      try {
+        Desktop.getDesktop().browse(new URI(ABOUT_URL));
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
+        Message.error("Error Opening About Page", e.getMessage());
+      }
+    }).start();
   }
 
   public void disassembleLine() {
@@ -322,7 +326,18 @@ public class DolphinSeqListener {
       }
       int offset = Integer.decode("0x" + message.substring(0, 8));
       String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
-      Browser.open(fileUri);
+      if (System.getProperty("os.name").startsWith("Windows")){
+        Browser.open(fileUri);
+      } else {
+        new Thread(() -> {
+          try {
+            Desktop.getDesktop().browse(new URI(fileUri));
+          } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error Opening File", e);
+            Message.error("Error Opening File", e.getMessage());
+          }
+        }).start();
+      }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Opening Line", e);
       Message.error("Error Opening Line", e.getMessage());
