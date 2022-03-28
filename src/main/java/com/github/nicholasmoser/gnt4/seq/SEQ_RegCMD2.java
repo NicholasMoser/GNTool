@@ -176,7 +176,7 @@ public class SEQ_RegCMD2 {
   public String getDescription() {
     return operands.stream()
         .map(Object::toString)
-        .collect(Collectors.joining("; "));
+        .collect(Collectors.joining(", "));
   }
 
   public List<Operand> getOperands() {

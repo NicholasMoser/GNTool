@@ -321,10 +321,10 @@ public class OpcodeGroup2A {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     baos.write(ea.getBytes());
-    StringBuilder info = new StringBuilder(ea.getDescription());
     SEQ_RegCMD1 ea2 = SEQ_RegCMD1.get(bs);
     baos.write(ea2.getBytes());
-    info.append("; ");
+    StringBuilder info = new StringBuilder(ea.getDescription());
+    info.append(", ");
     info.append(ea2.getDescription());
     baos.write(bs.readBytes(4));
     return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
