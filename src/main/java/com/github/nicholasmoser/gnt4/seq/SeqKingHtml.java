@@ -144,6 +144,9 @@ public class SeqKingHtml {
           display: inline-block;
           border-bottom: 1px dotted black;
         }
+        .g {
+          color: DimGray;
+        }
         """;
   }
 

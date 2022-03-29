@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class BranchLinkReturnLessThanEqualZero implements Opcode {
 
+  private final static String MNEMONIC = "blrlez";
   private final int offset;
 
   public BranchLinkReturnLessThanEqualZero(int offset) {
@@ -25,7 +26,7 @@ public class BranchLinkReturnLessThanEqualZero implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | blrlez {014B0000}", offset);
+    return String.format("%05X | %s {014B0000}", offset, MNEMONIC);
   }
 
   @Override

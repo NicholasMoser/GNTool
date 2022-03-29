@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class ShortNimply implements Opcode {
 
+  private final static String MNEMONIC = "s_nimply";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -29,7 +30,7 @@ public class ShortNimply implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | s_nimply %s %s", offset, info, formatRawBytes(bytes));
+    return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
   }
 
   @Override

@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Pop implements Opcode {
 
+  private final static String MNEMONIC = "pop";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -29,7 +30,7 @@ public class Pop implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | pop %s %s", offset, info, formatRawBytes(bytes));
+    return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
   }
 
   @Override

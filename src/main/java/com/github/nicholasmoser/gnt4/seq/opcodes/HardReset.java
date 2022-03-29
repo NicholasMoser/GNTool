@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class HardReset implements Opcode {
 
+  private final static String MNEMONIC = "hard_reset";
   private final int offset;
 
   public HardReset(int offset) {
@@ -25,7 +26,7 @@ public class HardReset implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | hard_reset {00010000}", offset);
+    return String.format("%05X | %s {00010000}", offset, MNEMONIC);
   }
 
   @Override

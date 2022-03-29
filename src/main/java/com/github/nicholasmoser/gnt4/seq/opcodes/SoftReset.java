@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class SoftReset implements Opcode {
 
+  private final static String MNEMONIC = "soft_reset";
   private final int offset;
 
   public SoftReset(int offset) {
@@ -25,7 +26,7 @@ public class SoftReset implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | soft_reset {00000000}", offset);
+    return String.format("%05X | %s {00000000}", offset, MNEMONIC);
   }
 
   @Override

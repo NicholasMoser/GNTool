@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Or implements Opcode {
 
+  private final static String MNEMONIC = "or";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -29,7 +30,7 @@ public class Or implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | or %s %s", offset, info, formatRawBytes(bytes));
+    return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
   }
 
   @Override

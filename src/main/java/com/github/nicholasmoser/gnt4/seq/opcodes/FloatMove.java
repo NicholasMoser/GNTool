@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class FloatMove implements Opcode {
 
+  private final static String MNEMONIC = "f_mov";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -29,7 +30,7 @@ public class FloatMove implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | f_mov %s %s", offset, info, formatRawBytes(bytes));
+    return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
   }
 
   @Override

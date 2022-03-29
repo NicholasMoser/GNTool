@@ -8,6 +8,7 @@ import j2html.tags.ContainerTag;
 
 public class SectionTitle implements Opcode {
 
+  private final static String MNEMONIC = "Section Title";
   private final int offset;
   private final byte[] bytes;
   private final String title;
@@ -34,7 +35,7 @@ public class SectionTitle implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | Section Title: %s %s", offset, title, formatRawBytes(bytes));
+    return String.format("%05X | %s: %s %s", offset, MNEMONIC, title, formatRawBytes(bytes));
   }
 
   @Override

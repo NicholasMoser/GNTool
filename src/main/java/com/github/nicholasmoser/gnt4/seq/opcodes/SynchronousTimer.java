@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 public class SynchronousTimer implements Opcode {
 
+  private final static String MNEMONIC = "sync_timer";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -32,7 +33,7 @@ public class SynchronousTimer implements Opcode {
   @Override
   public String toString() {
     int frames = ByteUtils.toInt32(Arrays.copyOfRange(bytes, 4, 8));
-    return String.format("%05X | sync_timer (%d frames) %s %s", offset, frames, info, formatRawBytes(bytes));
+    return String.format("%05X | %s (%d frames) %s %s", offset, MNEMONIC, frames, info, formatRawBytes(bytes));
   }
 
   @Override

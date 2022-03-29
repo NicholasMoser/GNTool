@@ -55,6 +55,8 @@ public class UnknownOpcode implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    return div(attrs(id))
+        .withText(String.format("%05X | op_%02X%02X %s ", offset, bytes[0], bytes[1], info))
+        .with(formatRawBytesHTML(bytes));
   }
 }

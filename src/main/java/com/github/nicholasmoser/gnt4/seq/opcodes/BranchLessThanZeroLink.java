@@ -11,6 +11,7 @@ import j2html.tags.ContainerTag;
 
 public class BranchLessThanZeroLink implements Opcode {
 
+  private final static String MNEMONIC = "bltzal";
   private final int offset;
   private final int destination;
 
@@ -31,7 +32,7 @@ public class BranchLessThanZeroLink implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | bltzal 0x%X {01410000 %08X}", offset, destination, destination);
+    return String.format("%05X | %s 0x%X {01410000 %08X}", offset, MNEMONIC, destination, destination);
   }
 
   @Override
