@@ -20,6 +20,10 @@ public class BranchLink implements Opcode {
     this.destination = destination;
   }
 
+  public int getDestination() {
+    return destination;
+  }
+
   @Override
   public int getOffset() {
     return offset;

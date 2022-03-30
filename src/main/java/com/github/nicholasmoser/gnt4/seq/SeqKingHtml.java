@@ -7,13 +7,15 @@ import static j2html.TagCreator.div;
 import static j2html.TagCreator.h1;
 import static j2html.TagCreator.head;
 import static j2html.TagCreator.html;
+import static j2html.TagCreator.li;
 import static j2html.TagCreator.p;
 import static j2html.TagCreator.script;
 import static j2html.TagCreator.style;
 import static j2html.TagCreator.title;
 import static j2html.TagCreator.ul;
-import static j2html.TagCreator.li;
 
+import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
@@ -69,14 +71,32 @@ public class SeqKingHtml {
     ContainerTag<PTag> subroutine = p();
     for (Opcode opcode : opcodes) {
       subroutine.with(opcode.toHTML());
-      if (opcode instanceof BranchLinkReturn ||
-          opcode instanceof SeqEditOpcode) {
+      if (isFunctionEnd(opcode, opcodes)) {
         body.with(subroutine);
         subroutine = p();
       }
     }
     body.with(subroutine);
     return body;
+  }
+
+  public static boolean isFunctionEnd(Opcode currentOpcode, List<Opcode> opcodes) {
+    if (currentOpcode instanceof BranchLinkReturn blr) {
+      // It's a new function if there is a branch and link to the first instruction after a blr
+      int offset = blr.getOffset();
+      for (Opcode opcode : opcodes) {
+        if (opcode instanceof BranchLink bl) {
+          if (offset == bl.getDestination()) {
+            return true;
+          }
+        }
+      }
+    } else if (currentOpcode instanceof BinaryData) {
+      return true;
+    } else if (currentOpcode instanceof SeqEditOpcode) {
+      return true;
+    }
+    return false;
   }
 
   /**
