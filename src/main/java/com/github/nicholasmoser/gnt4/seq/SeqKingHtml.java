@@ -83,14 +83,11 @@ public class SeqKingHtml {
    * @return The HTML head of the document.
    */
   private static ContainerTag getHead() {
-    // Tooltip no longer used for better performance
-    String css = getCSS(); // + getTooltipCSS("b");
+    String css = getCSS();
     return head(
         title("SEQ Report"),
         style(css),
-        // Tooltip no longer used for better performance
         script(getToggleHideBytes())
-        //script(getTooltipJavascript("b", "Unconditional branch to an offset."))
     );
   }
 
@@ -142,11 +139,6 @@ public class SeqKingHtml {
         a:visited {
           color: #4E94C3;
         }
-        .tooltip {
-          position: relative;
-          display: inline-block;
-          border-bottom: 1px dotted black;
-        }
         .g {
           color: DimGray;
         }
@@ -154,49 +146,6 @@ public class SeqKingHtml {
           color: #1E1E1E;
         }
         """;
-  }
-
-  /**
-   * Returns CSS for the tooltip of the given opcode.
-   *
-   * @param opcode The opcode to get the tooltip CSS for.
-   * @return The tooltip CSS.
-   */
-  private static String getTooltipCSS(String opcode) {
-    return "." + opcode + " ." + opcode + "text {"
-        + " visibility: hidden;"
-        + " width: 120px;"
-        + " background-color: black;"
-        + " color: #fff;"
-        + " text-align: center;"
-        + " border-radius: 6px;"
-        + " padding: 5px 0;"
-        + " position: absolute;"
-        + " z-index: 1;"
-        + " }"
-        + " ." + opcode + ":hover ." + opcode + "text {"
-        + " visibility: visible;"
-        + " }\n";
-  }
-
-  /**
-   * Returns a javascript code block that adds a tooltip for the given opcode. The opcode is
-   * referenced as an HTML class. The tooltip displays the given text parameter.
-   *
-   * @param opcode The opcode of the tooltip.
-   * @param text The text to display in the tooltip.
-   * @return The javascript code block of the tooltip.
-   */
-  private static String getTooltipJavascript(String opcode, String text) {
-    return "document.addEventListener('DOMContentLoaded', (event) => {\n"
-        + "var elements = document.getElementsByClassName('" + opcode + "');\n"
-        + "for (var i = 0; i < elements.length; i++) {\n"
-        + "    var span = document.createElement('span');\n"
-        + "    span.textContent = '" + text + "';\n"
-        + "    span.className = '" + opcode + "text'; \n"
-        + "    elements[i].appendChild(span);\n"
-        + "}"
-        + "})";
   }
 
   private static String getToggleHideBytes() {
