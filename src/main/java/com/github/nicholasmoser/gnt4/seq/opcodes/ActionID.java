@@ -81,8 +81,10 @@ public class ActionID implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", actionOffset);
     return div(attrs(id))
-        .with(span(String.format("%05X | Action ID 0x%X at offset ", offset, actionId)))
+        .withText(String.format("%05X | Action ID 0x%X at offset ", offset, actionId))
         .with(a(String.format("0x%X", actionOffset)).withHref(dest))
-        .with(span(String.format(" %s%s", formatRawBytes(bytes), info)));
+        .withText(" ")
+        .with(formatRawBytesHTML(bytes))
+        .withText(String.format(" %s", info));
   }
 }

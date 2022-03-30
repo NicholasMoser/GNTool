@@ -39,6 +39,9 @@ public class SynchronousTimer implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    int frames = ByteUtils.toInt32(Arrays.copyOfRange(bytes, 4, 8));
+    return div(attrs(id))
+        .withText(String.format("%05X | %s (%d frames) %s ", offset, MNEMONIC, frames, info))
+        .with(formatRawBytesHTML(bytes));
   }
 }

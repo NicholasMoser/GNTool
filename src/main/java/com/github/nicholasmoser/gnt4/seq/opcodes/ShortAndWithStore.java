@@ -36,6 +36,8 @@ public class ShortAndWithStore implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    return div(attrs(id))
+        .withText(String.format("%05X | %s %s ", offset, MNEMONIC, info))
+        .with(formatRawBytesHTML(bytes));
   }
 }

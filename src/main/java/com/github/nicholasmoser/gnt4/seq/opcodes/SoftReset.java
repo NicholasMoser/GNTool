@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.opcodes;
 
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
+import static j2html.TagCreator.span;
 
 import j2html.tags.ContainerTag;
 
@@ -32,6 +33,8 @@ public class SoftReset implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    return div(attrs(id))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
+        .with(span("00000000").withClass("g"));
   }
 }
