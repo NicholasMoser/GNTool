@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import static j2html.TagCreator.a;
 import static j2html.TagCreator.body;
+import static j2html.TagCreator.button;
 import static j2html.TagCreator.div;
 import static j2html.TagCreator.h1;
 import static j2html.TagCreator.head;
@@ -48,6 +49,7 @@ public class SeqKingHtml {
         getHead(),
         body(
             h1(fileName),
+            button("Toggle Hide Bytes").attr("onclick", "toggleHideBytes()"),
             getBody(opcodes)
         )
     ).withLang("en").render();
@@ -85,8 +87,9 @@ public class SeqKingHtml {
     String css = getCSS(); // + getTooltipCSS("b");
     return head(
         title("SEQ Report"),
-        style(css)
+        style(css),
         // Tooltip no longer used for better performance
+        script(getToggleHideBytes())
         //script(getTooltipJavascript("b", "Unconditional branch to an offset."))
     );
   }
@@ -147,6 +150,9 @@ public class SeqKingHtml {
         .g {
           color: DimGray;
         }
+        .v {
+          color: #1E1E1E;
+        }
         """;
   }
 
@@ -191,5 +197,24 @@ public class SeqKingHtml {
         + "    elements[i].appendChild(span);\n"
         + "}"
         + "})";
+  }
+
+  private static String getToggleHideBytes() {
+    return """
+        function toggleHideBytes() {
+          const isVisible = document.querySelector('.g');
+          if (isVisible != null) {
+            const elements = document.getElementsByClassName("g");
+            while(elements.length > 0) {
+              elements[0].className = 'v';
+            }
+          } else {
+            const elements = document.getElementsByClassName("v");
+            while(elements.length > 0) {
+              elements[0].className = 'g';
+            }
+          }
+        }
+        """;
   }
 }
