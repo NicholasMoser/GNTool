@@ -69,9 +69,10 @@ public class SeqKingHtml {
     Optional<ContainerTag> toc = getTableOfContents(opcodes);
     toc.ifPresent(body::with);
     ContainerTag<PTag> subroutine = p();
-    for (Opcode opcode : opcodes) {
+    for (int i = 0; i < opcodes.size(); i++) {
+      Opcode opcode = opcodes.get(i);
       subroutine.with(opcode.toHTML());
-      if (isFunctionEnd(opcode, opcodes)) {
+      if (isFunctionEnd(i, opcodes)) {
         body.with(subroutine);
         subroutine = p();
       }
@@ -80,10 +81,16 @@ public class SeqKingHtml {
     return body;
   }
 
-  public static boolean isFunctionEnd(Opcode currentOpcode, List<Opcode> opcodes) {
-    if (currentOpcode instanceof BranchLinkReturn blr) {
+  public static boolean isFunctionEnd(int index, List<Opcode> opcodes) {
+    if (index + 1 == opcodes.size()) {
+      // Start of file
+      return false;
+    }
+    Opcode currentOpcode = opcodes.get(index);
+    Opcode nextOpcode = opcodes.get(index + 1);
+    if (currentOpcode instanceof BranchLinkReturn) {
       // It's a new function if there is a branch and link to the first instruction after a blr
-      int offset = blr.getOffset();
+      int offset = nextOpcode.getOffset();
       for (Opcode opcode : opcodes) {
         if (opcode instanceof BranchLink bl) {
           if (offset == bl.getDestination()) {
@@ -91,9 +98,14 @@ public class SeqKingHtml {
           }
         }
       }
-    } else if (currentOpcode instanceof BinaryData) {
+    }
+    if (currentOpcode instanceof BinaryData) {
       return true;
-    } else if (currentOpcode instanceof SeqEditOpcode) {
+    }
+    if (nextOpcode instanceof BinaryData) {
+      return true;
+    }
+    if (currentOpcode instanceof SeqEditOpcode) {
       return true;
     }
     return false;
