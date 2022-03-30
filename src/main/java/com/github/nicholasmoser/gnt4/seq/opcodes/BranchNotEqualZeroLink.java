@@ -40,8 +40,9 @@ public class BranchNotEqualZeroLink implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);
     return div(attrs(id))
-        .with(span(String.format("%05X | bnezal ", offset)))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
         .with(a(String.format("0x%X", destination)).withHref(dest))
-        .with(span(String.format(" {013E0000 %08X}", destination)));
+        .withText(" ")
+        .with(formatRawBytesHTML(getBytes()));
   }
 }

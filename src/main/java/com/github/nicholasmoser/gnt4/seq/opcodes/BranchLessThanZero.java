@@ -48,8 +48,9 @@ public class BranchLessThanZero implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);
     return div(attrs(id))
-        .with(span(String.format("%05X | bltz ", offset)))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
         .with(a(String.format("0x%X", destination)).withHref(dest))
-        .with(span(String.format(" {01%02X0000 %08X}", secondByte, destination)));
+        .withText(" ")
+        .with(formatRawBytesHTML(getBytes()));
   }
 }

@@ -32,6 +32,8 @@ public class BranchLinkReturn implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    return div(attrs(id))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
+        .with(formatRawBytesHTML(getBytes()));
   }
 }
