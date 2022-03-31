@@ -22,9 +22,11 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnLessThanZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnNotEqualZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualToZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualZeroLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTable;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -57,7 +59,7 @@ public class OpcodeGroup01 {
       case 0x49 -> branchLinkReturnGreaterThanEqualZero(bs);
       case 0x4A -> branchLinkReturnLessThanZero(bs);
       case 0x4B -> branchLinkReturnLessThanEqualZero(bs);
-      case 0x50 -> op_0150(bs);
+      case 0x50 -> branch_table(bs);
       case 0x51 -> op_0151(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
@@ -248,20 +250,21 @@ public class OpcodeGroup01 {
     return new BranchLinkReturnLessThanEqualZero(offset);
   }
 
-  private static Opcode op_0150(ByteStream bs) throws IOException {
-    // Likely some kind of switch-case
+  private static Opcode branch_table(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
-    int word = bs.peekWord();
-    // After opcode 0150 is an array of SEQ offsets. Almost every opcode is larger than Seq.MAX_SIZE
-    // so this should almost always be fine.
-    while (word < Seq.MAX_SIZE) {
-      baos.write(bs.readBytes(4));
-      word = bs.peekWord();
+    byte[] numOfBranchesBytes = bs.readBytes(4);
+    baos.write(numOfBranchesBytes);
+    int numOfBranches = ByteUtils.toInt32(numOfBranchesBytes);
+    int[] offsets = new int[numOfBranches];
+    for (int i = 0; i < numOfBranches; i++) {
+      byte[] offsetBytes = bs.readBytes(4);
+      baos.write(offsetBytes);
+      offsets[i] = ByteUtils.toInt32(offsetBytes);
     }
-    return new UnknownOpcode(offset, baos.toByteArray(), ea.getDescription());
+    return new BranchTable(offset, baos.toByteArray(), ea.getDescription(), offsets);
   }
 
   private static Opcode op_0151(ByteStream bs) throws IOException {
