@@ -72,11 +72,13 @@ public class MOTUnpackerTool {
     }
 
   private static void tryToOpen(Path outputDir) {
-    try {
-      Desktop.getDesktop().open(outputDir.toFile());
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Open Directory", e);
-      Message.error("Failed to Open Directory", e.getMessage());
-    }
+    new Thread(() -> {
+      try {
+        Desktop.getDesktop().open(outputDir.toFile());
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Failed to Open Directory", e);
+        Message.error("Failed to Open Directory", e.getMessage());
+      }
+    }).start();
   }
 }
