@@ -14,6 +14,7 @@ import static j2html.TagCreator.style;
 import static j2html.TagCreator.title;
 import static j2html.TagCreator.ul;
 
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
@@ -82,23 +83,13 @@ public class SeqKingHtml {
   }
 
   public static boolean isFunctionEnd(int index, List<Opcode> opcodes) {
-    if (index + 1 == opcodes.size()) {
-      // Start of file
+    if ((index == 0) || (index + 1 == opcodes.size())) {
+      // Start or end of file, ignore
       return false;
     }
     Opcode currentOpcode = opcodes.get(index);
     Opcode nextOpcode = opcodes.get(index + 1);
-    if (currentOpcode instanceof BranchLinkReturn) {
-      // It's a new function if there is a branch and link to the first instruction after a blr
-      int offset = nextOpcode.getOffset();
-      for (Opcode opcode : opcodes) {
-        if (opcode instanceof BranchLink bl) {
-          if (offset == bl.getDestination()) {
-            return true;
-          }
-        }
-      }
-    }
+    // Break before and after binary data and seq edits
     if (currentOpcode instanceof BinaryData) {
       return true;
     }
@@ -107,6 +98,24 @@ public class SeqKingHtml {
     }
     if (currentOpcode instanceof SeqEditOpcode) {
       return true;
+    }
+    if (nextOpcode instanceof SeqEditOpcode) {
+      return true;
+    }
+    // Check for branching or referential patterns that indicate a function
+    int offset = nextOpcode.getOffset();
+    for (Opcode opcode : opcodes) {
+      if (currentOpcode instanceof BranchLinkReturn && opcode instanceof BranchLink bl) {
+        // It's a new function if there is a branch and link to the first instruction after a blr
+        if (offset == bl.getDestination()) {
+          return true;
+        }
+      } else if (opcode instanceof ActionID actionId) {
+        // Break where an action starts
+        if (offset == actionId.getActionOffset()) {
+          return true;
+        }
+      }
     }
     return false;
   }

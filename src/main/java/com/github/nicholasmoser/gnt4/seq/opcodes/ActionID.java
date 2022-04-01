@@ -61,6 +61,10 @@ public class ActionID implements Opcode {
     }
   }
 
+  public int getActionOffset() {
+    return actionOffset;
+  }
+
   @Override
   public int getOffset() {
     return offset;
