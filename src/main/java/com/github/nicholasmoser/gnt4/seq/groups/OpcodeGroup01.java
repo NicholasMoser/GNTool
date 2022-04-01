@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
+import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZeroLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLessThanEqualZeroLink;
@@ -29,6 +30,8 @@ import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OpcodeGroup01 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
@@ -251,6 +254,7 @@ public class OpcodeGroup01 {
   }
 
   private static Opcode branch_table(ByteStream bs) throws IOException {
+    // First read the input and number of branches
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -258,16 +262,26 @@ public class OpcodeGroup01 {
     byte[] numOfBranchesBytes = bs.readBytes(4);
     baos.write(numOfBranchesBytes);
     int numOfBranches = ByteUtils.toInt32(numOfBranchesBytes);
-    int[] offsets = new int[numOfBranches];
+    StringBuilder info = new StringBuilder(ea.getDescription());
+    // Iterate over each branch table offset
+    List<Integer> offsets = new ArrayList<>();
     for (int i = 0; i < numOfBranches; i++) {
-      byte[] offsetBytes = bs.readBytes(4);
-      baos.write(offsetBytes);
-      offsets[i] = ByteUtils.toInt32(offsetBytes);
+      byte[] branchOffsetBytes = bs.peekBytes(4);
+      int branchOffset = ByteUtils.toInt32(branchOffsetBytes);
+      if (branchOffset > Seq.MAX_SIZE) {
+        // numOfBranches seems to be invalid for some files like maki/m_title.seq and ita/0000.seq
+        info.append(String.format(" (INVALID NUM OF BRANCHES, SHOULD BE %d)", numOfBranches));
+        break;
+      }
+      bs.skip(4); // Skip the 4 that were previously peeked
+      baos.write(branchOffsetBytes);
+      offsets.add(branchOffset);
     }
-    return new BranchTable(offset, baos.toByteArray(), ea.getDescription(), offsets);
+    return new BranchTable(offset, baos.toByteArray(), info.toString(), offsets);
   }
 
   private static Opcode branch_table_link(ByteStream bs) throws IOException {
+    // First read the input and number of branches
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -275,12 +289,21 @@ public class OpcodeGroup01 {
     byte[] numOfBranchesBytes = bs.readBytes(4);
     baos.write(numOfBranchesBytes);
     int numOfBranches = ByteUtils.toInt32(numOfBranchesBytes);
-    int[] offsets = new int[numOfBranches];
+    StringBuilder info = new StringBuilder(ea.getDescription());
+    // Iterate over each branch table offset
+    List<Integer> offsets = new ArrayList<>();
     for (int i = 0; i < numOfBranches; i++) {
-      byte[] offsetBytes = bs.readBytes(4);
-      baos.write(offsetBytes);
-      offsets[i] = ByteUtils.toInt32(offsetBytes);
+      byte[] branchOffsetBytes = bs.peekBytes(4);
+      int branchOffset = ByteUtils.toInt32(branchOffsetBytes);
+      if (branchOffset > Seq.MAX_SIZE) {
+        // numOfBranches seems to be invalid for some files like maki/m_title.seq and ita/0000.seq
+        info.append(String.format(" (INVALID NUM OF BRANCHES, SHOULD BE %d)", numOfBranches));
+        break;
+      }
+      bs.skip(4); // Skip the 4 that were previously peeked
+      baos.write(branchOffsetBytes);
+      offsets.add(branchOffset);
     }
-    return new BranchTableLink(offset, baos.toByteArray(), ea.getDescription(), offsets);
+    return new BranchTableLink(offset, baos.toByteArray(), info.toString(), offsets);
   }
 }
