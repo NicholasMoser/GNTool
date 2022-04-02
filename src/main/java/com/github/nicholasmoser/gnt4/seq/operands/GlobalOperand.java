@@ -22,7 +22,12 @@ public class GlobalOperand implements Operand {
     this.value = value;
     this.infoBuilder = new StringBuilder();
   }
-  
+
+  @Override
+  public int get() {
+    return getAddress();
+  }
+
   public String getName() {
     return value.toString();
   }

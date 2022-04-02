@@ -12,6 +12,8 @@ public class ImmediateOperand implements Operand {
     this.infoBuilder = new StringBuilder();
   }
 
+  public int get() { return getOffset(); }
+
   public int getOffset() {
     return offset;
   }
