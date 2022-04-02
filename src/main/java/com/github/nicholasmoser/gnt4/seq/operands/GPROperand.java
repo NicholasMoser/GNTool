@@ -18,6 +18,8 @@ public class GPROperand implements Operand {
     this.infoBuilder = new StringBuilder();
   }
 
+  public int get() { return getIndex(); }
+
   public int getIndex() {
     return index;
   }
