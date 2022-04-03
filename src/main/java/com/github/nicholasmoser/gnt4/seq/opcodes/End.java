@@ -6,12 +6,12 @@ import static j2html.TagCreator.span;
 
 import j2html.tags.ContainerTag;
 
-public class SoftReset implements Opcode {
+public class End implements Opcode {
 
-  private final static String MNEMONIC = "soft_reset";
+  private final static String MNEMONIC = "end";
   private final int offset;
 
-  public SoftReset(int offset) {
+  public End(int offset) {
     this.offset = offset;
   }
 
