@@ -3,7 +3,10 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SetTimerDecrement;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
+import com.github.nicholasmoser.gnt4.seq.operands.Operand;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.google.common.primitives.Bytes;
 import java.io.IOException;
@@ -24,7 +27,7 @@ public class OpcodeGroup21 {
       case 0x0F -> op_210F(bs);
       case 0x10 -> op_2110(bs);
       case 0x11 -> op_2111(bs);
-      case 0x12 -> op_2112(bs);
+      case 0x12 -> set_timer_decrement(bs);
       case 0x13 -> op_2113(bs);
       case 0x14 -> op_2114(bs);
       case 0x15 -> op_2115(bs);
@@ -115,10 +118,20 @@ public class OpcodeGroup21 {
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
   }
 
-  private static Opcode op_2112(ByteStream bs) throws IOException {
+  private static Opcode set_timer_decrement(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    StringBuilder info = new StringBuilder(ea.getDescription());
+    Operand secondOperand = ea.getSecondOperand();
+    if (secondOperand instanceof ImmediateOperand decrement) {
+      int value = decrement.getImmediateValue();
+      if (value == 0) {
+        info.append(" (default to 0x100)");
+      }
+    } else {
+      throw new IllegalStateException("Second operand should always be an immediate value.");
+    }
+    return new SetTimerDecrement(offset, ea.getBytes(), info.toString());
   }
 
   private static Opcode op_2113(ByteStream bs) throws IOException {
