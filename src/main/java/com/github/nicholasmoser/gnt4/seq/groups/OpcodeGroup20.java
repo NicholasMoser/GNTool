@@ -2,6 +2,8 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
+import com.github.nicholasmoser.gnt4.seq.opcodes.CharacterUpdate;
+import com.github.nicholasmoser.gnt4.seq.opcodes.CharacterUpdate2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SynchronousTimer;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SynchronousTimerRun;
@@ -88,13 +90,13 @@ public class OpcodeGroup20 {
   private static Opcode op_2002(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new CharacterUpdate(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_2003(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new CharacterUpdate2(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_2004(ByteStream bs) throws IOException {
