@@ -97,7 +97,7 @@ public class SEQ_RegCMD1 {
           pushWord(bs.readWord());
           operand = new SeqOperand(opcode_last_byte - 0x18, true);
         } else {
-          operand = loadOperand(opcode_last_byte, true);
+          operand = SEQ_RegGP(opcode_last_byte, true);
           pushWord(bs.readWord());
         }
       } else {
@@ -108,7 +108,7 @@ public class SEQ_RegCMD1 {
         } else if (lastSixBits < 0x30) {
           operand = new SeqOperand(lastSixBits * 4, false);
         } else {
-          operand = loadOperand(lastSixBits, false);
+          operand = SEQ_RegGP(lastSixBits, false);
         }
         pushWord(bs.readWord());
         int word = bs.readWord();
@@ -130,7 +130,7 @@ public class SEQ_RegCMD1 {
       } else if (lastSixBits < 0x30) {
         operand = new SeqOperand(lastSixBits * 4, false);
       } else {
-        operand = loadOperand(lastSixBits, false);
+        operand = SEQ_RegGP(lastSixBits, false);
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
@@ -147,7 +147,7 @@ public class SEQ_RegCMD1 {
    * @return The Operand.
    * @throws IOException If an I/O error occurs.
    */
-  private Operand loadOperand(byte bitFlag, boolean returnPc) throws IOException {
+  private Operand SEQ_RegGP(byte bitFlag, boolean returnPc) throws IOException {
     return switch (bitFlag) {
       case 0x30 ->
           // Appears to be a matrix identity used for matrix multiplication of attacking hitbox
