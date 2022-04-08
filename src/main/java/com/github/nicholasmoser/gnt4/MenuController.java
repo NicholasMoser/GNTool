@@ -613,12 +613,20 @@ public class MenuController {
    */
   @FXML
   protected void about() {
-    try {
-      Desktop.getDesktop().browse(new URI(ABOUT_URL));
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
-      Message.error("Error Opening About Page", e.getMessage());
-    }
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        Desktop.getDesktop().browse(new URI(ABOUT_URL));
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
+        LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
+        Message.error("Error Opening About Page", e.getMessage());
+      }
+    });
+    new Thread(task).start();
   }
 
   /**
@@ -626,12 +634,20 @@ public class MenuController {
    */
   @FXML
   protected void openDirectory() {
-    try {
-      Desktop.getDesktop().open(uncompressedDirectory.toFile());
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
-      Message.error("Error Opening Workspace Directory", e.getMessage());
-    }
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        Desktop.getDesktop().open(uncompressedDirectory.toFile());
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
+        LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
+        Message.error("Error Opening Workspace Directory", e.getMessage());
+      }
+    });
+    new Thread(task).start();
   }
 
   @FXML
@@ -654,32 +670,40 @@ public class MenuController {
 
   @FXML
   protected void musyxExtract() {
-    try {
-      String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
-      Path samFilePath = uncompressedDirectory.resolve(samFile);
-      if (!Files.exists(samFilePath)) {
-        samFilePath = Paths.get(samFile);
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        String samFile = musyxSamFile.getSelectionModel().getSelectedItem();
+        Path samFilePath = uncompressedDirectory.resolve(samFile);
         if (!Files.exists(samFilePath)) {
-          throw new IOException("Unable to find SAM file: " + samFile);
+          samFilePath = Paths.get(samFile);
+          if (!Files.exists(samFilePath)) {
+            throw new IOException("Unable to find SAM file: " + samFile);
+          }
         }
+        String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
+        Path sdiFilePath = Paths.get(sdiFile);
+        String name = samFilePath.getFileName().toString().replace(".sam", "/");
+        Path outputPath = samFilePath.getParent().resolve(name);
+        if (!Files.isRegularFile(sdiFilePath)) {
+          String message = "Cannot find .sdi file: " + sdiFilePath;
+          LOGGER.log(Level.SEVERE, message);
+          Message.error("Missing .sdi", message);
+          return null;
+        }
+        Files.createDirectories(outputPath);
+        MusyXExtract.extract_samples(sdiFilePath, samFilePath, outputPath);
+        Desktop.getDesktop().open(outputPath.toFile());
+        return null;
       }
-      String sdiFile = samFilePath.toString().replace(".sam", ".sdi");
-      Path sdiFilePath = Paths.get(sdiFile);
-      String name = samFilePath.getFileName().toString().replace(".sam", "/");
-      Path outputPath = samFilePath.getParent().resolve(name);
-      if (!Files.isRegularFile(sdiFilePath)) {
-        String message = "Cannot find .sdi file: " + sdiFilePath;
-        LOGGER.log(Level.SEVERE, message);
-        Message.error("Missing .sdi", message);
-        return;
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
+        LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
+        Message.error("Error Extracting Audio", e.getMessage());
       }
-      Files.createDirectories(outputPath);
-      MusyXExtract.extract_samples(sdiFilePath, samFilePath, outputPath);
-      Desktop.getDesktop().open(outputPath.toFile());
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
-      Message.error("Error Extracting Audio", e.getMessage());
-    }
+    });
+    new Thread(task).start();
   }
 
   @FXML
@@ -890,31 +914,39 @@ public class MenuController {
 
   @FXML
   protected void txg2tplExtract() {
-    try {
-      String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
-      Path txgFilePath = uncompressedDirectory.resolve(txgFile);
-      if (!Files.exists(txgFilePath)) {
-        txgFilePath = Paths.get(txgFile);
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        String txgFile = txg2tplTexture.getSelectionModel().getSelectedItem();
+        Path txgFilePath = uncompressedDirectory.resolve(txgFile);
         if (!Files.exists(txgFilePath)) {
-          throw new IOException("Unable to find TXG file: " + txgFile);
+          txgFilePath = Paths.get(txgFile);
+          if (!Files.exists(txgFilePath)) {
+            throw new IOException("Unable to find TXG file: " + txgFile);
+          }
         }
+        String name = txgFilePath.getFileName().toString().replace(".txg", "/");
+        Path outputPath = txgFilePath.getParent().resolve(name);
+        if (!Files.isRegularFile(txgFilePath)) {
+          String message = "Cannot find .txg file: " + txgFilePath;
+          LOGGER.log(Level.SEVERE, message);
+          Message.error("Missing .txg", message);
+          return null;
+        }
+        Files.createDirectories(outputPath);
+        String output = TXG2TPL.unpack(txgFilePath, outputPath);
+        LOGGER.log(Level.INFO, output);
+        Desktop.getDesktop().open(outputPath.toFile());
+        return null;
       }
-      String name = txgFilePath.getFileName().toString().replace(".txg", "/");
-      Path outputPath = txgFilePath.getParent().resolve(name);
-      if (!Files.isRegularFile(txgFilePath)) {
-        String message = "Cannot find .txg file: " + txgFilePath;
-        LOGGER.log(Level.SEVERE, message);
-        Message.error("Missing .txg", message);
-        return;
-      }
-      Files.createDirectories(outputPath);
-      String output = TXG2TPL.unpack(txgFilePath, outputPath);
-      LOGGER.log(Level.INFO, output);
-      Desktop.getDesktop().open(outputPath.toFile());
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Extracting Textures", e);
-      Message.error("Error Extracting Textures", e.getMessage());
-    }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+        if (e!=null){
+          LOGGER.log(Level.SEVERE, "Error Extracting Textures", e);
+          Message.error("Error Extracting Textures", e.getMessage());
+        }
+    });
+    new Thread(task).start();
   }
 
   @FXML
@@ -1477,20 +1509,36 @@ public class MenuController {
     ContextMenu contextMenu = new ContextMenu();
     Path fullFilePath = uncompressedDirectory.resolve(filePath);
     MenuItem openFile = new MenuItem("Open File");
-    openFile.setOnAction(event -> {
-      try {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
         Desktop.getDesktop().open(fullFilePath.toFile());
-      } catch (IOException e) {
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
         LOGGER.log(Level.SEVERE, "Error Opening File", e);
       }
     });
+    openFile.setOnAction(event -> {
+      new Thread(task).start();
+    });
     MenuItem openDirectory = new MenuItem("Open Directory");
-    openDirectory.setOnAction(event -> {
-      try {
+    Task<Void> task2 = new Task<>() {
+      @Override
+      public Void call() throws Exception {
         Desktop.getDesktop().open(fullFilePath.getParent().toFile());
-      } catch (IOException e) {
+        return null;
+      }
+    };
+    task2.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
         LOGGER.log(Level.SEVERE, "Error Opening Directory", e);
       }
+    });
+    openDirectory.setOnAction(event -> {
+      new Thread(task2).start();
     });
     MenuItem revertChanges = new MenuItem("Revert Changes");
     revertChanges.setOnAction(event -> {

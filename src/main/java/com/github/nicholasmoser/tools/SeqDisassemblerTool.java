@@ -155,12 +155,20 @@ public class SeqDisassemblerTool {
     String msg = "Would you like to open the file now?";
     boolean yes = Message.infoConfirmation("Seq Successfully Disassembled", msg);
     if (yes) {
-      try {
-        Desktop.getDesktop().open(outputFile.toFile());
-      } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Failed to Open File", e);
-        Message.error("Failed to Open File", e.getMessage());
-      }
+      Task<Void> task = new Task<>() {
+        @Override
+        public Void call() throws Exception {
+          Desktop.getDesktop().open(outputFile.toFile());
+          return null;
+        }
+      };
+      task.exceptionProperty().addListener((observable,oldValue, e) -> {
+        if (e!=null){
+          LOGGER.log(Level.SEVERE, "Failed to Open File", e);
+          Message.error("Failed to Open File", e.getMessage());
+        }
+      });
+      new Thread(task).start();
     }
   }
 }
