@@ -24,42 +24,36 @@ public class OpcodeGroup0B {
   private static Opcode op_0B02(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0B03(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0B04(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0B07(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0B0A(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0B13(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 }

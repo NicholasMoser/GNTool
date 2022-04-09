@@ -11,6 +11,7 @@ import j2html.tags.ContainerTag;
 
 public class BranchLessThanZero implements Opcode {
 
+  private final static String MNEMONIC = "bltz";
   private final int offset;
   private final int destination;
   private final byte secondByte;
@@ -39,7 +40,7 @@ public class BranchLessThanZero implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | bltz 0x%X {01%02X0000 %08X}", offset, destination, secondByte, destination);
+    return String.format("%05X | %s 0x%X {01%02X0000 %08X}", offset, MNEMONIC, destination, secondByte, destination);
   }
 
   @Override
@@ -47,8 +48,9 @@ public class BranchLessThanZero implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);
     return div(attrs(id))
-        .with(span(String.format("%05X | bltz ", offset)))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
         .with(a(String.format("0x%X", destination)).withHref(dest))
-        .with(span(String.format(" {01%02X0000 %08X}", secondByte, destination)));
+        .withText(" ")
+        .with(formatRawBytesHTML(getBytes()));
   }
 }

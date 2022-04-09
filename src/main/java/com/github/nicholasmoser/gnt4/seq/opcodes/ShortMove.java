@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class ShortMove implements Opcode {
 
+  private final static String MNEMONIC = "s_mov";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -29,12 +30,14 @@ public class ShortMove implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | s_mov %s %s", offset, formatRawBytes(bytes), info);
+    return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
   }
 
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    return div(attrs(id))
+        .withText(String.format("%05X | %s %s ", offset, MNEMONIC, info))
+        .with(formatRawBytesHTML(bytes));
   }
 }

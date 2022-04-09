@@ -38,77 +38,66 @@ public class OpcodeGroup06 {
   private static Opcode s_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortMove(offset, ea.getBytes(), info);
+    return new ShortMove(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode s_andws(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortAndWithStore(offset, ea.getBytes(), info);
+    return new ShortAndWithStore(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode s_nimply(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortNimply(offset, ea.getBytes(), info);
+    return new ShortNimply(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode s_inc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortIncrement(offset, ea.getBytes(), info);
+    return new ShortIncrement(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode s_dec(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortDecrement(offset, ea.getBytes(), info);
+    return new ShortDecrement(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode s_add(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortAdd(offset, ea.getBytes(), info);
+    return new ShortAdd(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode s_sub(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortSubtract(offset, ea.getBytes(), info);
+    return new ShortSubtract(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode s_or(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortOr(offset, ea.getBytes(), info);
+    return new ShortOr(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode s_subws(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new ShortSubtractWithStore(offset, ea.getBytes(), info);
+    return new ShortSubtractWithStore(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0615(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0616(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 }

@@ -30,7 +30,6 @@ public class OpcodeGroup49 {
   public static Opcode op_4909(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
     Operand operandOne = ea.getFirstOperand();
@@ -58,6 +57,6 @@ public class OpcodeGroup49 {
     } else {
       throw new IllegalStateException("This operand is not yet supported: " + operandOne);
     }
-    return new UnknownOpcode(offset, baos.toByteArray(), info);
+    return new UnknownOpcode(offset, baos.toByteArray(), ea.getDescription());
   }
 }

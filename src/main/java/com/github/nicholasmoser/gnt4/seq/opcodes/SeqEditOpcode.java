@@ -12,6 +12,7 @@ import java.util.List;
 
 public class SeqEditOpcode implements Opcode {
 
+  private final static String MNEMONIC = "Seq Edit";
   private final int offset;
   private final SeqEdit edit;
 
@@ -32,7 +33,7 @@ public class SeqEditOpcode implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | Seq Edit: %s %s", offset, edit.getName(), formatRawBytes(getBytes()));
+    return String.format("%05X | %s: %s %s", offset, MNEMONIC, edit.getName(), formatRawBytes(getBytes()));
   }
 
   @Override

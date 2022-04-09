@@ -22,22 +22,19 @@ public class OpcodeGroup14 {
   private static Opcode op_1400(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_1404(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(0x14);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
   }
 
   private static Opcode op_1409(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 }

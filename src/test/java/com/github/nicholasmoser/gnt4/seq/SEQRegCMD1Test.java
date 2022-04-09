@@ -19,7 +19,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 13040013.
    * <p>
-   * Effective address is a general purpose register value.
+   * Operand is a general purpose register value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -30,7 +30,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr19", ea.getDescription());
+    assertEquals("gpr19", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -41,7 +41,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030003.
    * <p>
-   * Effective address is a general purpose register value.
+   * Operand is a general purpose register value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -52,7 +52,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: gpr3", ea.getDescription());
+    assertEquals("gpr3", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -63,7 +63,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 13060022.
    * <p>
-   * Effective address is a seq stored value.
+   * Operand is a seq stored value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -74,7 +74,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: seq_p_sp->field_0x0a", ea.getDescription());
+    assertEquals("seq_p_sp->field_0x0a", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -85,7 +85,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 21060026.
    * <p>
-   * Effective address is a seq stored value.
+   * Operand is a seq stored value.
    * <p>
    * This is called for getting this seq's chr_p +4 bytes appears to be the opponent chr_p
    * TODO: Is that true?
@@ -99,7 +99,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: seq_p_sp->field_0x0e", ea.getDescription());
+    assertEquals("seq_p_sp->field_0x0e", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -110,7 +110,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 06060032.
    * <p>
-   * Effective address is a global value.
+   * Operand is a global value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -121,7 +121,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: CONTROLLERS", ea.getDescription());
+    assertEquals("CONTROLLERS", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GlobalOperand);
     GlobalOperand globalOperand = (GlobalOperand) operand;
@@ -133,7 +133,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 06060039.
    * <p>
-   * Effective address is a global value.
+   * Operand is a global value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -144,7 +144,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: SAVE_DATA", ea.getDescription());
+    assertEquals("SAVE_DATA", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GlobalOperand);
     GlobalOperand globalOperand = (GlobalOperand) operand;
@@ -156,7 +156,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 0206003e.
    * <p>
-   * Effective address is an immediate value plus offset.
+   * Operand is an immediate value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -168,7 +168,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: Immediate value offset 0x4 (0x00000100)", ea.getDescription());
+    assertEquals("0x100", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
     ImmediateOperand immediateOperand = (ImmediateOperand) operand;
@@ -179,7 +179,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 0206003f.
    * <p>
-   * Effective address is an immediate value plus offset.
+   * Operand is an immediate value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -190,7 +190,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: Immediate value offset 0x4 (0x00000100)", ea.getDescription());
+    assertEquals("0x100", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
     ImmediateOperand immediateOperand = (ImmediateOperand) operand;
@@ -201,7 +201,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030080.
    * <p>
-   * Effective address is a general purpose register value plus general purpose register value
+   * Operand is a general purpose register value plus general purpose register value
    *
    * @throws Exception If any Exception occurs
    */
@@ -212,7 +212,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *gpr0 + *gpr23 + 0000", ea.getDescription());
+    assertEquals("*gpr0 + *gpr23 + 0000", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -223,7 +223,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 210600af.
    * <p>
-   * Effective address is a seq stored value plus general purpose register value.
+   * Operand is a seq stored value plus general purpose register value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -234,7 +234,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *seq_p_sp->field_0xbc + *gpr23 + 0000", ea.getDescription());
+    assertEquals("*seq_p_sp->field_0xbc + *gpr23 + 0000", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -245,7 +245,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 060600b4.
    * <p>
-   * Effective address is a global value plus seq stored value.
+   * Operand is a global value plus seq stored value.
    *
    * @throws Exception If any Exception occurs
    */
@@ -256,7 +256,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: DISPLAY + *seq_p_sp->field_0x90 + 0000", ea.getDescription());
+    assertEquals("DISPLAY + *seq_p_sp->field_0x90 + 0000", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GlobalOperand);
     GlobalOperand globalOperand = (GlobalOperand) operand;
@@ -268,7 +268,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 020600be.
    * <p>
-   * Effective address is a read immediate value plus seq stored value plus offset.
+   * Operand is a read immediate value plus seq stored value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -281,7 +281,7 @@ public class SEQRegCMD1Test {
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbe, 0x12, 0x34, 0x00, 0x04},
         ea.getBytes());
-    assertEquals("EA: Immediate value offset 0x8 (0x00003000) + *gpr4 + 1234",
+    assertEquals("0x3000 + *gpr4 + 1234",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
@@ -293,7 +293,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 020600bf.
    * <p>
-   * Effective address is a peek immediate value plus general purpose register value plus offset.
+   * Operand is a peek immediate value plus general purpose register value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -306,7 +306,7 @@ public class SEQRegCMD1Test {
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{(byte) 0x02, 0x06, 0x00, (byte) 0xbf, 0x12, 0x34, 0x00, 0x04},
         ea.getBytes());
-    assertEquals("EA: Immediate value offset 0x8 (0x00003000) + *gpr4 + 1234",
+    assertEquals("0x3000 + *gpr4 + 1234",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
@@ -318,7 +318,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030042.
    * <p>
-   * Effective address is a general purpose register value plus offset.
+   * Operand is a general purpose register value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -329,7 +329,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *gpr2 + offset 0x00000000", ea.getDescription());
+    assertEquals("*gpr2 + offset 0x0", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -340,7 +340,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030053.
    * <p>
-   * Effective address is a general purpose register value plus offset.
+   * Operand is a general purpose register value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -351,7 +351,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *gpr19 + offset 0x00000004", ea.getDescription());
+    assertEquals("*gpr19 + offset 0x4", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -362,7 +362,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 01500068.
    * <p>
-   * Effective address is a seq stored value plus offset.
+   * Operand is a seq stored value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -373,7 +373,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *seq_p_sp->field_0xa0 + offset 0x0000005C", ea.getDescription());
+    assertEquals("*seq_p_sp->field_0xa0 + offset 0x5C", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -384,7 +384,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 03030066.
    * <p>
-   * Effective address is a seq stored value plus offset.
+   * Operand is a seq stored value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -395,7 +395,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: *seq_p_sp->field_0x98 + offset 0x00000020", ea.getDescription());
+    assertEquals("*seq_p_sp->field_0x98 + offset 0x20", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -406,7 +406,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 01500070.
    * <p>
-   * Effective address is a global value plus offset.
+   * Operand is a global value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -417,7 +417,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: HITBOX_IDENTITY_MATRIX + offset 0x00000060", ea.getDescription());
+    assertEquals("HITBOX_IDENTITY_MATRIX + offset 0x60", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GlobalOperand);
     GlobalOperand globalOperand = (GlobalOperand) operand;
@@ -429,7 +429,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 3e020079.
    * <p>
-   * Effective address is a global value plus offset.
+   * Operand is a global value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -440,7 +440,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("EA: SAVE_DATA + offset 0x000001B6", ea.getDescription());
+    assertEquals("SAVE_DATA + offset 0x1B6", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GlobalOperand);
     GlobalOperand globalOperand = (GlobalOperand) operand;
@@ -452,7 +452,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 0f0d007e.
    * <p>
-   * Effective address is a read immediate value plus offset.
+   * Operand is a read immediate value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -464,7 +464,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7e, 0x00, 0x00, 0x10, 0x00}, ea.getBytes());
-    assertEquals("EA: Immediate value offset 0x8 (0x00000000) + offset 0x00001000",
+    assertEquals("0x0 + offset 0x1000",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
@@ -476,7 +476,7 @@ public class SEQRegCMD1Test {
   /**
    * Tests calling opcode 0f0d007f.
    * <p>
-   * Effective address is a peeked immediate value plus offset.
+   * Operand is a peeked immediate value plus offset.
    *
    * @throws Exception If any Exception occurs
    */
@@ -489,7 +489,7 @@ public class SEQRegCMD1Test {
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89},
         ea.getBytes());
-    assertEquals("EA: Immediate value offset 0x8 (0x0f0e003f) + offset 0x00000089",
+    assertEquals("0xF0E003F + offset 0x89",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);

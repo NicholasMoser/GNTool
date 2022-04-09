@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public class Branch implements Opcode {
 
+  private final static String MNEMONIC = "b";
   private final int offset;
   private final int destination;
 
@@ -32,7 +33,7 @@ public class Branch implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | b 0x%X {01320000 %08X}", offset, destination, destination);
+    return String.format("%05X | %s 0x%X {01320000 %08X}", offset, MNEMONIC, destination, destination);
   }
 
   @Override
@@ -40,13 +41,9 @@ public class Branch implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);
     return div(attrs(id))
-        .with(span(String.format("%05X | b ", offset)).attr("class=\"b\""))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
         .with(a(String.format("0x%X", destination)).withHref(dest))
-        .with(span(String.format(" {01320000 %08X}", destination)));
-  }
-
-  @Override
-  public Optional<String> description() {
-    return Optional.of("Unconditional branch to offset.");
+        .withText(" ")
+        .with(formatRawBytesHTML(getBytes()));
   }
 }

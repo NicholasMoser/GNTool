@@ -2,17 +2,21 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import static j2html.TagCreator.a;
 import static j2html.TagCreator.body;
+import static j2html.TagCreator.button;
 import static j2html.TagCreator.div;
 import static j2html.TagCreator.h1;
 import static j2html.TagCreator.head;
 import static j2html.TagCreator.html;
+import static j2html.TagCreator.li;
 import static j2html.TagCreator.p;
 import static j2html.TagCreator.script;
 import static j2html.TagCreator.style;
 import static j2html.TagCreator.title;
 import static j2html.TagCreator.ul;
-import static j2html.TagCreator.li;
 
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
@@ -48,6 +52,7 @@ public class SeqKingHtml {
         getHead(),
         body(
             h1(fileName),
+            button("Toggle Hide Bytes").attr("onclick", "toggleHideBytes()"),
             getBody(opcodes)
         )
     ).withLang("en").render();
@@ -65,10 +70,10 @@ public class SeqKingHtml {
     Optional<ContainerTag> toc = getTableOfContents(opcodes);
     toc.ifPresent(body::with);
     ContainerTag<PTag> subroutine = p();
-    for (Opcode opcode : opcodes) {
+    for (int i = 0; i < opcodes.size(); i++) {
+      Opcode opcode = opcodes.get(i);
       subroutine.with(opcode.toHTML());
-      if (opcode instanceof BranchLinkReturn ||
-          opcode instanceof SeqEditOpcode) {
+      if (isFunctionEnd(i, opcodes)) {
         body.with(subroutine);
         subroutine = p();
       }
@@ -77,15 +82,53 @@ public class SeqKingHtml {
     return body;
   }
 
+  public static boolean isFunctionEnd(int index, List<Opcode> opcodes) {
+    if ((index == 0) || (index + 1 == opcodes.size())) {
+      // Start or end of file, ignore
+      return false;
+    }
+    Opcode currentOpcode = opcodes.get(index);
+    Opcode nextOpcode = opcodes.get(index + 1);
+    // Break before and after binary data and seq edits
+    if (currentOpcode instanceof BinaryData) {
+      return true;
+    }
+    if (nextOpcode instanceof BinaryData) {
+      return true;
+    }
+    if (currentOpcode instanceof SeqEditOpcode) {
+      return true;
+    }
+    if (nextOpcode instanceof SeqEditOpcode) {
+      return true;
+    }
+    // Check for branching or referential patterns that indicate a function
+    int offset = nextOpcode.getOffset();
+    for (Opcode opcode : opcodes) {
+      if (currentOpcode instanceof BranchLinkReturn && opcode instanceof BranchLink bl) {
+        // It's a new function if there is a branch and link to the first instruction after a blr
+        if (offset == bl.getDestination()) {
+          return true;
+        }
+      } else if (opcode instanceof ActionID actionId) {
+        // Break where an action starts
+        if (offset == actionId.getActionOffset()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   /**
    * @return The HTML head of the document.
    */
   private static ContainerTag getHead() {
-    String css = getCSS() + getTooltipCSS("b");
+    String css = getCSS();
     return head(
         title("SEQ Report"),
         style(css),
-        script(getTooltipJavascript("b", "Unconditional branch to an offset."))
+        script(getToggleHideBytes())
     );
   }
 
@@ -137,54 +180,31 @@ public class SeqKingHtml {
         a:visited {
           color: #4E94C3;
         }
-        .tooltip {
-          position: relative;
-          display: inline-block;
-          border-bottom: 1px dotted black;
+        .g {
+          color: DimGray;
+        }
+        .v {
+          color: #1E1E1E;
         }
         """;
   }
 
-  /**
-   * Returns CSS for the tooltip of the given opcode.
-   *
-   * @param opcode The opcode to get the tooltip CSS for.
-   * @return The tooltip CSS.
-   */
-  private static String getTooltipCSS(String opcode) {
-    return "." + opcode + " ." + opcode + "text {"
-        + " visibility: hidden;"
-        + " width: 120px;"
-        + " background-color: black;"
-        + " color: #fff;"
-        + " text-align: center;"
-        + " border-radius: 6px;"
-        + " padding: 5px 0;"
-        + " position: absolute;"
-        + " z-index: 1;"
-        + " }"
-        + " ." + opcode + ":hover ." + opcode + "text {"
-        + " visibility: visible;"
-        + " }\n";
-  }
-
-  /**
-   * Returns a javascript code block that adds a tooltip for the given opcode. The opcode is
-   * referenced as an HTML class. The tooltip displays the given text parameter.
-   *
-   * @param opcode The opcode of the tooltip.
-   * @param text The text to display in the tooltip.
-   * @return The javascript code block of the tooltip.
-   */
-  private static String getTooltipJavascript(String opcode, String text) {
-    return "document.addEventListener('DOMContentLoaded', (event) => {\n"
-        + "var elements = document.getElementsByClassName('" + opcode + "');\n"
-        + "for (var i = 0; i < elements.length; i++) {\n"
-        + "    var span = document.createElement('span');\n"
-        + "    span.textContent = '" + text + "';\n"
-        + "    span.className = '" + opcode + "text'; \n"
-        + "    elements[i].appendChild(span);\n"
-        + "}"
-        + "})";
+  private static String getToggleHideBytes() {
+    return """
+        function toggleHideBytes() {
+          const isVisible = document.querySelector('.g');
+          if (isVisible != null) {
+            const elements = document.getElementsByClassName("g");
+            while(elements.length > 0) {
+              elements[0].className = 'v';
+            }
+          } else {
+            const elements = document.getElementsByClassName("v");
+            while(elements.length > 0) {
+              elements[0].className = 'g';
+            }
+          }
+        }
+        """;
   }
 }

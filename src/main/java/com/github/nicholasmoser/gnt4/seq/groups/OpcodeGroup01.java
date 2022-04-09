@@ -22,11 +22,16 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnLessThanZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturnNotEqualZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualToZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchNotEqualZeroLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTable;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTableLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OpcodeGroup01 {
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
@@ -57,8 +62,8 @@ public class OpcodeGroup01 {
       case 0x49 -> branchLinkReturnGreaterThanEqualZero(bs);
       case 0x4A -> branchLinkReturnLessThanZero(bs);
       case 0x4B -> branchLinkReturnLessThanEqualZero(bs);
-      case 0x50 -> op_0150(bs);
-      case 0x51 -> op_0151(bs);
+      case 0x50 -> branch_table(bs);
+      case 0x51 -> branch_table_link(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -66,15 +71,13 @@ public class OpcodeGroup01 {
   private static Opcode op_0101(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0105(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   public static Opcode branch(ByteStream bs) throws IOException {
@@ -250,37 +253,57 @@ public class OpcodeGroup01 {
     return new BranchLinkReturnLessThanEqualZero(offset);
   }
 
-  private static Opcode op_0150(ByteStream bs) throws IOException {
-    // Likely some kind of switch-case
+  private static Opcode branch_table(ByteStream bs) throws IOException {
+    // First read the input and number of branches
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
-    int word = bs.peekWord();
-    // After opcode 0150 is an array of SEQ offsets. Almost every opcode is larger than Seq.MAX_SIZE
-    // so this should almost always be fine.
-    while (word < Seq.MAX_SIZE) {
-      baos.write(bs.readBytes(4));
-      word = bs.peekWord();
+    byte[] numOfBranchesBytes = bs.readBytes(4);
+    baos.write(numOfBranchesBytes);
+    int numOfBranches = ByteUtils.toInt32(numOfBranchesBytes);
+    StringBuilder info = new StringBuilder(ea.getDescription());
+    // Iterate over each branch table offset
+    List<Integer> offsets = new ArrayList<>();
+    for (int i = 0; i < numOfBranches; i++) {
+      byte[] branchOffsetBytes = bs.peekBytes(4);
+      int branchOffset = ByteUtils.toInt32(branchOffsetBytes);
+      if (branchOffset > Seq.MAX_SIZE) {
+        // numOfBranches seems to be invalid for some files like maki/m_title.seq and ita/0000.seq
+        info.append(String.format(" (INVALID NUM OF BRANCHES, SHOULD BE %d)", numOfBranches));
+        break;
+      }
+      bs.skip(4); // Skip the 4 that were previously peeked
+      baos.write(branchOffsetBytes);
+      offsets.add(branchOffset);
     }
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, baos.toByteArray(), info);
+    return new BranchTable(offset, baos.toByteArray(), info.toString(), offsets);
   }
 
-  private static Opcode op_0151(ByteStream bs) throws IOException {
-    // Likely some kind of switch-case
+  private static Opcode branch_table_link(ByteStream bs) throws IOException {
+    // First read the input and number of branches
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
-    int word = bs.peekWord();
-    // After opcode 0150 is an array of SEQ offsets. Almost every opcode is larger than Seq.MAX_SIZE
-    // so this should almost always be fine.
-    while (word < Seq.MAX_SIZE) {
-      baos.write(bs.readBytes(4));
-      word = bs.peekWord();
+    byte[] numOfBranchesBytes = bs.readBytes(4);
+    baos.write(numOfBranchesBytes);
+    int numOfBranches = ByteUtils.toInt32(numOfBranchesBytes);
+    StringBuilder info = new StringBuilder(ea.getDescription());
+    // Iterate over each branch table offset
+    List<Integer> offsets = new ArrayList<>();
+    for (int i = 0; i < numOfBranches; i++) {
+      byte[] branchOffsetBytes = bs.peekBytes(4);
+      int branchOffset = ByteUtils.toInt32(branchOffsetBytes);
+      if (branchOffset > Seq.MAX_SIZE) {
+        // numOfBranches seems to be invalid for some files like maki/m_title.seq and ita/0000.seq
+        info.append(String.format(" (INVALID NUM OF BRANCHES, SHOULD BE %d)", numOfBranches));
+        break;
+      }
+      bs.skip(4); // Skip the 4 that were previously peeked
+      baos.write(branchOffsetBytes);
+      offsets.add(branchOffset);
     }
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, baos.toByteArray(), info);
+    return new BranchTableLink(offset, baos.toByteArray(), info.toString(), offsets);
   }
 }

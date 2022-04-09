@@ -29,15 +29,13 @@ public class OpcodeGroup0F {
   private static Opcode op_0F0A(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0F0D(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0F0E(ByteStream bs) throws IOException {
@@ -45,7 +43,7 @@ public class OpcodeGroup0F {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
-    StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
+    StringBuilder info = new StringBuilder(ea.getDescription());
     byte[] textBytes = SeqHelper.readString(bs);
     baos.write(textBytes);
     String fileName = SeqHelper.getString(textBytes);
@@ -58,22 +56,19 @@ public class OpcodeGroup0F {
   private static Opcode op_0F0F(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0F10(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0F11(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0F14(ByteStream bs) throws IOException {
@@ -81,7 +76,7 @@ public class OpcodeGroup0F {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
-    StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
+    StringBuilder info = new StringBuilder(ea.getDescription());
     byte[] textBytes = SeqHelper.readString(bs);
     baos.write(textBytes);
     String fileName = SeqHelper.getString(textBytes);

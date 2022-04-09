@@ -25,54 +25,48 @@ public class OpcodeGroup3E {
   private static Opcode op_3E00(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
-    return new UnknownOpcode(offset, fullBytes, info);
+    return new UnknownOpcode(offset, fullBytes, ea.getDescription());
   }
 
   private static Opcode op_3E01(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
-    return new UnknownOpcode(offset, fullBytes, info);
+    return new UnknownOpcode(offset, fullBytes, ea.getDescription());
   }
 
   private static Opcode op_3E02(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
-    return new UnknownOpcode(offset, fullBytes, info);
+    return new UnknownOpcode(offset, fullBytes, ea.getDescription());
   }
 
   private static Opcode op_3E03(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
-    return new UnknownOpcode(offset, fullBytes, info);
+    return new UnknownOpcode(offset, fullBytes, ea.getDescription());
   }
 
   private static Opcode op_3E04(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(8);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
-    return new UnknownOpcode(offset, fullBytes, info);
+    return new UnknownOpcode(offset, fullBytes, ea.getDescription());
   }
 
   private static Opcode op_3E05(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] lastWord = bs.readBytes(4);
     byte[] fullBytes = Bytes.concat(ea.getBytes(), lastWord);
-    return new UnknownOpcode(offset, fullBytes, info);
+    return new UnknownOpcode(offset, fullBytes, ea.getDescription());
   }
 }

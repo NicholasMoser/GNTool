@@ -7,6 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class BinaryData implements Opcode {
 
+  private final static String MNEMONIC = "binary_data";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -35,7 +36,7 @@ public class BinaryData implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | binary data, 0x%x bytes %s%s", offset, bytes.length, formatRawBytes(bytes), info);
+    return String.format("%05X | %s 0x%X bytes %s %s", offset, MNEMONIC, bytes.length, info, formatRawBytes(bytes));
   }
 
   @Override

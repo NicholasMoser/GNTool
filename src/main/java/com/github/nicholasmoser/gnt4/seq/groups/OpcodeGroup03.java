@@ -24,21 +24,18 @@ public class OpcodeGroup03 {
   private static Opcode movr(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new Movr(offset, ea.getBytes(), info);
+    return new Movr(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode push(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new Push(offset, ea.getBytes(), info);
+    return new Push(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode pop(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new Pop(offset, ea.getBytes(), info);
+    return new Pop(offset, ea.getBytes(), ea.getDescription());
   }
 }

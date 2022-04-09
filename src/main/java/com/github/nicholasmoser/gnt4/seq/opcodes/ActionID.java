@@ -11,6 +11,7 @@ import j2html.tags.ContainerTag;
 
 public class ActionID implements Opcode {
 
+  private final static String MNEMONIC = "Action ID";
   private final int offset;
   private final byte[] bytes;
   private final int actionId;
@@ -60,6 +61,10 @@ public class ActionID implements Opcode {
     }
   }
 
+  public int getActionOffset() {
+    return actionOffset;
+  }
+
   @Override
   public int getOffset() {
     return offset;
@@ -72,7 +77,7 @@ public class ActionID implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | Action ID 0x%X at offset 0x%X %s%s", offset, actionId, actionOffset, formatRawBytes(bytes), info);
+    return String.format("%05X | %s 0x%X at offset 0x%X %s%s", offset, MNEMONIC, actionId, actionOffset, formatRawBytes(bytes), info);
   }
 
   @Override
@@ -80,8 +85,10 @@ public class ActionID implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", actionOffset);
     return div(attrs(id))
-        .with(span(String.format("%05X | Action ID 0x%X at offset ", offset, actionId)))
+        .withText(String.format("%05X | Action ID 0x%X at offset ", offset, actionId))
         .with(a(String.format("0x%X", actionOffset)).withHref(dest))
-        .with(span(String.format(" %s%s", formatRawBytes(bytes), info)));
+        .withText(" ")
+        .with(formatRawBytesHTML(bytes))
+        .withText(String.format(" %s", info));
   }
 }

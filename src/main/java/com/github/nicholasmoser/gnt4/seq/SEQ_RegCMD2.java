@@ -67,7 +67,7 @@ public class SEQ_RegCMD2 {
           operands.add(new SeqOperand(first_address_byte - 0x18, true));
           second_address_byte = (byte) (opcode & 0xff);
         } else {
-          operands.add(getOperandType(first_address_byte, true));
+          operands.add(SEQ_RegGP(first_address_byte, true));
           pushWord(bs.readWord());
           second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
         }
@@ -84,11 +84,11 @@ public class SEQ_RegCMD2 {
       } else if (lastSixBits < 0x30) {
         firstOperand = new SeqOperand(lastSixBits * 4, false);
       } else {
-        firstOperand = getOperandType(lastSixBits, false);
+        firstOperand = SEQ_RegGP(lastSixBits, false);
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      firstOperand.addInfo(String.format(" + offset 0x%08X", word));
+      firstOperand.addInfo(String.format(" + offset 0x%X", word));
       operands.add(firstOperand);
       pushWord(word);
       second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
@@ -107,7 +107,7 @@ public class SEQ_RegCMD2 {
           pushWord(bs.readWord());
           operands.add(new SeqOperand(second_address_byte - 0x18, true));
         } else {
-          operands.add(getOperandType(second_address_byte, true));
+          operands.add(SEQ_RegGP(second_address_byte, true));
           pushWord(bs.readWord());
         }
       } else {
@@ -119,7 +119,7 @@ public class SEQ_RegCMD2 {
         } else if (lastSixBits2 < 0x30) {
           secondOperand = new SeqOperand(lastSixBits2 * 4, false);
         } else {
-          secondOperand = getOperandType(lastSixBits2, false);
+          secondOperand = SEQ_RegGP(lastSixBits2, false);
         }
         pushWord(bs.readWord());
         int word = bs.readWord();
@@ -143,11 +143,11 @@ public class SEQ_RegCMD2 {
       } else if (lastSixBits2 < 0x30) {
         secondOperand = new SeqOperand(lastSixBits2 * 4, false);
       } else {
-        secondOperand = getOperandType(lastSixBits2, false);
+        secondOperand = SEQ_RegGP(lastSixBits2, false);
       }
       pushWord(bs.readWord());
       int word2 = bs.readWord();
-      secondOperand.addInfo(String.format(" + offset 0x%08X", word2));
+      secondOperand.addInfo(String.format(" + offset 0x%X", word2));
       operands.add(secondOperand);
       pushWord(word2);
     }
@@ -176,7 +176,7 @@ public class SEQ_RegCMD2 {
   public String getDescription() {
     return operands.stream()
         .map(Object::toString)
-        .collect(Collectors.joining("; "));
+        .collect(Collectors.joining(", "));
   }
 
   public List<Operand> getOperands() {
@@ -209,7 +209,7 @@ public class SEQ_RegCMD2 {
    * @return The Operand.
    * @throws IOException If an I/O error occurs.
    */
-  private Operand getOperandType(byte bitFlag, boolean returnPc) throws IOException {
+  private Operand SEQ_RegGP(byte bitFlag, boolean returnPc) throws IOException {
     return switch (bitFlag) {
       case 0x30 ->
           // Appears to be a matrix identity used for matrix multiplication of attacking hitbox

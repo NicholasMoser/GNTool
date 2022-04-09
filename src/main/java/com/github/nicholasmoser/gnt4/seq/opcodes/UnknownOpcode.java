@@ -49,12 +49,14 @@ public class UnknownOpcode implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | op_%02X%02X %s%s", offset, bytes[0], bytes[1], formatRawBytes(bytes), info);
+    return String.format("%05X | op_%02X%02X %s %s", offset, bytes[0], bytes[1], info, formatRawBytes(bytes));
   }
 
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    return div(attrs(id))
+        .withText(String.format("%05X | op_%02X%02X %s ", offset, bytes[0], bytes[1], info))
+        .with(formatRawBytesHTML(bytes));
   }
 }

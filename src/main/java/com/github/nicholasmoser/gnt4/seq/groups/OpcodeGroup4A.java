@@ -22,16 +22,14 @@ public class OpcodeGroup4A {
   private static Opcode op_4A00(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(4);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
   }
 
   private static Opcode op_4A03(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    String info = String.format(" %s", ea.getDescription());
     byte[] bytes = bs.readBytes(8);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), info);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
   }
 }

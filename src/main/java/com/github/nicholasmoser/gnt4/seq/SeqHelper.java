@@ -86,7 +86,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class SeqHelper {
 
@@ -264,7 +263,7 @@ public class SeqHelper {
       // These binaries can be after multiple different opcodes
       if (SeqHelper.isOp04700Binary(bs)) {
         byte[] bytes = bs.readBytes(0x10);
-        return Collections.singletonList(new BinaryData(offset, bytes, "; Binary data referenced by op_4700"));
+        return Collections.singletonList(new BinaryData(offset, bytes, " (Binary data referenced by op_4700)"));
       } else if (SeqHelper.isUnknownBinary2(bs)) {
         byte[] bytes = bs.readBytes(0x10);
         return Collections.singletonList(new BinaryData(offset, bytes));

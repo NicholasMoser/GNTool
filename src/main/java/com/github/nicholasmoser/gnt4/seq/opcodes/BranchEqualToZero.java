@@ -11,6 +11,7 @@ import j2html.tags.ContainerTag;
 
 public class BranchEqualToZero implements Opcode {
 
+  private final static String MNEMONIC = "beqz";
   private final int offset;
   private final int destination;
 
@@ -31,7 +32,7 @@ public class BranchEqualToZero implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | beqz 0x%X {01330000 %08X}", offset, destination, destination);
+    return String.format("%05X | %s 0x%X {01330000 %08X}", offset, MNEMONIC, destination, destination);
   }
 
   @Override
@@ -39,8 +40,9 @@ public class BranchEqualToZero implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);
     return div(attrs(id))
-        .with(span(String.format("%05X | beqz ", offset)))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
         .with(a(String.format("0x%X", destination)).withHref(dest))
-        .with(span(String.format(" {01330000 %08X}", destination)));
+        .withText(" ")
+        .with(formatRawBytesHTML(getBytes()));
   }
 }

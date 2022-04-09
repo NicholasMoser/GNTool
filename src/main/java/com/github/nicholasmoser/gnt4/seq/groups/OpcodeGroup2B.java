@@ -25,7 +25,7 @@ public class OpcodeGroup2B {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(ea.getBytes());
-    StringBuilder info = new StringBuilder(String.format(" %s", ea.getDescription()));
+    StringBuilder info = new StringBuilder(ea.getDescription());
     byte[] textBytes = SeqHelper.readString(bs);
     baos.write(textBytes);
     String fileName = SeqHelper.getString(textBytes);
@@ -38,7 +38,6 @@ public class OpcodeGroup2B {
   public static Opcode op_2B01(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    String info = String.format(" %s", ea.getDescription());
-    return new UnknownOpcode(offset, ea.getBytes(), info);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 }

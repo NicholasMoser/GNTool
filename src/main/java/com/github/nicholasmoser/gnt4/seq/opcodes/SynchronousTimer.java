@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 public class SynchronousTimer implements Opcode {
 
+  private final static String MNEMONIC = "sync_timer";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -32,12 +33,15 @@ public class SynchronousTimer implements Opcode {
   @Override
   public String toString() {
     int frames = ByteUtils.toInt32(Arrays.copyOfRange(bytes, 4, 8));
-    return String.format("%05X | sync_timer (%d frames) %s %s", offset, frames, formatRawBytes(bytes), info);
+    return String.format("%05X | %s (%d frames) %s %s", offset, MNEMONIC, frames, info, formatRawBytes(bytes));
   }
 
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id)).withText(toString());
+    int frames = ByteUtils.toInt32(Arrays.copyOfRange(bytes, 4, 8));
+    return div(attrs(id))
+        .withText(String.format("%05X | %s (%d frames) %s ", offset, MNEMONIC, frames, info))
+        .with(formatRawBytesHTML(bytes));
   }
 }

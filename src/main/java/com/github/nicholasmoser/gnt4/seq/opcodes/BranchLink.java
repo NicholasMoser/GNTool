@@ -11,12 +11,17 @@ import j2html.tags.ContainerTag;
 
 public class BranchLink implements Opcode {
 
+  private final static String MNEMONIC = "bl";
   private final int offset;
   private final int destination;
 
   public BranchLink(int offset, int destination) {
     this.offset = offset;
     this.destination = destination;
+  }
+
+  public int getDestination() {
+    return destination;
   }
 
   @Override
@@ -31,7 +36,7 @@ public class BranchLink implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | bl 0x%X {013C0000 %08X}", offset, destination, destination);
+    return String.format("%05X | %s 0x%X {013C0000 %08X}", offset, MNEMONIC, destination, destination);
   }
 
   @Override
@@ -39,8 +44,9 @@ public class BranchLink implements Opcode {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);
     return div(attrs(id))
-        .with(span(String.format("%05X | bl ", offset)).attr("class=\"bl\""))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
         .with(a(String.format("0x%X", destination)).withHref(dest))
-        .with(span(String.format(" {013C0000 %08X}", destination)));
+        .withText(" ")
+        .with(formatRawBytesHTML(getBytes()));
   }
 }
