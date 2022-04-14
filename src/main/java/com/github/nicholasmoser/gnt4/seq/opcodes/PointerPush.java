@@ -1,19 +1,17 @@
 package com.github.nicholasmoser.gnt4.seq.opcodes;
 
+import j2html.tags.ContainerTag;
+
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
-import j2html.tags.ContainerTag;
-
-public class Mov implements Opcode {
-
-    private final static String MNEMONIC = "ptr_mov";
-
+public class PointerPush implements Opcode{
+    private final static String MNEMONIC = "ptr_push";
     private final int offset;
     private final byte[] bytes;
     private final String info;
 
-    public Mov(int offset, byte[] bytes, String info) {
+    public PointerPush(int offset, byte[] bytes, String info) {
         this.offset = offset;
         this.bytes = bytes;
         this.info = info;
@@ -25,7 +23,9 @@ public class Mov implements Opcode {
     }
 
     @Override
-    public byte[] getBytes() { return bytes; }
+    public byte[] getBytes() {
+        return bytes;
+    }
 
     @Override
     public String toString() {

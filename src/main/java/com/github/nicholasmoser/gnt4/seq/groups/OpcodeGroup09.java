@@ -2,10 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.opcodes.SeqPointerToOffset;
-import com.github.nicholasmoser.gnt4.seq.opcodes.OffsetToSeqPointer;
-import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.*;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.google.common.primitives.Bytes;
 import java.io.IOException;
@@ -55,7 +52,7 @@ public class OpcodeGroup09 {
   private static Opcode ptr_movc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new PointerMovc(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_0902(ByteStream bs) throws IOException {
@@ -73,7 +70,7 @@ public class OpcodeGroup09 {
   private static Opcode ptr_add(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new PointerAdd(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode ptr_sub(ByteStream bs) throws IOException {
@@ -91,7 +88,7 @@ public class OpcodeGroup09 {
   private static Opcode ptr_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new Mov(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode offsetToPointer(ByteStream bs) throws IOException {
@@ -109,7 +106,7 @@ public class OpcodeGroup09 {
   private static Opcode ptr_push(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new PointerPush(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode ptr_pop(ByteStream bs) throws IOException {
@@ -130,7 +127,7 @@ public class OpcodeGroup09 {
   private static Opcode ptr_branch(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new PointerBranch(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode branchEqualToZero(ByteStream bs) throws IOException {
@@ -172,7 +169,7 @@ public class OpcodeGroup09 {
   private static Opcode ptr_branchLink(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new PointerBranchLink(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode branchEqualZeroLink(ByteStream bs) throws IOException {
