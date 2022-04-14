@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.concurrent.Task;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
@@ -178,14 +179,20 @@ public class GNTAEditor {
   }
 
   public void aboutMOTEditor() {
-    new Thread(() -> {
-      try {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
         Desktop.getDesktop().browse(new URI(MOT_EDITOR_INFO_URL));
-      } catch (Exception e) {
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
         LOGGER.log(Level.SEVERE, "Error Opening Help Page", e);
         Message.error("Error Opening Help Page", e.getMessage());
       }
-    }).start();
+    });
+    new Thread(task).start();
   }
 
   private void updateAllControls(int boneAnimIndex, int keyFrameIndex) {

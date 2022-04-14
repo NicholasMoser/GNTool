@@ -7,6 +7,7 @@ import com.github.nicholasmoser.mot.Motion;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.File;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -72,13 +73,19 @@ public class MOTUnpackerTool {
     }
 
   private static void tryToOpen(Path outputDir) {
-    new Thread(() -> {
-      try {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
         Desktop.getDesktop().open(outputDir.toFile());
-      } catch (Exception e) {
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
         LOGGER.log(Level.SEVERE, "Failed to Open Directory", e);
         Message.error("Failed to Open Directory", e.getMessage());
       }
-    }).start();
+    });
+    new Thread(task).start();
   }
 }
