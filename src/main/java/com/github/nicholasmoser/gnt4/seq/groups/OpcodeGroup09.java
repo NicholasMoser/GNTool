@@ -11,6 +11,7 @@ import com.google.common.primitives.Bytes;
 import java.io.IOException;
 
 public class OpcodeGroup09 {
+
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
       case 0x00 -> op_0900(bs);
