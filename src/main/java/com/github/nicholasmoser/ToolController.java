@@ -12,9 +12,13 @@ import com.github.nicholasmoser.tools.MOTUnpackerTool;
 import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.tools.TXG2TPLTool;
+
+import java.awt.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Labeled;
@@ -96,28 +100,36 @@ public class ToolController {
    * @param tool The tool name.
    */
   private void runTool(String tool) {
-    try {
-      switch (tool) {
-        case FPK_REPACKER_GC -> FPKRepackerTool.repackGamecubeFPK();
-        case FPK_REPACKER_WII -> FPKRepackerTool.repackWiiFPK();
-        case FPK_REPACKER_PS2 -> FPKRepackerTool.repackPS2FPK();
-        case ISO_EXTRACTOR_GC -> ISOExtractorTool.extractGameCubeISO();
-        case FPK_UNPACKER_GC -> FPKUnpackerTool.unpackGamecubeFPK();
-        case FPK_UNPACKER_WII -> FPKUnpackerTool.unpackWiiFPK();
-        case FPK_UNPACKER_PS2 -> FPKUnpackerTool.unpackPS2FPK();
-        case ISO_PATCHER_GC -> ISOPatcher.patchGameCubeISO();
-        case ISO_COMPARE_GC -> ISOCompareTool.compareGameCubeISO();
-        case TXG2TPL -> TXG2TPLTool.run();
-        case SEQ_DISASSEMBLER_HTML -> SeqDisassemblerTool.disassembleToHTML();
-        case SEQ_DISASSEMBLER_TXT -> SeqDisassemblerTool.disassembleToTXT();
-        case SEQ_EDITOR -> SeqEditorTool.open();
-        case MOT_UNPACKER -> MOTUnpackerTool.run();
-        case MOT_REPACKER -> MOTRepackerTool.run();
-        case GNTA_EDITOR -> GNTAEditorTool.open();
-        case DOLPHIN_SEQ_LISTENER -> DolphinSeqListenerTool.run();
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        switch (tool) {
+          case FPK_REPACKER_GC -> FPKRepackerTool.repackGamecubeFPK();
+          case FPK_REPACKER_WII -> FPKRepackerTool.repackWiiFPK();
+          case FPK_REPACKER_PS2 -> FPKRepackerTool.repackPS2FPK();
+          case ISO_EXTRACTOR_GC -> ISOExtractorTool.extractGameCubeISO();
+          case FPK_UNPACKER_GC -> FPKUnpackerTool.unpackGamecubeFPK();
+          case FPK_UNPACKER_WII -> FPKUnpackerTool.unpackWiiFPK();
+          case FPK_UNPACKER_PS2 -> FPKUnpackerTool.unpackPS2FPK();
+          case ISO_PATCHER_GC -> ISOPatcher.patchGameCubeISO();
+          case ISO_COMPARE_GC -> ISOCompareTool.compareGameCubeISO();
+          case TXG2TPL -> TXG2TPLTool.run();
+          case SEQ_DISASSEMBLER_HTML -> SeqDisassemblerTool.disassembleToHTML();
+          case SEQ_DISASSEMBLER_TXT -> SeqDisassemblerTool.disassembleToTXT();
+          case SEQ_EDITOR -> SeqEditorTool.open();
+          case MOT_UNPACKER -> MOTUnpackerTool.run();
+          case MOT_REPACKER -> MOTRepackerTool.run();
+          case GNTA_EDITOR -> GNTAEditorTool.open();
+          case DOLPHIN_SEQ_LISTENER -> DolphinSeqListenerTool.run();
+        }
+        return null;
       }
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);
-    }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
+        LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);
+      }
+    });
+    new Thread(task).start();
   }
 }

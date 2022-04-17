@@ -7,11 +7,15 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A tool to run TXG2TPL.
  */
 public class TXG2TPLTool {
+
+  private static final Logger LOGGER = Logger.getLogger(TXG2TPLTool.class.getName());
 
   /**
    * Runs the TXG2TPL tool.
@@ -30,6 +34,12 @@ public class TXG2TPLTool {
     }
     Path output = outputPath.get();
     TXG2TPL.unpack(input, output);
-    Desktop.getDesktop().open(output.toFile());
+    new Thread(() -> {
+      try {
+        Desktop.getDesktop().open(output.toFile());
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Failed to Open Directory", e.getMessage());
+      }
+    }).start();
   }
 }

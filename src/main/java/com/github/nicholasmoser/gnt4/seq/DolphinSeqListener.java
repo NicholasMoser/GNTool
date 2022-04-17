@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.animation.AnimationTimer;
+import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -77,25 +78,37 @@ public class DolphinSeqListener {
   }
 
   public void downloadLuaDolphin() {
-    new Thread(() -> {
-      try {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
         Desktop.getDesktop().browse(new URI(DOLPHIN_LUA_DOWNLOAD));
-      } catch (Exception e) {
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
         LOGGER.log(Level.SEVERE, "Error Opening Dolphin Lua Download", e);
         Message.error("Error Opening Dolphin Lua Download", e.getMessage());
       }
-    }).start();
+    });
+    new Thread(task).start();
   }
 
   public void aboutDolphinSEQListener() {
-    new Thread(() -> {
-      try {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
         Desktop.getDesktop().browse(new URI(ABOUT_URL));
-      } catch (Exception e) {
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
         LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
         Message.error("Error Opening About Page", e.getMessage());
       }
-    }).start();
+    });
+    new Thread(task).start();
   }
 
   public void disassembleLine() {
@@ -291,57 +304,71 @@ public class DolphinSeqListener {
    * @param message The message to parse and go to.
    */
   private void disassembleLine(String message) {
-    try {
-      // Get path to seq files
-      if (gnt4Files == null) {
-        Message.info("Select Workspace", "Please select a GNTool workspace directory.");
-        Optional<Path> path = Choosers.getInputWorkspaceDirectory(GNTool.USER_HOME);
-        if (path.isEmpty()) {
-          return;
-        }
-        gnt4Files = path.get().resolve("uncompressed/files");
-      }
-      // Get path to input SEQ file
-      GNT4FileNames fileNames = new GNT4FileNames();
-      String brokenName = message.substring(27);
-      if (brokenName.isBlank()) {
-        throw new IOException("Unknown file name!");
-      }
-      String seqName = fileNames.fix(brokenName);
-      Path seqPath = gnt4Files.resolve(seqName);
-      if (!Files.exists(seqPath)) {
-        throw new IOException(seqPath + " does not exist.");
-      }
-      // See if the output HTML is already cached
-      Path outputHTML = seqToSeqReport.get(seqName);
-      if (outputHTML == null) {
-        // Get path to output HTML file and generate it
-        Optional<Path> output = Choosers.getOutputHTML(gnt4Files.toFile());
-        if (output.isEmpty()) {
-          return;
-        }
-        outputHTML = output.get();
-        seqToSeqReport.put(seqName, outputHTML);
-        SeqKing.generateHTML(seqPath, outputHTML, false);
-      }
-      int offset = Integer.decode("0x" + message.substring(0, 8));
-      String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
-      if (System.getProperty("os.name").startsWith("Windows")){
-        Browser.open(fileUri);
-      } else {
-        new Thread(() -> {
-          try {
-            Desktop.getDesktop().browse(new URI(fileUri));
-          } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error Opening File", e);
-            Message.error("Error Opening File", e.getMessage());
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        // Get path to seq files
+        if (gnt4Files == null) {
+          Message.info("Select Workspace", "Please select a GNTool workspace directory.");
+          Optional<Path> path = Choosers.getInputWorkspaceDirectory(GNTool.USER_HOME);
+          if (path.isEmpty()) {
+            return null;
           }
-        }).start();
+          gnt4Files = path.get().resolve("uncompressed/files");
+        }
+        // Get path to input SEQ file
+        GNT4FileNames fileNames = new GNT4FileNames();
+        String brokenName = message.substring(27);
+        if (brokenName.isBlank()) {
+          throw new IOException("Unknown file name!");
+        }
+        String seqName = fileNames.fix(brokenName);
+        Path seqPath = gnt4Files.resolve(seqName);
+        if (!Files.exists(seqPath)) {
+          throw new IOException(seqPath + " does not exist.");
+        }
+        // See if the output HTML is already cached
+        Path outputHTML = seqToSeqReport.get(seqName);
+        if (outputHTML == null) {
+          // Get path to output HTML file and generate it
+          Optional<Path> output = Choosers.getOutputHTML(gnt4Files.toFile());
+          if (output.isEmpty()) {
+            return null;
+          }
+          outputHTML = output.get();
+          seqToSeqReport.put(seqName, outputHTML);
+          SeqKing.generateHTML(seqPath, outputHTML, false);
+        }
+        int offset = Integer.decode("0x" + message.substring(0, 8));
+        String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
+        if (System.getProperty("os.name").startsWith("Windows")){
+          Browser.open(fileUri);
+        } else {
+          Task<Void> task = new Task<>() {
+            @Override
+            public Void call() throws Exception {
+              Desktop.getDesktop().browse(new URI(fileUri));
+              return null;
+            }
+          };
+          task.exceptionProperty().addListener((observable,oldValue, e) -> {
+            if (e!=null){
+              LOGGER.log(Level.SEVERE, "Error Opening File", e);
+              Message.error("Error Opening File", e.getMessage());
+            }
+          });
+          new Thread(task).start();
+        }
+        return null;
       }
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Opening Line", e);
-      Message.error("Error Opening Line", e.getMessage());
-    }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
+        LOGGER.log(Level.SEVERE, "Error Opening Line", e);
+        Message.error("Error Opening Line", e.getMessage());
+      }
+    });
+    new Thread(task).start();
   }
 
   private void copy(String text) {

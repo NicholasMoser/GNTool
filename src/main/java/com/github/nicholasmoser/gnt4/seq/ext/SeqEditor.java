@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -276,12 +278,20 @@ public class SeqEditor {
   }
 
   public void aboutSEQEditor() {
-    try {
-      Desktop.getDesktop().browse(new URI(SEQ_EDITOR_INFO_URL));
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Opening Help Page", e);
-      Message.error("Error Opening Help Page", e.getMessage());
-    }
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        Desktop.getDesktop().browse(new URI(SEQ_EDITOR_INFO_URL));
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
+        LOGGER.log(Level.SEVERE, "Error Opening Help Page", e);
+        Message.error("Error Opening Help Page", e.getMessage());
+      }
+    });
+    new Thread(task).start();
   }
 
   /**
