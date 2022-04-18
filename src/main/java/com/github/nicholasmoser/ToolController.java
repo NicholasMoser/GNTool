@@ -13,7 +13,6 @@ import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.tools.TXG2TPLTool;
 
-import java.awt.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
