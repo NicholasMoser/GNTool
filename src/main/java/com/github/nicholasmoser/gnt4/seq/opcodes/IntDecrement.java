@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class Movc implements Opcode {
+public class IntDecrement implements Opcode {
 
-  private final static String MNEMONIC = "i32_mov";
+  private final static String MNEMONIC = "i32_dec";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public Movc(int offset, byte[] bytes, String info) {
+  public IntDecrement(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

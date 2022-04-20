@@ -1,21 +1,21 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Add;
-import com.github.nicholasmoser.gnt4.seq.opcodes.And;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Andws;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Decrement;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Divide;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Increment;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Movc;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Multiply;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Nimply;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntAdd;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntAnd;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntAndCompare;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntDecrement;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntDivide;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntIncrement;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntMov;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntMultiply;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntNimply;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Or;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Sub;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Subws;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntOr;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntSubtract;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntSubtractCompare;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Xor;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntXor;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 
@@ -44,79 +44,79 @@ public class OpcodeGroup04 {
   private static Opcode i32_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Movc(offset, ea.getBytes(), ea.getDescription());
+    return new IntMov(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_andc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Andws(offset, ea.getBytes(), ea.getDescription());
+    return new IntAndCompare(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_nimply(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Nimply(offset, ea.getBytes(), ea.getDescription());
+    return new IntNimply(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_inc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Increment(offset, ea.getBytes(), ea.getDescription());
+    return new IntIncrement(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_dec(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Decrement(offset, ea.getBytes(), ea.getDescription());
+    return new IntDecrement(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_add(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Add(offset, ea.getBytes(), ea.getDescription());
+    return new IntAdd(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_sub(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Sub(offset, ea.getBytes(), ea.getDescription());
+    return new IntSubtract(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_mul(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Multiply(offset, ea.getBytes(), ea.getDescription());
+    return new IntMultiply(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_div(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Divide(offset, ea.getBytes(), ea.getDescription());
+    return new IntDivide(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_and(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new And(offset, ea.getBytes(), ea.getDescription());
+    return new IntAnd(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_or(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Or(offset, ea.getBytes(), ea.getDescription());
+    return new IntOr(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_xor(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Xor(offset, ea.getBytes(), ea.getDescription());
+    return new IntXor(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_subc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Subws(offset, ea.getBytes(), ea.getDescription());
+    return new IntSubtractCompare(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_rand(ByteStream bs) throws IOException {
