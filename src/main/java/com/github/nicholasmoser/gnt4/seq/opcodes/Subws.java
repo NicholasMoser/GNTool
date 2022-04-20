@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Subws implements Opcode {
 
-  private final static String MNEMONIC = "subws";
+  private final static String MNEMONIC = "i32_subc";
   private final int offset;
   private final byte[] bytes;
   private final String info;

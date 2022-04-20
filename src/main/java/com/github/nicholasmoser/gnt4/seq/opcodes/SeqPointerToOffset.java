@@ -8,6 +8,7 @@ import static j2html.TagCreator.div;
 
 public class SeqPointerToOffset implements Opcode {
 
+    private final static String MNEMONIC = "ptr_to_offset";
     private final int offset;
     private final byte[] bytes;
     private final String info;
@@ -28,7 +29,7 @@ public class SeqPointerToOffset implements Opcode {
 
     @Override
     public String toString() {
-        return String.format("%05X | Save offset in SEQ file from pointer {%s} %s", offset, formatRawBytes(bytes), info);
+        return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
     }
 
     @Override

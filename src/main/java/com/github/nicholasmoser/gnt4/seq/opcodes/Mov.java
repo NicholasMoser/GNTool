@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Mov implements Opcode {
 
-    private final static String MNEMONIC = "ptr_mov";
+    private final static String MNEMONIC = "ptr_move";
 
     private final int offset;
     private final byte[] bytes;

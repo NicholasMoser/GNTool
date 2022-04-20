@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Movc implements Opcode {
 
-  private final static String MNEMONIC = "movc";
+  private final static String MNEMONIC = "i32_mov";
   private final int offset;
   private final byte[] bytes;
   private final String info;

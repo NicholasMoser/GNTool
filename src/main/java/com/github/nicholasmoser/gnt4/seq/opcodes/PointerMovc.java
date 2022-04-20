@@ -7,7 +7,7 @@ import static j2html.TagCreator.div;
 
 public class PointerMovc implements Opcode{
 
-    private final static String MNEMONIC = "ptr_movc";
+    private final static String MNEMONIC = "ptr_mov";
     private final int offset;
     private final byte[] bytes;
     private final String info;

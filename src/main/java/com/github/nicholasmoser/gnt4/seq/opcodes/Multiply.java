@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Multiply implements Opcode {
 
-  private final static String MNEMONIC = "mul";
+  private final static String MNEMONIC = "i32_mul";
   private final int offset;
   private final byte[] bytes;
   private final String info;

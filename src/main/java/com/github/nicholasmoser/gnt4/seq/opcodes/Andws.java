@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Andws implements Opcode {
 
-  private final static String MNEMONIC = "andws";
+  private final static String MNEMONIC = "i32_andc";
   private final int offset;
   private final byte[] bytes;
   private final String info;

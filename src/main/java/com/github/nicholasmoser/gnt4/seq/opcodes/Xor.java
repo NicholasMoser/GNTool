@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Xor implements Opcode {
 
-  private final static String MNEMONIC = "xor";
+  private final static String MNEMONIC = "i32_xor";
   private final int offset;
   private final byte[] bytes;
   private final String info;
