@@ -52,7 +52,7 @@ public class OpcodeGroup09 {
   private static Opcode ptr_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new PointerMovc(offset, ea.getBytes(), ea.getDescription());
+    return new PointerMov(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode ptr_inc(ByteStream bs) throws IOException {
@@ -88,19 +88,19 @@ public class OpcodeGroup09 {
   private static Opcode ptr_move(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new Mov(offset, ea.getBytes(), ea.getDescription());
+    return new PointerMove(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode ptr_from_offset(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new OffsetToSeqPointer(offset, ea.getBytes(), ea.getDescription());
+    return new PointerFromOffset(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode ptr_to_offset(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new SeqPointerToOffset(offset, ea.getBytes(), ea.getDescription());
+    return new PointerToOffset(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode ptr_push(ByteStream bs) throws IOException {

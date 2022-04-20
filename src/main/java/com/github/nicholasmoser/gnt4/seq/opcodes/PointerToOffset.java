@@ -6,14 +6,14 @@ import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
 
-public class OffsetToSeqPointer implements Opcode {
+public class PointerToOffset implements Opcode {
 
-    private final static String MNEMONIC = "ptr_from_offset";
+    private final static String MNEMONIC = "ptr_to_offset";
     private final int offset;
     private final byte[] bytes;
     private final String info;
 
-    public OffsetToSeqPointer(int offset, byte[] bytes, String info) {
+    public PointerToOffset(int offset, byte[] bytes, String info) {
         this.offset = offset;
         this.bytes = bytes;
         this.info = info;

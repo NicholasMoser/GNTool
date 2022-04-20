@@ -1,19 +1,19 @@
 package com.github.nicholasmoser.gnt4.seq.opcodes;
 
+import j2html.tags.ContainerTag;
+
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
-import j2html.tags.ContainerTag;
 
-public class Mov implements Opcode {
+public class PointerFromOffset implements Opcode {
 
-    private final static String MNEMONIC = "ptr_move";
-
+    private final static String MNEMONIC = "ptr_from_offset";
     private final int offset;
     private final byte[] bytes;
     private final String info;
 
-    public Mov(int offset, byte[] bytes, String info) {
+    public PointerFromOffset(int offset, byte[] bytes, String info) {
         this.offset = offset;
         this.bytes = bytes;
         this.info = info;
@@ -35,8 +35,6 @@ public class Mov implements Opcode {
     @Override
     public ContainerTag toHTML() {
         String id = String.format("#%X", offset);
-        return div(attrs(id))
-                .withText(String.format("%05X | %s %s ", offset, MNEMONIC, info))
-                .with(formatRawBytesHTML(bytes));
+        return div(attrs(id)).withText(toString());
     }
 }

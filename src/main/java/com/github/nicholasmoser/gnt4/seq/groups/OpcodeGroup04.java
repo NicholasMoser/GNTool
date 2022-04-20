@@ -7,9 +7,11 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.IntAndCompare;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntDecrement;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntDivide;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntIncrement;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntModulo;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntMov;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntMultiply;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntNimply;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntRandom;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntOr;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntSubtract;
@@ -122,12 +124,12 @@ public class OpcodeGroup04 {
   private static Opcode i32_rand(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new IntRandom(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i32_mod(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    return new IntModulo(offset, ea.getBytes(), ea.getDescription());
   }
 }
