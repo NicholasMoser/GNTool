@@ -4,6 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.*;
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import java.io.IOException;
 
@@ -121,7 +122,8 @@ public class OpcodeGroup09 {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     byte[] bytes = bs.readBytes(4);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
+    int tableOffset = ByteUtils.toInt32(bytes);
+    return new PointerTableLookup(offset, Bytes.concat(ea.getBytes(), bytes), tableOffset, ea.getDescription());
   }
 
   private static Opcode ptr_b(ByteStream bs) throws IOException {
