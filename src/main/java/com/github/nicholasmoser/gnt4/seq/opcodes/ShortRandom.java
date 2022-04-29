@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class ShortSubtract implements Opcode {
+public class ShortRandom implements Opcode {
 
-  private final static String MNEMONIC = "i16_sub";
+  private final static String MNEMONIC = "i16_rand";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public ShortSubtract(int offset, byte[] bytes, String info) {
+  public ShortRandom(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

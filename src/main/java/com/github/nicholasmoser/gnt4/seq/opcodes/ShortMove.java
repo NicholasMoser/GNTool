@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class ShortMove implements Opcode {
 
-  private final static String MNEMONIC = "s_mov";
+  private final static String MNEMONIC = "i16_mov";
   private final int offset;
   private final byte[] bytes;
   private final String info;

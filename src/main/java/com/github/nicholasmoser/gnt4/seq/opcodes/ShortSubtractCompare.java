@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class ShortAndWithStore implements Opcode {
+public class ShortSubtractCompare implements Opcode {
 
-  private final static String MNEMONIC = "s_andws";
+  private final static String MNEMONIC = "i16_subc";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public ShortAndWithStore(int offset, byte[] bytes, String info) {
+  public ShortSubtractCompare(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

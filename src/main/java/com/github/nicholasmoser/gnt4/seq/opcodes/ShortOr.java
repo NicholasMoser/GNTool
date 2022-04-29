@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class ShortOr implements Opcode {
 
-  private final static String MNEMONIC = "s_or";
+  private final static String MNEMONIC = "i16_or";
   private final int offset;
   private final byte[] bytes;
   private final String info;

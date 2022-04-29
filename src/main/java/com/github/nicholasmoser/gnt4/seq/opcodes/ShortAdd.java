@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class ShortAdd implements Opcode {
 
-  private final static String MNEMONIC = "s_add";
+  private final static String MNEMONIC = "i16_add";
   private final int offset;
   private final byte[] bytes;
   private final String info;

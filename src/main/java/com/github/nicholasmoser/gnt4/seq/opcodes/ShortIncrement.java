@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class ShortIncrement implements Opcode {
 
-  private final static String MNEMONIC = "s_inc";
+  private final static String MNEMONIC = "i16_inc";
   private final int offset;
   private final byte[] bytes;
   private final String info;
