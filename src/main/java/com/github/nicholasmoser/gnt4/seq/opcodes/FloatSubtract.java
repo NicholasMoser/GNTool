@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class FloatSubtract implements Opcode {
 
-  private final static String MNEMONIC = "f_sub";
+  private final static String MNEMONIC = "f32_sub";
   private final int offset;
   private final byte[] bytes;
   private final String info;
