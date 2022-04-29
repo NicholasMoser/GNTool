@@ -35,7 +35,7 @@ public class BranchTable implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | %s %s %s (%d branches)", offset, offsets.size(), MNEMONIC, info, formatRawBytes(bytes));
+    return String.format("%05X | %s %s (%d branches) %s", offset, MNEMONIC, info, offsets.size(), formatRawBytes(bytes));
   }
 
   @Override
