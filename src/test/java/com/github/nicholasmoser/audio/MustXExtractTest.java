@@ -103,6 +103,8 @@ public class MustXExtractTest {
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
         assertEquals(Files.list(outputDir).count(), Files.list(outputDir2).count());
       } else {
+        System.out.println("inputSdi size = " + Files.size(inputSdi));
+        System.out.println("outputSdi size = " + Files.size(outputSdi));
         assertFalse(Files.mismatch(inputSdi, outputSdi) != -1);
         long delta = (long) (Files.size(inputSam) * 0.03);
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
