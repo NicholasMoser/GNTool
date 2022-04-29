@@ -62,7 +62,7 @@ public class SeqKing {
   public static List<Opcode> getOpcodes(Path seqPath, String fileName, boolean verbose) throws IOException {
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(fileName);
-    SeqType seqType = SeqHelper.getSeqType(seqPath);
+    SeqType seqType = SeqHelper.getSeqType(fileName);
 
     // A set of the unique binaries that have been parsed, used to fail when multiple instances of
     // a unique binary are found, implying an error in the parsing.

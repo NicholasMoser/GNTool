@@ -176,12 +176,11 @@ public class SeqHelper {
   /**
    * Returns the type of seq file this is.
    *
-   * @param seqPath The path to the seq file.
+   * @param fileName   The name of the seq file from {@link Seqs}
    * @return The type of seq this file is.
    */
-  public static SeqType getSeqType(Path seqPath) {
-    String path = seqPath.toString();
-    if (path.endsWith("0000.seq") && (path.contains("files/chr") || path.contains("files\\chr"))) {
+  public static SeqType getSeqType(String fileName) {
+    if (fileName.startsWith("files/chr/")) {
       return SeqType.CHR_0000;
     }
     return SeqType.OTHER;
