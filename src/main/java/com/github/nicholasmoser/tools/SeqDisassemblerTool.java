@@ -45,7 +45,14 @@ public class SeqDisassemblerTool {
     if (outputPath.isEmpty()) {
       return;
     }
-    runAsync(seqPath, outputPath.get(), true);
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), true);
   }
 
   /**
@@ -60,7 +67,14 @@ public class SeqDisassemblerTool {
       return;
     }
     currentDirectory = seqPath.getParent().toFile();
-    runAsync(seqPath, outputPath.get(), true);
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), true);
   }
 
   /**
@@ -87,7 +101,14 @@ public class SeqDisassemblerTool {
     if (outputPath.isEmpty()) {
       return;
     }
-    runAsync(seqPath, outputPath.get(), false);
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), false);
   }
 
   /**
@@ -102,7 +123,14 @@ public class SeqDisassemblerTool {
       return;
     }
     currentDirectory = seqPath.getParent().toFile();
-    runAsync(seqPath, outputPath.get(), false);
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), false);
   }
 
   /**
@@ -110,26 +138,20 @@ public class SeqDisassemblerTool {
    * status of the operation.
    *
    * @param seqPath The seq to disassemble.
+   * @param fileName   The name of the seq file from {@link Seqs}
    * @param outputFile The output file to write to.
    * @param html If the output is an html file, txt otherwise.
    */
-  private static void runAsync(Path seqPath, Path outputFile, boolean html) {
+  private static void runAsync(Path seqPath, String fileName, Path outputFile, boolean html) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() {
         try {
           updateMessage(String.format("Disassembling %s", seqPath.getFileName()));
-          Optional<String> fileName = Seqs.getFileName(seqPath);
-          if (fileName.isEmpty()) {
-            fileName = Seqs.requestFileName();
-            if (fileName.isEmpty()) {
-              return null;
-            }
-          }
           if (html) {
-            SeqKing.generateHTML(seqPath, fileName.get(), outputFile, false);
+            SeqKing.generateHTML(seqPath, fileName, outputFile, false);
           } else {
-            SeqKing.generateTXT(seqPath, fileName.get(), outputFile, false);
+            SeqKing.generateTXT(seqPath, fileName, outputFile, false);
           }
           updateMessage("Complete");
           updateProgress(1, 1);
