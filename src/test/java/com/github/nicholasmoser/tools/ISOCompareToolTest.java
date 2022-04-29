@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
+import com.sun.jna.Platform;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -173,8 +174,7 @@ public class ISOCompareToolTest {
     Files.createFile(temp2.resolve("test"));
     try {
       String difference = ISOCompareTool.getDifference(temp1, temp2, ISO1, ISO2);
-      // Currently Windows-only
-      String expectedMessage = "\nFiles only in ISO1\n"
+      String windowsMessage = "\nFiles only in ISO1\n"
           + "------------------\n"
           + "test\\test\n"
           + "\n"
@@ -184,7 +184,21 @@ public class ISOCompareToolTest {
           + "\n"
           + "Changed Files\n"
           + "-------------\n";
-      assertEquals(expectedMessage, difference);
+      String message = "\nFiles only in ISO1\n"
+          + "------------------\n"
+          + "test/test\n"
+          + "\n"
+          + "Files only in ISO2\n"
+          + "------------------\n"
+          + "test\n"
+          + "\n"
+          + "Changed Files\n"
+          + "-------------\n";
+      if (Platform.isWindows()) {
+        assertEquals(windowsMessage, difference);
+      } else {
+        assertEquals(message, difference);
+      }
     } finally {
       MoreFiles.deleteRecursively(temp1, RecursiveDeleteOption.ALLOW_INSECURE);
       MoreFiles.deleteRecursively(temp2, RecursiveDeleteOption.ALLOW_INSECURE);
@@ -205,8 +219,7 @@ public class ISOCompareToolTest {
     Files.createFile(temp1.resolve("test/test"));
     try {
       String difference = ISOCompareTool.getDifference(temp1, temp2, ISO1, ISO2);
-      // Currently Windows-only
-      String expectedMessage = "\nFiles only in ISO1\n"
+      String windowsMessage = "\nFiles only in ISO1\n"
           + "------------------\n"
           + "test\\test\n"
           + "\n"
@@ -215,7 +228,20 @@ public class ISOCompareToolTest {
           + "\n"
           + "Changed Files\n"
           + "-------------\n";
-      assertEquals(expectedMessage, difference);
+      String message = "\nFiles only in ISO1\n"
+          + "------------------\n"
+          + "test/test\n"
+          + "\n"
+          + "Files only in ISO2\n"
+          + "------------------\n"
+          + "\n"
+          + "Changed Files\n"
+          + "-------------\n";
+      if (Platform.isWindows()) {
+        assertEquals(windowsMessage, difference);
+      } else {
+        assertEquals(message, difference);
+      }
     } finally {
       MoreFiles.deleteRecursively(temp1, RecursiveDeleteOption.ALLOW_INSECURE);
       MoreFiles.deleteRecursively(temp2, RecursiveDeleteOption.ALLOW_INSECURE);
