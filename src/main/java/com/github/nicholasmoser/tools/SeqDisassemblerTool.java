@@ -4,6 +4,7 @@ import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqKing;
+import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.File;
@@ -118,10 +119,17 @@ public class SeqDisassemblerTool {
       public Void call() {
         try {
           updateMessage(String.format("Disassembling %s", seqPath.getFileName()));
+          Optional<String> fileName = Seqs.getFileName(seqPath);
+          if (fileName.isEmpty()) {
+            fileName = Seqs.requestFileName();
+            if (fileName.isEmpty()) {
+              return null;
+            }
+          }
           if (html) {
-            SeqKing.generateHTML(seqPath, outputFile, false);
+            SeqKing.generateHTML(seqPath, fileName.get(), outputFile, false);
           } else {
-            SeqKing.generateTXT(seqPath, outputFile, false);
+            SeqKing.generateTXT(seqPath, fileName.get(), outputFile, false);
           }
           updateMessage("Complete");
           updateProgress(1, 1);

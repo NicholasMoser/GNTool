@@ -6,6 +6,7 @@ import com.github.nicholasmoser.testing.Prereqs;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class SeqKingTest {
@@ -530,7 +531,8 @@ public class SeqKingTest {
     try {
       String output = seq.toString().replace(".seq", "_test.html");
       outputPath = Paths.get(output);
-      SeqKing.generateHTML(seq, outputPath, VERBOSE);
+      Optional<String> fileName = Seqs.getFileName(seq);
+      SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE);
       String expected = seq.toString().replace(".seq", ".html");
       Path expectedPath = Paths.get(expected);
       byte[] expectedBytes = Files.readAllBytes(expectedPath);
@@ -548,7 +550,8 @@ public class SeqKingTest {
     try {
       String output = seq.toString().replace(".seq", ".html");
       outputPath = Paths.get(output);
-      SeqKing.generateHTML(seq, outputPath, VERBOSE);
+      Optional<String> fileName = Seqs.getFileName(seq);
+      SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE);
     } finally {
       if (DELETE_FILE && outputPath != null) {
         Files.deleteIfExists(outputPath);
