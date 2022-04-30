@@ -79,6 +79,7 @@ public class MustXExtractTest {
   @MethodSource("samSdiPathProvider")
   public void testExtractAndRepack(Path inputSdi, Path inputSam) throws Exception {
     // Outputs
+    System.out.println(inputSdi);
     Path tempDir = FileUtils.getTempDirectory();
     Path outputDir = tempDir.resolve(UUID.randomUUID().toString());
     Path outputDir2 = tempDir.resolve(UUID.randomUUID().toString());

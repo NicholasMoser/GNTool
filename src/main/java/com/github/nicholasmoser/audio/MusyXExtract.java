@@ -448,7 +448,7 @@ public class MusyXExtract {
     }
     String match = matcher.group(1);
     int result = Integer.parseInt(match, 16);
-    System.out.printf("ID is %d (0x%X) for file %s\n", result, result, dspPath);
+    System.out.printf("  ID is %d (0x%X) for file %s\n", result, result, dspPath);
     return result;
   }
 
