@@ -49,5 +49,6 @@ public class TXG2TPLTool {
         LOGGER.log(Level.SEVERE, "Failed to Open Directory", e.getMessage());
       }
     });
+    new Thread(task).start();
   }
 }
