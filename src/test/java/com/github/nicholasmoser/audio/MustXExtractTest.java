@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -103,8 +104,14 @@ public class MustXExtractTest {
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
         assertEquals(Files.list(outputDir).count(), Files.list(outputDir2).count());
       } else {
-        System.out.println("inputSdi size = " + Files.size(inputSdi));
-        System.out.println("outputSdi size = " + Files.size(outputSdi));
+        int mismatch = (int) Files.mismatch(inputSdi, outputSdi);
+        System.out.println("mismatch at offset " + mismatch);
+        byte[] inputSdiBytes = Files.readAllBytes(inputSdi);
+        System.out.println(inputSdi);
+        System.out.println(Arrays.toString(Arrays.copyOfRange(inputSdiBytes, mismatch, mismatch + 0x10)));
+        byte[] outputSdiBytes = Files.readAllBytes(outputSdi);
+        System.out.println(outputSdi);
+        System.out.println(Arrays.toString(Arrays.copyOfRange(outputSdiBytes, mismatch, mismatch + 0x10)));
         assertFalse(Files.mismatch(inputSdi, outputSdi) != -1);
         long delta = (long) (Files.size(inputSam) * 0.03);
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
