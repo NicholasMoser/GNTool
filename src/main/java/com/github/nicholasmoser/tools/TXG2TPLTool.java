@@ -2,7 +2,10 @@ package com.github.nicholasmoser.tools;
 
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
+import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.graphics.TXG2TPL;
+import javafx.concurrent.Task;
+
 import java.awt.Desktop;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,12 +37,17 @@ public class TXG2TPLTool {
     }
     Path output = outputPath.get();
     TXG2TPL.unpack(input, output);
-    new Thread(() -> {
-      try {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
         Desktop.getDesktop().open(output.toFile());
-      } catch (Exception e) {
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
         LOGGER.log(Level.SEVERE, "Failed to Open Directory", e.getMessage());
       }
-    }).start();
+    });
   }
 }
