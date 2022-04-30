@@ -2,7 +2,6 @@ package com.github.nicholasmoser.tools;
 
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
-import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import javafx.concurrent.Task;
 
