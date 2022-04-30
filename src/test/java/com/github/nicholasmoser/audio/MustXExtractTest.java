@@ -2,10 +2,7 @@ package com.github.nicholasmoser.audio;
 
 import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import com.github.nicholasmoser.testing.Prereqs;
@@ -17,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -79,7 +75,6 @@ public class MustXExtractTest {
   @MethodSource("samSdiPathProvider")
   public void testExtractAndRepack(Path inputSdi, Path inputSam) throws Exception {
     // Outputs
-    System.out.println(inputSdi);
     Path tempDir = FileUtils.getTempDirectory();
     Path outputDir = tempDir.resolve(UUID.randomUUID().toString());
     Path outputDir2 = tempDir.resolve(UUID.randomUUID().toString());
@@ -105,15 +100,7 @@ public class MustXExtractTest {
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
         assertEquals(Files.list(outputDir).count(), Files.list(outputDir2).count());
       } else {
-        int mismatch = (int) Files.mismatch(inputSdi, outputSdi);
-        if (mismatch != -1) {
-          System.out.println("  mismatch = " + mismatch);
-          byte[] bytes = Arrays.copyOfRange(Files.readAllBytes(inputSdi), 0, 0x18);
-          System.out.println("  inputSdi = " + Arrays.toString(bytes));
-          bytes = Arrays.copyOfRange(Files.readAllBytes(outputSdi), 0, 0x18);
-          System.out.println("  outputSdi = " + Arrays.toString(bytes));
-        }
-        assertEquals(mismatch, -1);
+        assertEquals(Files.mismatch(inputSdi, outputSdi), -1);
         long delta = (long) (Files.size(inputSam) * 0.03);
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
         assertDirectoriesEqual(outputDir, outputDir2);
