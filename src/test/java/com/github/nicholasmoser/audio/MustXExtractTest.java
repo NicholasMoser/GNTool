@@ -105,7 +105,15 @@ public class MustXExtractTest {
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
         assertEquals(Files.list(outputDir).count(), Files.list(outputDir2).count());
       } else {
-        assertFalse(Files.mismatch(inputSdi, outputSdi) != -1);
+        int mismatch = (int) Files.mismatch(inputSdi, outputSdi);
+        if (mismatch != -1) {
+          System.out.println("  mismatch = " + mismatch);
+          byte[] bytes = Arrays.copyOfRange(Files.readAllBytes(inputSdi), 0, 0x18);
+          System.out.println("  inputSdi = " + Arrays.toString(bytes));
+          bytes = Arrays.copyOfRange(Files.readAllBytes(outputSdi), 0, 0x18);
+          System.out.println("  outputSdi = " + Arrays.toString(bytes));
+        }
+        assertEquals(mismatch, -1);
         long delta = (long) (Files.size(inputSam) * 0.03);
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
         assertDirectoriesEqual(outputDir, outputDir2);
