@@ -2,10 +2,7 @@ package com.github.nicholasmoser.audio;
 
 import static com.github.nicholasmoser.utils.TestUtil.assertDirectoriesEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import com.github.nicholasmoser.testing.Prereqs;
@@ -103,7 +100,7 @@ public class MustXExtractTest {
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
         assertEquals(Files.list(outputDir).count(), Files.list(outputDir2).count());
       } else {
-        assertFalse(Files.mismatch(inputSdi, outputSdi) != -1);
+        assertEquals(Files.mismatch(inputSdi, outputSdi), -1);
         long delta = (long) (Files.size(inputSam) * 0.03);
         assertEquals(Files.size(inputSam), Files.size(outputSam), delta);
         assertDirectoriesEqual(outputDir, outputDir2);

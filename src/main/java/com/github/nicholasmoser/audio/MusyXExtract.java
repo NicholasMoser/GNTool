@@ -416,6 +416,7 @@ public class MusyXExtract {
       List<Path> dspPaths = Files.list(inputPath)
           .filter(Files::isRegularFile)
           .filter(path -> path.toString().endsWith(".dsp"))
+          .sorted()
           .collect(Collectors.toList());
       for (Path dspPath : dspPaths) {
         int id = getId(dspPath);
