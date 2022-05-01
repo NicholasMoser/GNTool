@@ -153,7 +153,7 @@ public class DolHijack {
         throw new IOException("A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
       }
       // Write the codes list to the codes.json file
-      Path codesJson = dolPath.resolve("../../../codes.json");
+      Path codesJson = dolPath.getParent().resolve("../../codes.json");
       Files.writeString(codesJson, codesList.toString(2));
       break;
     }
