@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class FloatDivide implements Opcode {
 
-  private final static String MNEMONIC = "f_div";
+  private final static String MNEMONIC = "f32_div";
   private final int offset;
   private final byte[] bytes;
   private final String info;

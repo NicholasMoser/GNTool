@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class Nimply implements Opcode {
+public class ShortAndCompare implements Opcode {
 
-  private final static String MNEMONIC = "nimply";
+  private final static String MNEMONIC = "i16_andc";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public Nimply(int offset, byte[] bytes, String info) {
+  public ShortAndCompare(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

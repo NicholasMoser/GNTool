@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class Decrement implements Opcode {
+public class FloatVectorMultiplyMatrix implements Opcode {
 
-  private final static String MNEMONIC = "dec";
+  private final static String MNEMONIC = "fvec_mulm";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public Decrement(int offset, byte[] bytes, String info) {
+  public FloatVectorMultiplyMatrix(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

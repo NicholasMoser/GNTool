@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class FloatSubtract implements Opcode {
+public class FloatVectorSubtract implements Opcode {
 
-  private final static String MNEMONIC = "f32_sub";
+  private final static String MNEMONIC = "fvec_sub";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public FloatSubtract(int offset, byte[] bytes, String info) {
+  public FloatVectorSubtract(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

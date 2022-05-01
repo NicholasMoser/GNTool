@@ -1,6 +1,9 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
+import javafx.scene.control.ChoiceDialog;
 
 public class Seqs {
 
@@ -265,4 +268,34 @@ public class Seqs {
           STG_030_0000, STG_030_0100, STG_031_0000, STG_031_0100, STG_032_0000, STG_032_0100, S_00,
           S_01, S_02, S_03, S_04, S_05, S_06, S_07, S_08, S_09, S_0E, S_10, S_11, S_12, S_13, S_14,
           S_15, S_16, S_17, S_18, S_19, S_1E, S_20, S_21, S_22, S_23, S_24);
+
+  /**
+   * Tries to find the unique path name of the SEQ file from the given SEQ path. Will return an
+   * empty optional in such cases as the SEQ file being renamed.
+   *
+   * @param seqPath The path to the SEQ file.
+   * @return An optional unique file name of the SEQ file.
+   */
+  public static Optional<String> getFileName(Path seqPath) {
+    String fixedPath = seqPath.toString().replace("\\", "/");
+    for (String path : ALL) {
+      if (fixedPath.endsWith(path)) {
+        return Optional.of(path);
+      }
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * Request an SEQ file name from the user.
+   *
+   * @return An optional SEQ file name.
+   */
+  public static Optional<String> requestFileName() {
+    ChoiceDialog<String> dialog = new ChoiceDialog<>(Seqs.ALL.get(0), Seqs.ALL);
+    dialog.setTitle("Select SEQ File");
+    dialog.setHeaderText("Please select which SEQ file this is.");
+    dialog.setContentText("File:");
+    return dialog.showAndWait();
+  }
 }

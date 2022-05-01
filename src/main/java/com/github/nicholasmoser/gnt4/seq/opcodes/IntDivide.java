@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class Xor implements Opcode {
+public class IntDivide implements Opcode {
 
-  private final static String MNEMONIC = "xor";
+  private final static String MNEMONIC = "i32_div";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public Xor(int offset, byte[] bytes, String info) {
+  public IntDivide(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

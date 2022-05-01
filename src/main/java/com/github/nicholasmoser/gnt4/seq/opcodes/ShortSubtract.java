@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class ShortSubtract implements Opcode {
 
-  private final static String MNEMONIC = "s_sub";
+  private final static String MNEMONIC = "i16_sub";
   private final int offset;
   private final byte[] bytes;
   private final String info;

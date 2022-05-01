@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class Sub implements Opcode {
+public class IntOr implements Opcode {
 
-  private final static String MNEMONIC = "sub";
+  private final static String MNEMONIC = "i32_or";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public Sub(int offset, byte[] bytes, String info) {
+  public IntOr(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

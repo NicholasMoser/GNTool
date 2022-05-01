@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import static j2html.TagCreator.a;
+import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.body;
 import static j2html.TagCreator.button;
 import static j2html.TagCreator.div;
@@ -14,6 +15,7 @@ import static j2html.TagCreator.style;
 import static j2html.TagCreator.title;
 import static j2html.TagCreator.ul;
 
+import com.github.nicholasmoser.gnt4.seq.comment.Comments;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
@@ -29,7 +31,9 @@ import j2html.tags.specialized.UlTag;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -53,7 +57,7 @@ public class SeqKingHtml {
         body(
             h1(fileName),
             button("Toggle Hide Bytes").attr("onclick", "toggleHideBytes()"),
-            getBody(opcodes)
+            getBody(opcodes, fileName)
         )
     ).withLang("en").render();
     Files.writeString(outputPath, html);
@@ -65,14 +69,22 @@ public class SeqKingHtml {
    * @param opcodes The list of opcodes.
    * @return The HTML body.
    */
-  private static ContainerTag getBody(List<Opcode> opcodes) {
+  private static ContainerTag getBody(List<Opcode> opcodes, String fileName) {
+    Map<Integer, String> offsetToComments = Comments.getComments(fileName);
     ContainerTag<DivTag> body = div();
     Optional<ContainerTag> toc = getTableOfContents(opcodes);
     toc.ifPresent(body::with);
     ContainerTag<PTag> subroutine = p();
     for (int i = 0; i < opcodes.size(); i++) {
       Opcode opcode = opcodes.get(i);
+      // Maybe get comment
+      String comment = offsetToComments.get(opcode.getOffset());
+      if (comment != null) {
+        subroutine.with(div(comment).withClass("c"));
+      }
+      // Get opcode HTML
       subroutine.with(opcode.toHTML());
+      // Maybe break for end of function
       if (isFunctionEnd(i, opcodes)) {
         body.with(subroutine);
         subroutine = p();
@@ -185,6 +197,9 @@ public class SeqKingHtml {
         }
         .v {
           color: #1E1E1E;
+        }
+        .c {
+          color: #6A8759;
         }
         """;
   }

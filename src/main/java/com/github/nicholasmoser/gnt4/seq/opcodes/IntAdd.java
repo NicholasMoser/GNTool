@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class Subws implements Opcode {
+public class IntAdd implements Opcode {
 
-  private final static String MNEMONIC = "subws";
+  private final static String MNEMONIC = "i32_add";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public Subws(int offset, byte[] bytes, String info) {
+  public IntAdd(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

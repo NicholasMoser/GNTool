@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class And implements Opcode {
+public class IntIncrement implements Opcode {
 
-  private final static String MNEMONIC = "and";
+  private final static String MNEMONIC = "i32_inc";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public And(int offset, byte[] bytes, String info) {
+  public IntIncrement(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

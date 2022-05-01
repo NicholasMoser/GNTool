@@ -5,14 +5,14 @@ import static j2html.TagCreator.div;
 
 import j2html.tags.ContainerTag;
 
-public class FloatMove implements Opcode {
+public class ByteMov implements Opcode {
 
-  private final static String MNEMONIC = "f_mov";
+  private final static String MNEMONIC = "i8_mov";
   private final int offset;
   private final byte[] bytes;
   private final String info;
 
-  public FloatMove(int offset, byte[] bytes, String info) {
+  public ByteMov(int offset, byte[] bytes, String info) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;

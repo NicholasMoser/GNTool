@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class FloatMultiply implements Opcode {
 
-  private final static String MNEMONIC = "f_mul";
+  private final static String MNEMONIC = "f32_mul";
   private final int offset;
   private final byte[] bytes;
   private final String info;

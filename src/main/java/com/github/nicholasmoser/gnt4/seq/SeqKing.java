@@ -21,25 +21,27 @@ public class SeqKing {
    * Parse the given seq file and create an HTML report at the given output path.
    *
    * @param seqPath    The seq file path.
+   * @param fileName   The name of the seq file from {@link Seqs}
    * @param outputPath The output HTML report file path.
    * @param verbose    If the txt output should be printed to the console.
    * @throws IOException If an I/O error occurs.
    */
-  public static void generateHTML(Path seqPath, Path outputPath, boolean verbose) throws IOException {
-    List<Opcode> opcodes = getOpcodes(seqPath, verbose);
-    SeqKingHtml.generate(seqPath.getFileName().toString(), opcodes, outputPath);
+  public static void generateHTML(Path seqPath, String fileName, Path outputPath, boolean verbose) throws IOException {
+    List<Opcode> opcodes = getOpcodes(seqPath, fileName, verbose);
+    SeqKingHtml.generate(fileName, opcodes, outputPath);
   }
 
   /**
    * Parse the given seq file and create an HTML report at the given output path.
    *
    * @param seqPath    The seq file path.
+   * @param fileName   The name of the seq file from {@link Seqs}
    * @param outputPath The output HTML report file path.
    * @param verbose    If the txt output should be printed to the console.
    * @throws IOException If an I/O error occurs.
    */
-  public static void generateTXT(Path seqPath, Path outputPath, boolean verbose) throws IOException {
-    List<Opcode> opcodes = getOpcodes(seqPath, verbose);
+  public static void generateTXT(Path seqPath, String fileName, Path outputPath, boolean verbose) throws IOException {
+    List<Opcode> opcodes = getOpcodes(seqPath, fileName, verbose);
     try(OutputStream os = Files.newOutputStream(outputPath)) {
       for (Opcode opcode : opcodes) {
         os.write(opcode.toString().getBytes(StandardCharsets.UTF_8));
@@ -52,14 +54,15 @@ public class SeqKing {
    * Get the list of opcodes for the given seq file.
    *
    * @param seqPath The path to the seq file.
+   * @param fileName   The name of the seq file from {@link Seqs}
    * @param verbose If the txt output should be printed to the console.
    * @return The list of opcodes.
    * @throws IOException If an I/O error occurs.
    */
-  public static List<Opcode> getOpcodes(Path seqPath, boolean verbose) throws IOException {
+  public static List<Opcode> getOpcodes(Path seqPath, String fileName, boolean verbose) throws IOException {
     // Known offsets of binary data
-    Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(seqPath);
-    SeqType seqType = SeqHelper.getSeqType(seqPath);
+    Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(fileName);
+    SeqType seqType = SeqHelper.getSeqType(fileName);
 
     // A set of the unique binaries that have been parsed, used to fail when multiple instances of
     // a unique binary are found, implying an error in the parsing.
@@ -152,68 +155,67 @@ public class SeqKing {
   /**
    * Returns known binary offsets and sizes in seq files.
    *
-   * @param seqPath The path to the seq file.
+   * @param fileName   The name of the seq file from {@link Seqs}
    * @return The binary offsets and sizes of that seq file.
    */
-  private static Map<Integer, Integer> getBinaryOffsets(Path seqPath) {
+  private static Map<Integer, Integer> getBinaryOffsets(String fileName) {
     Map<Integer, Integer> binaryOffsetToSize = new HashMap<>();
-    String path = seqPath.toString().replace('\\', '/');
-    if (path.endsWith("char_sel.seq")) {
-      binaryOffsetToSize.put(0x950, 0x14);
-      binaryOffsetToSize.put(0x9A0, 0xc);
-      binaryOffsetToSize.put(0x2370, 0x100);
-      binaryOffsetToSize.put(0xF3E0, 0x43C);
-      binaryOffsetToSize.put(0xFAA0, 0x14B4);
-    } else if (path.endsWith("chr/nar/0000.seq")) {
-      binaryOffsetToSize.put(0x30C4C, 0x14);
-      binaryOffsetToSize.put(0x319B0, 0x10);
-    } else if (path.endsWith("chr/kak/0000.seq")) {
-      binaryOffsetToSize.put(0x32CB0, 0x10);
-      binaryOffsetToSize.put(0x344C0, 0x10);
-    } else if (path.endsWith("chr/kim/0000.seq")) {
-      binaryOffsetToSize.put(0x28BC4, 0x10);
-    } else if (path.endsWith("chr/iru/0010.seq")) {
-      binaryOffsetToSize.put(0x2C34, 0x200);
-      binaryOffsetToSize.put(0x2EE8, 0x18);
-      binaryOffsetToSize.put(0x2F08, 0x10);
-    } else if (path.endsWith("game/player00.seq")) {
-      binaryOffsetToSize.put(0x70, 0x10);
-    } else if (path.endsWith("game/camera01.seq")) {
-      binaryOffsetToSize.put(0x3E0, 0x10);
-    } else if (path.endsWith("furu/f_camera.seq")) {
-      binaryOffsetToSize.put(0x4C0, 0x10);
-    } else if (path.endsWith("chr/cmn/1000.seq")) {
-      binaryOffsetToSize.put(0x1430, 0x3BF0); // TODO: Is this all REALLY binary data???
-    } else if (path.endsWith("game/game00.seq")) {
-      binaryOffsetToSize.put(0x18, 0x18);
-      binaryOffsetToSize.put(0x9E04, 0xE6C);
-      binaryOffsetToSize.put(0xAC70, 0x80); // array of strings
-      binaryOffsetToSize.put(0xACF0, 0x3F0);
-      binaryOffsetToSize.put(0xBFD0, 0x10);
-      binaryOffsetToSize.put(0xBFF8, 0x10);
-      binaryOffsetToSize.put(0xC020, 0x10);
-      binaryOffsetToSize.put(0xC048, 0x10);
-      binaryOffsetToSize.put(0xC070, 0x10);
-      binaryOffsetToSize.put(0xC098, 0x10);
-      binaryOffsetToSize.put(0xC710, 0x38); // array of strings
-      binaryOffsetToSize.put(0xD7AC, 0x34); // array of offsets
-      binaryOffsetToSize.put(0x11A68, 0x34); // array of offsets
-      binaryOffsetToSize.put(0x12FDC, 0x34); // array of offsets
-      binaryOffsetToSize.put(0x15C58, 0x10);
-    } else if (path.endsWith("maki/m_title.seq")) {
-      binaryOffsetToSize.put(0x6EC0, 0x30);
-      binaryOffsetToSize.put(0x11A00, 0x3A8);
-      binaryOffsetToSize.put(0x11DA8, 0x70); // array of offsets
-      binaryOffsetToSize.put(0x11E18, 0x338);
-      binaryOffsetToSize.put(0x12150, 0x70); // array of offsets
-      binaryOffsetToSize.put(0x121C0, 0x17A0);
-      binaryOffsetToSize.put(0x1C040, 0xF0); // array of offsets?
-      binaryOffsetToSize.put(0x1C130, 0x162E0);
-      binaryOffsetToSize.put(0x32410, 0x8C0); // array of offsets?
+    switch (fileName) {
+      case Seqs.CHARSEL -> {
+        binaryOffsetToSize.put(0x950, 0x14);
+        binaryOffsetToSize.put(0x9A0, 0xc);
+        binaryOffsetToSize.put(0x2370, 0x100);
+        binaryOffsetToSize.put(0xF3E0, 0x43C);
+        binaryOffsetToSize.put(0xFAA0, 0x14B4);
+      }
+      case Seqs.NAR_0000 -> {
+        binaryOffsetToSize.put(0x30C4C, 0x14);
+        binaryOffsetToSize.put(0x319B0, 0x10);
+      }
+      case Seqs.KAK_0000 -> {
+        binaryOffsetToSize.put(0x32CB0, 0x10);
+        binaryOffsetToSize.put(0x344C0, 0x10);
+      }
+      case Seqs.KIM_0000 -> binaryOffsetToSize.put(0x28BC4, 0x10);
+      case Seqs.IRU_0010 -> {
+        binaryOffsetToSize.put(0x2C34, 0x200);
+        binaryOffsetToSize.put(0x2EE8, 0x18);
+        binaryOffsetToSize.put(0x2F08, 0x10);
+      }
+      case Seqs.PLAYER_00 -> binaryOffsetToSize.put(0x70, 0x10);
+      case Seqs.CAMERA_01 -> binaryOffsetToSize.put(0x3E0, 0x10);
+      case Seqs.F_CAMERA -> binaryOffsetToSize.put(0x4C0, 0x10);
+      case Seqs.CMN_1000 -> binaryOffsetToSize.put(0x1430,
+          0x3BF0); // TODO: Is this all REALLY binary data???
+      case Seqs.GAME_00 -> {
+        binaryOffsetToSize.put(0x18, 0x18);
+        binaryOffsetToSize.put(0x9E04, 0xE6C);
+        binaryOffsetToSize.put(0xAC70, 0x80); // array of strings
+        binaryOffsetToSize.put(0xACF0, 0x3F0);
+        binaryOffsetToSize.put(0xBFD0, 0x10);
+        binaryOffsetToSize.put(0xBFF8, 0x10);
+        binaryOffsetToSize.put(0xC020, 0x10);
+        binaryOffsetToSize.put(0xC048, 0x10);
+        binaryOffsetToSize.put(0xC070, 0x10);
+        binaryOffsetToSize.put(0xC098, 0x10);
+        binaryOffsetToSize.put(0xC710, 0x38); // array of strings
+        binaryOffsetToSize.put(0xD7AC, 0x34); // array of offsets
+        binaryOffsetToSize.put(0x11A68, 0x34); // array of offsets
+        binaryOffsetToSize.put(0x12FDC, 0x34); // array of offsets
+        binaryOffsetToSize.put(0x15C58, 0x10);
+      }
+      case Seqs.M_TITLE -> {
+        binaryOffsetToSize.put(0x6EC0, 0x30);
+        binaryOffsetToSize.put(0x11A00, 0x3A8);
+        binaryOffsetToSize.put(0x11DA8, 0x70); // array of offsets
+        binaryOffsetToSize.put(0x11E18, 0x338);
+        binaryOffsetToSize.put(0x12150, 0x70); // array of offsets
+        binaryOffsetToSize.put(0x121C0, 0x17A0);
+        binaryOffsetToSize.put(0x1C040, 0xF0); // array of offsets?
+        binaryOffsetToSize.put(0x1C130, 0x162E0);
+        binaryOffsetToSize.put(0x32410, 0x8C0); // array of offsets?
+      }
     }
     return binaryOffsetToSize;
   }
-
-  // TODO: Add notes
-  // 0xB30 For Iruka, this is where the Action ID offset is read from the Action ID table
 }

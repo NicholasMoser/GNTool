@@ -4,6 +4,7 @@ import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqKing;
+import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.File;
@@ -44,7 +45,14 @@ public class SeqDisassemblerTool {
     if (outputPath.isEmpty()) {
       return;
     }
-    runAsync(seqPath, outputPath.get(), true);
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), true);
   }
 
   /**
@@ -59,7 +67,14 @@ public class SeqDisassemblerTool {
       return;
     }
     currentDirectory = seqPath.getParent().toFile();
-    runAsync(seqPath, outputPath.get(), true);
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), true);
   }
 
   /**
@@ -86,7 +101,14 @@ public class SeqDisassemblerTool {
     if (outputPath.isEmpty()) {
       return;
     }
-    runAsync(seqPath, outputPath.get(), false);
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), false);
   }
 
   /**
@@ -101,7 +123,14 @@ public class SeqDisassemblerTool {
       return;
     }
     currentDirectory = seqPath.getParent().toFile();
-    runAsync(seqPath, outputPath.get(), false);
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), false);
   }
 
   /**
@@ -109,19 +138,20 @@ public class SeqDisassemblerTool {
    * status of the operation.
    *
    * @param seqPath The seq to disassemble.
+   * @param fileName   The name of the seq file from {@link Seqs}
    * @param outputFile The output file to write to.
    * @param html If the output is an html file, txt otherwise.
    */
-  private static void runAsync(Path seqPath, Path outputFile, boolean html) {
+  private static void runAsync(Path seqPath, String fileName, Path outputFile, boolean html) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() {
         try {
           updateMessage(String.format("Disassembling %s", seqPath.getFileName()));
           if (html) {
-            SeqKing.generateHTML(seqPath, outputFile, false);
+            SeqKing.generateHTML(seqPath, fileName, outputFile, false);
           } else {
-            SeqKing.generateTXT(seqPath, outputFile, false);
+            SeqKing.generateTXT(seqPath, fileName, outputFile, false);
           }
           updateMessage("Complete");
           updateProgress(1, 1);
