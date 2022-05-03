@@ -106,7 +106,7 @@ public class SEQ_RegCMD1 {
         if (lastSixBits < 0x18) {
           operand = new GPROperand(lastSixBits, false);
         } else if (lastSixBits < 0x30) {
-          operand = new SeqOperand(lastSixBits * 4, false);
+          operand = new SeqOperand(lastSixBits - 0x18, false);
         } else {
           operand = SEQ_RegGP(lastSixBits, false);
         }
@@ -128,7 +128,7 @@ public class SEQ_RegCMD1 {
       if (lastSixBits < 0x18) {
         operand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        operand = new SeqOperand(lastSixBits * 4, false);
+        operand = new SeqOperand(lastSixBits - 0x18, false);
       } else {
         operand = SEQ_RegGP(lastSixBits, false);
       }

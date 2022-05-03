@@ -82,7 +82,7 @@ public class SEQ_RegCMD2 {
       if (lastSixBits < 0x18) {
         firstOperand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        firstOperand = new SeqOperand(lastSixBits * 4, false);
+        firstOperand = new SeqOperand(lastSixBits - 0x18, false);
       } else {
         firstOperand = SEQ_RegGP(lastSixBits, false);
       }
@@ -117,7 +117,7 @@ public class SEQ_RegCMD2 {
         if (lastSixBits2 < 0x18) {
           secondOperand = new GPROperand(lastSixBits2, false);
         } else if (lastSixBits2 < 0x30) {
-          secondOperand = new SeqOperand(lastSixBits2 * 4, false);
+          secondOperand = new SeqOperand(lastSixBits2 - 0x18, false);
         } else {
           secondOperand = SEQ_RegGP(lastSixBits2, false);
         }
@@ -141,7 +141,7 @@ public class SEQ_RegCMD2 {
       if (lastSixBits2 < 0x18) {
         secondOperand = new GPROperand(lastSixBits2, false);
       } else if (lastSixBits2 < 0x30) {
-        secondOperand = new SeqOperand(lastSixBits2 * 4, false);
+        secondOperand = new SeqOperand(lastSixBits2 - 0x18, false);
       } else {
         secondOperand = SEQ_RegGP(lastSixBits2, false);
       }
