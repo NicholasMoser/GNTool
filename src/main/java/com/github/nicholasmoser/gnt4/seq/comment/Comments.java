@@ -87,6 +87,7 @@ public class Comments {
     Multimap<Integer, String> iru0000Comments = ArrayListMultimap.create();
     iru0000Comments.put(0x5CF0, "// Scale chr model larger by 1.1x");
 
+    iru0000Comments.put(0xA1C, "// Many actions end by branch and linking to here");
     iru0000Comments.put(0xAA8, "// Action Offset Lookup Branch #1");
 
     iru0000Comments.put(0xB08, "// Action Offset Lookup Branch #2 (Happy path)");
