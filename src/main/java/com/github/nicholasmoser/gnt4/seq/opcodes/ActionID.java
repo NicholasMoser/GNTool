@@ -18,15 +18,23 @@ public class ActionID implements Opcode {
   private final int actionOffset;
   private String info;
 
-  public ActionID(int offset, byte[] bytes, int actionId, boolean unused) {
+  public enum Type {
+    NORMAL,
+    RESET,
+    UNUSED
+  }
+
+  public ActionID(int offset, byte[] bytes, int actionId, Type type) {
     this.offset = offset;
     this.bytes = bytes;
     this.actionId = actionId;
     this.actionOffset = ByteUtils.toInt32(bytes);
-    if (unused) {
-      info = " (UNUSED)";
-    } else {
+    if (type == Type.NORMAL) {
       info = " " + Seq.getActionDescription(actionId);
+    } else if (type == Type.RESET) {
+      info = " (UNUSED - Reset chr)";
+    } else {
+      info = " (UNUSED)";
     }
   }
 
