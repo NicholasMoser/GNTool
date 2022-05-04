@@ -679,7 +679,7 @@ public class Seq {
     actionDescriptions.put(0x03D, "Getting hit animation");
     actionDescriptions.put(0x03E, "Getting hit animation");
     actionDescriptions.put(0x03F, "Getting hit animation");
-    actionDescriptions.put(0x040, "Getting hit (e.g. by Naruto 5B");
+    actionDescriptions.put(0x040, "Getting hit (e.g. by Naruto 5B)");
     actionDescriptions.put(0x041, "Getting hit animation");
     actionDescriptions.put(0x042, "Getting hit animation");
     actionDescriptions.put(0x043, "Getting hit animation");

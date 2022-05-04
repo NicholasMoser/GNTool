@@ -23,41 +23,10 @@ public class ActionID implements Opcode {
     this.bytes = bytes;
     this.actionId = actionId;
     this.actionOffset = ByteUtils.toInt32(bytes);
-    switch (actionId) {
-      case Seq.ACTION_5B -> this.info = " 5B";
-      case Seq.ACTION_6B -> this.info = " 6B";
-      case Seq.ACTION_4B -> this.info = " 4B";
-      case Seq.ACTION_2B -> this.info = " 2B";
-      case Seq.ACTION_RB -> this.info = " RB";
-      case Seq.ACTION_5A -> this.info = " 5A";
-      case Seq.ACTION_6A -> this.info = " 6A";
-      case Seq.ACTION_4A -> this.info = " 4A";
-      case Seq.ACTION_2A -> this.info = " 2A";
-      case Seq.ACTION_RA -> this.info = " RA";
-      case Seq.ACTION_RKNJ_GROUND -> this.info = " RKNJ Ground";
-      case Seq.ACTION_RKNJ_AIR -> this.info = " RKNJ Air";
-      case Seq.ACTION_LKNJ -> this.info = " LKNJ";
-      case Seq.ACTION_ZKNJ_INCOMING -> this.info = " ZKNJ Incoming";
-      case Seq.ACTION_5Z_OUTGOING -> this.info = " 5Z Outgoing";
-      case Seq.ACTION_4Z_INCOMING -> this.info = " 4Z Incoming";
-      case Seq.ACTION_5Z_INCOMING -> this.info = " 5Z Incoming";
-      case Seq.ACTION_ZKNJ_OUTGOING -> this.info = " ZKNJ Outgoing";
-      case Seq.ACTION_4Z_OUTGOING -> this.info = " 4Z Outgoing";
-      case Seq.ACTION_JB -> this.info = " JB";
-      case Seq.ACTION_JA -> this.info = " JA";
-      case Seq.ACTION_8B -> this.info = " 8B";
-      case Seq.ACTION_8A -> this.info = " 8A";
-      case Seq.ACTION_5X -> this.info = " 5X";
-      case Seq.ACTION_2X -> this.info = " 2X";
-      case Seq.ACTION_COMBO_START -> this.info = " Combo start";
-      case Seq.ACTION_GROUND_THROW -> this.info = " Ground throw";
-      case Seq.ACTION_BACK_GROUND_THROW -> this.info = " Back ground throw";
-      case Seq.ACTION_AIR_THROW -> this.info = " Air throw";
-      case Seq.ACTION_ACTIVATED_X -> this.info = " Activated X";
-      default -> this.info = "";
-    }
     if (unused) {
-      info += " (UNUSED)";
+      info = " (UNUSED)";
+    } else {
+      info = " " + Seq.getActionDescription(actionId);
     }
   }
 
