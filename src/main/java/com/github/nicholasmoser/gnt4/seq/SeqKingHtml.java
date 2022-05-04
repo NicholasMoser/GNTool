@@ -23,6 +23,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SeqEditOpcode;
+import com.google.common.collect.Multimap;
 import j2html.Config;
 import j2html.tags.ContainerTag;
 import j2html.tags.specialized.DivTag;
@@ -70,7 +71,7 @@ public class SeqKingHtml {
    * @return The HTML body.
    */
   private static ContainerTag getBody(List<Opcode> opcodes, String fileName) {
-    Map<Integer, String> offsetToComments = Comments.getComments(fileName);
+    Multimap<Integer, String> offsetToComments = Comments.getComments(fileName);
     ContainerTag<DivTag> body = div();
     Optional<ContainerTag> toc = getTableOfContents(opcodes);
     toc.ifPresent(body::with);
@@ -78,9 +79,10 @@ public class SeqKingHtml {
     for (int i = 0; i < opcodes.size(); i++) {
       Opcode opcode = opcodes.get(i);
       // Maybe get comment
-      String comment = offsetToComments.get(opcode.getOffset());
-      if (comment != null) {
-        subroutine.with(div(comment).withClass("c"));
+      if (offsetToComments.containsKey(opcode.getOffset())) {
+        for (String comment : offsetToComments.get(opcode.getOffset())) {
+          subroutine.with(div(comment).withClass("c"));
+        }
       }
       // Get opcode HTML
       subroutine.with(opcode.toHTML());
