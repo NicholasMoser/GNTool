@@ -32,7 +32,7 @@ public class ActionID implements Opcode {
     if (type == Type.NORMAL) {
       info = " " + Seq.getActionDescription(actionId);
     } else if (type == Type.RESET) {
-      info = " (UNUSED - Reset chr)";
+      info = " (UNUSED - reset chr)";
     } else {
       info = " (UNUSED)";
     }
