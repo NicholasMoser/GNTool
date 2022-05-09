@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
@@ -95,7 +96,7 @@ public class SEQ_RegCMD1 {
           operand = new GPROperand(opcode_last_byte, true);
         } else if (opcode_last_byte < 0x30) {
           pushWord(bs.readWord());
-          operand = new SeqOperand(opcode_last_byte - 0x18, true);
+          operand = getSeqOperand(opcode_last_byte - 0x18, true);
         } else {
           operand = SEQ_RegGP(opcode_last_byte, true);
           pushWord(bs.readWord());
@@ -106,7 +107,7 @@ public class SEQ_RegCMD1 {
         if (lastSixBits < 0x18) {
           operand = new GPROperand(lastSixBits, false);
         } else if (lastSixBits < 0x30) {
-          operand = new SeqOperand(lastSixBits - 0x18, false);
+          operand = getSeqOperand(lastSixBits - 0x18, false);
         } else {
           operand = SEQ_RegGP(lastSixBits, false);
         }
@@ -128,7 +129,7 @@ public class SEQ_RegCMD1 {
       if (lastSixBits < 0x18) {
         operand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        operand = new SeqOperand(lastSixBits - 0x18, false);
+        operand = getSeqOperand(lastSixBits - 0x18, false);
       } else {
         operand = SEQ_RegGP(lastSixBits, false);
       }
@@ -137,6 +138,21 @@ public class SEQ_RegCMD1 {
       operand.withField(word);
       pushWord(word);
     }
+  }
+
+  /**
+   * Checks a {@link SeqOperand} to see if it is a known Operand type, and instead returns that
+   * type if so. For example, {@link ChrOperand} is one such known type at a specific index.
+   *
+   * @param index The index.
+   * @param isPointer If this operand is a pointer.
+   * @return The operand.
+   */
+  public Operand getSeqOperand(int index, boolean isPointer) {
+    if (index == 0xE) {
+      return new ChrOperand(isPointer);
+    }
+    return new SeqOperand(index, isPointer);
   }
 
   /**
