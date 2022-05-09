@@ -910,7 +910,7 @@ public class Seq {
     actionDescriptions.put(0x1DF, "Activated 3-Man X #6");
     actionDescriptions.put(0x1E0, "Getting thrown (front)");
     actionDescriptions.put(0x1E1, "Getting thrown (back)");
-    actionDescriptions.put(0x1E2, "Unknown");
+    actionDescriptions.put(0x1E2, "Getting thrown (air)");
     actionDescriptions.put(0x1E3, "Hit by super (e.g. by Naruto 5X)");
     actionDescriptions.put(0x1E4, "Hit by big throw (e.g. by Choji 5A)");
     actionDescriptions.put(0x1E5, "Hit by underground throw (e.g. by Kakashi/Kabuto 2A)");
