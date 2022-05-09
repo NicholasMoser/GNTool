@@ -1,27 +1,24 @@
 package com.github.nicholasmoser.gnt4.seq.operands;
 
-public class SeqOperand implements Operand {
+public class ChrOperand implements Operand {
 
-  private final int index;
   private final boolean pointer;
   private final StringBuilder infoBuilder;
   private int fieldOffset;
 
   /**
-   * Creates a new seq_p_sp operand.
+   * Creates a new chr_p operand.
    *
-   * @param index The seq_p_sp field index.
    * @param isPointer If this operand is a pointer; otherwise it is the value of a pointer.
    */
-  public SeqOperand(int index, boolean isPointer) {
-    this.index = index;
+  public ChrOperand(boolean isPointer) {
     this.pointer = isPointer;
     this.infoBuilder = new StringBuilder();
     this.fieldOffset = -1;
   }
 
   @Override
-  public int get() { return getIndex(); }
+  public int get() { return fieldOffset; }
 
   @Override
   public void addInfo(String info) {
@@ -33,10 +30,6 @@ public class SeqOperand implements Operand {
     this.fieldOffset = fieldOffset;
   }
 
-  public int getIndex() {
-    return index;
-  }
-
   public boolean isPointer() {
     return pointer;
   }
@@ -45,6 +38,6 @@ public class SeqOperand implements Operand {
   public String toString() {
     String prefix = pointer ? "" : "*";
     String field = getFieldDisplay(fieldOffset);
-    return String.format("%sseq_p_sp->field_0x%02x%s%s", prefix, index * 4, field, infoBuilder);
+    return String.format("%schr_p%s%s", prefix, field, infoBuilder);
   }
 }

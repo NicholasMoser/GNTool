@@ -88,7 +88,7 @@ public class SEQ_RegCMD2 {
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      firstOperand.addInfo(String.format(" + offset 0x%X", word));
+      firstOperand.withField(word);
       operands.add(firstOperand);
       pushWord(word);
       second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
@@ -147,7 +147,7 @@ public class SEQ_RegCMD2 {
       }
       pushWord(bs.readWord());
       int word2 = bs.readWord();
-      secondOperand.addInfo(String.format(" + offset 0x%X", word2));
+      secondOperand.withField(word2);
       operands.add(secondOperand);
       pushWord(word2);
     }

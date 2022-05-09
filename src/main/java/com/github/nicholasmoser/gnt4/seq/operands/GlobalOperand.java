@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4.seq.operands;
 public class GlobalOperand implements Operand {
 
   private final StringBuilder infoBuilder;
+  private int fieldOffset;
 
   public enum Value {
     HITBOX_IDENTITY_MATRIX, // Init to size 0xc78 at 0x8001521c
@@ -21,11 +22,22 @@ public class GlobalOperand implements Operand {
   public GlobalOperand(Value value) {
     this.value = value;
     this.infoBuilder = new StringBuilder();
+    this.fieldOffset = -1;
   }
 
   @Override
   public int get() {
     return getAddress();
+  }
+
+  @Override
+  public void addInfo(String info) {
+    infoBuilder.append(info);
+  }
+
+  @Override
+  public void withField(int fieldOffset) {
+    this.fieldOffset = fieldOffset;
   }
 
   public String getName() {
@@ -51,12 +63,8 @@ public class GlobalOperand implements Operand {
   }
 
   @Override
-  public void addInfo(String info) {
-    infoBuilder.append(info);
-  }
-
-  @Override
   public String toString() {
-    return String.format("%s%s", getName(), infoBuilder);
+    String field = getFieldDisplay(fieldOffset);
+    return String.format("%s%s%s", getName(), field, infoBuilder);
   }
 }
