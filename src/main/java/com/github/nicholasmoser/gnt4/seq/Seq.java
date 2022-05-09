@@ -632,7 +632,7 @@ public class Seq {
     actionDescriptions.put(0x006, "End running");
     actionDescriptions.put(0x007, "Back dash");
     actionDescriptions.put(0x008, "Unknown");
-    // Actions between the above and below are unused
+
     actionDescriptions.put(0x013, "Start jumping");
     actionDescriptions.put(0x014, "Jumping up");
     actionDescriptions.put(0x015, "Jumping forward");
@@ -667,7 +667,7 @@ public class Seq {
     actionDescriptions.put(0x032, "Block low hit (e.g. by Naruto 2B)");
     actionDescriptions.put(0x033, "Block in air");
     actionDescriptions.put(0x034, "Block with lift (e.g. by Naruto 6A)");
-    // Actions between the above and below are unused
+
     actionDescriptions.put(0x036, "Unknown");
     actionDescriptions.put(0x037, "Block hard hit and slide (e.g. by Naruto 4B)");
     actionDescriptions.put(0x038, "Unknown");
@@ -712,7 +712,7 @@ public class Seq {
     actionDescriptions.put(0x05F, "Hit with furi (turns you around, from BR)");
     actionDescriptions.put(0x060, "Hit; trip onto ground (e.g. Hinata 2B)");
     actionDescriptions.put(0x061, "Hard knockdown");
-    // Actions between the above and below are unused
+
     actionDescriptions.put(0x064, "Unknown");
     actionDescriptions.put(0x065, "Guard break");
     actionDescriptions.put(0x066, "Landing on ground on back");
@@ -779,7 +779,7 @@ public class Seq {
     actionDescriptions.put(0x0A3, "2B");
     actionDescriptions.put(0x0A4, "DB (Duplicate)");
     actionDescriptions.put(0x0A5, "DB");
-    // Actions between the above and below are unused
+
     actionDescriptions.put(0x0B0, "5A");
     actionDescriptions.put(0x0B1, "6A");
     actionDescriptions.put(0x0B2, "4A");
