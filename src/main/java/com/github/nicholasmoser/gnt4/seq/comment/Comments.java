@@ -107,8 +107,8 @@ public class Comments {
     iru0000Comments.put(0xB28, "// Load memory address of chr_tbl into gpr19");
     iru0000Comments.put(0xB30, "// Loads action offset from chr_tbl");
 
-    iru0000Comments.put(0x9B88, "// Set chr_tbl address to *seq_p_sp->field_0x260 + offset 0x230");
-    iru0000Comments.put(0x9E7C, "// Set chr_tbl address to *seq_p_sp->field_0x260 + offset 0x230");
+    iru0000Comments.put(0x9B88, "// Set chr_tbl address to *seq_p_sp->field_0x38 + offset 0x230");
+    iru0000Comments.put(0x9E7C, "// Set chr_tbl address to *seq_p_sp->field_0x38 + offset 0x230");
     allComments.put(Seqs.IRU_0000, iru0000Comments);
 
     Multimap<Integer, String> jir0000Comments = ArrayListMultimap.create();
