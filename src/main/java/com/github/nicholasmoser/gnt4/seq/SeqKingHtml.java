@@ -78,7 +78,7 @@ public class SeqKingHtml {
     ContainerTag<PTag> subroutine = p();
     for (int i = 0; i < opcodes.size(); i++) {
       Opcode opcode = opcodes.get(i);
-      // Maybe get comment
+      // Maybe get comments
       if (offsetToComments.containsKey(opcode.getOffset())) {
         for (String comment : offsetToComments.get(opcode.getOffset())) {
           subroutine.with(div(comment).withClass("c"));
