@@ -1,5 +1,8 @@
 package com.github.nicholasmoser.gnt4.seq.operands;
 
+import com.github.nicholasmoser.gnt4.seq.structs.Chr;
+import java.util.Optional;
+
 public class ChrOperand implements Operand {
 
   private final boolean pointer;
@@ -37,7 +40,8 @@ public class ChrOperand implements Operand {
   @Override
   public String toString() {
     String prefix = pointer ? "" : "*";
-    String field = getFieldDisplay(fieldOffset);
+    Optional<String> knownField = Chr.getField(fieldOffset);
+    String field = knownField.isPresent() ? "->" + knownField.get() : getFieldDisplay(fieldOffset);
     return String.format("%schr_p%s%s", prefix, field, infoBuilder);
   }
 }
