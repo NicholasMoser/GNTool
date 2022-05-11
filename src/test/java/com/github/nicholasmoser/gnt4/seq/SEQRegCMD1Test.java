@@ -541,6 +541,29 @@ public class SEQRegCMD1Test {
     assertEquals(0x20, chrOperand.get());
     assertFalse(chrOperand.isPointer());
   }
+
+
+  /**
+   * Tests calling opcode 21060027.
+   * <p>
+   * Operand is a foe_chr_p stored value plus offset.
+   *
+   * @throws Exception If any Exception occurs
+   */
+  @Test
+  public void testFoeChr() throws Exception {
+    byte[] bytes = new byte[]{0x21, 0x06, 0x00, 0x27};
+    ByteStream bs = new ByteStream(bytes);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
+    assertEquals(bytes.length, bs.offset());
+    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals("foe_chr_p", ea.getDescription());
+    Operand operand = ea.getOperand();
+    assertTrue(operand instanceof ChrOperand);
+    ChrOperand chrOperand = (ChrOperand) operand;
+    assertEquals(-1, chrOperand.get());
+    assertTrue(chrOperand.isPointer());
+  }
 }
 
 
