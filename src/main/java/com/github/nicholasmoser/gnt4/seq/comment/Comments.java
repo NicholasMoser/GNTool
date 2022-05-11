@@ -102,9 +102,7 @@ public class Comments {
     iru0000Comments.put(0xAA8, "// Action Offset Lookup Branch #1");
 
     iru0000Comments.put(0xB08, "// Action Offset Lookup Branch #2 (Happy path)");
-    iru0000Comments.put(0xB18, "// Load current action id into gpr2");
     iru0000Comments.put(0xB20, "// Convert action id to table offset");
-    iru0000Comments.put(0xB28, "// Load memory address of chr_tbl into gpr19");
     iru0000Comments.put(0xB30, "// Loads action offset from chr_tbl");
 
     iru0000Comments.put(0x9B88, "// Set chr_tbl address to *seq_p_sp->field_0x38 + offset 0x230");
