@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID.Type;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SectionTitle;
@@ -18,6 +19,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class SeqSection {
+
+  // The below three byte arrays are for various types of chr reset functions that are used
+  private final static byte[] CHR_RESET_1 = new byte[] { 0x24, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x01, 0x04, 0x02, 0x66, 0x00, 0x00, 0x00, 0x02, 0x3C, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x01};
+  private final static byte[] CHR_RESET_2 = new byte[] { 0x04, 0x02, 0x66, 0x00, 0x00, 0x00, 0x02,
+      0x3C, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0B, 0x01, 0x3C, 0x00, 0x00, 0x00, 0x00,
+      0x0A, 0x1C };
+  private final static byte[] CHR_RESET_3 = new byte[] { 0x04, 0x02, 0x66, 0x00, 0x00, 0x00, 0x02,
+      0x3C, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x3C, 0x00, 0x00, 0x00, 0x00,
+      0x0A, 0x1C };
 
   /**
    * Returns if the next 4-byte word is the start of a new seq section.
@@ -164,19 +176,32 @@ public class SeqSection {
     int id = 0;
     int word = bs.readWord();
     while (word != -1) {
-      boolean unused = isActionUnused(bs, word);
-      section.add(new ActionID(bs.offset() - 4, ByteUtils.fromInt32(word), id++, unused));
+      Type type = getActionType(bs, word);
+      section.add(new ActionID(bs.offset() - 4, ByteUtils.fromInt32(word), id++, type));
       word = bs.readWord();
     }
     return section;
   }
 
-  private static boolean isActionUnused(ByteStream bs, int offset) throws IOException {
-    int currentOffset = bs.offset();
-    bs.seek(offset);
-    int actionCode = bs.readWord();
-    bs.seek(currentOffset);
-    return actionCode == 0;
+  private static Type getActionType(ByteStream bs, int offset) throws IOException {
+    int savedOffset = bs.offset();
+    try {
+      bs.seek(offset);
+      int actionCode = bs.peekWord();
+      if (actionCode == 0) {
+        return Type.UNUSED;
+      } else {
+        byte[] actual = bs.readNBytes(0x18);
+        if (Arrays.equals(CHR_RESET_1, actual) ||
+            Arrays.equals(CHR_RESET_2, actual) ||
+            Arrays.equals(CHR_RESET_3, actual)) {
+          return Type.RESET;
+        }
+      }
+      return Type.NORMAL;
+    } finally {
+      bs.seek(savedOffset);
+    }
   }
 
   /**
