@@ -5,6 +5,7 @@ import java.util.Optional;
 
 public class ChrOperand implements Operand {
 
+  private final boolean isFoe;
   private final boolean pointer;
   private final StringBuilder infoBuilder;
   private int fieldOffset;
@@ -14,7 +15,8 @@ public class ChrOperand implements Operand {
    *
    * @param isPointer If this operand is a pointer; otherwise it is the value of a pointer.
    */
-  public ChrOperand(boolean isPointer) {
+  public ChrOperand(boolean isFoe, boolean isPointer) {
+    this.isFoe = isFoe;
     this.pointer = isPointer;
     this.infoBuilder = new StringBuilder();
     this.fieldOffset = -1;
@@ -39,9 +41,10 @@ public class ChrOperand implements Operand {
 
   @Override
   public String toString() {
+    String chr = isFoe ? "foe_chr_p" : "chr_p";
     String prefix = pointer ? "" : "*";
     Optional<String> knownField = Chr.getField(fieldOffset);
     String field = knownField.isPresent() ? "->" + knownField.get() : getFieldDisplay(fieldOffset);
-    return String.format("%schr_p%s%s", prefix, field, infoBuilder);
+    return String.format("%s%s%s%s", prefix, chr, field, infoBuilder);
   }
 }

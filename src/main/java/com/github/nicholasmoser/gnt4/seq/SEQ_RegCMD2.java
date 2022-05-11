@@ -212,7 +212,9 @@ public class SEQ_RegCMD2 {
    */
   public Operand getSeqOperand(int index, boolean isPointer) {
     if (index == 0xE) {
-      return new ChrOperand(isPointer);
+      return new ChrOperand(false, isPointer);
+    } else if (index == 0xF) {
+      return new ChrOperand(true, isPointer);
     }
     return new SeqOperand(index, isPointer);
   }
