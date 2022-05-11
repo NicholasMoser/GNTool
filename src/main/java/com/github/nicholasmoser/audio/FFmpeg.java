@@ -17,11 +17,22 @@ public class FFmpeg {
    * @throws IOException If an I/O error occurs.
    */
   public static String prepareSoundEffect(Path input, Path output) throws IOException {
-    if (!Files.isRegularFile(Paths.get("ffmpeg.exe"))) {
-      throw new IOException("ffmpeg.exe cannot be found.");
+    String ffmpeg;
+    if (System.getProperty("os.name").startsWith("Windows")) {
+      ffmpeg = "ffmpeg.exe";
+      if (!Files.isRegularFile(Paths.get("ffmpeg.exe"))) {
+        throw new IOException("ffmpeg.exe cannot be found.");
+      }
+    } else {
+      try {
+        ffmpeg = "ffmpeg";
+        Runtime.getRuntime().exec("ffmpeg");
+      } catch (Exception e) {
+        throw new IOException("ffmpeg cannot be found.");
+      }
     }
     try {
-      Process process = new ProcessBuilder("ffmpeg.exe", "-y", "-i", input.toString(), "-ar",
+      Process process = new ProcessBuilder(ffmpeg, "-y", "-i", input.toString(), "-ar",
           "32000", "-acodec", "pcm_s16le", "-map_channel", "0.0.0", "-loglevel", "quiet", output.toString()).start();
       process.waitFor();
       return new String(process.getErrorStream().readAllBytes());
@@ -41,11 +52,22 @@ public class FFmpeg {
    * @throws IOException If an I/O error occurs.
    */
   public static String prepareMusic(Path input, Path output) throws IOException {
-    if (!Files.isRegularFile(Paths.get("ffmpeg.exe"))) {
-      throw new IOException("ffmpeg.exe cannot be found.");
+    String ffmpeg;
+    if (System.getProperty("os.name").startsWith("Windows")) {
+      ffmpeg = "ffmpeg.exe";
+      if (!Files.isRegularFile(Paths.get("ffmpeg.exe"))) {
+        throw new IOException("ffmpeg.exe cannot be found.");
+      }
+    } else {
+      try {
+        ffmpeg = "ffmpeg";
+        Runtime.getRuntime().exec("ffmpeg");
+      } catch (Exception e) {
+        throw new IOException("ffmpeg cannot be found.");
+      }
     }
     try {
-      Process process = new ProcessBuilder("ffmpeg.exe", "-y", "-i", input.toString(), "-ar",
+      Process process = new ProcessBuilder(ffmpeg, "-y", "-i", input.toString(), "-ar",
           "48000", "-ac", "2", "-acodec", "pcm_s16le", "-bitexact", "-loglevel", "quiet", output.toString()).start();
       process.waitFor();
       return new String(process.getErrorStream().readAllBytes());
