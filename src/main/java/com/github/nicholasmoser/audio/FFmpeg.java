@@ -18,7 +18,7 @@ public class FFmpeg {
    */
   public static String prepareSoundEffect(Path input, Path output) throws IOException {
     String ffmpeg;
-    if (System.getProperty("os.name").startsWith("Windows")) {
+    if (Platform.isWindows()) {
       ffmpeg = "ffmpeg.exe";
       if (!Files.isRegularFile(Paths.get("ffmpeg.exe"))) {
         throw new IOException("ffmpeg.exe cannot be found.");
@@ -53,7 +53,7 @@ public class FFmpeg {
    */
   public static String prepareMusic(Path input, Path output) throws IOException {
     String ffmpeg;
-    if (System.getProperty("os.name").startsWith("Windows")) {
+    if (Platform.isWindows()) {
       ffmpeg = "ffmpeg.exe";
       if (!Files.isRegularFile(Paths.get("ffmpeg.exe"))) {
         throw new IOException("ffmpeg.exe cannot be found.");
