@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
-import com.sun.jna.Platform;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
