@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
+import com.github.nicholasmoser.gnt4.seq.opcodes.CreateHitbox;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SetTimerDecrement;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
@@ -18,7 +19,7 @@ public class OpcodeGroup21 {
       case 0x00 -> op_2100(bs);
       case 0x01 -> op_2101(bs);
       case 0x02 -> op_2102(bs);
-      case 0x04 -> op_2104(bs);
+      case 0x04 -> create_hitbox(bs);
       case 0x05 -> op_2105(bs);
       case 0x06 -> op_2106(bs);
       case 0x07 -> op_2107(bs);
@@ -59,11 +60,15 @@ public class OpcodeGroup21 {
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
-  private static Opcode op_2104(ByteStream bs) throws IOException {
+  private static Opcode create_hitbox(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    byte[] bytes = bs.readBytes(8);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
+    Short boneId = bs.readShort();
+    Short size = bs.readShort();
+    if (bs.readWord() != 0) {
+      throw new IOException("Last four bytes of create_hitbox should be unused (zero)");
+    }
+    return new CreateHitbox(offset, ea.getBytes(), boneId, size, ea.getDescription());
   }
 
   private static Opcode op_2105(ByteStream bs) throws IOException {
