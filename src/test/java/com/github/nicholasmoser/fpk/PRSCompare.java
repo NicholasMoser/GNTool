@@ -1,8 +1,8 @@
 package com.github.nicholasmoser.fpk;
 
 import com.github.nicholasmoser.fpk.NativePRS.PRS;
+import com.github.nicholasmoser.utils.GUIUtils;
 import com.google.common.math.IntMath;
-import com.sun.jna.Platform;
 import java.math.RoundingMode;
 import java.nio.ShortBuffer;
 import java.nio.file.Files;
@@ -15,7 +15,7 @@ public class PRSCompare {
   @Test
   @Disabled("This test is not ready to be used yet.")
   public void testCompare() throws Exception {
-    if (!Platform.isWindows()) {
+    if (!GUIUtils.isWindows()) {
       System.out.println("Platforms other than Windows not supported for this test.");
       return;
     }

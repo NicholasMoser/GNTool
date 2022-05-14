@@ -172,4 +172,11 @@ public class GUIUtils {
     }
     return Optional.empty();
   }
+
+  /**
+   * @return If the platform this is running on is Windows.
+   */
+  public static boolean isWindows() {
+    return System.getProperty("os.name").startsWith("Windows");
+  }
 }
