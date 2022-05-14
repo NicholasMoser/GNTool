@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
@@ -64,7 +65,7 @@ public class SEQ_RegCMD2 {
           operands.add(new GPROperand(first_address_byte, true));
           second_address_byte = (byte) (opcode & 0xff);
         } else if (first_address_byte < 0x30) {
-          operands.add(new SeqOperand(first_address_byte - 0x18, true));
+          operands.add(getSeqOperand(first_address_byte - 0x18, true));
           second_address_byte = (byte) (opcode & 0xff);
         } else {
           operands.add(SEQ_RegGP(first_address_byte, true));
@@ -82,13 +83,13 @@ public class SEQ_RegCMD2 {
       if (lastSixBits < 0x18) {
         firstOperand = new GPROperand(lastSixBits, false);
       } else if (lastSixBits < 0x30) {
-        firstOperand = new SeqOperand(lastSixBits - 0x18, false);
+        firstOperand = getSeqOperand(lastSixBits - 0x18, false);
       } else {
         firstOperand = SEQ_RegGP(lastSixBits, false);
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
-      firstOperand.addInfo(String.format(" + offset 0x%X", word));
+      firstOperand.withField(word);
       operands.add(firstOperand);
       pushWord(word);
       second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
@@ -105,7 +106,7 @@ public class SEQ_RegCMD2 {
           operands.add(new GPROperand(second_address_byte, true));
         } else if (second_address_byte < 0x30) {
           pushWord(bs.readWord());
-          operands.add(new SeqOperand(second_address_byte - 0x18, true));
+          operands.add(getSeqOperand(second_address_byte - 0x18, true));
         } else {
           operands.add(SEQ_RegGP(second_address_byte, true));
           pushWord(bs.readWord());
@@ -117,7 +118,7 @@ public class SEQ_RegCMD2 {
         if (lastSixBits2 < 0x18) {
           secondOperand = new GPROperand(lastSixBits2, false);
         } else if (lastSixBits2 < 0x30) {
-          secondOperand = new SeqOperand(lastSixBits2 - 0x18, false);
+          secondOperand = getSeqOperand(lastSixBits2 - 0x18, false);
         } else {
           secondOperand = SEQ_RegGP(lastSixBits2, false);
         }
@@ -141,13 +142,13 @@ public class SEQ_RegCMD2 {
       if (lastSixBits2 < 0x18) {
         secondOperand = new GPROperand(lastSixBits2, false);
       } else if (lastSixBits2 < 0x30) {
-        secondOperand = new SeqOperand(lastSixBits2 - 0x18, false);
+        secondOperand = getSeqOperand(lastSixBits2 - 0x18, false);
       } else {
         secondOperand = SEQ_RegGP(lastSixBits2, false);
       }
       pushWord(bs.readWord());
       int word2 = bs.readWord();
-      secondOperand.addInfo(String.format(" + offset 0x%X", word2));
+      secondOperand.withField(word2);
       operands.add(secondOperand);
       pushWord(word2);
     }
@@ -199,6 +200,23 @@ public class SEQ_RegCMD2 {
    */
   private void pushWord(int word) throws IOException {
     bytes.write(ByteUtils.fromInt32(word));
+  }
+
+  /**
+   * Checks a {@link SeqOperand} to see if it is a known Operand type, and instead returns that
+   * type if so. For example, {@link ChrOperand} is one such known type at a specific index.
+   *
+   * @param index The index.
+   * @param isPointer If this operand is a pointer.
+   * @return The operand.
+   */
+  public Operand getSeqOperand(int index, boolean isPointer) {
+    if (index == 0xE) {
+      return new ChrOperand(false, isPointer);
+    } else if (index == 0xF) {
+      return new ChrOperand(true, isPointer);
+    }
+    return new SeqOperand(index, isPointer);
   }
 
   /**

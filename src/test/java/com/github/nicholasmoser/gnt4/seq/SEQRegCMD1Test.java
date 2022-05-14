@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand.Value;
@@ -83,27 +84,25 @@ public class SEQRegCMD1Test {
   }
 
   /**
-   * Tests calling opcode 21060026.
+   * Tests calling opcode 21060025.
    * <p>
    * Operand is a seq stored value.
    * <p>
-   * This is called for getting this seq's chr_p +4 bytes appears to be the opponent chr_p
-   * TODO: Is that true?
    *
    * @throws Exception If any Exception occurs
    */
   @Test
   public void testSeq_2() throws Exception {
-    byte[] bytes = new byte[]{0x21, 0x06, 0x00, 0x26};
+    byte[] bytes = new byte[]{0x21, 0x06, 0x00, 0x25};
     ByteStream bs = new ByteStream(bytes);
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("seq_p_sp->field_0x38", ea.getDescription());
+    assertEquals("seq_p_sp->field_0x34", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
-    assertEquals(0xE, seqOperand.getIndex());
+    assertEquals(0xD, seqOperand.getIndex());
     assertTrue(seqOperand.isPointer());
   }
 
@@ -234,11 +233,11 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*seq_p_sp->field_0x2f0 + *gpr23 + 0000", ea.getDescription());
+    assertEquals("*seq_p_sp->field_0x5C + *gpr23 + 0000", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
-    assertEquals(0xBC, seqOperand.getIndex());
+    assertEquals(0x17, seqOperand.getIndex());
     assertFalse(seqOperand.isPointer());
   }
 
@@ -329,7 +328,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*gpr2 + offset 0x0", ea.getDescription());
+    assertEquals("*gpr2->field_0x00", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -351,7 +350,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*gpr19 + offset 0x4", ea.getDescription());
+    assertEquals("*gpr19->field_0x04", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GPROperand);
     GPROperand gprOperand = (GPROperand) operand;
@@ -373,16 +372,16 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*seq_p_sp->field_0x280 + offset 0x5C", ea.getDescription());
+    assertEquals("*seq_p_sp->field_0x40->field_0x5C", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
-    assertEquals(0xA0, seqOperand.getIndex());
+    assertEquals(0x10, seqOperand.getIndex());
     assertFalse(seqOperand.isPointer());
   }
 
   /**
-   * Tests calling opcode 03030066.
+   * Tests calling opcode 03030065.
    * <p>
    * Operand is a seq stored value plus offset.
    *
@@ -390,16 +389,16 @@ public class SEQRegCMD1Test {
    */
   @Test
   public void testSeqPlusOffset_2() throws Exception {
-    byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x66, 0x00, 0x00, 0x00, 0x20};
+    byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x65, 0x00, 0x00, 0x00, 0x20};
     ByteStream bs = new ByteStream(bytes);
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*seq_p_sp->field_0x260 + offset 0x20", ea.getDescription());
+    assertEquals("*seq_p_sp->field_0x34->field_0x20", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
-    assertEquals(0x98, seqOperand.getIndex());
+    assertEquals(0xD, seqOperand.getIndex());
     assertFalse(seqOperand.isPointer());
   }
 
@@ -417,7 +416,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("HITBOX_IDENTITY_MATRIX + offset 0x60", ea.getDescription());
+    assertEquals("HITBOX_IDENTITY_MATRIX->field_0x60", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GlobalOperand);
     GlobalOperand globalOperand = (GlobalOperand) operand;
@@ -440,7 +439,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("SAVE_DATA + offset 0x1B6", ea.getDescription());
+    assertEquals("SAVE_DATA->field_0x1B6", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof GlobalOperand);
     GlobalOperand globalOperand = (GlobalOperand) operand;
@@ -464,7 +463,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7e, 0x00, 0x00, 0x10, 0x00}, ea.getBytes());
-    assertEquals("0x0 + offset 0x1000",
+    assertEquals("0x0->field_0x1000",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
@@ -489,13 +488,81 @@ public class SEQRegCMD1Test {
     assertEquals(0x8, bs.offset());
     assertArrayEquals(new byte[]{0x0f, 0x0d, 0x00, 0x7f, 0x00, 0x00, 0x00, (byte) 0x89},
         ea.getBytes());
-    assertEquals("0xF0E003F + offset 0x89",
+    assertEquals("0xF0E003F->field_0x89",
         ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ImmediateOperand);
     ImmediateOperand immediateOperand = (ImmediateOperand) operand;
     assertEquals(0x8, immediateOperand.getOffset());
     assertEquals(0x0f0e003f, immediateOperand.getImmediateValue());
+  }
+
+
+  /**
+   * Tests calling opcode 21060026.
+   * <p>
+   * Operand is a chr_p stored value plus offset.
+   *
+   * @throws Exception If any Exception occurs
+   */
+  @Test
+  public void testChr() throws Exception {
+    byte[] bytes = new byte[]{0x21, 0x06, 0x00, 0x26};
+    ByteStream bs = new ByteStream(bytes);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
+    assertEquals(bytes.length, bs.offset());
+    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals("chr_p", ea.getDescription());
+    Operand operand = ea.getOperand();
+    assertTrue(operand instanceof ChrOperand);
+    ChrOperand chrOperand = (ChrOperand) operand;
+    assertEquals(-1, chrOperand.get());
+    assertTrue(chrOperand.isPointer());
+  }
+
+  /**
+   * Tests calling opcode 03030066.
+   * <p>
+   * Operand is a chr_p stored value plus offset.
+   *
+   * @throws Exception If any Exception occurs
+   */
+  @Test
+  public void testChrPlusOffset() throws Exception {
+    byte[] bytes = new byte[]{0x03, 0x03, 0x00, 0x66, 0x00, 0x00, 0x00, 0x20};
+    ByteStream bs = new ByteStream(bytes);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
+    assertEquals(bytes.length, bs.offset());
+    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals("*chr_p->field_0x20", ea.getDescription());
+    Operand operand = ea.getOperand();
+    assertTrue(operand instanceof ChrOperand);
+    ChrOperand chrOperand = (ChrOperand) operand;
+    assertEquals(0x20, chrOperand.get());
+    assertFalse(chrOperand.isPointer());
+  }
+
+
+  /**
+   * Tests calling opcode 21060027.
+   * <p>
+   * Operand is a foe_chr_p stored value plus offset.
+   *
+   * @throws Exception If any Exception occurs
+   */
+  @Test
+  public void testFoeChr() throws Exception {
+    byte[] bytes = new byte[]{0x21, 0x06, 0x00, 0x27};
+    ByteStream bs = new ByteStream(bytes);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
+    assertEquals(bytes.length, bs.offset());
+    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals("foe_chr_p", ea.getDescription());
+    Operand operand = ea.getOperand();
+    assertTrue(operand instanceof ChrOperand);
+    ChrOperand chrOperand = (ChrOperand) operand;
+    assertEquals(-1, chrOperand.get());
+    assertTrue(chrOperand.isPointer());
   }
 }
 

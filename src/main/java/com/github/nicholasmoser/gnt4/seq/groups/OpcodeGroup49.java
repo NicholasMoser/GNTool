@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
 import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
@@ -52,7 +53,7 @@ public class OpcodeGroup49 {
         default:
           break;
       }
-    } else if (operandOne instanceof SeqOperand) {
+    } else if (operandOne instanceof SeqOperand || operandOne instanceof ChrOperand) {
       // Do nothing
     } else {
       throw new IllegalStateException("This operand is not yet supported: " + operandOne);

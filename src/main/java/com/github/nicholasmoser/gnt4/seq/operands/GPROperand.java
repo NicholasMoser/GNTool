@@ -5,6 +5,7 @@ public class GPROperand implements Operand {
   private final int index;
   private final boolean pointer;
   private final StringBuilder infoBuilder;
+  private int fieldOffset;
 
   /**
    * Creates a new general purpose register operand.
@@ -16,9 +17,21 @@ public class GPROperand implements Operand {
     this.index = index;
     this.pointer = isPointer;
     this.infoBuilder = new StringBuilder();
+    this.fieldOffset = -1;
   }
 
+  @Override
   public int get() { return getIndex(); }
+
+  @Override
+  public void addInfo(String info) {
+    infoBuilder.append(info);
+  }
+
+  @Override
+  public void withField(int fieldOffset) {
+    this.fieldOffset = fieldOffset;
+  }
 
   public int getIndex() {
     return index;
@@ -29,13 +42,9 @@ public class GPROperand implements Operand {
   }
 
   @Override
-  public void addInfo(String info) {
-    infoBuilder.append(info);
-  }
-
-  @Override
   public String toString() {
     String prefix = pointer ? "" : "*";
-    return String.format("%sgpr%d%s", prefix, index, infoBuilder);
+    String field = getFieldDisplay(fieldOffset);
+    return String.format("%sgpr%d%s%s", prefix, index, field, infoBuilder);
   }
 }

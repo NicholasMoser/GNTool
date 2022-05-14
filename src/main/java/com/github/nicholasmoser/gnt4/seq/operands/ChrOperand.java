@@ -1,27 +1,29 @@
 package com.github.nicholasmoser.gnt4.seq.operands;
 
-public class SeqOperand implements Operand {
+import com.github.nicholasmoser.gnt4.seq.structs.Chr;
+import java.util.Optional;
 
-  private final int index;
+public class ChrOperand implements Operand {
+
+  private final boolean isFoe;
   private final boolean pointer;
   private final StringBuilder infoBuilder;
   private int fieldOffset;
 
   /**
-   * Creates a new seq_p_sp operand.
+   * Creates a new chr_p operand.
    *
-   * @param index The seq_p_sp field index.
    * @param isPointer If this operand is a pointer; otherwise it is the value of a pointer.
    */
-  public SeqOperand(int index, boolean isPointer) {
-    this.index = index;
+  public ChrOperand(boolean isFoe, boolean isPointer) {
+    this.isFoe = isFoe;
     this.pointer = isPointer;
     this.infoBuilder = new StringBuilder();
     this.fieldOffset = -1;
   }
 
   @Override
-  public int get() { return getIndex(); }
+  public int get() { return fieldOffset; }
 
   @Override
   public void addInfo(String info) {
@@ -33,18 +35,16 @@ public class SeqOperand implements Operand {
     this.fieldOffset = fieldOffset;
   }
 
-  public int getIndex() {
-    return index;
-  }
-
   public boolean isPointer() {
     return pointer;
   }
 
   @Override
   public String toString() {
+    String chr = isFoe ? "foe_chr_p" : "chr_p";
     String prefix = pointer ? "" : "*";
-    String field = getFieldDisplay(fieldOffset);
-    return String.format("%sseq_p_sp->field_0x%02X%s%s", prefix, index * 4, field, infoBuilder);
+    Optional<String> knownField = Chr.getField(fieldOffset);
+    String field = knownField.isPresent() ? "->" + knownField.get() : getFieldDisplay(fieldOffset);
+    return String.format("%s%s%s%s", prefix, chr, field, infoBuilder);
   }
 }

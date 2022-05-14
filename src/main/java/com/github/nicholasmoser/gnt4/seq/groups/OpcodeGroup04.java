@@ -1,6 +1,8 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
+import com.github.nicholasmoser.gnt4.GNT4Characters;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
+import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntAdd;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntAnd;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntAndCompare;
@@ -18,6 +20,8 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.IntSubtract;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntSubtractCompare;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntXor;
+import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
+import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 
@@ -46,6 +50,22 @@ public class OpcodeGroup04 {
   private static Opcode i32_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    // Check for known chr_p fields and return more descriptive descriptions
+    if (ea.getFirstOperand() instanceof ChrOperand chr && ea.getSecondOperand() instanceof ImmediateOperand immediate) {
+      int value = immediate.getImmediateValue();
+      if (chr.get() == 0x1C) { // chr_id
+        String chrName = GNT4Characters.INTERNAL_CHAR_ORDER.inverse().get(value);
+        if (chrName != null) {
+          return new IntMov(offset, ea.getBytes(), String.format("%s, %s (0x%X)", chr, chrName, value));
+        }
+      } else if (chr.get() == 0x23C) {
+        String action = Seq.getActionDescription(value);
+        if (action != null) {
+          return new IntMov(offset, ea.getBytes(), String.format("%s, %s (0x%X)", chr, action, value));
+        }
+      }
+    }
+    // Just return the normal description
     return new IntMov(offset, ea.getBytes(), ea.getDescription());
   }
 
@@ -118,6 +138,22 @@ public class OpcodeGroup04 {
   private static Opcode i32_subc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    // Check for known chr_p fields and return more descriptive descriptions
+    if (ea.getFirstOperand() instanceof ChrOperand chr && ea.getSecondOperand() instanceof ImmediateOperand immediate) {
+      int value = immediate.getImmediateValue();
+      if (chr.get() == 0x1C) { // chr_id
+        String chrName = GNT4Characters.INTERNAL_CHAR_ORDER.inverse().get(value);
+        if (chrName != null) {
+          return new IntSubtractCompare(offset, ea.getBytes(), String.format("%s, %s (0x%X)", chr, chrName, value));
+        }
+      } else if (chr.get() == 0x23C) {
+        String action = Seq.getActionDescription(value);
+        if (action != null) {
+          return new IntSubtractCompare(offset, ea.getBytes(), String.format("%s, %s (0x%X)", chr, action, value));
+        }
+      }
+    }
+    // Just return the normal description
     return new IntSubtractCompare(offset, ea.getBytes(), ea.getDescription());
   }
 
