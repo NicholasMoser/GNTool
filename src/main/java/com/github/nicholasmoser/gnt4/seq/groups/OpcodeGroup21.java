@@ -4,6 +4,8 @@ import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.CreateHitbox;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SetAngDir;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SetPowDmgGrd;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SetTimerDecrement;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
@@ -20,8 +22,8 @@ public class OpcodeGroup21 {
       case 0x01 -> op_2101(bs);
       case 0x02 -> op_2102(bs);
       case 0x04 -> create_hitbox(bs);
-      case 0x05 -> op_2105(bs);
-      case 0x06 -> op_2106(bs);
+      case 0x05 -> set_pow_dmg_grd(bs);
+      case 0x06 -> set_ang_dir(bs);
       case 0x07 -> op_2107(bs);
       case 0x08 -> op_2108(bs);
       case 0x0B -> op_210B(bs);
@@ -71,18 +73,24 @@ public class OpcodeGroup21 {
     return new CreateHitbox(offset, ea.getBytes(), boneId, size, ea.getDescription());
   }
 
-  private static Opcode op_2105(ByteStream bs) throws IOException {
+  private static Opcode set_pow_dmg_grd(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    byte[] bytes = bs.readBytes(8);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
+    Short pow = bs.readShort();
+    Short dmg = bs.readShort();
+    Short grd = bs.readShort();
+    if (bs.readShort() != 0) {
+      throw new IOException("Last two bytes of set_pow_dmg_grd should be unused (zero)");
+    }
+    return new SetPowDmgGrd(offset, ea.getBytes(), pow, dmg, grd, ea.getDescription());
   }
 
-  private static Opcode op_2106(ByteStream bs) throws IOException {
+  private static Opcode set_ang_dir(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    byte[] bytes = bs.readBytes(4);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
+    Short ang = bs.readShort();
+    Short dir = bs.readShort();
+    return new SetAngDir(offset, ea.getBytes(), ang, dir, ea.getDescription());
   }
 
   private static Opcode op_2107(ByteStream bs) throws IOException {
