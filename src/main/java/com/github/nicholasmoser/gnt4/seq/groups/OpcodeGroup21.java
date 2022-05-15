@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.CreateHitbox;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SetAngDir;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SetHitboxTimer;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SetPowDmgGrd;
 import com.github.nicholasmoser.gnt4.seq.opcodes.SetTimerDecrement;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
@@ -24,7 +25,7 @@ public class OpcodeGroup21 {
       case 0x04 -> create_hitbox(bs);
       case 0x05 -> set_pow_dmg_grd(bs);
       case 0x06 -> set_ang_dir(bs);
-      case 0x07 -> op_2107(bs);
+      case 0x07 -> set_hitbox_timer(bs);
       case 0x08 -> op_2108(bs);
       case 0x0B -> op_210B(bs);
       case 0x0F -> op_210F(bs);
@@ -93,11 +94,12 @@ public class OpcodeGroup21 {
     return new SetAngDir(offset, ea.getBytes(), ang, dir, ea.getDescription());
   }
 
-  private static Opcode op_2107(ByteStream bs) throws IOException {
+  private static Opcode set_hitbox_timer(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    byte[] bytes = bs.readBytes(4);
-    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
+    Short startFrame = bs.readShort();
+    Short endFrame = bs.readShort();
+    return new SetHitboxTimer(offset, ea.getBytes(), startFrame, endFrame, ea.getDescription());
   }
 
   private static Opcode op_2108(ByteStream bs) throws IOException {
