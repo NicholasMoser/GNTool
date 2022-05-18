@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.audio;
 
+import com.github.nicholasmoser.utils.GUIUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +19,7 @@ public class FFmpeg {
    */
   public static String prepareSoundEffect(Path input, Path output) throws IOException {
     String ffmpeg;
-    if (Platform.isWindows()) {
+    if (GUIUtils.isWindows()) {
       ffmpeg = "ffmpeg.exe";
       if (!Files.isRegularFile(Paths.get("ffmpeg.exe"))) {
         throw new IOException("ffmpeg.exe cannot be found.");
@@ -53,7 +54,7 @@ public class FFmpeg {
    */
   public static String prepareMusic(Path input, Path output) throws IOException {
     String ffmpeg;
-    if (Platform.isWindows()) {
+    if (GUIUtils.isWindows()) {
       ffmpeg = "ffmpeg.exe";
       if (!Files.isRegularFile(Paths.get("ffmpeg.exe"))) {
         throw new IOException("ffmpeg.exe cannot be found.");
