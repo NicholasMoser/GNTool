@@ -167,6 +167,13 @@ public class SeqKing {
         binaryOffsetToSize.put(0x2370, 0x100);
         binaryOffsetToSize.put(0xF3E0, 0x43C);
         binaryOffsetToSize.put(0xFAA0, 0x14B4);
+        // GNT4 TE
+        //binaryOffsetToSize.put(0x950, 0x14);
+        //binaryOffsetToSize.put(0x9A0, 0xc); maybe remove this
+        //binaryOffsetToSize.put(0x9E0, 0xc);
+        //binaryOffsetToSize.put(0x23B0, 0x100);
+        //binaryOffsetToSize.put(0xF420, 0x43C);
+        //binaryOffsetToSize.put(0xFAE0, 0x14B4);
       }
       case Seqs.NAR_0000 -> {
         binaryOffsetToSize.put(0x30C4C, 0x14);
