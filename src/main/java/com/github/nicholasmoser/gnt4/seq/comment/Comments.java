@@ -254,6 +254,10 @@ public class Comments {
     zab0000Comments.put(0x5D40, "// Scale chr model larger by 1.1x");
     allComments.put(Seqs.ZAB_0000, zab0000Comments);
 
+    Multimap<Integer, String> charSelComments = ArrayListMultimap.create();
+    charSelComments.put(0xCE4, "Random stage value is set here");
+    allComments.put(Seqs.CHARSEL, charSelComments);
+
     return allComments;
   }
 }

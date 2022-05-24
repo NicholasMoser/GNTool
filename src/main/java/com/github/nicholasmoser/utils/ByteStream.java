@@ -89,6 +89,20 @@ public class ByteStream extends ByteArrayInputStream {
   }
 
   /**
+   * Read the next big-endian 2-byte short and return it.
+   *
+   * @return The big-endian 4-byte short.
+   * @throws IOException If an I/O error occurs.
+   */
+  public short readShort() throws IOException {
+    byte[] bytes = new byte[2];
+    if (read(bytes) != 2) {
+      throw new IOException("Failed to read word at offset " + pos);
+    }
+    return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getShort();
+  }
+
+  /**
    * Read the next big-endian 4-byte word and return it.
    *
    * @return The big-endian 4-byte word.
