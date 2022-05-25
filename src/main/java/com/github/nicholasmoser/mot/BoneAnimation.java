@@ -228,6 +228,9 @@ public class BoneAnimation {
     //  int size = 16 - (baos.size() % 16);
     //  baos.write(new byte[size]);
     //}
+    if (baos.size() % 16 != 0) {
+      throw new IOException("Still need to implement this logic! See above TODO");
+    }
 
     if ((flags1 & 0x0002) != 0) {
       for (Coordinate coordinate : coordinates) {
