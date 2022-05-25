@@ -18,8 +18,8 @@ public class BoneAnimation {
   private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
   private final int offset;
   private final short numOfKeyFrames;
-  private final int timeValuesOffset;
-  private final int coordinatesOffset;
+  private int timeValuesOffset;
+  private int coordinatesOffset;
   private final List<Coordinate> coordinates;
   private final List<Float> timeValues;
   private final String junk1;
@@ -51,6 +51,10 @@ public class BoneAnimation {
     return offset;
   }
 
+  public short getNumOfKeyFrames() {
+    return numOfKeyFrames;
+  }
+
   public short getFlags1() {
     return flags1;
   }
@@ -71,8 +75,16 @@ public class BoneAnimation {
     return coordinates;
   }
 
+  public int getCoordinatesOffset() {
+    return coordinatesOffset;
+  }
+
   public List<Float> getTimeValues() {
     return timeValues;
+  }
+
+  public int getTimeValuesOffset() {
+    return timeValuesOffset;
   }
 
   public void setFlags1(short flags1) {
@@ -89,6 +101,14 @@ public class BoneAnimation {
 
   public void setTotalTime(float totalTime) {
     this.totalTime = totalTime;
+  }
+
+  public void setTimeValuesOffset(int timeValuesOffset) {
+    this.timeValuesOffset = timeValuesOffset;
+  }
+
+  public void setCoordinatesOffset(int coordinatesOffset) {
+    this.coordinatesOffset = coordinatesOffset;
   }
 
   /**
@@ -127,16 +147,26 @@ public class BoneAnimation {
     // Handle coordinates, if they exist
     List<Coordinate> coordinates = new ArrayList<>();
     String junk2 = null;
-    if (coordinatesOffset != 0) {
+    if ((flags1 & 0x0200) != 0) {
       if (raf.getFilePointer() != animationOffset + coordinatesOffset) {
         throw new IOException("Second animation values do not follow first.");
       }
-      for (int i = 0; i < numOfKeyFrames; i++) {
-        short x = ByteUtils.readInt16(raf);
-        short y = ByteUtils.readInt16(raf);
-        short z = ByteUtils.readInt16(raf);
-        short w = ByteUtils.readInt16(raf);
-        coordinates.add(new Coordinate(x, y, z, w));
+      if ((flags1 & 0x0002) != 0) {
+        for (int i = 0; i < numOfKeyFrames; i++) {
+          short x = ByteUtils.readInt16(raf);
+          short y = ByteUtils.readInt16(raf);
+          short z = ByteUtils.readInt16(raf);
+          short w = ByteUtils.readInt16(raf);
+          coordinates.add(new Coordinate(x, y, z, w));
+        }
+      } else if ((flags1 & 0x0004) != 0) {
+        for (int i = 0; i < numOfKeyFrames; i++) {
+          float x = ByteUtils.readFloat(raf);
+          float y = ByteUtils.readFloat(raf);
+          float z = ByteUtils.readFloat(raf);
+          float w = ByteUtils.readFloat(raf);
+          coordinates.add(new Coordinate(x, y, z, w));
+        }
       }
       junk2 = readJunkData(raf);
     }

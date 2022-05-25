@@ -111,6 +111,31 @@ public class GNTAnimation {
 
     // Write out each bone animation header and data for them
     for (BoneAnimation boneAnimation : boneAnimations) {
+      if (boneAnimation.getFlags1() == 0x0204) {
+        int currentOffset = boneAnimation.getCoordinatesOffset();
+        int lastSize = boneAnimation.getNumOfKeyFrames();
+        boneAnimation.setFlags1((short) 0x0202);
+        for (BoneAnimation boneAnimation1 : boneAnimations) {
+          if (boneAnimation1.getTimeValuesOffset() > currentOffset) {
+            int thisSize = boneAnimation1.getNumOfKeyFrames();
+            int alignment = 0;
+            if ((lastSize*8) % 16 != 0){
+              alignment = 16 - (lastSize*8) % 16;
+            }
+            int timeValueOffset = currentOffset + (lastSize * 8);
+            boneAnimation1.setTimeValuesOffset(currentOffset + (lastSize * 8) + alignment);
+            if ((thisSize*4) % 16 != 0) {
+              alignment = 16 - (thisSize*4) % 16;
+            } else {
+              alignment = 0;
+            }
+            boneAnimation1.setCoordinatesOffset(boneAnimation1.getTimeValuesOffset() + (thisSize * 4) + alignment);
+            currentOffset = boneAnimation1.getCoordinatesOffset();
+            lastSize = thisSize;
+            boneAnimation1.setFlags1((short) 0x0202);
+          }
+        }
+      }
       header.write(boneAnimation.getHeaderBytes());
       data.write(boneAnimation.getDataBytes());
     }
