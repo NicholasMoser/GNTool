@@ -111,6 +111,18 @@ public class GNTAnimation {
 
     // Write out each bone animation header and data for them
     for (BoneAnimation boneAnimation : boneAnimations) {
+      header.write(boneAnimation.getHeaderBytes());
+      data.write(boneAnimation.getDataBytes());
+    }
+    return Bytes.concat(header.toByteArray(), data.toByteArray());
+  }
+
+  /**
+   * Rewrite a GNTAnimation to be compatible with GNT4. This involves changing 0x0204 animations
+   * (with floats) to 0x0202 animations (with shorts).
+   */
+  public void rewriteForGNT4() {
+    for (BoneAnimation boneAnimation : boneAnimations) {
       if (boneAnimation.getFlags1() == 0x0204) {
         int currentOffset = boneAnimation.getCoordinatesOffset();
         int lastSize = boneAnimation.getNumOfKeyFrames();
@@ -122,7 +134,7 @@ public class GNTAnimation {
             if ((lastSize*8) % 16 != 0){
               alignment = 16 - (lastSize*8) % 16;
             }
-            int timeValueOffset = currentOffset + (lastSize * 8);
+            // int timeValueOffset = currentOffset + (lastSize * 8);
             boneAnimation1.setTimeValuesOffset(currentOffset + (lastSize * 8) + alignment);
             if ((thisSize*4) % 16 != 0) {
               alignment = 16 - (thisSize*4) % 16;
@@ -136,10 +148,7 @@ public class GNTAnimation {
           }
         }
       }
-      header.write(boneAnimation.getHeaderBytes());
-      data.write(boneAnimation.getDataBytes());
     }
-    return Bytes.concat(header.toByteArray(), data.toByteArray());
   }
 
   /**
