@@ -219,17 +219,18 @@ public class BoneAnimation {
     for (Float value : timeValues) {
       baos.write(ByteUtils.fromFloat(value));
     }
-    if (junk1 != null) {
-      baos.write(junk1.getBytes(JUNK_ENCODING));
+
+    // Handle alignment
+    int bytesLeftToAlign = 16 - (baos.size() % 16);
+    if (bytesLeftToAlign == 16) {
+      bytesLeftToAlign = 0;
     }
-    // TODO: Use logic to actually pad when more animations are added
-    //if (baos.size() % 16 != 0) {
-    //  // Pad to 16-byte alignment
-    //  int size = 16 - (baos.size() % 16);
-    //  baos.write(new byte[size]);
-    //}
-    if (baos.size() % 16 != 0) {
-      throw new IOException("Still need to implement this logic! See above TODO");
+    if (junk1 != null && junk1.getBytes(JUNK_ENCODING).length == bytesLeftToAlign) {
+      // Pad with existing junk from original files
+      baos.write(junk1.getBytes(JUNK_ENCODING));
+    } else if (bytesLeftToAlign > 0) {
+      // Pad with zeroes
+      baos.write(new byte[bytesLeftToAlign]);
     }
 
     if ((flags1 & 0x0002) != 0) {
@@ -248,9 +249,19 @@ public class BoneAnimation {
       }
     }
 
-    if (junk2 != null) {
-      baos.write(junk2.getBytes(JUNK_ENCODING));
+    // Handle alignment
+    bytesLeftToAlign = 16 - (baos.size() % 16);
+    if (bytesLeftToAlign == 16) {
+      bytesLeftToAlign = 0;
     }
+    if (junk2 != null && junk2.getBytes(JUNK_ENCODING).length == bytesLeftToAlign) {
+      // Pad with existing junk from original files
+      baos.write(junk2.getBytes(JUNK_ENCODING));
+    } else if (bytesLeftToAlign > 0) {
+      // Pad with zeroes
+      baos.write(new byte[bytesLeftToAlign]);
+    }
+
     return baos.toByteArray();
   }
 
