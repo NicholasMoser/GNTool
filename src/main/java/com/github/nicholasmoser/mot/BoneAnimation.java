@@ -115,7 +115,7 @@ public class BoneAnimation {
    * Parse the bone animation from the file at the current offset. The offset of the parent
    * animation is also required to correctly read the data.
    *
-   * @param raf The file to read from.
+   * @param raf             The file to read from.
    * @param animationOffset The offset of the parent animation.
    * @return The bone animation.
    * @throws IOException If an I/O error occurs
@@ -167,6 +167,8 @@ public class BoneAnimation {
           float w = ByteUtils.readFloat(raf);
           coordinates.add(new Coordinate(x, y, z, w));
         }
+      } else {
+        throw new IOException(String.format("Unexpected flags: 0x%X", flags1));
       }
       junk2 = readJunkData(raf);
     }
@@ -217,24 +219,49 @@ public class BoneAnimation {
     for (Float value : timeValues) {
       baos.write(ByteUtils.fromFloat(value));
     }
-    if (junk1 != null) {
+
+    // Handle alignment
+    int bytesLeftToAlign = 16 - (baos.size() % 16);
+    if (bytesLeftToAlign == 16) {
+      bytesLeftToAlign = 0;
+    }
+    if (junk1 != null && junk1.getBytes(JUNK_ENCODING).length == bytesLeftToAlign) {
+      // Pad with existing junk from original files
       baos.write(junk1.getBytes(JUNK_ENCODING));
+    } else if (bytesLeftToAlign > 0) {
+      // Pad with zeroes
+      baos.write(new byte[bytesLeftToAlign]);
     }
-    // TODO: Use logic to actually pad when more animations are added
-    //if (baos.size() % 16 != 0) {
-    //  // Pad to 16-byte alignment
-    //  int size = 16 - (baos.size() % 16);
-    //  baos.write(new byte[size]);
-    //}
-    for (Coordinate coordinate : coordinates) {
-      baos.write(ByteUtils.fromUint16(coordinate.getX()));
-      baos.write(ByteUtils.fromUint16(coordinate.getY()));
-      baos.write(ByteUtils.fromUint16(coordinate.getZ()));
-      baos.write(ByteUtils.fromUint16(coordinate.getW()));
+
+    if ((flags1 & 0x0002) != 0) {
+      for (Coordinate coordinate : coordinates) {
+        baos.write(ByteUtils.fromUint16(coordinate.getX()));
+        baos.write(ByteUtils.fromUint16(coordinate.getY()));
+        baos.write(ByteUtils.fromUint16(coordinate.getZ()));
+        baos.write(ByteUtils.fromUint16(coordinate.getW()));
+      }
+    } else if ((flags1 & 0x0004) != 0) {
+      for (Coordinate coordinate : coordinates) {
+        baos.write(ByteUtils.fromFloat(coordinate.getFloatX()));
+        baos.write(ByteUtils.fromFloat(coordinate.getFloatY()));
+        baos.write(ByteUtils.fromFloat(coordinate.getFloatZ()));
+        baos.write(ByteUtils.fromFloat(coordinate.getFloatW()));
+      }
     }
-    if (junk2 != null) {
+
+    // Handle alignment
+    bytesLeftToAlign = 16 - (baos.size() % 16);
+    if (bytesLeftToAlign == 16) {
+      bytesLeftToAlign = 0;
+    }
+    if (junk2 != null && junk2.getBytes(JUNK_ENCODING).length == bytesLeftToAlign) {
+      // Pad with existing junk from original files
       baos.write(junk2.getBytes(JUNK_ENCODING));
+    } else if (bytesLeftToAlign > 0) {
+      // Pad with zeroes
+      baos.write(new byte[bytesLeftToAlign]);
     }
+
     return baos.toByteArray();
   }
 
