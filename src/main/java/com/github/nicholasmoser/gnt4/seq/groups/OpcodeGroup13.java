@@ -76,7 +76,8 @@ public class OpcodeGroup13 {
   private static Opcode op_1305(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    byte[] bytes = bs.readBytes(4);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
   }
 
   private static Opcode op_1306(ByteStream bs) throws IOException {
