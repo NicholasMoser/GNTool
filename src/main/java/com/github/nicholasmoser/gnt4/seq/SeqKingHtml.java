@@ -16,6 +16,8 @@ import static j2html.TagCreator.title;
 import static j2html.TagCreator.ul;
 
 import com.github.nicholasmoser.gnt4.seq.comment.Comments;
+import com.github.nicholasmoser.gnt4.seq.comment.Function;
+import com.github.nicholasmoser.gnt4.seq.comment.Functions;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
@@ -71,6 +73,7 @@ public class SeqKingHtml {
    * @return The HTML body.
    */
   private static ContainerTag getBody(List<Opcode> opcodes, String fileName) {
+    Map<Integer, Function> offsetToFunction = Functions.getFunctions(fileName);
     Multimap<Integer, String> offsetToComments = Comments.getComments(fileName);
     ContainerTag<DivTag> body = div();
     Optional<ContainerTag> toc = getTableOfContents(opcodes);
@@ -78,6 +81,14 @@ public class SeqKingHtml {
     ContainerTag<PTag> subroutine = p();
     for (int i = 0; i < opcodes.size(); i++) {
       Opcode opcode = opcodes.get(i);
+      // Maybe get function
+      if (offsetToFunction.containsKey(opcode.getOffset())) {
+        String functionName = offsetToFunction.get(opcode.getOffset()).name();
+        subroutine.with(div(functionName + ":").withClass("c"));
+        for (String comment : offsetToFunction.get(opcode.getOffset()).comments()) {
+          subroutine.with(div(comment).withClass("c"));
+        }
+      }
       // Maybe get comments
       if (offsetToComments.containsKey(opcode.getOffset())) {
         for (String comment : offsetToComments.get(opcode.getOffset())) {
