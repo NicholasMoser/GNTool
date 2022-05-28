@@ -1,6 +1,9 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.seq.comment.Function;
+import com.github.nicholasmoser.gnt4.seq.comment.Functions;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
@@ -141,9 +144,18 @@ public class SeqKing {
       }
 
       // Otherwise, parse the seq opcode
-      opcodes.add(SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode));
+      Opcode newOpcode = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode);
+      opcodes.add(newOpcode);
       if (verbose) {
-        System.out.println(opcodes.get(opcodes.size() - 1));
+        System.out.println(newOpcode);
+      }
+      // This is a very hacky way of setting the function name on a branching opcode
+      if (newOpcode instanceof BranchingOpcode branchingOpcode) {
+        Map<Integer, Function> functions = Functions.getFunctions(fileName);
+        Function function = functions.get(branchingOpcode.getDestination());
+        if (function != null) {
+          branchingOpcode.setDestinationFunctionName(function.name());
+        }
       }
       if (bs.offset() == bytes.length) {
         break; // EOF

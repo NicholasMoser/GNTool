@@ -9,19 +9,26 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import j2html.tags.ContainerTag;
 
-public class BranchLink implements Opcode {
+public class BranchLink implements Opcode, BranchingOpcode {
 
   private final static String MNEMONIC = "bl";
   private final int offset;
   private final int destination;
+  private String functionName;
 
   public BranchLink(int offset, int destination) {
     this.offset = offset;
     this.destination = destination;
   }
 
+  @Override
   public int getDestination() {
     return destination;
+  }
+
+  @Override
+  public void setDestinationFunctionName(String functionName) {
+    this.functionName = functionName;
   }
 
   @Override
@@ -42,10 +49,11 @@ public class BranchLink implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    String dest = String.format("#%X", destination);
+    String dest = functionName != null ? functionName : String.format("0x%X", destination);
+    String destHref = String.format("#%X", destination);
     return div(attrs(id))
         .withText(String.format("%05X | %s ", offset, MNEMONIC))
-        .with(a(String.format("0x%X", destination)).withHref(dest))
+        .with(a(dest).withHref(destHref))
         .withText(" ")
         .with(formatRawBytesHTML(getBytes()));
   }

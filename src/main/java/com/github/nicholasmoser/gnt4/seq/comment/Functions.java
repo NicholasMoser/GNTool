@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.comment;
 
 import com.github.nicholasmoser.gnt4.seq.Seqs;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class Functions {
     Map<Integer, Function> functions =  FUNCTIONS.get(fileName);
     if (functions == null) {
       LOGGER.log(Level.INFO, "No functions found for file " + fileName);
-      return new HashMap<>();
+      return Collections.emptyMap();
     }
     return functions;
   }
