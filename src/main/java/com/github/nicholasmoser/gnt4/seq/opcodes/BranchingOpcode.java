@@ -4,5 +4,5 @@ public interface BranchingOpcode {
 
   int getDestination();
 
-  void setDestinationFunctionName(String functionName);
+  void setDestinationFunctionName(String destFuncName);
 }

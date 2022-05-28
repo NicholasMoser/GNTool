@@ -3,18 +3,18 @@ package com.github.nicholasmoser.gnt4.seq.opcodes;
 import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
-import static j2html.TagCreator.span;
 
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import j2html.tags.ContainerTag;
 
-public class BranchGreaterThanOrEqualToZero implements Opcode {
+public class BranchGreaterThanOrEqualToZero implements Opcode, BranchingOpcode {
 
   private final static String MNEMONIC = "bgez";
   private final int offset;
   private final int destination;
   private final byte secondByte;
+  private String destFuncName;
 
   /**
    * @param offset      The offset of the opcode.
@@ -26,6 +26,16 @@ public class BranchGreaterThanOrEqualToZero implements Opcode {
     this.offset = offset;
     this.destination = destination;
     this.secondByte = secondByte;
+  }
+
+  @Override
+  public int getDestination() {
+    return destination;
+  }
+
+  @Override
+  public void setDestinationFunctionName(String destFuncName) {
+    this.destFuncName = destFuncName;
   }
 
   @Override
@@ -46,10 +56,11 @@ public class BranchGreaterThanOrEqualToZero implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    String dest = String.format("#%X", destination);
+    String destName = destFuncName != null ? destFuncName : String.format("0x%X", destination);
+    String destHref = String.format("#%X", destination);
     return div(attrs(id))
         .withText(String.format("%05X | %s ", offset, MNEMONIC))
-        .with(a(String.format("0x%X", destination)).withHref(dest))
+        .with(a(destName).withHref(destHref))
         .withText(" ")
         .with(formatRawBytesHTML(getBytes()));
   }
