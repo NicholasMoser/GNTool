@@ -44,7 +44,7 @@ public class UnknownOpcode implements Opcode {
     String[] op = operands.split(",");
     int len = (op.length-1)*4;
     ByteBuffer bytes = ByteBuffer.allocate(len);
-    bytes.putShort(Short.parseShort(opcode.replace("op_",""),16));
+    bytes.putShort(Short.parseShort(opcode,16));
     if (op[0].replace(" ","").startsWith("0x")) {
       bytes.put(Byte.parseByte(op[0].substring(op[0].indexOf("0x") + 2),16));
     } else {

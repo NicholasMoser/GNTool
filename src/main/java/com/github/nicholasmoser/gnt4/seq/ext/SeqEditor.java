@@ -2,7 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
-import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.Ranges;
@@ -10,7 +10,6 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
-import com.google.common.primitives.Bytes;
 import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.scene.control.ContextMenu;
@@ -233,233 +230,16 @@ public class SeqEditor {
    * Assemble the opcodes to bytes
    */
   public void assemble() {
-    String[] opcodes = opcodesTextArea.getText().split("\n");
+    String[] lines = opcodesTextArea.getText().split("\n");
     StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < opcodes.length; i++) {
-      String operation = opcodes[i];
-      String opcode;
-      String operands = "";
-      try {
-        opcode = operation.substring(0,operation.indexOf(" "));
-        operands = operation.substring(operation.indexOf(" ")).replace(" ","");
-      } catch (Exception e) {
-        opcode = operation;
-      }
-      byte[] bytes;
-      String[] op;
-      switch (opcode) {
-        case "":
-          continue;
-        case "b":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01320000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "beqz":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01330000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bnez":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01340000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bgtz":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01350000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bgez":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01360000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bltz":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01370000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "blez":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01380000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bdnz":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x013B0000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bl":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x013C0000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "beqzal":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x013D0000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bnezal":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x013E0000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bgtzal":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x013F0000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bgezal":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01400000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "bltzal":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01410000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "blezal":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x01420000),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "blr":
-          bytes = ByteUtils.fromInt32(0x01450000);
-          break;
-        case "blreqz":
-          bytes = ByteUtils.fromInt32(0x01460000);
-          break;
-        case "blrnez":
-          bytes = ByteUtils.fromInt32(0x01470000);
-          break;
-        case "blrgtz":
-          bytes = ByteUtils.fromInt32(0x01480000);
-          break;
-        case "blrgez":
-          bytes = ByteUtils.fromInt32(0x01490000);
-          break;
-        case "blrltz":
-          bytes = ByteUtils.fromInt32(0x014A0000);
-          break;
-        case "blrlez":
-          bytes = ByteUtils.fromInt32(0x014B0000);
-          break;
-        case "i32_mov":
-          if (operands.contains("->")) {
-            continue;
-          }
-          op = operands.split(",");
-          ByteBuffer buffer = ByteBuffer.allocate(0x24);
-          buffer.put((byte) 0x04);
-          buffer.put((byte) 0x02);
-          for(byte b: SEQ_REGCMD2(op[0].replace(" ",""),op[1].replace(" ",""))) {
-            buffer.put(b);
-          }
-          bytes = new byte[buffer.position()];
-          buffer.position(0);
-          buffer.get(bytes);
-          break;
-        case "sync_timer":
-          bytes = Bytes.concat(ByteUtils.fromInt32(0x2011263F),ByteUtils.fromInt32(Integer.decode(operands)));
-          break;
-        case "sync_timer_run":
-          bytes = ByteUtils.fromUint32(0x20120026);
-          break;
-        case "create_hitbox":
-          op = operands.split(",");
-          bytes = Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0));
-          break;
-        case "set_pow_dmg_grd":
-          op = operands.split(",");
-          bytes = Bytes.concat(ByteUtils.fromUint32(0x21050026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint16(Integer.decode(op[2])), ByteUtils.fromUint16(0));
-          break;
-        case "set_ang_dir":
-          op = operands.split(",");
-          bytes = Bytes.concat(ByteUtils.fromUint32(0x21060026),ByteUtils.fromUint16(Integer.decode(op[0])),ByteUtils.fromUint16(Integer.decode(op[1])));
-          break;
-        case "set_hitbox_timer":
-          op = operands.split(",");
-          bytes = Bytes.concat(ByteUtils.fromUint32(0x21070026),ByteUtils.fromUint16(Integer.decode(op[0])),ByteUtils.fromUint16(Integer.decode(op[1])));
-          break;
-        case "flag":
-          bytes = ByteUtils.fromUint16(0x241A);
-          continue;
-        default:
-          bytes = UnknownOpcode.of(opcode,operands);
-      }
-      for (byte b: bytes) {
+    List<Opcode> opcodes = SeqAssembler.assembleLines(lines);
+    for (Opcode o : opcodes) {
+      for (byte b: o.getBytes()) {
         builder.append(String.format("%02X",b));
       }
       builder.append("\n");
     }
     newBytesTextArea.setText(builder.toString());
-  }
-
-  private byte[] SEQ_REGCMD1(String op) {
-    ByteBuffer buffer = ByteBuffer.allocate(0xA);
-    byte opv;
-    int opdirect = 0;
-    buffer.put((byte) 0);
-    if (op.startsWith("gpr")) {
-      opv = Byte.decode(op.replace("gpr",""));
-    } else if (op.startsWith("seqr")) {
-      opv = Byte.decode(op.replace("seqr",""));
-    } else {
-      try {
-        opdirect = Integer.decode(op);
-        opv = 0x3f;
-      } catch (Exception e) {
-        if (op.equals("chr_p")) {
-          opv = 0x26;
-        } else {
-          opv = -1;
-        }
-      }
-    }
-
-    buffer.put(opv);
-    if (opv >= 0x3E) {
-      buffer.putInt(Integer.reverseBytes(opdirect));
-    }
-
-    byte[] bytes = new byte[buffer.position()];
-    buffer.position(0);
-    buffer.get(bytes);
-    return bytes;
-  }
-
-  private byte[] SEQ_REGCMD2(String op1, String op2) {
-    byte op1v;
-    int op1direct = 0;
-    if (op1.startsWith("gpr")) {
-      op1v = Byte.decode(op1.substring(3));
-    } else if (op1.startsWith("seqr")) {
-      op1v = (byte) (Byte.decode(op1.substring(4)) + 0x18);
-    } else {
-      try {
-        op1direct = Integer.decode(op1);
-        op1v = 0x3f;
-      } catch (Exception e) {
-        if (op1.equals("chr_p")) {
-          op1v = 0x26;
-        } else {
-          throw e;
-        }
-      }
-    }
-    byte op2v;
-    int op2direct = 0;
-    if (op2.startsWith("gpr")) {
-      op2v = Byte.decode(op2.replace("gpr",""));
-    } else if (op2.contains("seqr")) {
-      op2v = (byte) (Byte.decode(op2.replace("seqr", "")) + 0x18);
-    } else {
-      try {
-        op2direct = Integer.decode(op2);
-        op2v = 0x3f;
-      } catch (Exception e) {
-        if (op2.equals("chr_p")) {
-          op2v = 0x26;
-        } else {
-          throw e;
-        }
-      }
-    }
-
-    ByteBuffer buffer = ByteBuffer.allocate(0x22);
-    buffer.put(op1v);
-    if (op1v >= 0x3E && op1v < 0x80) {
-      buffer.put((byte) 0);
-      buffer.putInt(op1direct);
-      buffer.put(op2v);
-      buffer.put((byte)0);
-      buffer.put((byte)0);
-      buffer.put((byte)0);
-      if (op2v >= 0x3E) {
-        buffer.putInt(op2direct);
-      }
-    } else if (op1v < 0x3E) {
-      buffer.put(op2v);
-      if (op2v >= 0x3E && op2v < 0x80) {
-        buffer.putInt(op2direct);
-      }
-    }
-    byte[] bytes = new byte[buffer.position()];
-    buffer.position(0);
-    buffer.get(bytes);
-    return bytes;
   }
 
   /**
