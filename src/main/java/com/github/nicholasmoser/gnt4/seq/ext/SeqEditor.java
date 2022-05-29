@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.Ranges;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import javafx.concurrent.Task;
 import javafx.event.EventTarget;
@@ -223,6 +225,33 @@ public class SeqEditor {
     } else {
       Message.error("No Edit Opened", "Cannot apply, no edit is opened.");
     }
+  }
+
+  /**
+   * Assemble the opcodes to bytes
+   */
+  public void assemble() {
+    String[] opcodes = opcodesTextArea.getText().split("\n");
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < opcodes.length; i++) {
+      String operation = opcodes[i];
+      String opcode = operation.substring(0,operation.indexOf(" "));
+      String operands = operation.substring(operation.indexOf(" "));
+      byte[] bytes;
+      switch (opcode) {
+        case "":
+          continue;
+        case "blr":
+          bytes = ByteUtils.fromInt32(0x01450000);
+          break;
+        default:
+          bytes = UnknownOpcode.of(opcode,operands);
+      }
+      for (byte b: bytes) {
+        builder.append(String.format("%02X",b));
+      }
+    }
+    newBytesTextArea.setText(builder.toString());
   }
 
   /**

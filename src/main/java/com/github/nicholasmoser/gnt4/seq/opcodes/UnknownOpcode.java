@@ -4,8 +4,11 @@ import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 import j2html.tags.ContainerTag;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 
 public class UnknownOpcode implements Opcode {
 
@@ -35,6 +38,31 @@ public class UnknownOpcode implements Opcode {
       throw new IOException("Failed to read bytes for opcode");
     }
     return new UnknownOpcode(bs.offset() - bytesLength, bytes, info);
+  }
+
+  public static byte[] of(String opcode, String operands) {
+    String[] op = operands.split(",");
+    int len = (op.length-1)*4;
+    ByteBuffer bytes = ByteBuffer.allocate(len);
+    bytes.putShort(Short.parseShort(opcode.replace("op_",""),16));
+    if (op[0].replace(" ","").startsWith("0x")) {
+      bytes.put(Byte.parseByte(op[0].substring(op[0].indexOf("0x") + 2),16));
+    } else {
+      bytes.put(Byte.parseByte(op[0].replace(" ","")));
+    }
+    if (op[1].replace(" ","").startsWith("0x")) {
+      bytes.put(Byte.parseByte(op[1].substring(op[1].indexOf("0x") + 2),16));
+    } else {
+      bytes.put(Byte.parseByte(op[1].replace(" ","")));
+    }
+    for (int i = 2; i < op.length; i++){
+      if (op[i].replace(" ","").startsWith("0x")) {
+        bytes.putInt(Integer.parseInt(op[i].substring(op[i].indexOf("0x") + 2),16));
+      } else {
+        bytes.putInt(Integer.parseInt(op[i].replace(" ","")));
+      }
+    }
+    return bytes.array();
   }
 
   @Override
