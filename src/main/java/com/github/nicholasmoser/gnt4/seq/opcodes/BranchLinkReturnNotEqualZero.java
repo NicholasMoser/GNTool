@@ -26,7 +26,12 @@ public class BranchLinkReturnNotEqualZero implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | %s {01450000}", offset, MNEMONIC);
+    return String.format("%05X | %s {01470000}", offset, MNEMONIC);
+  }
+
+  @Override
+  public String toAssembly() {
+    return String.format("%s",MNEMONIC);
   }
 
   @Override

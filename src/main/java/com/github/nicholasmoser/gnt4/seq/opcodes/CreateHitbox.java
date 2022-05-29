@@ -41,6 +41,11 @@ public class CreateHitbox implements Opcode {
   }
 
   @Override
+  public String toAssembly() {
+    return String.format("%s %s",MNEMONIC,info);
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     return div(attrs(id))

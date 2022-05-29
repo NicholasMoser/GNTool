@@ -37,6 +37,11 @@ public class SynchronousTimer implements Opcode {
   }
 
   @Override
+  public String toAssembly() {
+    return String.format("%s %s",MNEMONIC,info);
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     int frames = ByteUtils.toInt32(Arrays.copyOfRange(bytes, 4, 8));

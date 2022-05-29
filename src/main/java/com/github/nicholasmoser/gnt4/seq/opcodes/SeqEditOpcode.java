@@ -37,6 +37,11 @@ public class SeqEditOpcode implements Opcode {
   }
 
   @Override
+  public String toAssembly() {
+    return String.format("%s %s",MNEMONIC,edit.getName());
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     List<ContainerTag> opcodes = new ArrayList<>();

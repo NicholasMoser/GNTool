@@ -411,7 +411,7 @@ public class SeqEditor {
         byte opcodeGroup = (byte) bs.read();
         byte opcode = (byte) bs.read();
         bs.reset();
-        builder.append(SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode).toString());
+        builder.append(SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode).toAssembly());
         builder.append('\n');
       }
       return builder.toString();

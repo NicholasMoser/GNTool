@@ -39,6 +39,11 @@ public class SectionTitle implements Opcode {
   }
 
   @Override
+  public String toAssembly() {
+    return String.format("%s %s",MNEMONIC,title);
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     return h2(attrs(id)).withText(toString());

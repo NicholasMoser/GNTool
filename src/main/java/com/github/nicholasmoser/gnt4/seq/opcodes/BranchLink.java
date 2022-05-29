@@ -46,6 +46,11 @@ public class BranchLink implements Opcode, BranchingOpcode {
   }
 
   @Override
+  public String toAssembly() {
+    return String.format("%s 0x%X",MNEMONIC,destination);
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     String destName = destFuncName != null ? destFuncName : String.format("0x%X", destination);

@@ -53,6 +53,16 @@ public class UnknownOpcode implements Opcode {
   }
 
   @Override
+  public String toAssembly() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(String.format("op_%02X%02X 0x%02X, 0x%02X", bytes[0], bytes[1], bytes[2], bytes[3]));
+    for (int i = 4; i < bytes.length; i = i+4) {
+      builder.append(String.format(", 0x%02X%02X%02X%02X", bytes[i], bytes[i+1], bytes[i+2], bytes[i+3]));
+    }
+    return builder.toString();
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     return div(attrs(id))

@@ -11,6 +11,8 @@ public interface Opcode {
 
   byte[] getBytes();
 
+  String toAssembly();
+
   ContainerTag toHTML();
 
   default String formatRawBytes(byte[] bytes) {

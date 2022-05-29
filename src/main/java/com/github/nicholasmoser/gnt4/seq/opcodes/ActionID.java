@@ -58,6 +58,11 @@ public class ActionID implements Opcode {
   }
 
   @Override
+  public String toAssembly() {
+    return String.format("%s",MNEMONIC);
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", actionOffset);
