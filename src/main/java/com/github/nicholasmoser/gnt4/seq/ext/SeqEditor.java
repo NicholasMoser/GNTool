@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+import com.google.common.primitives.Bytes;
 import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.scene.control.ContextMenu;
@@ -241,8 +242,71 @@ public class SeqEditor {
       switch (opcode) {
         case "":
           continue;
+        case "b":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01320000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "beqz":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01330000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bnez":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01340000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bgtz":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01350000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bgez":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01360000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bltz":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01370000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "blez":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01380000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bdnz":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x013B0000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bl":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x013C0000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "beqzal":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x013D0000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bnezal":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x013E0000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bgtzal":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x013F0000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bgezal":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01400000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "bltzal":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01410000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "blezal":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x01420000),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
         case "blr":
           bytes = ByteUtils.fromInt32(0x01450000);
+          break;
+        case "blreqz":
+          bytes = ByteUtils.fromInt32(0x01460000);
+          break;
+        case "blrnez":
+          bytes = ByteUtils.fromInt32(0x01470000);
+          break;
+        case "blrgtz":
+          bytes = ByteUtils.fromInt32(0x01480000);
+          break;
+        case "blrgez":
+          bytes = ByteUtils.fromInt32(0x01490000);
+          break;
+        case "blrltz":
+          bytes = ByteUtils.fromInt32(0x014A0000);
+          break;
+        case "blrlez":
+          bytes = ByteUtils.fromInt32(0x014B0000);
           break;
         default:
           bytes = UnknownOpcode.of(opcode,operands);
