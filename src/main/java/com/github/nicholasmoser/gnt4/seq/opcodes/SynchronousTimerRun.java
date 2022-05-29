@@ -37,7 +37,7 @@ public class SynchronousTimerRun implements Opcode {
 
   @Override
   public String toAssembly() {
-    return String.format("%s %s",MNEMONIC,info);
+    return String.format("%s",MNEMONIC);
   }
 
   @Override

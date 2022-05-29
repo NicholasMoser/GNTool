@@ -41,7 +41,7 @@ public class SetAngDir implements Opcode {
 
   @Override
   public String toAssembly() {
-    return String.format("%s %s",MNEMONIC,info);
+    return String.format("%s 0x%02X, 0x%02X", MNEMONIC, ang, dir);
   }
 
   @Override

@@ -38,7 +38,7 @@ public class SynchronousTimer implements Opcode {
 
   @Override
   public String toAssembly() {
-    return String.format("%s %s",MNEMONIC,info);
+    return String.format("%s %s",MNEMONIC,info.replace("chr_p, ",""));
   }
 
   @Override

@@ -34,7 +34,7 @@ public class FlagOperation implements Opcode {
 
   @Override
   public String toAssembly() {
-    return String.format("%s",info);
+    return String.format("flag %s",info.replace("\"",""));
   }
 
   @Override

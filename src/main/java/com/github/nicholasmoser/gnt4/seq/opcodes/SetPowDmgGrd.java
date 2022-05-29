@@ -44,7 +44,7 @@ public class SetPowDmgGrd implements Opcode {
 
   @Override
   public String toAssembly() {
-    return String.format("%s %s",MNEMONIC,info);
+    return String.format("%s 0x%04X, 0x%04X, 0x%04X", MNEMONIC, pow, dmg, grd);
   }
 
   @Override

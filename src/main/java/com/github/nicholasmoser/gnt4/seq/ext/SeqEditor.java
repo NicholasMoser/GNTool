@@ -10,6 +10,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -236,9 +237,16 @@ public class SeqEditor {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < opcodes.length; i++) {
       String operation = opcodes[i];
-      String opcode = operation.substring(0,operation.indexOf(" "));
-      String operands = operation.substring(operation.indexOf(" "));
+      String opcode;
+      String operands = "";
+      try {
+        opcode = operation.substring(0,operation.indexOf(" "));
+        operands = operation.substring(operation.indexOf(" ")).replace(" ","");
+      } catch (Exception e) {
+        opcode = operation;
+      }
       byte[] bytes;
+      String[] op;
       switch (opcode) {
         case "":
           continue;
@@ -307,6 +315,89 @@ public class SeqEditor {
           break;
         case "blrlez":
           bytes = ByteUtils.fromInt32(0x014B0000);
+          break;
+        case "i32_mov":
+          op = operands.split(",");
+          String op1 = op[0];
+          byte op1v;
+          int op1direct = 0;
+          if (op1.startsWith("gpr")) {
+            op1v = Byte.decode(op1.substring(3));
+          } else if (op1.startsWith("seqr")) {
+            op1v = (byte) (Byte.decode(op1.substring(4)) + 0x18);
+          } else {
+            try {
+              op1direct = Integer.decode(op1);
+              op1v = 0x3f;
+            } catch (Exception e) {
+              if (op1.equals("chr_p")) {
+                op1v = 0x26;
+              } else {
+                op1v = -1;
+              }
+            }
+          }
+          String op2 = op[0].replace(" ","");
+          byte op2v = -1;
+          int op2direct = 0;
+          if (op2.startsWith("gpr")) {
+            op2v = Byte.decode(op2.substring(3));
+          } else if (op2.startsWith("seqr")) {
+            op2v = (byte) (Byte.decode(op2.substring(4)) + 0x18);
+          } else {
+            try {
+              op2direct = Integer.decode(op1);
+              op2v = 0x3f;
+            } catch (Exception e) {
+              if (op2.equals("chr_p")) {
+                op2v = 0x26;
+              }
+            }
+          }
+
+          ByteBuffer buffer = ByteBuffer.allocate(0x24);
+          buffer.put((byte) 0x04);
+          buffer.put((byte) 0x02);
+          buffer.put(op1v);
+          if (op1v >= 0x3E && op1v < 0x80) {
+            buffer.put((byte) 0);
+            buffer.putInt(Integer.reverseBytes(op1direct));
+            buffer.put(op2v);
+            buffer.put((byte)0);
+            buffer.put((byte)0);
+            buffer.put((byte)0);
+            if (op2v >= 0x3E) {
+              buffer.putInt(Integer.reverseBytes(op2direct));
+            }
+          } else if (op1v < 0x3E) {
+            buffer.put(op2v);
+            if (op2v >= 0x3E && op2v < 0x80) {
+              buffer.putInt(Integer.reverseBytes(op2direct));
+            }
+          }
+          bytes = buffer.array();
+          break;
+        case "sync_timer":
+          bytes = Bytes.concat(ByteUtils.fromInt32(0x2011263F),ByteUtils.fromInt32(Integer.decode(operands)));
+          break;
+        case "sync_timer_run":
+          bytes = ByteUtils.fromUint32(0x20120026);
+          break;
+        case "create_hitbox":
+          op = operands.split(",");
+          bytes = Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0));
+          break;
+        case "set_pow_dmg_grd":
+          op = operands.split(",");
+          bytes = Bytes.concat(ByteUtils.fromUint32(0x21050026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint16(Integer.decode(op[2])), ByteUtils.fromUint16(0));
+          break;
+        case "set_ang_dir":
+          op = operands.split(",");
+          bytes = Bytes.concat(ByteUtils.fromUint32(0x21060026),ByteUtils.fromUint16(Integer.decode(op[0])),ByteUtils.fromUint16(Integer.decode(op[1])));
+          break;
+        case "set_hitbox_timer":
+          op = operands.split(",");
+          bytes = Bytes.concat(ByteUtils.fromUint32(0x21070026),ByteUtils.fromUint16(Integer.decode(op[0])),ByteUtils.fromUint16(Integer.decode(op[1])));
           break;
         default:
           bytes = UnknownOpcode.of(opcode,operands);
