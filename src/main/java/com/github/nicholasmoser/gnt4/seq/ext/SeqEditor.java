@@ -318,64 +318,13 @@ public class SeqEditor {
           break;
         case "i32_mov":
           op = operands.split(",");
-          String op1 = op[0];
-          byte op1v;
-          int op1direct = 0;
-          if (op1.startsWith("gpr")) {
-            op1v = Byte.decode(op1.substring(3));
-          } else if (op1.startsWith("seqr")) {
-            op1v = (byte) (Byte.decode(op1.substring(4)) + 0x18);
-          } else {
-            try {
-              op1direct = Integer.decode(op1);
-              op1v = 0x3f;
-            } catch (Exception e) {
-              if (op1.equals("chr_p")) {
-                op1v = 0x26;
-              } else {
-                op1v = -1;
-              }
-            }
-          }
-          String op2 = op[0].replace(" ","");
-          byte op2v = -1;
-          int op2direct = 0;
-          if (op2.startsWith("gpr")) {
-            op2v = Byte.decode(op2.substring(3));
-          } else if (op2.startsWith("seqr")) {
-            op2v = (byte) (Byte.decode(op2.substring(4)) + 0x18);
-          } else {
-            try {
-              op2direct = Integer.decode(op1);
-              op2v = 0x3f;
-            } catch (Exception e) {
-              if (op2.equals("chr_p")) {
-                op2v = 0x26;
-              }
-            }
-          }
-
           ByteBuffer buffer = ByteBuffer.allocate(0x24);
           buffer.put((byte) 0x04);
           buffer.put((byte) 0x02);
-          buffer.put(op1v);
-          if (op1v >= 0x3E && op1v < 0x80) {
-            buffer.put((byte) 0);
-            buffer.putInt(Integer.reverseBytes(op1direct));
-            buffer.put(op2v);
-            buffer.put((byte)0);
-            buffer.put((byte)0);
-            buffer.put((byte)0);
-            if (op2v >= 0x3E) {
-              buffer.putInt(Integer.reverseBytes(op2direct));
-            }
-          } else if (op1v < 0x3E) {
-            buffer.put(op2v);
-            if (op2v >= 0x3E && op2v < 0x80) {
-              buffer.putInt(Integer.reverseBytes(op2direct));
-            }
+          for(byte b: SEQ_REGCMD2(op[0],op[1])) {
+            buffer.put(b);
           }
-          bytes = buffer.array();
+          bytes = buffer.compact().array();
           break;
         case "sync_timer":
           bytes = Bytes.concat(ByteUtils.fromInt32(0x2011263F),ByteUtils.fromInt32(Integer.decode(operands)));
@@ -407,6 +356,93 @@ public class SeqEditor {
       }
     }
     newBytesTextArea.setText(builder.toString());
+  }
+
+  private byte[] SEQ_REGCMD1(String op) {
+    ByteBuffer buffer = ByteBuffer.allocate(0xA);
+    byte opv;
+    int opdirect = 0;
+    buffer.put((byte) 0);
+    if (op.startsWith("gpr")) {
+      opv = Byte.decode(op.replace("gpr",""));
+    } else if (op.startsWith("seqr")) {
+      opv = Byte.decode(op.replace("seqr",""));
+    } else {
+      try {
+        opdirect = Integer.decode(op);
+        opv = 0x3f;
+      } catch (Exception e) {
+        if (op.equals("chr_p")) {
+          opv = 0x26;
+        } else {
+          opv = -1;
+        }
+      }
+    }
+    buffer.put(opv);
+    if (opv >= 0x3E) {
+      buffer.putInt(Integer.reverseBytes(opdirect));
+    }
+    return buffer.compact().array();
+  }
+
+  private byte[] SEQ_REGCMD2(String op1, String op2) {
+    byte op1v;
+    int op1direct = 0;
+    if (op1.startsWith("gpr")) {
+      op1v = Byte.decode(op1.replace("gpr", ""));
+    } else if (op1.startsWith("seqr")) {
+      op1v = (byte) (Byte.decode(op1.replace("seqr","")) + 0x18);
+    } else {
+      try {
+        op1direct = Integer.decode(op1);
+        op1v = 0x3f;
+      } catch (Exception e) {
+        if (op1.equals("chr_p")) {
+          op1v = 0x26;
+        } else {
+          throw e;
+        }
+      }
+    }
+    byte op2v;
+    int op2direct = 0;
+    if (op2.startsWith("gpr")) {
+      op2v = Byte.decode(op2.replace("gpr",""));
+    } else if (op2.startsWith("seqr")) {
+      op2v = (byte) (Byte.decode(op2.replace("seqr","")) + 0x18);
+    } else {
+      try {
+        op2direct = Integer.decode(op1);
+        op2v = 0x3f;
+      } catch (Exception e) {
+        if (op2.equals("chr_p")) {
+          op2v = 0x26;
+        } else {
+          throw e;
+        }
+      }
+    }
+
+    ByteBuffer buffer = ByteBuffer.allocate(0x22);
+    buffer.put(op1v);
+    if (op1v >= 0x3E && op1v < 0x80) {
+      buffer.put((byte) 0);
+      buffer.putInt(Integer.reverseBytes(op1direct));
+      buffer.put(op2v);
+      buffer.put((byte)0);
+      buffer.put((byte)0);
+      buffer.put((byte)0);
+      if (op2v >= 0x3E) {
+        buffer.putInt(Integer.reverseBytes(op2direct));
+      }
+    } else if (op1v < 0x3E) {
+      buffer.put(op2v);
+      if (op2v >= 0x3E && op2v < 0x80) {
+        buffer.putInt(Integer.reverseBytes(op2direct));
+      }
+    }
+    return buffer.compact().array();
   }
 
   /**
