@@ -101,6 +101,15 @@ public class SeqAssembler {
                 case "i32":
                     bytes = getInt((byte)0x04, opcode[1], operands.split(","));
                     break;
+                case "i8":
+                    bytes = getInt((byte)0x05, opcode[1], operands.split(","));
+                    break;
+                case "i16":
+                    bytes = getInt((byte)0x06, opcode[1], operands.split(","));
+                    break;
+                case "i64":
+                    bytes = getInt((byte)0x07, opcode[1], operands.split(","));
+                    break;
                 case "sync":
                     switch (opcode[1]) {
                         case "timer":
