@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
+import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -11,6 +12,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class SeqAssembler {
 
@@ -157,6 +159,7 @@ public class SeqAssembler {
                 case "flags":
                     buffer.putShort((short)0x241A);
                     byte action = 0;
+                    byte group = 0;
                     switch (opcode[1]) {
                         case "set":
                             break;
@@ -180,56 +183,59 @@ public class SeqAssembler {
                         case "af":
                             break;
                         case "nf":
-                            action += 0x06;
+                            group = 0x06;
                             break;
                         case "pf":
-                            action += 0x0C;
+                            group = 0x0C;
                             break;
                         case "kf":
-                            action += 0x12;
+                            group = 0x12;
                             break;
                         case "df":
-                            action += 0x18;
+                            group = 0x18;
                             break;
                         case "ef":
-                            action += 0x1E;
+                            group = 0x1E;
                             break;
                         case "mf":
-                            action += 0x24;
+                            group = 0x24;
                             break;
                         case "rf":
-                            action += 0x2A;
+                            group = 0x2A;
                             break;
                         case "sf":
-                            action += 0x30;
+                            group = 0x30;
                             break;
                         case "unknown":
-                            action += 0x36;
+                            group = 0x36;
                             break;
                         case "cf":
-                            action += 0x3C;
+                            group = 0x3C;
                             break;
                         case "chr":
                         case "cmf":
-                            action += 0x42;
+                            group = 0x42;
                             break;
                         case "k2f":
-                            action += 0x48;
+                            group = 0x48;
                             break;
                         case "d2f":
-                            action += 0x4E;
+                            group = 0x4E;
                             break;
                         case "n2f":
-                            action += 0x54;
+                            group = 0x54;
                             break;
                     }
+                    action += group;
                     buffer.put(action);
+                    //No alternative actions supported, only pure flag operations
                     buffer.put((byte) 0);
+                    buffer.putInt(getFlags(opcode[2],operands.replace("\"","")));
                     bytes = new byte[buffer.position()];
                     buffer.position(0);
                     buffer.get(bytes);
                     buffer.position(0);
-                    continue;
+                    break;
                 case "op":
                     bytes = UnknownOpcode.of(opcode[1], operands);
                     break;
@@ -239,6 +245,65 @@ public class SeqAssembler {
             opcodes.add(new UnknownOpcode(offset, bytes));
         }
         return opcodes;
+    }
+
+    static private int getFlags(String group, String operands) {
+        int flags = 0;
+        Map<Integer, String> flagValues;
+        switch (group) {
+            case "af":
+                flagValues = Seq.AF_FLAGS;
+                break;
+            case "nf":
+                flagValues = Seq.NF_FLAGS;
+                break;
+            case "pf":
+                flagValues = Seq.PF_FLAGS;
+                break;
+            case "kf":
+                flagValues = Seq.KF_FLAGS;
+                break;
+            case "df":
+                flagValues = Seq.KF_FLAGS;
+                break;
+            case "ef":
+                flagValues = Seq.EF_FLAGS;
+                break;
+            case "mf":
+                flagValues = Seq.MF_FLAGS;
+                break;
+            case "rf":
+                flagValues = Seq.RF_FLAGS;
+                break;
+            case "sf":
+                flagValues = Seq.SF_FLAGS;
+                break;
+            case "cf":
+                flagValues = Seq.CF_FLAGS;
+                break;
+            case "chr":
+            case "cmf":
+                flagValues = Seq.CHR_MOD_FLAGS;
+                break;
+            case "k2f":
+                flagValues = Seq.K2F_FLAGS;
+                break;
+            case "d2f":
+                flagValues = Seq.D2F_FLAGS;
+                break;
+            case "n2f":
+                flagValues = Seq.N2F_FLAGS;
+                break;
+            case "unknown":
+            default:
+                throw new IllegalStateException("Unexpected value: " + group);
+        }
+        for (Entry<Integer, String> entry : flagValues.entrySet()) {
+            if (operands.contains(entry.getValue())) {
+                flags |= (entry.getKey());
+            }
+        }
+        return flags;
     }
 
     static private byte[] getInt(byte group, String opcode, String[] operands) {
