@@ -17,6 +17,7 @@ public class SeqAssembler {
     public static LinkedList<Opcode> assembleLines(String[] lines) {
         LinkedList<Opcode> opcodes = new LinkedList<>();
         int offset = 0;
+        ByteBuffer buffer = ByteBuffer.allocate(0x50);
         for (int i = 0; i < lines.length; i++) {
             String operation = lines[i];
             String[] opcode;
@@ -153,8 +154,81 @@ public class SeqAssembler {
                             break;
                     }
                     break;
-                case "flag":
-                    bytes = ByteUtils.fromUint16(0x241A);
+                case "flags":
+                    buffer.putShort((short)0x241A);
+                    byte action = 0;
+                    switch (opcode[1]) {
+                        case "set":
+                            break;
+                        case "remove":
+                            action = 1;
+                            break;
+                        case "and":
+                            action = 2;
+                            break;
+                        case "add":
+                            action = 3;
+                            break;
+                        case "xor":
+                            action = 4;
+                            break;
+                        case "get":
+                            action = 5;
+                            break;
+                    }
+                    switch (opcode[2]) {
+                        case "af":
+                            break;
+                        case "nf":
+                            action += 0x06;
+                            break;
+                        case "pf":
+                            action += 0x0C;
+                            break;
+                        case "kf":
+                            action += 0x12;
+                            break;
+                        case "df":
+                            action += 0x18;
+                            break;
+                        case "ef":
+                            action += 0x1E;
+                            break;
+                        case "mf":
+                            action += 0x24;
+                            break;
+                        case "rf":
+                            action += 0x2A;
+                            break;
+                        case "sf":
+                            action += 0x30;
+                            break;
+                        case "unknown":
+                            action += 0x36;
+                            break;
+                        case "cf":
+                            action += 0x3C;
+                            break;
+                        case "chr":
+                        case "cmf":
+                            action += 0x42;
+                            break;
+                        case "k2f":
+                            action += 0x48;
+                            break;
+                        case "d2f":
+                            action += 0x4E;
+                            break;
+                        case "n2f":
+                            action += 0x54;
+                            break;
+                    }
+                    buffer.put(action);
+                    buffer.put((byte) 0);
+                    bytes = new byte[buffer.position()];
+                    buffer.position(0);
+                    buffer.get(bytes);
+                    buffer.position(0);
                     continue;
                 case "op":
                     bytes = UnknownOpcode.of(opcode[1], operands);
