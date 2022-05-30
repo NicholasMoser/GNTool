@@ -99,11 +99,6 @@ public class SeqAssembler {
                     bytes = ByteUtils.fromInt32(0x014B0000);
                     break;
                 case "i32":
-                    /*
-                    if (operands.contains("->")) {
-                        continue;
-                    }
-                     */
                     bytes = getInt((byte)0x04, opcode[1], operands.split(","));
                     break;
                 case "sync":
@@ -167,11 +162,113 @@ public class SeqAssembler {
         ByteBuffer buffer = ByteBuffer.allocate(0x24);
         buffer.put(group);
         switch (opcode) {
+            case "debug":
+                buffer.put((byte) 0);
+                buffer.putShort((short) 0);
+                break;
+            case "float":
+                buffer.put((byte) 0x01);
+                break;
             case "mov":
                 buffer.put((byte) 0x02);
                 break;
+            case "andc":
+                buffer.put((byte) 0x03);
+                break;
+            case "nimply":
+                buffer.put((byte) 0x04);
+                break;
+            case "inc":
+                buffer.put((byte) 0x05);
+                break;
+            case "dec":
+                buffer.put((byte) 0x06);
+                break;
+            case "add":
+                buffer.put((byte) 0x07);
+                break;
+            case "sub":
+                buffer.put((byte) 0x08);
+                break;
+            case "mul":
+                buffer.put((byte) 0x09);
+                break;
+            case "div":
+                buffer.put((byte) 0x0A);
+                break;
+            case "shl":
+                buffer.put((byte) 0x0B);
+                break;
+            case "shr":
+                buffer.put((byte) 0x0C);
+                break;
+            case "and":
+                buffer.put((byte) 0x0D);
+                break;
+            case "or":
+                buffer.put((byte) 0x0E);
+                break;
+            case "xor":
+                buffer.put((byte) 0x0F);
+                break;
+            case "not":
+                buffer.put((byte) 0x10);
+                break;
+            case "subc":
+                buffer.put((byte) 0x11);
+                break;
+            case "chs":
+                buffer.put((byte) 0x12);
+                break;
+            case "cuhw":
+                buffer.put((byte) 0x13);
+                break;
+            case "range":
+                buffer.put((byte) 0x14);
+                break;
+            case "rand":
+                buffer.put((byte) 0x15);
+                break;
+            case "andcz":
+                buffer.put((byte) 0x16);
+                break;
+            case "mod":
+                buffer.put((byte) 0x17);
+                break;
+            case "abs":
+                buffer.put((byte) 0x18);
+                break;
         }
-        buffer.put(SEQ_REGCMD2(operands[0].replace(" ", ""), operands[1].replace(" ", "")));
+        switch (opcode) {
+            case "inc":
+            case "dec":
+            case "abs":
+                buffer.put(SEQ_REGCMD1(operands[0].replace(" ", "")));
+                break;
+            case "float":
+            case "mov":
+            case "andc":
+            case "nimply":
+            case "add":
+            case "sub":
+            case "mul":
+            case "div":
+            case "shl":
+            case "shr":
+            case "and":
+            case "or":
+            case "xor":
+            case "not":
+            case "subc":
+            case "chs":
+            case "cuhw":
+            case "range":
+            case "rand":
+            case "andcz":
+            case "mod":
+                buffer.put(SEQ_REGCMD2(operands[0].replace(" ", ""), operands[1].replace(" ", "")));
+                break;
+        }
         byte[] bytes = new byte[buffer.position()];
         buffer.position(0);
         buffer.get(bytes);
