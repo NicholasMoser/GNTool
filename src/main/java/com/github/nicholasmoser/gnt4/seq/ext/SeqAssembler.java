@@ -7,9 +7,7 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 
 import java.nio.ByteBuffer;
-import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -391,7 +389,7 @@ public class SeqAssembler {
             case "inc":
             case "dec":
             case "abs":
-                buffer.put(SEQ_REGCMD1(operands[0].replace(" ", "")));
+                buffer.put(SEQ_RegCMD1(operands[0].replace(" ", "")));
                 break;
             case "float":
             case "mov":
@@ -414,7 +412,7 @@ public class SeqAssembler {
             case "rand":
             case "andcz":
             case "mod":
-                buffer.put(SEQ_REGCMD2(operands[0].replace(" ", ""), operands[1].replace(" ", "")));
+                buffer.put(SEQ_RegCMD2(operands[0].replace(" ", ""), operands[1].replace(" ", "")));
                 break;
         }
         byte[] bytes = new byte[buffer.position()];
@@ -495,7 +493,7 @@ public class SeqAssembler {
             new SimpleEntry<>("game_info", (byte)0x3C),
             new SimpleEntry<>("unused", (byte)0x3D));
 
-    static private byte[] SEQ_REGCMD1(String op) {
+    static private byte[] SEQ_RegCMD1(String op) {
         if (op.startsWith("*")) {
             op = op.substring(1);
         }
@@ -529,7 +527,7 @@ public class SeqAssembler {
         return bytes;
     }
 
-    static private byte[] SEQ_REGCMD2(String op1, String op2) {
+    static private byte[] SEQ_RegCMD2(String op1, String op2) {
         if (op1.startsWith("*")) {
             op1 = op1.substring(1);
         }
