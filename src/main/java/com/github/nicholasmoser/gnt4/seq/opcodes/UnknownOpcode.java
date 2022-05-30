@@ -45,22 +45,11 @@ public class UnknownOpcode implements Opcode {
     int len = (op.length-1)*4;
     ByteBuffer bytes = ByteBuffer.allocate(len);
     bytes.putShort(Short.parseShort(opcode,16));
-    if (op[0].replace(" ","").startsWith("0x")) {
-      bytes.put(Byte.parseByte(op[0].substring(op[0].indexOf("0x") + 2),16));
-    } else {
-      bytes.put(Byte.parseByte(op[0].replace(" ","")));
-    }
-    if (op[1].replace(" ","").startsWith("0x")) {
-      bytes.put(Byte.parseByte(op[1].substring(op[1].indexOf("0x") + 2),16));
-    } else {
-      bytes.put(Byte.parseByte(op[1].replace(" ","")));
-    }
+    bytes.put(Byte.decode(op[0]));
+    bytes.put(Byte.decode(op[1]));
+
     for (int i = 2; i < op.length; i++){
-      if (op[i].replace(" ","").startsWith("0x")) {
-        bytes.putInt(Integer.parseInt(op[i].substring(op[i].indexOf("0x") + 2),16));
-      } else {
-        bytes.putInt(Integer.parseInt(op[i].replace(" ","")));
-      }
+        bytes.putInt(Long.decode(op[i]).intValue());
     }
     return bytes.array();
   }

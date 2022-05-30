@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 
@@ -11,6 +12,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 public class SeqAssembler {
 
@@ -241,6 +243,7 @@ public class SeqAssembler {
                     System.err.println(opcode[0]);
             }
             opcodes.add(new UnknownOpcode(offset, bytes));
+            offset += bytes.length;
         }
         return opcodes;
     }
@@ -501,18 +504,29 @@ public class SeqAssembler {
         String[] opParts = op.split("->");
         String register = opParts[0].toLowerCase();
         Byte registerVal = registers.get(register);
-        Long opDirect = (long) 0;
+        Integer opDirect = 0;
         buffer.put((byte) 0);
         if (registerVal == null) {
-            opDirect = Long.decode(op);
+            opDirect = Long.decode(op).intValue();
             registerVal = (byte)0x3f;
         } else if(opParts.length > 1) {
             String offset = opParts[1];
-            //String indirectOffset;
             registerVal = (byte) (registerVal | 0x10 << opParts.length);
-            offset = opParts[1];
             if (offset.startsWith("field_")) {
-                opDirect = Long.decode(offset.replace("field_", ""));
+                opDirect = Long.decode(offset.replace("field_", "")).intValue();
+            } else {
+                Optional<Integer> asd = null;
+                switch (registerVal & 0x3f) {
+                    case 0x26:
+                    case 0x27:
+                        asd = Chr.getOffset(offset);
+                        break;
+                }
+                if (asd != null) {
+                    opDirect = asd.get();
+                } else {
+                    opDirect = Integer.decode(offset);
+                }
             }
         }
 
@@ -534,17 +548,36 @@ public class SeqAssembler {
         String[] op1Parts = op1.split("->");
         String register1 = op1Parts[0].toLowerCase();
         Byte op1v = registers.get(register1);
-        Long op1Direct = (long) 0;
+        Integer op1Direct = 0;
         if (op1v == null) {
-            op1Direct = Long.decode(op1Parts[0]);
             op1v = 0x3f;
+            op1Direct = Long.decode(op1Parts[0]).intValue();
         } else if(op1Parts.length > 1) {
             String offset1 = op1Parts[1];
             //String indirectOffset;
             op1v = (byte) (op1v | 0x10 << op1Parts.length);
             offset1 = op1Parts[1];
             if (offset1.startsWith("field_")) {
-                op1Direct = Long.decode(offset1.replace("field_", ""));
+                op1Direct = Long.decode(offset1.replace("field_", "")).intValue();
+            } else {
+                Integer asd = null;
+                switch (op1v & 0x3f) {
+                    case 0x26:
+                    case 0x27:
+                        asd = Chr.getOffset(offset1).get();
+                        break;
+                }
+                if (asd == null) {
+                    try {
+                        op1Direct = Integer.decode(offset1);
+                    } catch (Exception e) {
+                        System.err.println(op1);
+                        System.err.println(String.format("0x%02X",op1v));
+                        System.err.println(String.format("0x%02X",offset1));
+                        System.err.println(String.format("0x%02X",op2));
+                    }
+
+                }
             }
         }
 
@@ -554,17 +587,39 @@ public class SeqAssembler {
         String[] op2Parts = op2.split("->");
         String register2 = op2Parts[0].toLowerCase();
         Byte op2v = registers.get(register2);
-        Long op2Direct = (long) 0;
+        Integer op2Direct = 0;
         if (op2v == null) {
-            op2Direct = Long.decode(op2Parts[0]);
             op2v = 0x3f;
+            switch (op1v & 0x3f) {
+                case 0x26:
+                case 0x27:
+                    op2 = op2.substring(op2.indexOf("0x"));
+                    if (op2.contains(")")) {
+                        op2 = op2.replace(")","");
+                    }
+                    break;
+            }
+            op2Direct = Long.decode(op2).intValue();
         } else if(op1Parts.length > 1) {
             String offset2 = op2Parts[1];
             //String indirectOffset;
             op2v = (byte) (op2v | 0x10 << op2Parts.length);
             offset2 = op1Parts[1];
             if (offset2.startsWith("field_")) {
-                op1Direct = Long.decode(offset2.replace("field_", ""));
+                op2Direct = Long.decode(offset2.replace("field_", "")).intValue();
+            } else {
+                Optional<Integer> asd = null;
+                switch (op2v & 0x3f) {
+                    case 0x26:
+                    case 0x27:
+                        asd = Chr.getOffset(offset2);
+                        break;
+                }
+                if (asd != null) {
+                    op2Direct = asd.get();
+                } else {
+                    op2Direct = Integer.decode(offset2);
+                }
             }
         }
 
