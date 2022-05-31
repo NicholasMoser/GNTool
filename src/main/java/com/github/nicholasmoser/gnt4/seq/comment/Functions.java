@@ -87,6 +87,10 @@ public class Functions {
     allFunctions.put(Seqs.IRU_0000, functions);
 
     functions = getChrBaseFunctions();
+    functions.put(0x5DAC, increaseChrModelSize);
+    allFunctions.put(Seqs.ITA_0000, functions);
+
+    functions = getChrBaseFunctions();
     functions.put(0x5CC0, increaseChrModelSize);
     allFunctions.put(Seqs.JIR_0000, functions);
 
