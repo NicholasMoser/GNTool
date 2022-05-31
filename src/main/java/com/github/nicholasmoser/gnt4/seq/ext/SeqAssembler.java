@@ -31,6 +31,14 @@ public class SeqAssembler {
                 opcode = operation.split("_");
             }
             String[] op;
+            String op1 = "";
+            String op2 = "";
+            try {
+                op1 = operands.split(",")[0];
+                op2 = operands.split(",")[1];
+            } catch (Exception e) {
+
+            }
             switch (opcode[0].replace(" ","")) {
                 case "":
                     continue;
@@ -194,8 +202,6 @@ public class SeqAssembler {
                     buffer.put(SEQ_RegCMD2(operands.split(",")[0],operands.split(",")[1]));
                     break;
                 case "ptr":
-                    String op1 = operands.split(",")[0];
-                    String op2 = operands.split(",")[1];
                     switch (opcode[1]){
                         case "debug":
                             buffer.putShort((short) 0x0900);
@@ -236,6 +242,34 @@ public class SeqAssembler {
                         case "bl":
                             buffer.putShort((short) 0x091D);
                             buffer.put(SEQ_RegCMD1(operands));
+                            break;
+                    }
+                    break;
+                case "fvec":
+                    switch (opcode[1]) {
+                        case "mov":
+                            buffer.putShort((short) 0x0B02);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "add":
+                            buffer.putShort((short) 0x0B03);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "sub":
+                            buffer.putShort((short) 0x0B04);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "muls":
+                            buffer.putShort((short) 0x0B07);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "movs":
+                            buffer.putShort((short) 0x0B0A);
+                            buffer.put(SEQ_RegCMD1(operands));
+                            break;
+                        case "mulm":
+                            buffer.putShort((short) 0x0B13);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
                             break;
                     }
                     break;
