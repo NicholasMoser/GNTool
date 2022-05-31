@@ -194,9 +194,47 @@ public class SeqAssembler {
                     buffer.put(SEQ_RegCMD2(operands.split(",")[0],operands.split(",")[1]));
                     break;
                 case "ptr":
+                    String op1 = operands.split(",")[0];
+                    String op2 = operands.split(",")[1];
                     switch (opcode[1]){
                         case "debug":
                             buffer.putShort((short) 0x0900);
+                            buffer.put(SEQ_RegCMD1(operands));
+                            break;
+                        case "mov":
+                            buffer.putShort((short) 0x0901);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "add":
+                            buffer.putShort((short) 0x0904);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "move":
+                            buffer.putShort((short) 0x0907);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "from":
+                            buffer.putShort((short) 0x0908);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "to":
+                            buffer.putShort((short) 0x0909);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "push":
+                            buffer.putShort((short) 0x090A);
+                            buffer.put(SEQ_RegCMD1(operands));
+                            break;
+                        case "table":
+                            buffer.putShort((short) 0x090C);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "b":
+                            buffer.putShort((short) 0x0914);
+                            buffer.put(SEQ_RegCMD1(operands));
+                            break;
+                        case "bl":
+                            buffer.putShort((short) 0x091D);
                             buffer.put(SEQ_RegCMD1(operands));
                             break;
                     }
@@ -323,6 +361,9 @@ public class SeqAssembler {
                 case "op":
                     switch (opcode[1]) {
                         case "0208":
+                            //TODO
+                            break;
+                        case "0926":
                             //TODO
                             break;
                         default:
