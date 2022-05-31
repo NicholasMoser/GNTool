@@ -273,6 +273,13 @@ public class SeqAssembler {
                             break;
                     }
                     break;
+                case "mtx":
+                    switch (opcode[1]) {
+                        case "scale":
+                            buffer.putShort((short) 0x0C09);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                    }
                 case "sync":
                     switch (opcode[1]) {
                         case "timer":
@@ -314,6 +321,17 @@ public class SeqAssembler {
                                     break;
                             }
                             break;
+                        case "pause":
+                            buffer.putShort((short) 0x1503);
+                            buffer.put(SEQ_RegCMD1(operands));
+                            break;
+                        case "timer":
+                            switch (opcode[2]) {
+                                case "decrement":
+                                    buffer.putShort((short) 0x2112);
+                                    buffer.put(SEQ_RegCMD2(op1,op2));
+                                    break;
+                            }
                     }
                     break;
                 case "flags":
@@ -392,13 +410,21 @@ public class SeqAssembler {
                     buffer.put((byte) 0);
                     buffer.putInt(getFlags(opcode[2],operands.replace("\"","")));
                     break;
+                case "loadTexture":
+                    //TODO
+                    break;
                 case "op":
                     switch (opcode[1]) {
                         case "0208":
                             //TODO
                             break;
                         case "0926":
-                            //TODO
+                            buffer.putShort((short) 0x0926);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "0E06":
+                            buffer.putShort((short) 0x0E06);
+                            buffer.put(SEQ_RegCMD2(op1,op2));
                             break;
                         default:
                             buffer.put(UnknownOpcode.of(opcode[1], operands));
