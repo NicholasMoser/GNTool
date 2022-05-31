@@ -42,7 +42,7 @@ public class Comments {
     Map<String, Multimap<Integer, String>> allComments = new HashMap<>();
 
     Multimap<Integer, String> comments = ArrayListMultimap.create();
-    comments.put(0xA1C, "// Many actions end by branch and linking to here");
+    comments.put(0xA6C, "// Update last_act_id to act_id");
     comments.put(0xAA8, "// Action Offset Lookup Branch #1");
     comments.put(0xB08, "// Action Offset Lookup Branch #2 (Happy path)");
     comments.put(0xB20, "// Convert action id to table offset");
