@@ -30,98 +30,186 @@ public class SeqAssembler {
             } catch (Exception e) {
                 opcode = operation.split("_");
             }
-            byte[] bytes = new byte[0];
             String[] op;
             switch (opcode[0].replace(" ","")) {
                 case "":
                     continue;
+                case "end":
+                    buffer.putInt(0);
+                    break;
+                case "hard":
+                    switch (opcode[1]) {
+                        case "reset":
+                            buffer.putInt(1);
+                            break;
+                    }
+                    break;
                 case "b":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01320000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01320000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "beqz":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01330000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01330000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bnez":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01340000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01340000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bgtz":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01350000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01350000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bgez":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01360000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01360000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bltz":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01370000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01370000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "blez":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01380000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01380000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bdnz":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x013B0000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x013B0000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bl":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x013C0000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x013C0000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "beqzal":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x013D0000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x013D0000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bnezal":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x013E0000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x013E0000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bgtzal":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x013F0000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x013F0000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bgezal":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01400000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01400000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "bltzal":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01410000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01410000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "blezal":
-                    bytes = Bytes.concat(ByteUtils.fromInt32(0x01420000), ByteUtils.fromInt32(Integer.decode(operands)));
+                    buffer.putInt(0x01420000);
+                    buffer.putInt(Integer.decode(operands));
                     break;
                 case "blr":
-                    bytes = ByteUtils.fromInt32(0x01450000);
+                    buffer.putInt(0x01450000);
                     break;
                 case "blreqz":
-                    bytes = ByteUtils.fromInt32(0x01460000);
+                    buffer.putInt(0x01460000);
                     break;
                 case "blrnez":
-                    bytes = ByteUtils.fromInt32(0x01470000);
+                    buffer.putInt(0x01470000);
                     break;
                 case "blrgtz":
-                    bytes = ByteUtils.fromInt32(0x01480000);
+                    buffer.putInt(0x01480000);
                     break;
                 case "blrgez":
-                    bytes = ByteUtils.fromInt32(0x01490000);
+                    buffer.putInt(0x01490000);
                     break;
                 case "blrltz":
-                    bytes = ByteUtils.fromInt32(0x014A0000);
+                    buffer.putInt(0x014A0000);
                     break;
                 case "blrlez":
-                    bytes = ByteUtils.fromInt32(0x014B0000);
+                    buffer.putInt(0x014B0000);
+                    break;
+                case "SEQ":
+                    switch (opcode[1]) {
+                        case "ReqSetPrev":
+                            //TODO
+                            break;
+                        case "ReqLoadPrev":
+                            if (opcode.length > 2) {
+                                switch (opcode[2]) {
+                                    case "I":
+                                        //TODO
+                                        break;
+                                }
+                            } else {
+                                //TODO
+                                //ReqLoadPrev
+                            }
+                            break;
+                    }
+                case "TskSendMsg":
+                    //TODO
+                    break;
+                case "TskExecFunc":
+                    //TODO
+                    break;
+                case "movr":
+                    buffer.putShort((short) 0x0301);
+                    buffer.put(SEQ_RegCMD2(operands.split(",")[0],operands.split(",")[1]));
+                    break;
+                case "push":
+                    buffer.putShort((short) 0x0303);
+                    buffer.put(SEQ_RegCMD1(operands));
+                    break;
+                case "pop":
+                    buffer.putShort((short) 0x0304);
+                    buffer.put(SEQ_RegCMD1(operands));
                     break;
                 case "i32":
-                    bytes = getInt((byte)0x04, opcode[1], operands.split(","));
+                    buffer.put(getInt((byte)0x04, opcode[1], operands.split(",")));
                     break;
                 case "i8":
-                    bytes = getInt((byte)0x05, opcode[1], operands.split(","));
+                    buffer.put(getInt((byte)0x05, opcode[1], operands.split(",")));
                     break;
                 case "i16":
-                    bytes = getInt((byte)0x06, opcode[1], operands.split(","));
+                    buffer.put(getInt((byte)0x06, opcode[1], operands.split(",")));
                     break;
                 case "i64":
-                    bytes = getInt((byte)0x07, opcode[1], operands.split(","));
+                    buffer.put(getInt((byte)0x07, opcode[1], operands.split(",")));
+                    break;
+                case "f32":
+                    switch (opcode[1]) {
+                        case "move":
+                            buffer.putShort((short) 0x0802);
+                            break;
+                        case "sub":
+                            buffer.putShort((short) 0x0804);
+                            break;
+                        case "mul":
+                            buffer.putShort((short) 0x0805);
+                            break;
+                        case "div":
+                            buffer.putShort((short) 0x0806);
+                            break;
+                        case "cmp":
+                            buffer.putShort((short) 0x0807);
+                            break;
+                    }
+                    buffer.put(SEQ_RegCMD2(operands.split(",")[0],operands.split(",")[1]));
+                    break;
+                case "ptr":
+                    switch (opcode[1]){
+                        case "debug":
+                            buffer.putShort((short) 0x0900);
+                            buffer.put(SEQ_RegCMD1(operands));
+                            break;
+                    }
                     break;
                 case "sync":
                     switch (opcode[1]) {
                         case "timer":
                             if (opcode.length == 2) {
-                                bytes = Bytes.concat(ByteUtils.fromInt32(0x2011263F), ByteUtils.fromInt32(Integer.decode(operands)));
+                                buffer.put(Bytes.concat(ByteUtils.fromInt32(0x2011263F), ByteUtils.fromInt32(Integer.decode(operands))));
                             } else {
                                 switch (opcode[2]) {
                                     case "run":
-                                        bytes = ByteUtils.fromUint32(0x20120026);
+                                        buffer.put(ByteUtils.fromUint32(0x20120026));
                                         break;
                                 }
                             }
@@ -132,7 +220,7 @@ public class SeqAssembler {
                     switch (opcode[1]) {
                         case "hitbox":
                             op = operands.split(",");
-                            bytes = Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0));
+                            buffer.put(Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0)));
                             break;
                     }
                     break;
@@ -140,17 +228,17 @@ public class SeqAssembler {
                     switch (opcode[1]) {
                         case "pow":
                             op = operands.split(",");
-                            bytes = Bytes.concat(ByteUtils.fromUint32(0x21050026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint16(Integer.decode(op[2])), ByteUtils.fromUint16(0));
+                            buffer.put(Bytes.concat(ByteUtils.fromUint32(0x21050026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint16(Integer.decode(op[2])), ByteUtils.fromUint16(0)));
                             break;
                         case "ang":
                             op = operands.split(",");
-                            bytes = Bytes.concat(ByteUtils.fromUint32(0x21060026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])));
+                            buffer.put(Bytes.concat(ByteUtils.fromUint32(0x21060026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1]))));
                             break;
                         case "hitbox":
                             switch (opcode[2]) {
                                 case "timer":
                                     op = operands.split(",");
-                                    bytes = Bytes.concat(ByteUtils.fromUint32(0x21070026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])));
+                                    buffer.put(Bytes.concat(ByteUtils.fromUint32(0x21070026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1]))));
                                     break;
                             }
                             break;
@@ -231,19 +319,26 @@ public class SeqAssembler {
                     //No alternative actions supported, only pure flag operations
                     buffer.put((byte) 0);
                     buffer.putInt(getFlags(opcode[2],operands.replace("\"","")));
-                    bytes = new byte[buffer.position()];
-                    buffer.position(0);
-                    buffer.get(bytes);
-                    buffer.position(0);
                     break;
                 case "op":
-                    bytes = UnknownOpcode.of(opcode[1], operands);
+                    switch (opcode[1]) {
+                        case "0208":
+                            //TODO
+                            break;
+                        default:
+                            buffer.put(UnknownOpcode.of(opcode[1], operands));
+                            break;
+                    }
                     break;
                 default:
                     System.err.println(opcode[0]);
             }
+            byte[] bytes = new byte[buffer.position()];
+            buffer.position(0);
+            buffer.get(bytes);
             opcodes.add(new UnknownOpcode(offset, bytes));
             offset += bytes.length;
+            buffer.position(0);
         }
         return opcodes;
     }
