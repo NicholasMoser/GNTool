@@ -172,14 +172,37 @@ public class Functions {
    */
   private static Map<Integer, Function> getChrBaseFunctions(String chrSeq) {
     Map<Integer, Function> baseFunctions = new HashMap<>();
+
     baseFunctions.put(0xA1C,
         new Function("CallAction", List.of("// Many actions end by branch and linking to here")));
-    baseFunctions.put(0xC40, new Function("CallAnimation", List.of("// gpr2 = The animation ID")));
+
+    Function callAnimation = new Function("CallAnimation", List.of("// gpr2 = The animation ID"));
+    baseFunctions.put(getCallAnimationOffset(chrSeq), callAnimation);
+
     baseFunctions.putAll(getChakraSubtractFunctions(chrSeq));
+
     Function increaseChrModelSize = new Function("IncreaseChrModelSize",
         List.of("// Scale chr model larger by 1.1x"));
     baseFunctions.put(getIncreaseChrModelSizeOffset(chrSeq), increaseChrModelSize);
+
     return baseFunctions;
+  }
+
+  private static int getCallAnimationOffset(String chrSeq) {
+    switch (chrSeq) {
+      case Seqs.DOG_0000, Seqs.KAR_0000 -> {
+        return 0xC20;
+      }
+      case Seqs.KID_0000, Seqs.KIM_0000, Seqs.SA2_0000 -> {
+        return 0xC4C;
+      }
+      case Seqs.SKO_0000 -> {
+        return 0xCB0;
+      }
+      default -> {
+        return 0xC40;
+      }
+    }
   }
 
   private static int getIncreaseChrModelSizeOffset(String chrSeq) {
@@ -250,12 +273,6 @@ public class Functions {
     }
   }
 
-  /**
-   * Return a mapping of the functions that subtract chakra.
-   *
-   * @param chrSeq The chr seq file.
-   * @return a mapping of the functions that subtract chakra
-   */
   private static Map<Integer, Function> getChakraSubtractFunctions(String chrSeq) {
     Map<Integer, Function> functions = new HashMap<>();
     Function remove100Meter = new Function("Remove100%Meter", Collections.emptyList());
