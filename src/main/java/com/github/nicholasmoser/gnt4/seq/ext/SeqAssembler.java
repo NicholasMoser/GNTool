@@ -9,6 +9,7 @@ import com.google.common.primitives.Bytes;
 
 import java.nio.ByteBuffer;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,8 +21,14 @@ public class SeqAssembler {
         LinkedList<Opcode> opcodes = new LinkedList<>();
         int offset = 0;
         ByteBuffer buffer = ByteBuffer.allocate(0x50);
+        Map<String, Integer> labelMap = new HashMap<>();
         for (int i = 0; i < lines.length; i++) {
+            boolean isBranch = false;
             String operation = lines[i];
+            if (operation.endsWith(":")) {
+                labelMap.put(operation.replace(":","").replace(" ",""),offset);
+                continue;
+            }
             String[] opcode;
             String operands = "";
             try {
@@ -55,62 +62,77 @@ public class SeqAssembler {
                 case "b":
                     buffer.putInt(0x01320000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "beqz":
                     buffer.putInt(0x01330000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bnez":
                     buffer.putInt(0x01340000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bgtz":
                     buffer.putInt(0x01350000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bgez":
                     buffer.putInt(0x01360000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bltz":
                     buffer.putInt(0x01370000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "blez":
                     buffer.putInt(0x01380000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bdnz":
                     buffer.putInt(0x013B0000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bl":
                     buffer.putInt(0x013C0000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "beqzal":
                     buffer.putInt(0x013D0000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bnezal":
                     buffer.putInt(0x013E0000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bgtzal":
                     buffer.putInt(0x013F0000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bgezal":
                     buffer.putInt(0x01400000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "bltzal":
                     buffer.putInt(0x01410000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "blezal":
                     buffer.putInt(0x01420000);
                     buffer.putInt(Integer.decode(operands));
+                    //isBranch = true;
                     break;
                 case "blr":
                     buffer.putInt(0x01450000);
@@ -437,7 +459,11 @@ public class SeqAssembler {
             byte[] bytes = new byte[buffer.position()];
             buffer.position(0);
             buffer.get(bytes);
-            opcodes.add(new UnknownOpcode(offset, bytes));
+            if (!isBranch) {
+                opcodes.add(new UnknownOpcode(offset, bytes));
+            } else {
+                //TODO
+            }
             offset += bytes.length;
             buffer.position(0);
         }
