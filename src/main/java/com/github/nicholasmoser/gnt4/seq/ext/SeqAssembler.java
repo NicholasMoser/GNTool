@@ -588,7 +588,7 @@ public class SeqAssembler {
             case "inc":
             case "dec":
             case "abs":
-                buffer.put(SEQ_RegCMD1(operands[0].replace(" ", "")));
+                buffer.put(SEQ_RegCMD1(operands[0].replace(" ", ""),group));
                 break;
             case "float":
             case "mov":
@@ -611,7 +611,7 @@ public class SeqAssembler {
             case "rand":
             case "andcz":
             case "mod":
-                buffer.put(SEQ_RegCMD2(operands[0].replace(" ", ""), operands[1].replace(" ", "")));
+                buffer.put(SEQ_RegCMD2(operands[0].replace(" ", ""), operands[1].replace(" ", ""), group));
                 break;
         }
         byte[] bytes = new byte[buffer.position()];
@@ -693,6 +693,10 @@ public class SeqAssembler {
             new SimpleEntry<>("unused", (byte)0x3D));
 
     static private byte[] SEQ_RegCMD1(String op) {
+        return SEQ_RegCMD1(op,4);
+    }
+
+    static private byte[] SEQ_RegCMD1(String op, int type) {
         if (op.startsWith("*")) {
             op = op.substring(1);
         }
@@ -727,8 +731,27 @@ public class SeqAssembler {
         }
 
         buffer.put(registerVal);
-        if (registerVal >= 0x3E) {
+        if (registerVal > 0x3F) {
             buffer.putInt(Integer.reverseBytes(opDirect.intValue()));
+        }
+        switch (registerVal & 0x3F) {
+            case 0x3F:
+                switch (type) {
+                    case 4:
+                        buffer.putInt(opDirect.intValue());
+                        break;
+                    case 5:
+                        buffer.put(opDirect.byteValue());
+                        buffer.put((byte) 0);
+                        buffer.put((byte) 0);
+                        buffer.put((byte) 0);
+                        break;
+                    case 6:
+                        buffer.putShort(opDirect.shortValue());
+                        buffer.putShort((short) 0);
+                        break;
+                }
+                break;
         }
 
         byte[] bytes = new byte[buffer.position()];
@@ -738,6 +761,10 @@ public class SeqAssembler {
     }
 
     static private byte[] SEQ_RegCMD2(String op1, String op2) {
+        return SEQ_RegCMD2(op1, op2, 4);
+    }
+
+    static private byte[] SEQ_RegCMD2(String op1, String op2, int type) {
         if (op1.startsWith("*")) {
             op1 = op1.substring(1);
         }
@@ -821,20 +848,49 @@ public class SeqAssembler {
 
         ByteBuffer buffer = ByteBuffer.allocate(0x30);
         buffer.put(op1v);
-        if (op1v >= 0x3E && op1v < 0x80) {
+        if (op1v > 0x3F) {
             buffer.put((byte) 0);
             buffer.putInt(op1Direct.intValue());
             buffer.put(op2v);
             buffer.put((byte)0);
             buffer.put((byte)0);
             buffer.put((byte)0);
-            if (op2v >= 0x3E) {
+            if (op2v > 0x3F) {
+                buffer.putInt(op2Direct.intValue());
+            } else if (op2v >= 0x3E) {
+                switch (type) {
+                    case 0x4:
+                        buffer.putInt(op2Direct);
+                        break;
+                    case 0x5:
+                        buffer.put(op2Direct.byteValue());
+                        buffer.putShort((short) 0);
+                        buffer.put((byte) 0);
+                        break;
+                    case 0x6:
+                        buffer.putShort(op2Direct.shortValue());
+                        buffer.putShort((short) 0);
+                        break;
+                }
+            }
+        } else {
+            buffer.put(op2v);
+            if (op2v > 0x3F && op2v < 0x80) {
                 buffer.putInt(op2Direct.intValue());
             }
-        } else if (op1v < 0x3E) {
-            buffer.put(op2v);
-            if (op2v >= 0x3E && op2v < 0x80) {
-                buffer.putInt(op2Direct.intValue());
+            switch (type) {
+                case 0x4:
+                    buffer.putInt(op2Direct);
+                    break;
+                case 0x5:
+                    buffer.put(op2Direct.byteValue());
+                    buffer.putShort((short) 0);
+                    buffer.put((byte) 0);
+                    break;
+                case 0x6:
+                    buffer.putShort(op2Direct.shortValue());
+                    buffer.putShort((short) 0);
+                    break;
             }
         }
         byte[] bytes = new byte[buffer.position()];
