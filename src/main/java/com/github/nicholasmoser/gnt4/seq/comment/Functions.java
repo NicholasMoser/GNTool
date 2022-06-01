@@ -13,9 +13,6 @@ import java.util.logging.Logger;
  */
 public class Functions {
 
-  // TODO: Add notes
-  // 0xB30 For Iruka, this is where the Action ID offset is read from the Action ID table
-
   private static final Logger LOGGER = Logger.getLogger(Functions.class.getName());
   private static Map<String, Map<Integer, Function>> FUNCTIONS;
 
