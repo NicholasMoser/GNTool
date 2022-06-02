@@ -826,6 +826,8 @@ public class SeqAssembler {
                         System.err.println(String.format("0x%02X",op2));
                     }
 
+                } else {
+                    op1Direct = asd;
                 }
             }
         }
@@ -853,7 +855,6 @@ public class SeqAssembler {
             String offset2 = op2Parts[1];
             //String indirectOffset;
             op2v = (byte) (op2v | 0x10 << op2Parts.length);
-            offset2 = op1Parts[1];
             if (offset2.startsWith("field_")) {
                 op2Direct = Long.decode(offset2.replace("field_", "")).intValue();
             } else {
