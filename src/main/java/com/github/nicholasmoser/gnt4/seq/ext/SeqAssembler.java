@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -472,59 +473,58 @@ public class SeqAssembler {
 
     static private int getFlags(String group, String operands) {
         int flags = 0;
-        Map<Integer, String> flagValues;
+        Map<String, Integer> flagValues;
         switch (group) {
             case "af":
-                flagValues = Seq.AF_FLAGS;
+                flagValues = Seq.AF_FLAGS_GET;
                 break;
             case "nf":
-                flagValues = Seq.NF_FLAGS;
+                flagValues = Seq.NF_FLAGS_GET;
                 break;
             case "pf":
-                flagValues = Seq.PF_FLAGS;
+                flagValues = Seq.PF_FLAGS_GET;
                 break;
             case "kf":
-                flagValues = Seq.KF_FLAGS;
+                flagValues = Seq.KF_FLAGS_GET;
                 break;
             case "df":
-                flagValues = Seq.KF_FLAGS;
+                flagValues = Seq.DF_FLAGS_GET;
                 break;
             case "ef":
-                flagValues = Seq.EF_FLAGS;
+                flagValues = Seq.EF_FLAGS_GET;
                 break;
             case "mf":
-                flagValues = Seq.MF_FLAGS;
+                flagValues = Seq.MF_FLAGS_GET;
                 break;
             case "rf":
-                flagValues = Seq.RF_FLAGS;
+                flagValues = Seq.RF_FLAGS_GET;
                 break;
             case "sf":
-                flagValues = Seq.SF_FLAGS;
+                flagValues = Seq.SF_FLAGS_GET;
                 break;
             case "cf":
-                flagValues = Seq.CF_FLAGS;
+                flagValues = Seq.CF_FLAGS_GET;
                 break;
             case "chr":
             case "cmf":
-                flagValues = Seq.CHR_MOD_FLAGS;
+                flagValues = Seq.CHR_MOD_FLAGS_GET;
                 break;
             case "k2f":
-                flagValues = Seq.K2F_FLAGS;
+                flagValues = Seq.K2F_FLAGS_GET;
                 break;
             case "d2f":
-                flagValues = Seq.D2F_FLAGS;
+                flagValues = Seq.D2F_FLAGS_GET;
                 break;
             case "n2f":
-                flagValues = Seq.N2F_FLAGS;
+                flagValues = Seq.N2F_FLAGS_GET;
                 break;
             case "unknown":
             default:
                 throw new IllegalStateException("Unexpected value: " + group);
         }
-        for (Entry<Integer, String> entry : flagValues.entrySet()) {
-            if (operands.contains(entry.getValue())) {
-                flags |= (entry.getKey());
-            }
+        for (String s : operands.toUpperCase().split(",")) {
+            int flag = flagValues.getOrDefault(s,0);
+            flags |= flag;
         }
         return flags;
     }
