@@ -60,7 +60,7 @@ public class BranchLessThanEqualZeroLink implements Opcode, BranchingOpcode {
 
   @Override
   public String toAssembly(int offset) {
-    if (destination > offset) {
+    if (destination < offset) {
       return String.format("%s 0x%X", MNEMONIC, destination);
     } else {
       return String.format("%s 0x%X", MNEMONIC, destination - offset);
