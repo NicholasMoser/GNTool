@@ -70,6 +70,15 @@ public class Branching implements Opcode {
   }
 
   @Override
+  public String toAssembly(int offset) {
+    if (destination > offset) {
+      return String.format("%s 0x%X", MNEMONIC, destination);
+    } else {
+      return String.format("%s 0x%X", MNEMONIC, destination - offset);
+    }
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", destination);

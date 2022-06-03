@@ -55,7 +55,16 @@ public class Branch implements Opcode, BranchingOpcode {
 
   @Override
   public String toAssembly() {
-    return String.format("%s 0x%X",MNEMONIC,destination);
+    return String.format("%s 0x%X", MNEMONIC, destination);
+  }
+
+  @Override
+  public String toAssembly(int offset) {
+    if (destination < offset) {
+      return String.format("%s 0x%X", MNEMONIC, destination);
+    } else {
+      return String.format("%s 0x%X", MNEMONIC, destination - offset);
+    }
   }
 
   @Override

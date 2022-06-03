@@ -157,7 +157,7 @@ public class SeqEditor {
     hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
     hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
     newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
-    opcodesTextArea.setText(getOpcodesString(newBytes));
+    opcodesTextArea.setText(getOpcodesString(newBytes, seqEdit.getPosition()));
   }
 
   /**
@@ -448,7 +448,7 @@ public class SeqEditor {
    * @param bytes The opcode byte array.
    * @return The human-readable text of the opcodes.
    */
-  private String getOpcodesString(byte[] bytes) {
+  private String getOpcodesString(byte[] bytes, int offset) {
     try {
       ByteStream bs = new ByteStream(bytes);
       StringBuilder builder = new StringBuilder();
@@ -457,7 +457,7 @@ public class SeqEditor {
         byte opcodeGroup = (byte) bs.read();
         byte opcode = (byte) bs.read();
         bs.reset();
-        builder.append(SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode).toAssembly());
+        builder.append(SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode).toAssembly(offset));
         builder.append('\n');
       }
       return builder.toString();

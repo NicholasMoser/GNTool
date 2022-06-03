@@ -47,6 +47,11 @@ public class SeqEditOpcode implements Opcode {
   }
 
   @Override
+  public String toAssembly(int offset) {
+    return toAssembly();
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     List<ContainerTag> opcodes = new ArrayList<>();

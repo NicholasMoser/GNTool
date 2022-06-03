@@ -41,6 +41,11 @@ public class HardReset implements Opcode {
   }
 
   @Override
+  public String toAssembly(int offset) {
+    return toAssembly();
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     return div(attrs(id))

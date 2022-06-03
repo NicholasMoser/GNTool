@@ -19,12 +19,14 @@ public class SeqEdit {
   public static final byte[] STOP = { 0x73, 0x74, 0x6F, 0x70 };
 
   private final String name;
-  private final int offset;  private final int size;
+  private final int offset;
+  private final int size;
   private final byte[] oldBytes;
   private final byte[] newBytes;
   private final byte[] newBytesWithBranchBack;
   private final byte[] branchBack;
   private final List<Opcode> newCodes;
+  private int position;
 
   /**
    * Constructor for a seq edit.
@@ -142,6 +144,15 @@ public class SeqEdit {
 
   public int getSize() {
     return size;
+  }
+
+  public int getPosition() {
+    return position;
+  }
+
+  public SeqEdit setPosition(int position) {
+    this.position = position;
+    return this;
   }
 
   /**

@@ -53,6 +53,11 @@ public class ComboList implements Opcode {
   }
 
   @Override
+  public String toAssembly(int offset) {
+    return toAssembly();
+  }
+
+  @Override
   public ContainerTag toHTML() {
     List<ContainerTag> comboDivs = combos.stream()
         .map(Combo::toHTML)

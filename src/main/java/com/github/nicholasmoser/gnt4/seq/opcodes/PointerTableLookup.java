@@ -45,6 +45,11 @@ public class PointerTableLookup implements Opcode {
   }
 
   @Override
+  public String toAssembly(int offset) {
+    return toAssembly();
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     String dest = String.format("#%X", tableOffset);

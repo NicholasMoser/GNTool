@@ -50,6 +50,11 @@ public class SetHitboxTimer implements Opcode {
   }
 
   @Override
+  public String toAssembly(int offset) {
+    return toAssembly();
+  }
+
+  @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     String syncTimerAfterHitbox = bytes[2] == 0 ? "Start of action" : "Neutral";

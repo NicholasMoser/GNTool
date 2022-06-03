@@ -45,6 +45,7 @@ public class SeqExt {
     }
     int seqExtOffset = getSeqExtOffset(seqBytes);
     int seqLength = seqBytes.length;
+    int position;
     // Add and subtract 8 to remove seq_ext\n and seq_end\n
     byte[] seqExtBytes = Arrays.copyOfRange(seqBytes, seqExtOffset + 8, seqLength - 8);
     List<SeqEdit> seqEdits = new ArrayList<>();
@@ -54,9 +55,10 @@ public class SeqExt {
         name = name.replace("\0", "");
         int offset = bs.readWord();
         byte[] oldBytes = readOpcodeBytes(bs);
+        position = seqExtOffset + bs.offset() + 8;
         byte[] newBytes = readOpcodeBytes(bs);
         byte[] newBytesWithoutBranchBack = Arrays.copyOfRange(newBytes, 0, newBytes.length - 8);
-        seqEdits.add(new SeqEdit(name, offset, oldBytes, newBytesWithoutBranchBack));
+        seqEdits.add(new SeqEdit(name, offset, oldBytes, newBytesWithoutBranchBack).setPosition(position));
       }
     }
     return seqEdits;
@@ -158,6 +160,7 @@ public class SeqExt {
       byte[] branchBytes = getBranchBytes(newBytesOffset, hijackLength);
       System.arraycopy(branchBytes, 0, seqBytes, offset, branchBytes.length);
       // seqExtSection.write(edit.getFullBytes());
+      edit.setPosition(newBytesOffset);
       seqExtSection.write(edit.getFullBytes(newBytesOffset));
     }
     seqExtSection.write(SEQ_END);
