@@ -25,6 +25,11 @@ public class BranchLinkReturnLessThanEqualZero implements Opcode {
   }
 
   @Override
+  public byte[] getBytes(int offset, int size) {
+    return getBytes();
+  }
+
+  @Override
   public String toString() {
     return String.format("%05X | %s {014B0000}", offset, MNEMONIC);
   }

@@ -1,9 +1,12 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A builder for a seq edit.
@@ -15,7 +18,9 @@ public class SeqEditBuilder {
   private Integer startOffset;
   private Integer endOffset;
   private byte[] newBytes;
+  private List<Opcode> newCodes;
   private String name;
+  private int length;
 
   private SeqEditBuilder() {
 
@@ -50,6 +55,16 @@ public class SeqEditBuilder {
     return this;
   }
 
+  public SeqEditBuilder newCodes(List<Opcode> newCodes) {
+    this.newCodes = newCodes;
+    return this;
+  }
+
+  public SeqEditBuilder newLength(int length) {
+    this.length = length;
+    return this;
+  }
+
   public SeqEditBuilder name(String name) {
     this.name = name;
     return this;
@@ -61,13 +76,11 @@ public class SeqEditBuilder {
       throw new IllegalArgumentException("endOffset is null");
     } else if (startOffset == null) {
       throw new IllegalArgumentException("startOffset is null");
-    } else if (newBytes == null) {
-      throw new IllegalArgumentException("newBytes is null");
     } else if (endOffset % 4 != 0) {
       throw new IllegalArgumentException("endOffset must be 4-byte aligned");
     } else if (startOffset % 4 != 0) {
       throw new IllegalArgumentException("startOffset must be 4-byte aligned");
-    } else if (newBytes.length % 4 != 0) {
+    } else if (newCodes == null && newBytes.length % 4 != 0 ) {
       throw new IllegalArgumentException("newBytes length must be 4-byte aligned");
     } else if (name == null) {
       throw new IllegalArgumentException("name is null");
@@ -90,7 +103,12 @@ public class SeqEditBuilder {
     } else {
       throw new IllegalArgumentException("seqBytes and seqPath both are null");
     }
-    SeqEdit edit = new SeqEdit(name, startOffset, oldBytes, newBytes);
+    SeqEdit edit;
+    if (newBytes == null) {
+      edit = new SeqEdit(name, startOffset, oldBytes, newCodes, length);
+    } else {
+      edit = new SeqEdit(name, startOffset, oldBytes, newBytes);
+    }
     return edit;
   }
 }

@@ -1,16 +1,19 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.gnt4.seq.Seq;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Branching;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
+import javafx.util.Pair;
 
 import java.nio.ByteBuffer;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,7 +21,7 @@ import java.util.Optional;
 
 public class SeqAssembler {
 
-    public static LinkedList<Opcode> assembleLines(String[] lines) {
+    public static Pair<List<Opcode>, Integer> assembleLines(String[] lines) {
         LinkedList<Opcode> opcodes = new LinkedList<>();
         int offset = 0;
         ByteBuffer buffer = ByteBuffer.allocate(0x50);
@@ -41,6 +44,7 @@ public class SeqAssembler {
             String[] op;
             String op1 = "";
             String op2 = "";
+            String label = "";
             try {
                 op1 = operands.split(",")[0];
                 op2 = operands.split(",")[1];
@@ -62,78 +66,123 @@ public class SeqAssembler {
                     break;
                 case "b":
                     buffer.putInt(0x01320000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "beqz":
                     buffer.putInt(0x01330000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bnez":
                     buffer.putInt(0x01340000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bgtz":
                     buffer.putInt(0x01350000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bgez":
                     buffer.putInt(0x01360000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bltz":
                     buffer.putInt(0x01370000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "blez":
                     buffer.putInt(0x01380000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bdnz":
                     buffer.putInt(0x013B0000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bl":
                     buffer.putInt(0x013C0000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "beqzal":
                     buffer.putInt(0x013D0000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bnezal":
                     buffer.putInt(0x013E0000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bgtzal":
                     buffer.putInt(0x013F0000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bgezal":
                     buffer.putInt(0x01400000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "bltzal":
                     buffer.putInt(0x01410000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "blezal":
                     buffer.putInt(0x01420000);
-                    buffer.putInt(Integer.decode(operands));
-                    //isBranch = true;
+                    try {
+                        buffer.putInt(Integer.decode(operands));
+                    } catch (Exception e) {
+                        isBranch = true;
+                    }
                     break;
                 case "blr":
                     buffer.putInt(0x01450000);
@@ -462,13 +511,19 @@ public class SeqAssembler {
             buffer.get(bytes);
             if (!isBranch) {
                 opcodes.add(new UnknownOpcode(offset, bytes));
+                offset += bytes.length;
             } else {
-                //TODO
+                opcodes.add(new Branching(bytes, operands));
+                offset += 8;
             }
-            offset += bytes.length;
             buffer.position(0);
         }
-        return opcodes;
+        for (Opcode opcode : opcodes) {
+            if (opcode.getClass() == Branching.class) {
+                ((Branching) opcode).setDestination(labelMap.get(((Branching) opcode).getLabel()));
+            }
+        }
+        return new Pair(opcodes,offset);
     }
 
     static private int getFlags(String group, String operands) {

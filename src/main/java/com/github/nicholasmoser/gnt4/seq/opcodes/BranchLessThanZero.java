@@ -49,6 +49,14 @@ public class BranchLessThanZero implements Opcode, BranchingOpcode {
   }
 
   @Override
+  public byte[] getBytes(int offset, int size) {
+    if (destination > offset && destination < offset + size) {
+      return Bytes.concat(new byte[] {0x01, secondByte, 0x00, 0x00}, ByteUtils.fromInt32(destination + offset));
+    }
+    return getBytes();
+  }
+
+  @Override
   public String toString() {
     return String.format("%05X | %s 0x%X {01%02X0000 %08X}", offset, MNEMONIC, destination, secondByte, destination);
   }

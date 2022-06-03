@@ -11,6 +11,8 @@ public interface Opcode {
 
   byte[] getBytes();
 
+  byte[] getBytes(int offset, int size);
+
   String toAssembly();
 
   ContainerTag toHTML();
@@ -38,4 +40,5 @@ public interface Opcode {
     }
     return span(sb.toString()).withClass("g");
   }
+
 }

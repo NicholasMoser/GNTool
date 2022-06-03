@@ -31,6 +31,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 /**
  * A class to represent the GUI for the seq editor tool. This allows the user to modify a seq file
@@ -231,8 +232,9 @@ public class SeqEditor {
    */
   public void assemble() {
     String[] lines = opcodesTextArea.getText().split("\n");
+    Pair<List<Opcode>, Integer> opcodes = SeqAssembler.assembleLines(lines);
+    /*
     StringBuilder builder = new StringBuilder();
-    List<Opcode> opcodes = SeqAssembler.assembleLines(lines);
     for (Opcode o : opcodes) {
       for (byte b: o.getBytes()) {
         builder.append(String.format("%02X",b));
@@ -240,6 +242,33 @@ public class SeqEditor {
       builder.append("\n");
     }
     newBytesTextArea.setText(builder.toString());
+    */
+    try {
+      // Remove the existing edit
+      SeqExt.removeEdit(selectedEdit, seqPath);
+      editsByName.remove(selectedEdit.getName());
+      editList.getItems().remove(selectedEdit.getName());
+      // Create the new edit
+      String name = nameTextArea.getText();
+      int offset = readNumber(offsetTextField.getText());
+      int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
+      SeqEdit seqEdit = SeqEditBuilder.getBuilder()
+              .name(name)
+              .startOffset(offset)
+              .endOffset(offset + hijackedBytesLength)
+              .newCodes(opcodes.getKey())
+              .newLength(opcodes.getValue())
+              .seqPath(seqPath)
+              .create();
+      // Add the new edit
+      SeqExt.addEdit(seqEdit, seqPath);
+      editsByName.put(name, seqEdit);
+      editList.getItems().add(name);
+      selectedEdit = seqEdit;
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Modify Edit", e);
+      Message.error("Failed to Modify Edit", e.getMessage());
+    }
   }
 
   /**

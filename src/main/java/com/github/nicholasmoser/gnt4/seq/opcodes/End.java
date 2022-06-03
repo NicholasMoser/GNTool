@@ -26,6 +26,11 @@ public class End implements Opcode {
   }
 
   @Override
+  public byte[] getBytes(int offset, int size) {
+    return getBytes();
+  }
+
+  @Override
   public String toString() {
     return String.format("%05X | %s {00000000}", offset, MNEMONIC);
   }

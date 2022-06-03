@@ -35,6 +35,11 @@ public class SetHitboxTimer implements Opcode {
   }
 
   @Override
+  public byte[] getBytes(int offset, int size) {
+    return getBytes();
+  }
+
+  @Override
   public String toString() {
     return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(getBytes()));
   }

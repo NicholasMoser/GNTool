@@ -31,6 +31,11 @@ public class SynchronousTimer implements Opcode {
   }
 
   @Override
+  public byte[] getBytes(int offset, int size) {
+    return getBytes();
+  }
+
+  @Override
   public String toString() {
     int frames = ByteUtils.toInt32(Arrays.copyOfRange(bytes, 4, 8));
     return String.format("%05X | %s (%d frames) %s %s", offset, MNEMONIC, frames, info, formatRawBytes(bytes));

@@ -157,7 +157,8 @@ public class SeqExt {
       int newBytesOffset = seqBytes.length + seqExtSection.size() + edit.getNewBytesOffset();
       byte[] branchBytes = getBranchBytes(newBytesOffset, hijackLength);
       System.arraycopy(branchBytes, 0, seqBytes, offset, branchBytes.length);
-      seqExtSection.write(edit.getFullBytes());
+      // seqExtSection.write(edit.getFullBytes());
+      seqExtSection.write(edit.getFullBytes(newBytesOffset));
     }
     seqExtSection.write(SEQ_END);
     return Bytes.concat(seqBytes, seqExtSection.toByteArray());

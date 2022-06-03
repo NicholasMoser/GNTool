@@ -28,6 +28,11 @@ public class PointerToOffset implements Opcode {
     public byte[] getBytes() { return bytes; }
 
     @Override
+    public byte[] getBytes(int offset, int size) {
+        return getBytes();
+    }
+
+    @Override
     public String toString() {
         return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
     }
