@@ -3,22 +3,31 @@ package com.github.nicholasmoser.gnt4.seq.opcodes;
 import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
-import static j2html.TagCreator.span;
 
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import j2html.tags.ContainerTag;
-import java.util.Optional;
 
-public class Branch implements Opcode {
+public class Branch implements Opcode, BranchingOpcode {
 
   private final static String MNEMONIC = "b";
   private final int offset;
   private final int destination;
+  private String destFuncName;
 
   public Branch(int offset, int destination) {
     this.offset = offset;
     this.destination = destination;
+  }
+
+  @Override
+  public int getDestination() {
+    return destination;
+  }
+
+  @Override
+  public void setDestinationFunctionName(String destFuncName) {
+    this.destFuncName = destFuncName;
   }
 
   @Override
@@ -39,10 +48,11 @@ public class Branch implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    String dest = String.format("#%X", destination);
+    String destName = destFuncName != null ? destFuncName : String.format("0x%X", destination);
+    String destHref = String.format("#%X", destination);
     return div(attrs(id))
         .withText(String.format("%05X | %s ", offset, MNEMONIC))
-        .with(a(String.format("0x%X", destination)).withHref(dest))
+        .with(a(destName).withHref(destHref))
         .withText(" ")
         .with(formatRawBytesHTML(getBytes()));
   }
