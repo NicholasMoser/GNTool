@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -150,14 +152,40 @@ public class SeqEditor {
     this.rightStatus.setText(mode.toString());
     this.selectedEdit = seqEdit;
     String editName = seqEdit.getName();
+    int position = seqEdit.getPosition();
     byte[] oldBytes = seqEdit.getOldBytes();
     byte[] newBytes = seqEdit.getNewBytes();
+    List<Opcode> newCodes = seqEdit.getNewCodes();
+    Map<Integer, String> labelMap = new HashMap<>();
+    StringBuilder newBytesText = new StringBuilder();
+    StringBuilder opcodesText = new StringBuilder();
     nameTextArea.setText(editName);
     offsetTextField.setText(Integer.toString(seqEdit.getOffset()));
     hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
     hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
-    newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
-    opcodesTextArea.setText(getOpcodesString(newBytes, seqEdit.getPosition()));
+    for (Opcode opcode : newCodes) {
+      if (BranchingOpcode.class.isInstance(opcode)) {
+        int destination = ((BranchingOpcode) opcode).getDestination();
+        if (destination >= position) {
+          String label = String.format("label%d", labelMap.size());
+          ((BranchingOpcode) opcode).setDestinationFunctionName(label);
+          ((BranchingOpcode) opcode).setDestination(destination - position);
+          labelMap.put(((BranchingOpcode) opcode).getDestination(), String.format("%s", label));
+        }
+      }
+    }
+    for (Opcode opcode : newCodes) {
+      String label = labelMap.get(opcode.getOffset());
+      if (label != null) {
+        opcodesText.append(String.format("%s:\n",label));
+      }
+      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes(position, seqEdit.getSize()))));
+      opcodesText.append(String.format("%s\n", opcode.toAssembly(position)));
+    }
+    //newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
+    //opcodesTextArea.setText(getOpcodesString(newBytes, seqEdit.getPosition()));
+    newBytesTextArea.setText(newBytesText.toString());
+    opcodesTextArea.setText(opcodesText.toString());
   }
 
   /**

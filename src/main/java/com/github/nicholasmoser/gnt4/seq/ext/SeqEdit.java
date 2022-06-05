@@ -1,12 +1,15 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
+import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,7 +70,15 @@ public class SeqEdit {
     byte[] branchOffset = ByteUtils.fromInt32(offset + oldBytes.length);
     this.branchBack = Bytes.concat(branch, branchOffset);
     this.newBytesWithBranchBack = Bytes.concat(newBytes, branch, branchOffset);
-    this.newCodes = null;
+    this.newCodes = new LinkedList<>();
+    ByteStream bs = new ByteStream(this.newBytes);
+    while (bs.bytesAreLeft()) {
+      try {
+        this.newCodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
     this.size = newBytes.length;
   }
 
@@ -101,17 +112,16 @@ public class SeqEdit {
     this.offset = offset;
     this.oldBytes = oldBytes;
     this.newCodes = newCodes;
-    //ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    /*
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     for (Opcode opcode : newCodes) {
       try {
         baos.write(opcode.getBytes(offset, size));
       } catch (Exception e) {
 
       }
-    }*/
-    //this.newBytes = baos.toByteArray();
-    this.newBytes = null;
+    }
+    this.newBytes = baos.toByteArray();
+    //this.newBytes = null;
     // Add the branch back
     byte[] branch = new byte[] { 0x01, 0x32, 0x00, 0x00 };
     byte[] branchOffset = ByteUtils.fromInt32(offset + oldBytes.length);
@@ -172,6 +182,10 @@ public class SeqEdit {
       }
     }
     return baos.toByteArray();
+  }
+
+  public List<Opcode> getNewCodes() {
+    return newCodes;
   }
 
 

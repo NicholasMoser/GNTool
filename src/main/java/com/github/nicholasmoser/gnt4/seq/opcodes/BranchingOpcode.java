@@ -21,7 +21,7 @@ public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destinatio
     this.bytes = bytes;
     this.offset = offset;
     this.destination = destination;
-    this.destFuncName = "";
+    this.destFuncName = null;
   }
 
   public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, String destFuncName) {
@@ -85,16 +85,22 @@ public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destinatio
 
   @Override
   public String toAssembly() {
-    return String.format("%s 0x%X", MNEMONIC, destination);
+    if (destFuncName == null) {
+      return String.format("%s 0x%X", MNEMONIC, destination);
+    }
+    return String.format("%s %s", MNEMONIC, destFuncName);
   }
 
   @Override
-  public String toAssembly(int offset) {
-    if (destination < offset) {
-      return String.format("%s 0x%X", MNEMONIC, destination);
-    } else {
-      return String.format("%s 0x%X", MNEMONIC, destination - offset);
+  public String toAssembly(int position) {
+    if (destFuncName == null) {
+      if (destination < position) {
+        return String.format("%s 0x%X", MNEMONIC, destination);
+      } else {
+        return String.format("%s 0x%X", MNEMONIC, destination - position);
+      }
     }
+    return String.format("%s %s", MNEMONIC, destFuncName);
   }
 
   @Override
