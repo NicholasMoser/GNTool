@@ -486,17 +486,40 @@ public class SeqAssembler {
                     //TODO
                     break;
                 case "op":
-                    switch (opcode[1]) {
-                        case "0208":
-                            //TODO
+                    String firstByte = opcode[1].substring(0,1);
+                    String secondByte = opcode[1].substring(2,3);
+                    switch (firstByte) {
+                        case "02":
+                            switch (secondByte) {
+                                case "08":
+                                    //TODO
+                                    break;
+                                default:
+                                    buffer.put(UnknownOpcode.of(opcode[1], operands));
+                                    break;
+                            }
                             break;
-                        case "0926":
-                            buffer.putShort((short) 0x0926);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                        case "09":
+                            switch (secondByte) {
+                                case "26":
+                                    buffer.putShort((short) 0x0926);
+                                    buffer.put(SEQ_RegCMD2(op1, op2));
+                                    break;
+                                default:
+                                    buffer.put(UnknownOpcode.of(opcode[1], operands));
+                                    break;
+                            }
                             break;
-                        case "0E06":
-                            buffer.putShort((short) 0x0E06);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                        case "0E":
+                            switch (secondByte) {
+                                case "06":
+                                    buffer.putShort((short) 0x0E06);
+                                    buffer.put(SEQ_RegCMD2(op1, op2));
+                                    break;
+                                default:
+                                    buffer.put(UnknownOpcode.of(opcode[1], operands));
+                                    break;
+                            }
                             break;
                         default:
                             buffer.put(UnknownOpcode.of(opcode[1], operands));
