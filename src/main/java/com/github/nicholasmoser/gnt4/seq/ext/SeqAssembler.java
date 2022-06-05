@@ -40,13 +40,12 @@ public class SeqAssembler {
             } catch (Exception e) {
                 opcode = operation.split("_");
             }
-            String[] op;
+            String[] op = operands.split(",");
             String op1 = "";
             String op2 = "";
-            String label = "";
             try {
-                op1 = operands.split(",")[0];
-                op2 = operands.split(",")[1];
+                op1 = op[0];
+                op2 = op[1];
             } catch (Exception e) {
 
             }
@@ -190,6 +189,33 @@ public class SeqAssembler {
                 case "blrlez":
                     currentOpcode = new BranchLinkReturnLessThanEqualZero(offset);
                     break;
+                case "chr":
+                    switch (opcode[1]) {
+                        case "init":
+                            baos.write(0x20);
+                            baos.write(0);
+                            baos.write(SEQ_RegCMD2(op1, op2));
+                            break;
+                        case "update":
+                            if (opcode.length > 2) {
+                                if (opcode[2].equals("2")) {
+                                        baos.write(0x20);
+                                        baos.write(3);
+                                        baos.write(SEQ_RegCMD2(op1, op2));
+                                }
+                            } else {
+                                baos.write(0x20);
+                                baos.write(2);
+                                baos.write(SEQ_RegCMD2(op1, op2));
+                            }
+                            break;
+                        case "CmdPAUSE":
+                            baos.write(0x15);
+                            baos.write(3);
+                            baos.write(SEQ_RegCMD1(operands));
+                    }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
+                    break;
                 case "SEQ":
                     switch (opcode[1]) {
                         case "ReqSetPrev":
@@ -207,6 +233,10 @@ public class SeqAssembler {
                                 //ReqLoadPrev
                             }
                             break;
+                        case "CmdPAUSE":
+                            baos.write(0x15);
+                            baos.write(3);
+                            baos.write(SEQ_RegCMD1(operands));
                     }
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
@@ -392,11 +422,78 @@ public class SeqAssembler {
                     }
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
+                case "projectile":
+                    switch (opcode[1]) {
+                        case "pow":
+                            if (opcode[2].equals("dmg") && opcode[3].equals("grd")) {
+                                baos.write(0x47);
+                                baos.write(4);
+                                baos.write(0);
+                                baos.write(0);
+                                baos.write(Integer.decode(op[0]));
+                                baos.write(Integer.decode(op[1]));
+                                baos.write(Integer.decode(op[2]));
+                            }
+                            break;
+                        case "num":
+                            if (opcode[2].equals("hits")) {
+                                baos.write(0x47);
+                                baos.write(5);
+                                baos.write(0);
+                                baos.write(0);
+                                baos.write(Integer.decode(op[0]));
+                            }
+                            break;
+                        case "axisrotation":
+                            baos.write(0x47);
+                            baos.write(6);
+                            baos.write(SEQ_RegCMD2(op1, op2));
+                            break;
+                        case "dir":
+                            if (opcode[2].equals("ang")) {
+                                baos.write(0x47);
+                                baos.write(7);
+                                baos.write(SEQ_RegCMD2(op1, op2));
+                            }
+                            break;
+                        case "velocity":
+                            baos.write(0x47);
+                            baos.write(0xA);
+                            baos.write(SEQ_RegCMD1(op[0]));
+                            break;
+                        case "launching":
+                            if (opcode[2].equals("height")) {
+                                baos.write(0x47);
+                                baos.write(0xE);
+                                baos.write(0);
+                                baos.write(Integer.decode(op[0]));
+                            }
+                            break;
+                        case "random":
+                            switch (opcode[2]) {
+                                case "launching":
+                                    if (opcode[3].equals("height")) {
+                                        baos.write(0x47);
+                                        baos.write(0x1D);
+                                        baos.write(0);
+                                        baos.write(0);
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
                 case "create":
                     switch (opcode[1]) {
                         case "hitbox":
-                            op = operands.split(",");
-                            baos.write(Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0)));
+                            if (opcode.length == 2) {
+                                op = operands.split(",");
+                                baos.write(Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0)));
+                            } else if (opcode[2].equals("with") && opcode[3].equals("offset")) {
+                                baos.write(ByteUtils.fromUint32(0x21110026));
+                                //TODO
+                                continue;
+                            }
                             break;
                     }
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
@@ -432,8 +529,52 @@ public class SeqAssembler {
                                     baos.write(SEQ_RegCMD2(op1,op2));
                                     break;
                             }
+                        case "rev":
+                            baos.write(0x21);
+                            if (opcode.length == 2) {
+                                baos.write(0xD);
+                                baos.write(0);
+                                baos.write(0x26);
+                                baos.write(ByteUtils.fromInt32(Integer.decode(operands)));
+                            } else if (opcode[2].equals("and") && opcode[3].equals("rev2")) {
+                                        baos.write(0xC);
+                                        baos.write(0);
+                                        baos.write(0x26);
+                                        baos.write(ByteUtils.fromInt32(Integer.decode(op1)));
+                                        baos.write(ByteUtils.fromInt32(Integer.decode(op2)));
+                                        break;
+                            }
+                            break;
+                        case "rev2":
+                            baos.write(0x21);
+                            baos.write(0xE);
+                            baos.write(0);
+                            baos.write(0x26);
+                            baos.write(ByteUtils.fromInt32(Integer.decode(operands)));
+                            break;
                     }
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
+                    break;
+                case "rev2":
+                    if (opcode[1].equals("knockback") && opcode[2].equals("modify")) {
+                        baos.write(0x21);
+                        baos.write(0xB);
+                        baos.write(Byte.decode(operands));
+                        baos.write(0x26);
+                    }
+                    break;
+                case "transform":
+                    switch (opcode[1]) {
+                        case "chr":
+                            switch (opcode[2]) {
+                                case "model":
+                                    baos.write(0x21);
+                                    baos.write(0x08);
+                                    baos.write(SEQ_RegCMD1("chr_p"));
+                                    break;
+                            }
+                            break;
+                    }
                     break;
                 case "flags":
                     baos.write(0x24);
