@@ -16,7 +16,7 @@ public class BranchingOpcode implements Opcode {
   private int destination;
   private String destFuncName;
 
-  public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destination) {
+public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destination) {
     this.MNEMONIC = MNEMONIC;
     this.bytes = bytes;
     this.offset = offset;
@@ -46,6 +46,10 @@ public class BranchingOpcode implements Opcode {
 
   public int getDestination() {
     return destination;
+  }
+
+  public void setDestination(int destination) {
+    this.destination = destination;
   }
 
   public String getDestinationFunctionName() {

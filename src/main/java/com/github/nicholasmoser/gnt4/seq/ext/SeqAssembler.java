@@ -1,7 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.gnt4.seq.Seq;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Branching;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.gnt4.seq.structs.Chr;
@@ -536,14 +536,14 @@ public class SeqAssembler {
                 opcodes.add(new UnknownOpcode(offset, bytes));
                 offset += bytes.length;
             } else {
-                opcodes.add(new Branching(bytes, operands));
+                opcodes.add(new BranchingOpcode("", bytes, offset, operands));
                 offset += 8;
             }
             buffer.position(0);
         }
         for (Opcode opcode : opcodes) {
-            if (opcode.getClass() == Branching.class) {
-                ((Branching) opcode).setDestination(labelMap.get(((Branching) opcode).getLabel()));
+            if (BranchingOpcode.class.isInstance(opcode)) {
+                ((BranchingOpcode) opcode).setDestination(labelMap.get(((BranchingOpcode) opcode).getDestinationFunctionName()));
             }
         }
         return new Pair(opcodes,offset);
