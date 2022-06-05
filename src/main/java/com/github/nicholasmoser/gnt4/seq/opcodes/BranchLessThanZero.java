@@ -10,6 +10,10 @@ import j2html.tags.ContainerTag;
 
 public class BranchLessThanZero extends BranchingOpcode {
 
+  public BranchLessThanZero(int offset, int destination) {
+    super("bltz", new byte[] {0x01, 0x37, 0x00, 0x00}, offset, destination);
+  }
+
   /**
    * @param offset      The offset of the opcode.
    * @param destination The destination of the branch.
@@ -18,6 +22,10 @@ public class BranchLessThanZero extends BranchingOpcode {
    */
   public BranchLessThanZero(int offset, int destination, byte secondByte) {
     super("bltz", new byte[] {0x01, secondByte, 0x00, 0x00}, offset, destination);
+  }
+
+  public BranchLessThanZero(int offset, String destFuncName) {
+    super("bltz", new byte[] {0x01, 0x37, 0x00, 0x00}, offset, destFuncName);
   }
 
 }

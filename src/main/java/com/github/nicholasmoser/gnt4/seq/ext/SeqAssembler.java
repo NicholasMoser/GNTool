@@ -1,33 +1,32 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.gnt4.seq.Seq;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
-import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.opcodes.*;
 import com.github.nicholasmoser.gnt4.seq.structs.Chr;
+import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import javafx.util.Pair;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 public class SeqAssembler {
 
-    public static Pair<List<Opcode>, Integer> assembleLines(String[] lines) {
+    public static Pair<List<Opcode>, Integer> assembleLines(String[] lines) throws IOException {
         LinkedList<Opcode> opcodes = new LinkedList<>();
         int offset = 0;
-        ByteBuffer buffer = ByteBuffer.allocate(0x50);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Map<String, Integer> labelMap = new HashMap<>();
         for (int i = 0; i < lines.length; i++) {
-            boolean isBranch = false;
             String operation = lines[i];
             if (operation.endsWith(":")) {
                 labelMap.put(operation.replace(":","").replace(" ",""),offset);
@@ -51,159 +50,145 @@ public class SeqAssembler {
             } catch (Exception e) {
 
             }
+            Opcode currentOpcode = null;
             switch (opcode[0].replace(" ","")) {
                 case "":
                     continue;
                 case "end":
-                    buffer.putInt(0);
+                    currentOpcode = new End(offset);
                     break;
                 case "hard":
                     switch (opcode[1]) {
                         case "reset":
-                            buffer.putInt(1);
+                            currentOpcode = new HardReset(offset);
                             break;
                     }
                     break;
                 case "b":
-                    buffer.putInt(0x01320000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new Branch(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new Branch(offset,operands);
                     }
                     break;
                 case "beqz":
-                    buffer.putInt(0x01330000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchEqualToZero(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchEqualToZero(offset,operands);
                     }
                     break;
                 case "bnez":
-                    buffer.putInt(0x01340000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchNotEqualToZero(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchNotEqualToZero(offset,operands);
                     }
                     break;
                 case "bgtz":
-                    buffer.putInt(0x01350000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchGreaterThanZero(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchGreaterThanZero(offset,operands);
                     }
                     break;
                 case "bgez":
-                    buffer.putInt(0x01360000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchGreaterThanZero(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchGreaterThanZero(offset,operands);
                     }
                     break;
                 case "bltz":
-                    buffer.putInt(0x01370000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchLessThanZero(offset, Integer.decode(operands),(byte) 0x37);
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchLessThanZero(offset,operands);
                     }
                     break;
                 case "blez":
-                    buffer.putInt(0x01380000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchLessThanOrEqualToZero(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchLessThanOrEqualToZero(offset,operands);
                     }
                     break;
                 case "bdnz":
-                    buffer.putInt(0x013B0000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchDecrementNotZero(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchDecrementNotZero(offset,operands);
                     }
                     break;
                 case "bl":
-                    buffer.putInt(0x013C0000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchLink(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchLink(offset,operands);
                     }
                     break;
                 case "beqzal":
-                    buffer.putInt(0x013D0000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchEqualToZeroLink(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchEqualToZeroLink(offset,operands);
                     }
                     break;
                 case "bnezal":
-                    buffer.putInt(0x013E0000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchNotEqualZeroLink(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchNotEqualZeroLink(offset,operands);
                     }
                     break;
                 case "bgtzal":
-                    buffer.putInt(0x013F0000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchingOpcode("bgtzal", new byte[] {0x01, 0x3F, 0x00, 0x00}, offset, Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchingOpcode("bgtzal", new byte[] {0x01, 0x3F, 0x00, 0x00}, offset, operands);
                     }
                     break;
                 case "bgezal":
-                    buffer.putInt(0x01400000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchingOpcode("bgezal", new byte[] {0x01, 0x40, 0x00, 0x00}, offset, Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchingOpcode("bgezal", new byte[] {0x01, 0x40, 0x00, 0x00}, offset, operands);
                     }
                     break;
                 case "bltzal":
-                    buffer.putInt(0x01410000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchLessThanZeroLink(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchLessThanZeroLink(offset,operands);
                     }
                     break;
                 case "blezal":
-                    buffer.putInt(0x01420000);
                     try {
-                        buffer.putInt(Integer.decode(operands));
+                        currentOpcode = new BranchLessThanEqualZeroLink(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        isBranch = true;
+                        currentOpcode = new BranchLessThanEqualZeroLink(offset,operands);
                     }
                     break;
                 case "blr":
-                    buffer.putInt(0x01450000);
+                    currentOpcode = new BranchLinkReturn(offset);
                     break;
                 case "blreqz":
-                    buffer.putInt(0x01460000);
+                    currentOpcode = new BranchLinkReturnEqualZero(offset);
                     break;
                 case "blrnez":
-                    buffer.putInt(0x01470000);
+                    currentOpcode = new BranchLinkReturnNotEqualZero(offset);
                     break;
                 case "blrgtz":
-                    buffer.putInt(0x01480000);
+                    currentOpcode = new BranchLinkReturnGreaterThanZero(offset);
                     break;
                 case "blrgez":
-                    buffer.putInt(0x01490000);
+                    currentOpcode = new BranchLinkReturnGreaterThanEqualZero(offset);
                     break;
                 case "blrltz":
-                    buffer.putInt(0x014A0000);
+                    currentOpcode = new BranchLinkReturnLessThanZero(offset);
                     break;
                 case "blrlez":
-                    buffer.putInt(0x014B0000);
+                    currentOpcode = new BranchLinkReturnLessThanEqualZero(offset);
                     break;
                 case "SEQ":
                     switch (opcode[1]) {
@@ -223,191 +208,220 @@ public class SeqAssembler {
                             }
                             break;
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
+                    break;
                 case "TskSendMsg":
                     //TODO
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "TskExecFunc":
                     //TODO
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "movr":
-                    buffer.putShort((short) 0x0301);
-                    buffer.put(SEQ_RegCMD2(operands.split(",")[0],operands.split(",")[1]));
+                    baos.write(3);
+                    baos.write(1);
+                    baos.write(SEQ_RegCMD2(operands.split(",")[0],operands.split(",")[1]));
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "push":
-                    buffer.putShort((short) 0x0303);
-                    buffer.put(SEQ_RegCMD1(operands));
+                    baos.write(3);
+                    baos.write(3);
+                    baos.write(SEQ_RegCMD1(operands));
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "pop":
-                    buffer.putShort((short) 0x0304);
-                    buffer.put(SEQ_RegCMD1(operands));
+                    baos.write(3);
+                    baos.write(4);
+                    baos.write(SEQ_RegCMD1(operands));
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), (byte) 3, (byte) 4);
                     break;
                 case "i32":
-                    buffer.put(getInt((byte)0x04, opcode[1], operands.split(",")));
+                    currentOpcode = getInt((byte)0x04, opcode[1], operands.split(","));
                     break;
                 case "i8":
-                    buffer.put(getInt((byte)0x05, opcode[1], operands.split(",")));
+                    currentOpcode = getInt((byte)0x05, opcode[1], operands.split(","));
                     break;
                 case "i16":
-                    buffer.put(getInt((byte)0x06, opcode[1], operands.split(",")));
+                    currentOpcode = getInt((byte)0x06, opcode[1], operands.split(","));
                     break;
                 case "i64":
-                    buffer.put(getInt((byte)0x07, opcode[1], operands.split(",")));
+                    currentOpcode = getInt((byte)0x07, opcode[1], operands.split(","));
                     break;
                 case "f32":
+                    baos.write(8);
                     switch (opcode[1]) {
                         case "move":
-                            buffer.putShort((short) 0x0802);
+                            baos.write(2);
                             break;
                         case "sub":
-                            buffer.putShort((short) 0x0804);
+                            baos.write(4);
                             break;
                         case "mul":
-                            buffer.putShort((short) 0x0805);
+                            baos.write(5);
                             break;
                         case "div":
-                            buffer.putShort((short) 0x0806);
+                            baos.write(6);
                             break;
                         case "cmp":
-                            buffer.putShort((short) 0x0807);
+                            baos.write(7);
                             break;
                     }
-                    buffer.put(SEQ_RegCMD2(operands.split(",")[0],operands.split(",")[1]));
+                    baos.write(SEQ_RegCMD2(operands.split(",")[0],operands.split(",")[1]));
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "ptr":
+                    baos.write(9);
                     switch (opcode[1]){
                         case "debug":
-                            buffer.putShort((short) 0x0900);
-                            buffer.put(SEQ_RegCMD1(operands));
+                            baos.write(0);
+                            baos.write(SEQ_RegCMD1(operands));
                             break;
                         case "mov":
-                            buffer.putShort((short) 0x0901);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(1);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "add":
-                            buffer.putShort((short) 0x0904);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(4);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "move":
-                            buffer.putShort((short) 0x0907);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(7);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "from":
-                            buffer.putShort((short) 0x0908);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(8);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "to":
-                            buffer.putShort((short) 0x0909);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(9);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "push":
-                            buffer.putShort((short) 0x090A);
-                            buffer.put(SEQ_RegCMD1(operands));
+                            baos.write(0xA);
+                            baos.write(SEQ_RegCMD1(operands));
                             break;
                         case "table":
-                            buffer.putShort((short) 0x090C);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(0xC);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "b":
-                            buffer.putShort((short) 0x0914);
-                            buffer.put(SEQ_RegCMD1(operands));
+                            baos.write(0x14);
+                            baos.write(SEQ_RegCMD1(operands));
                             break;
                         case "bl":
-                            buffer.putShort((short) 0x091D);
-                            buffer.put(SEQ_RegCMD1(operands));
+                            baos.write(0x1D);
+                            baos.write(SEQ_RegCMD1(operands));
                             break;
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "fvec":
+                    baos.write(0xB);
                     switch (opcode[1]) {
                         case "mov":
-                            buffer.putShort((short) 0x0B02);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(2);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "add":
-                            buffer.putShort((short) 0x0B03);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(3);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "sub":
-                            buffer.putShort((short) 0x0B04);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(4);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "muls":
-                            buffer.putShort((short) 0x0B07);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(7);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                         case "movs":
-                            buffer.putShort((short) 0x0B0A);
-                            buffer.put(SEQ_RegCMD1(operands));
+                            baos.write(0xA);
+                            baos.write(SEQ_RegCMD1(operands));
                             break;
                         case "mulm":
-                            buffer.putShort((short) 0x0B13);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(0x13);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "mtx":
+                    baos.write(0xC);
                     switch (opcode[1]) {
+                        case "copy":
+                            baos.write(1);
+                            baos.write(SEQ_RegCMD2(op1,op2));
+                            break;
                         case "scale":
-                            buffer.putShort((short) 0x0C09);
-                            buffer.put(SEQ_RegCMD2(op1,op2));
+                            baos.write(9);
+                            baos.write(SEQ_RegCMD2(op1,op2));
                             break;
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
+                    break;
                 case "sync":
                     switch (opcode[1]) {
                         case "timer":
                             if (opcode.length == 2) {
-                                buffer.put(Bytes.concat(ByteUtils.fromInt32(0x2011263F), ByteUtils.fromInt32(Integer.decode(operands))));
+                                baos.write(Bytes.concat(ByteUtils.fromInt32(0x2011263F), ByteUtils.fromInt32(Integer.decode(operands))));
                             } else {
                                 switch (opcode[2]) {
                                     case "run":
-                                        buffer.put(ByteUtils.fromUint32(0x20120026));
+                                        baos.write(ByteUtils.fromUint32(0x20120026));
                                         break;
                                 }
                             }
                             break;
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "create":
                     switch (opcode[1]) {
                         case "hitbox":
                             op = operands.split(",");
-                            buffer.put(Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0)));
+                            baos.write(Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0)));
                             break;
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "set":
                     switch (opcode[1]) {
                         case "pow":
                             op = operands.split(",");
-                            buffer.put(Bytes.concat(ByteUtils.fromUint32(0x21050026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint16(Integer.decode(op[2])), ByteUtils.fromUint16(0)));
+                            baos.write(Bytes.concat(ByteUtils.fromUint32(0x21050026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint16(Integer.decode(op[2])), ByteUtils.fromUint16(0)));
                             break;
                         case "ang":
                             op = operands.split(",");
-                            buffer.put(Bytes.concat(ByteUtils.fromUint32(0x21060026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1]))));
+                            baos.write(Bytes.concat(ByteUtils.fromUint32(0x21060026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1]))));
                             break;
                         case "hitbox":
                             switch (opcode[2]) {
                                 case "timer":
                                     op = operands.split(",");
-                                    buffer.put(Bytes.concat(ByteUtils.fromUint32(0x21070026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1]))));
+                                    baos.write(Bytes.concat(ByteUtils.fromUint32(0x21070026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1]))));
                                     break;
                             }
                             break;
                         case "pause":
-                            buffer.putShort((short) 0x1503);
-                            buffer.put(SEQ_RegCMD1(operands));
+                            baos.write(0x15);
+                            baos.write(0x03);
+                            baos.write(SEQ_RegCMD1(operands));
                             break;
                         case "timer":
                             switch (opcode[2]) {
                                 case "decrement":
-                                    buffer.putShort((short) 0x2112);
-                                    buffer.put(SEQ_RegCMD2(op1,op2));
+                                    baos.write(0x21);
+                                    baos.write(0x12);
+                                    baos.write(SEQ_RegCMD2(op1,op2));
                                     break;
                             }
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "flags":
-                    buffer.putShort((short)0x241A);
+                    baos.write(0x24);
+                    baos.write(0x1A);
                     byte action = 0;
                     byte group = 0;
                     switch (opcode[1]) {
@@ -477,13 +491,15 @@ public class SeqAssembler {
                             break;
                     }
                     action += group;
-                    buffer.put(action);
+                    baos.write(action);
                     //No alternative actions supported, only pure flag operations
-                    buffer.put((byte) 0);
-                    buffer.putInt(getFlags(opcode[2],operands.replace("\"","")));
+                    baos.write(0);
+                    baos.write(getFlags(opcode[2], operands.replace("\"", "")));
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "loadTexture":
                     //TODO
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "op":
                     String firstByte = opcode[1].substring(0,1);
@@ -495,51 +511,46 @@ public class SeqAssembler {
                                     //TODO
                                     break;
                                 default:
-                                    buffer.put(UnknownOpcode.of(opcode[1], operands));
+                                    baos.write(UnknownOpcode.of(opcode[1], operands));
                                     break;
                             }
                             break;
                         case "09":
                             switch (secondByte) {
                                 case "26":
-                                    buffer.putShort((short) 0x0926);
-                                    buffer.put(SEQ_RegCMD2(op1, op2));
+                                    baos.write(9);
+                                    baos.write(0x26);
+                                    baos.write(SEQ_RegCMD2(op1, op2));
                                     break;
                                 default:
-                                    buffer.put(UnknownOpcode.of(opcode[1], operands));
+                                    baos.write(UnknownOpcode.of(opcode[1], operands));
                                     break;
                             }
                             break;
                         case "0E":
                             switch (secondByte) {
                                 case "06":
-                                    buffer.putShort((short) 0x0E06);
-                                    buffer.put(SEQ_RegCMD2(op1, op2));
+                                    baos.write(0x0E);
+                                    baos.write(0x06);
+                                    baos.write(SEQ_RegCMD2(op1, op2));
                                     break;
                                 default:
-                                    buffer.put(UnknownOpcode.of(opcode[1], operands));
+                                    baos.write(UnknownOpcode.of(opcode[1], operands));
                                     break;
                             }
                             break;
                         default:
-                            buffer.put(UnknownOpcode.of(opcode[1], operands));
+                            baos.write(UnknownOpcode.of(opcode[1], operands));
                             break;
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 default:
                     System.err.println(opcode[0]);
+                    break;
             }
-            byte[] bytes = new byte[buffer.position()];
-            buffer.position(0);
-            buffer.get(bytes);
-            if (!isBranch) {
-                opcodes.add(new UnknownOpcode(offset, bytes));
-                offset += bytes.length;
-            } else {
-                opcodes.add(new BranchingOpcode("", bytes, offset, operands));
-                offset += 8;
-            }
-            buffer.position(0);
+            opcodes.add(currentOpcode);
+            offset += currentOpcode.getBytes().length;
         }
         for (Opcode opcode : opcodes) {
             if (BranchingOpcode.class.isInstance(opcode)) {
@@ -607,7 +618,7 @@ public class SeqAssembler {
         return flags;
     }
 
-    static private byte[] getInt(byte group, String opcode, String[] operands) {
+    static private Opcode getInt(byte group, String opcode, String[] operands) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(0x24);
         buffer.put(group);
         switch (opcode) {
@@ -721,7 +732,8 @@ public class SeqAssembler {
         byte[] bytes = new byte[buffer.position()];
         buffer.position(0);
         buffer.get(bytes);
-        return bytes;
+        ByteStream bs = new ByteStream(bytes);
+        return SeqHelper.getSeqOpcode(bs, bytes[0], bytes[1]);
     }
 
     private static final Map<String,Byte> registers = Map.ofEntries(new SimpleEntry<>("gpr0", (byte)0x0),

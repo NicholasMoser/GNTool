@@ -6,4 +6,8 @@ public class BranchNotEqualZeroLink extends BranchingOpcode {
     super("bnezal", new byte[] {0x01, 0x3E, 0x00, 0x00}, offset, destination);
   }
 
+  public BranchNotEqualZeroLink(int offset, String destFuncName) {
+    super("bnezal", new byte[] {0x01, 0x3E, 0x00, 0x00}, offset, destFuncName);
+  }
+
 }

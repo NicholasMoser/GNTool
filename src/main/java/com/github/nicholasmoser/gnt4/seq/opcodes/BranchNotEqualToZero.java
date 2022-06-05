@@ -14,4 +14,8 @@ public class BranchNotEqualToZero extends BranchingOpcode {
     super("bnez", new byte[] {0x01, 0x34, 0x00, 0x00}, offset, destination);
   }
 
+  public BranchNotEqualToZero(int offset, String destFuncName) {
+    super("bnez", new byte[] {0x01, 0x34, 0x00, 0x00}, offset, destFuncName);
+  }
+
 }

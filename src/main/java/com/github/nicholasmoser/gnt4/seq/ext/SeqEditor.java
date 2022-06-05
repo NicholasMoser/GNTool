@@ -232,17 +232,12 @@ public class SeqEditor {
    */
   public void assemble() {
     String[] lines = opcodesTextArea.getText().split("\n");
-    Pair<List<Opcode>, Integer> opcodes = SeqAssembler.assembleLines(lines);
-    /*
-    StringBuilder builder = new StringBuilder();
-    for (Opcode o : opcodes) {
-      for (byte b: o.getBytes()) {
-        builder.append(String.format("%02X",b));
-      }
-      builder.append("\n");
+    Pair<List<Opcode>, Integer> opcodes = null;
+    try {
+      opcodes = SeqAssembler.assembleLines(lines);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    newBytesTextArea.setText(builder.toString());
-    */
     try {
       // Remove the existing edit
       SeqExt.removeEdit(selectedEdit, seqPath);

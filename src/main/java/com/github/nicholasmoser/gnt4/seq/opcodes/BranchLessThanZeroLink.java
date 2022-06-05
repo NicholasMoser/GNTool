@@ -6,4 +6,8 @@ public class BranchLessThanZeroLink extends BranchingOpcode {
     super("bltzal", new byte[] {0x01, 0x41, 0x00, 0x00}, offset, destination);
   }
 
+  public BranchLessThanZeroLink(int offset, String destFuncName) {
+    super("bltzal", new byte[] {0x01, 0x41, 0x00, 0x00}, offset, destFuncName);
+  }
+
 }

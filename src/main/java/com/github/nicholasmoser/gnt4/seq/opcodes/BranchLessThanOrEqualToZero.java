@@ -6,4 +6,7 @@ public class BranchLessThanOrEqualToZero extends BranchingOpcode {
     super("blez", new byte[] {0x01, 0x38, 0x00, 0x00}, offset, destination);
   }
 
+    public BranchLessThanOrEqualToZero(int offset, String destFuncLabel) {
+      super("blez", new byte[] {0x01, 0x38, 0x00, 0x00}, offset, destFuncLabel);
+    }
 }

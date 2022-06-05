@@ -6,4 +6,9 @@ public class BranchEqualToZero extends BranchingOpcode {
     super("beqz", new byte[] {0x01, 0x33, 0x00, 0x00}, offset, destination);
   }
 
+  public BranchEqualToZero(int offset, String destFuncName) {
+    super("beqz", new byte[] {0x01, 0x33, 0x00, 0x00}, offset, destFuncName);
+  }
+
+
 }

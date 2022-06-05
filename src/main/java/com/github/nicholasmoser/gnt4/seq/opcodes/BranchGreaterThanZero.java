@@ -6,4 +6,8 @@ public class BranchGreaterThanZero extends BranchingOpcode {
     super("bgtz", new byte[] {0x01, 0x35, 0x00, 0x00}, offset, destination);
   }
 
+  public BranchGreaterThanZero(int offset, String destFuncName) {
+    super("bgtz", new byte[] {0x01, 0x35, 0x00, 0x00}, offset, destFuncName);
+  }
+
 }
