@@ -353,6 +353,22 @@ public class SeqAssembler {
                             baos.write(1);
                             baos.write(SEQ_RegCMD2(op1,op2));
                             break;
+                        case "concat":
+                            baos.write(2);
+                            baos.write(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "transpose":
+                            baos.write(3);
+                            baos.write(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "inverse":
+                            baos.write(4);
+                            baos.write(SEQ_RegCMD2(op1,op2));
+                            break;
+                        case "identity":
+                            baos.write(6);
+                            baos.write(SEQ_RegCMD1(operands));
+                            break;
                         case "scale":
                             baos.write(9);
                             baos.write(SEQ_RegCMD2(op1,op2));
