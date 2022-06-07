@@ -10,7 +10,7 @@ import static j2html.TagCreator.div;
 
 public class BranchingOpcode implements Opcode {
 
-  private static String MNEMONIC;
+  private String MNEMONIC;
   private byte[] bytes;
   private int offset;
   private int destination;
@@ -67,13 +67,15 @@ public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destinatio
 
   @Override
   public byte[] getBytes() {
-    return Bytes.concat(new byte[] { 0x01, 0x32, 0x00, 0x00 }, ByteUtils.fromInt32(destination));
+    return Bytes.concat(bytes, ByteUtils.fromInt32(destination));
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    if (destination > offset && destination < offset + size) {
-      return Bytes.concat(new byte[] {0x01, 0x32, 0x00, 0x00}, ByteUtils.fromInt32(destination + offset));
+  public byte[] getBytes(int position, int size) {
+    if (destination > position && destination < position + size) {
+      return Bytes.concat(bytes, ByteUtils.fromInt32(destination - position));
+    } else if (destination < size) {
+      return Bytes.concat(bytes, ByteUtils.fromInt32(destination + position));
     }
     return getBytes();
   }

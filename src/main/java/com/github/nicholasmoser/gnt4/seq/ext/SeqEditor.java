@@ -152,40 +152,18 @@ public class SeqEditor {
     this.rightStatus.setText(mode.toString());
     this.selectedEdit = seqEdit;
     String editName = seqEdit.getName();
-    int position = seqEdit.getPosition();
     byte[] oldBytes = seqEdit.getOldBytes();
-    byte[] newBytes = seqEdit.getNewBytes();
+    //byte[] newBytes = seqEdit.getNewBytes();
     List<Opcode> newCodes = seqEdit.getNewCodes();
-    Map<Integer, String> labelMap = new HashMap<>();
-    StringBuilder newBytesText = new StringBuilder();
-    StringBuilder opcodesText = new StringBuilder();
     nameTextArea.setText(editName);
     offsetTextField.setText(Integer.toString(seqEdit.getOffset()));
     hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
     hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
-    for (Opcode opcode : newCodes) {
-      if (BranchingOpcode.class.isInstance(opcode)) {
-        int destination = ((BranchingOpcode) opcode).getDestination();
-        if (destination >= position) {
-          String label = String.format("label%d", labelMap.size());
-          ((BranchingOpcode) opcode).setDestinationFunctionName(label);
-          ((BranchingOpcode) opcode).setDestination(destination - position);
-          labelMap.put(((BranchingOpcode) opcode).getDestination(), String.format("%s", label));
-        }
-      }
-    }
-    for (Opcode opcode : newCodes) {
-      String label = labelMap.get(opcode.getOffset());
-      if (label != null) {
-        opcodesText.append(String.format("%s:\n",label));
-      }
-      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes(position, seqEdit.getSize()))));
-      opcodesText.append(String.format("%s\n", opcode.toAssembly(position)));
-    }
+    Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes);
     //newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
     //opcodesTextArea.setText(getOpcodesString(newBytes, seqEdit.getPosition()));
-    newBytesTextArea.setText(newBytesText.toString());
-    opcodesTextArea.setText(opcodesText.toString());
+    newBytesTextArea.setText(opcodesStrings.getKey());
+    opcodesTextArea.setText(opcodesStrings.getValue());
   }
 
   /**
@@ -262,10 +240,17 @@ public class SeqEditor {
     String[] lines = opcodesTextArea.getText().split("\n");
     Pair<List<Opcode>, Integer> opcodes = null;
     try {
-      opcodes = SeqAssembler.assembleLines(lines);
+      opcodes = SeqAssembler.assembleLines(lines, this.seqPath);
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    StringBuilder sb = new StringBuilder();
+    for (Opcode op : opcodes.getKey()) {
+      sb.append(String.format("%s\n",ByteUtils.bytesToHexStringWords(op.getBytes())));
+    }
+    newBytesTextArea.setText(sb.toString());
+    /*
     try {
       // Remove the existing edit
       SeqExt.removeEdit(selectedEdit, seqPath);
@@ -291,7 +276,7 @@ public class SeqEditor {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Modify Edit", e);
       Message.error("Failed to Modify Edit", e.getMessage());
-    }
+    }*/
   }
 
   /**
@@ -471,7 +456,7 @@ public class SeqEditor {
    * @param bytes The opcode byte array.
    * @return The human-readable text of the opcodes.
    */
-  private String getOpcodesString(byte[] bytes, int offset) {
+  private String getOpcodesString(byte[] bytes) {
     try {
       ByteStream bs = new ByteStream(bytes);
       StringBuilder builder = new StringBuilder();
@@ -480,7 +465,7 @@ public class SeqEditor {
         byte opcodeGroup = (byte) bs.read();
         byte opcode = (byte) bs.read();
         bs.reset();
-        builder.append(SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode).toAssembly(offset));
+        builder.append(SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode).toString());
         builder.append('\n');
       }
       return builder.toString();
@@ -488,6 +473,38 @@ public class SeqEditor {
       LOGGER.log(Level.INFO, "Failed to process new bytes as opcodes", e);
       return "Unable to process opcodes";
     }
+  }
+
+  /**
+   * Get the opcodes, and bytes in human-readable text form from a given opcode list.
+   *
+   * @param newCodes The opcode byte array.
+   * @return Pair of the human-readable text of the bytes and opcodes.
+   */
+  private Pair<String, String> getOpcodesStrings(List<Opcode> newCodes) {
+    int position = this.selectedEdit.getPosition();
+    Map<Integer, String> labelMap = new HashMap<>();
+    StringBuilder newBytesText = new StringBuilder();
+    StringBuilder opcodesText = new StringBuilder();
+    for (Opcode opcode : newCodes) {
+      if (BranchingOpcode.class.isInstance(opcode)) {
+        int destination = ((BranchingOpcode) opcode).getDestination();
+        if (destination >= position) {
+          String label = String.format("label%d", labelMap.size());
+          ((BranchingOpcode) opcode).setDestinationFunctionName(label);
+          labelMap.put(((BranchingOpcode) opcode).getDestination() - position, String.format("%s", label));
+        }
+      }
+    }
+    for (Opcode opcode : newCodes) {
+      String label = labelMap.get(opcode.getOffset());
+      if (label != null) {
+        opcodesText.append(String.format("%s:\n",label));
+      }
+      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes(position, this.selectedEdit.getSize()))));
+      opcodesText.append(String.format("%s\n", opcode.toAssembly(position)));
+    }
+    return new Pair<>(newBytesText.toString(), opcodesText.toString());
   }
 
   /**

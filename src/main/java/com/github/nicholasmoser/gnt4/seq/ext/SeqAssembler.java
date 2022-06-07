@@ -2,31 +2,41 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.comment.Function;
+import com.github.nicholasmoser.gnt4.seq.comment.Functions;
 import com.github.nicholasmoser.gnt4.seq.opcodes.*;
 import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
+import com.google.protobuf.MapEntry;
 import javafx.util.Pair;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 public class SeqAssembler {
 
-    public static Pair<List<Opcode>, Integer> assembleLines(String[] lines) throws IOException {
+    public static Pair<List<Opcode>, Integer> assembleLines(String[] lines, Path SEQPath) throws IOException {
         LinkedList<Opcode> opcodes = new LinkedList<>();
         int offset = 0;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Map<String, Integer> labelMap = new HashMap<>();
+        Map<Integer, Function> globalFunctionMap = Functions.getFunctions(SEQPath.toString());
+        Map<String, Integer> globalLabelMap = new HashMap<>();
+        for (Entry<Integer, Function> me : globalFunctionMap.entrySet()) {
+            globalLabelMap.put(me.getValue().name(), me.getKey());
+        }
         for (int i = 0; i < lines.length; i++) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             String operation = lines[i];
             if (operation.endsWith(":")) {
                 labelMap.put(operation.replace(":","").replace(" ",""),offset);
@@ -49,7 +59,7 @@ public class SeqAssembler {
             } catch (Exception e) {
 
             }
-            Opcode currentOpcode = null;
+            Opcode currentOpcode = new UnknownOpcode(offset, new byte[] {0,0,0,0});
             switch (opcode[0].replace(" ","")) {
                 case "":
                     continue;
@@ -93,9 +103,9 @@ public class SeqAssembler {
                     break;
                 case "bgez":
                     try {
-                        currentOpcode = new BranchGreaterThanZero(offset,Integer.decode(operands));
+                        currentOpcode = new BranchGreaterThanOrEqualToZero(offset,Integer.decode(operands));
                     } catch (Exception e) {
-                        currentOpcode = new BranchGreaterThanZero(offset,operands);
+                        currentOpcode = new BranchGreaterThanOrEqualToZero(offset,operands);
                     }
                     break;
                 case "bltz":
@@ -120,6 +130,7 @@ public class SeqAssembler {
                     }
                     break;
                 case "bl":
+                    System.err.println("bl");
                     try {
                         currentOpcode = new BranchLink(offset,Integer.decode(operands));
                     } catch (Exception e) {
@@ -651,7 +662,7 @@ public class SeqAssembler {
                     baos.write(action);
                     //No alternative actions supported, only pure flag operations
                     baos.write(0);
-                    baos.write(getFlags(opcode[2], operands.replace("\"", "")));
+                    baos.write(ByteUtils.fromInt32(getFlags(opcode[2], operands.replace("\"", ""))));
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "loadTexture":
@@ -700,7 +711,8 @@ public class SeqAssembler {
                             baos.write(UnknownOpcode.of(opcode[1], operands));
                             break;
                     }
-                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
+                    currentOpcode = new UnknownOpcode(offset,baos.toByteArray());
+                    //currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 default:
                     System.err.println(opcode[0]);
@@ -711,7 +723,19 @@ public class SeqAssembler {
         }
         for (Opcode opcode : opcodes) {
             if (BranchingOpcode.class.isInstance(opcode)) {
-                ((BranchingOpcode) opcode).setDestination(labelMap.get(((BranchingOpcode) opcode).getDestinationFunctionName()));
+                Integer destination = labelMap.get(((BranchingOpcode) opcode).getDestinationFunctionName());
+                if (destination != null) {
+                    ((BranchingOpcode) opcode).setDestination(destination);
+                } else {
+                    destination = globalLabelMap.get(((BranchingOpcode) opcode).getDestinationFunctionName());
+                    if (destination != null) {
+                        ((BranchingOpcode) opcode).setDestination(destination);
+                    }
+                }
+                Function label = globalFunctionMap.get(((BranchingOpcode) opcode).getDestination());
+                if (label != null) {
+                    ((BranchingOpcode) opcode).setDestinationFunctionName(label.name());
+                }
             }
         }
         return new Pair(opcodes,offset);

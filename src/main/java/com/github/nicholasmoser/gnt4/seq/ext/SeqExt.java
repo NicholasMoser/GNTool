@@ -161,7 +161,7 @@ public class SeqExt {
       System.arraycopy(branchBytes, 0, seqBytes, offset, branchBytes.length);
       // seqExtSection.write(edit.getFullBytes());
       edit.setPosition(newBytesOffset);
-      seqExtSection.write(edit.getFullBytes(newBytesOffset));
+      seqExtSection.write(edit.getFullBytes());
     }
     seqExtSection.write(SEQ_END);
     return Bytes.concat(seqBytes, seqExtSection.toByteArray());

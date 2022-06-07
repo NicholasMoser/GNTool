@@ -69,12 +69,13 @@ public class SeqEdit {
     byte[] branch = new byte[] { 0x01, 0x32, 0x00, 0x00 };
     byte[] branchOffset = ByteUtils.fromInt32(offset + oldBytes.length);
     this.branchBack = Bytes.concat(branch, branchOffset);
-    this.newBytesWithBranchBack = Bytes.concat(newBytes, branch, branchOffset);
+    this.newBytesWithBranchBack = Bytes.concat(newBytes, branchBack);
     this.newCodes = new LinkedList<>();
-    ByteStream bs = new ByteStream(this.newBytes);
+    ByteStream bs = new ByteStream(newBytes);
     while (bs.bytesAreLeft()) {
       try {
-        this.newCodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
+        Opcode op = SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]);
+        this.newCodes.add(op);
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -208,14 +209,14 @@ public class SeqEdit {
       baos.write(ByteUtils.fromInt32(offset));
       baos.write(oldBytes);
       baos.write(STOP);
-      if (newBytesWithBranchBack != null) {
-        baos.write(newBytesWithBranchBack);
-      } else {
+      //if (newBytesWithBranchBack != null) {
+      //  baos.write(newBytesWithBranchBack);
+      //} else {
         for (Opcode op : newCodes) {
-          baos.write(op.getBytes());
+          baos.write(op.getBytes(position, size));
         }
         baos.write(branchBack);
-      }
+      //}
       baos.write(STOP);
       return baos.toByteArray();
     } catch (Exception e) {
