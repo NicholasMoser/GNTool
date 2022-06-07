@@ -4,8 +4,13 @@ import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
+import com.github.nicholasmoser.utils.ByteUtils;
 import j2html.tags.ContainerTag;
 import j2html.tags.specialized.DivTag;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class BranchTable implements Opcode {
@@ -14,14 +19,25 @@ public class BranchTable implements Opcode {
   private final int offset;
   private final byte[] bytes;
   private final String info;
-  private final List<Integer> offsets;
+  private List<Integer> offsets;
+  private List<String> branches;
 
   public BranchTable(int offset, byte[] bytes, String info, List<Integer> offsets) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;
     this.offsets = offsets;
+    this.branches = new LinkedList<>();
   }
+
+  public BranchTable(int offset, byte[] bytes, String info, List<Integer> offsets, List<String> branches) {
+    this.offset = offset;
+    this.bytes = bytes;
+    this.info = info;
+    this.offsets = offsets;
+    this.branches = branches;
+  }
+
 
   @Override
   public int getOffset() {
@@ -35,7 +51,20 @@ public class BranchTable implements Opcode {
 
   @Override
   public byte[] getBytes(int offset, int size) {
-    return bytes;
+    if (branches.size() == 0) {
+      return bytes;
+    } else {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      baos.write(bytes, 0, 8);
+      for (Integer branch : offsets) {
+        try {
+          baos.write(ByteUtils.fromInt32(branch));
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      return baos.toByteArray();
+    }
   }
 
   @Override
@@ -45,12 +74,24 @@ public class BranchTable implements Opcode {
 
   @Override
   public String toAssembly() {
-    return String.format("%s %s",MNEMONIC, info);
+    StringBuilder branches = new StringBuilder();
+    for (Integer branch : offsets) {
+      branches.append(String.format(", 0x%08X", branch));
+    }
+    return String.format("%s %s%s",MNEMONIC, info, branches);
   }
 
   @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
+  public String toAssembly(int position) {
+    StringBuilder branches = new StringBuilder();
+    for (Integer branch : offsets) {
+      if (branch > position) {
+        branches.append(String.format(", 0x%08X", branch - position));
+      } else {
+        branches.append(String.format(", 0x%08X", branch));
+      }
+    }
+    return String.format("%s %s%s",MNEMONIC, info, branches);
   }
 
   @Override

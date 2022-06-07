@@ -9,7 +9,6 @@ import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
-import com.google.protobuf.MapEntry;
 import javafx.util.Pair;
 
 import java.io.ByteArrayOutputStream;
@@ -130,7 +129,6 @@ public class SeqAssembler {
                     }
                     break;
                 case "bl":
-                    System.err.println("bl");
                     try {
                         currentOpcode = new BranchLink(offset,Integer.decode(operands));
                     } catch (Exception e) {
@@ -199,6 +197,34 @@ public class SeqAssembler {
                     break;
                 case "blrlez":
                     currentOpcode = new BranchLinkReturnLessThanEqualZero(offset);
+                    break;
+                case "branch":
+                    switch (opcode[1]) {
+                        case "table":
+                            if (opcode.length == 2) {
+                                baos.write(new byte[] {0x01, 0x50});
+                                baos.write(SEQ_RegCMD1(op[0]));
+                                baos.write(ByteUtils.fromInt32(op.length - 1));
+                                List<Integer> offsets = new LinkedList<>();
+                                List<String> branches = new LinkedList<>();
+                                for (int j = 1; j < op.length; j++) {
+                                    try {
+                                        int off = Integer.decode(op[j]);
+                                        offsets.add(off);
+                                        baos.write(ByteUtils.fromInt32(off));
+                                    } catch (Exception e) {
+                                        baos.write(ByteUtils.fromInt32(0));
+                                        branches.add(op[j]);
+                                    }
+                                }
+                                if (offsets.size() > 0) {
+                                    currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], offsets);
+                                } else {
+                                    //currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], branches);
+                                }
+                            }
+                            break;
+                    }
                     break;
                 case "chr":
                     switch (opcode[1]) {
@@ -736,6 +762,10 @@ public class SeqAssembler {
                 if (label != null) {
                     ((BranchingOpcode) opcode).setDestinationFunctionName(label.name());
                 }
+            } else if (BranchTable.class.isInstance(opcode)) {
+                //TODO
+            } else if (BranchTableLink.class.isInstance(opcode)) {
+                //TODO
             }
         }
         return new Pair(opcodes,offset);
