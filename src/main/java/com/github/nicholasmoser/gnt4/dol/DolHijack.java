@@ -21,31 +21,36 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * Class for hijacking code in the dol for GNT4. The code currently hijacked is a space of 297
- * instructions (1188 bytes) relating to the unused recording function in training mode.
+ * Class for hijacking code in the dol for GNT4. The code currently hijacked is a space of 2744
+ * bytes relating to AMC EXI2 stub library code. This code was used for debugging actual hardware
+ * and can be safely overridden.
  *
- * <ul>
- *   <li>80086f58 - Every frame of replay loop</li>
- *   <li>80087060 - Increase record number</li>
- *   <li>800870c0 - Saves recorded number?</li>
- *   <li>800871a0 - Does something every frame of recording</li>
- *   <li>80087364 - Helper function for 800b3790</li>
- *   <li>80087374 - Stop replay</li>
- * </ul>
+ * We used to override the recording functionality ({@link #OLD_START_RAM_ADDRESS}), but recording
+ * can now be used; therefore we cannot override this code anymore.
  */
 public class DolHijack {
 
   private static final Logger LOGGER = Logger.getLogger(DolHijack.class.getName());
 
   // Inclusive
-  public final static long START_RAM_ADDRESS = 0x80086F58L;
-  public final static long START_DOL_OFFSET = 0x83F58L;
+  public static final int START_RAM_ADDRESS = 0x80196824;
+  public static final int START_DOL_OFFSET = 0x193824;
 
   // Exclusive
-  public final static long END_RAM_ADDRESS = 0x800873FCL;
-  public final static long END_DOL_OFFSET = 0x843FC;
+  public static final int END_RAM_ADDRESS = 0x801972dc;
+  public static final int END_DOL_OFFSET = 0x1942DC;
 
-  public final static int SIZE = (int) (END_DOL_OFFSET - START_DOL_OFFSET);
+  public static final int SIZE = 0xAB8; // 2744
+
+  // Inclusive
+  public final static long OLD_START_RAM_ADDRESS = 0x80086F58L;
+  public final static long OLD_START_DOL_OFFSET = 0x83F58L;
+
+  // Exclusive
+  public final static long OLD_END_RAM_ADDRESS = 0x800873FCL;
+  public final static long OLD_END_DOL_OFFSET = 0x843FC;
+
+  public final static int OLD_SIZE = 0x4A4; // 1188
 
   private final static String KNOWN_CODES_RESOURCE = "known_codes.json";
   private final static String KNOWN_CODES_URL = "https://raw.githubusercontent.com/NicholasMoser/GNTool/master/src/main/resources/com/github/nicholasmoser/gnt4/dol/known_codes.json";
@@ -299,6 +304,32 @@ public class DolHijack {
         throw new IllegalStateException("Unable to find resource known_codes.json");
       }
       return new JSONArray(new JSONTokener(is));
+    }
+  }
+
+  /**
+   * Returns whether this dol is using the old way of code hijacking, that is, overriding the
+   * recording code.
+   *
+   * @param dolPath The dol to check.
+   * @return If the dol is using the old way of code hijacking.
+   * @throws IOException if an I/O error occurs
+   */
+  public static boolean isUsingOldCodeHihacking(Path dolPath) throws IOException {
+    byte[] originalHijackedBytes;
+    try(InputStream is = DolHijack.class.getResourceAsStream("old_hijack_original_bytes.bin")) {
+      if (is == null) {
+        throw new IllegalStateException("Unable to find resource old_hijack_original_bytes.bin");
+      }
+      originalHijackedBytes = is.readAllBytes();
+    }
+    try(RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "r")) {
+      byte[] currentRecordingCodeBytes = new byte[OLD_SIZE];
+      raf.seek(OLD_START_DOL_OFFSET);
+      if (raf.read(currentRecordingCodeBytes) != OLD_SIZE) {
+        throw new IOException("Failed to read bytes for recording code");
+      }
+      return !Arrays.equals(currentRecordingCodeBytes, originalHijackedBytes);
     }
   }
 }

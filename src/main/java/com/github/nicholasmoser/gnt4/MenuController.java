@@ -1257,9 +1257,9 @@ public class MenuController {
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.uncompressedFiles = uncompressedDirectory.resolve("files");
     this.codes = new GNT4Codes(uncompressedDirectory);
-    try(InputStream is = DolHijack.class.getResourceAsStream("hijack_original.bin")) {
+    try(InputStream is = DolHijack.class.getResourceAsStream("hijack_original_bytes.bin")) {
       if (is == null) {
-        throw new IllegalStateException("Unable to find resource hijack_original.bin");
+        throw new IllegalStateException("Unable to find resource hijack_original_bytes.bin");
       }
       this.originalHijackedBytes = is.readAllBytes();
     }
