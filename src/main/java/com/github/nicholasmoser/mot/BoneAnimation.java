@@ -18,8 +18,8 @@ public class BoneAnimation {
   private static final Charset JUNK_ENCODING = StandardCharsets.ISO_8859_1;
   private final int offset;
   private final short numOfKeyFrames;
-  private final int timeValuesOffset;
-  private final int coordinatesOffset;
+  private int timeValuesOffset;
+  private int coordinatesOffset;
   private final List<Coordinate> coordinates;
   private final List<Float> timeValues;
   private final String junk1;
@@ -51,6 +51,10 @@ public class BoneAnimation {
     return offset;
   }
 
+  public short getNumOfKeyFrames() {
+    return numOfKeyFrames;
+  }
+
   public short getFlags1() {
     return flags1;
   }
@@ -71,8 +75,16 @@ public class BoneAnimation {
     return coordinates;
   }
 
+  public int getCoordinatesOffset() {
+    return coordinatesOffset;
+  }
+
   public List<Float> getTimeValues() {
     return timeValues;
+  }
+
+  public int getTimeValuesOffset() {
+    return timeValuesOffset;
   }
 
   public void setFlags1(short flags1) {
@@ -91,11 +103,19 @@ public class BoneAnimation {
     this.totalTime = totalTime;
   }
 
+  public void setTimeValuesOffset(int timeValuesOffset) {
+    this.timeValuesOffset = timeValuesOffset;
+  }
+
+  public void setCoordinatesOffset(int coordinatesOffset) {
+    this.coordinatesOffset = coordinatesOffset;
+  }
+
   /**
    * Parse the bone animation from the file at the current offset. The offset of the parent
    * animation is also required to correctly read the data.
    *
-   * @param raf The file to read from.
+   * @param raf             The file to read from.
    * @param animationOffset The offset of the parent animation.
    * @return The bone animation.
    * @throws IOException If an I/O error occurs
@@ -127,16 +147,28 @@ public class BoneAnimation {
     // Handle coordinates, if they exist
     List<Coordinate> coordinates = new ArrayList<>();
     String junk2 = null;
-    if (coordinatesOffset != 0) {
+    if ((flags1 & 0x0200) != 0) {
       if (raf.getFilePointer() != animationOffset + coordinatesOffset) {
         throw new IOException("Second animation values do not follow first.");
       }
-      for (int i = 0; i < numOfKeyFrames; i++) {
-        short x = ByteUtils.readInt16(raf);
-        short y = ByteUtils.readInt16(raf);
-        short z = ByteUtils.readInt16(raf);
-        short w = ByteUtils.readInt16(raf);
-        coordinates.add(new Coordinate(x, y, z, w));
+      if ((flags1 & 0x0002) != 0) {
+        for (int i = 0; i < numOfKeyFrames; i++) {
+          short x = ByteUtils.readInt16(raf);
+          short y = ByteUtils.readInt16(raf);
+          short z = ByteUtils.readInt16(raf);
+          short w = ByteUtils.readInt16(raf);
+          coordinates.add(new Coordinate(x, y, z, w));
+        }
+      } else if ((flags1 & 0x0004) != 0) {
+        for (int i = 0; i < numOfKeyFrames; i++) {
+          float x = ByteUtils.readFloat(raf);
+          float y = ByteUtils.readFloat(raf);
+          float z = ByteUtils.readFloat(raf);
+          float w = ByteUtils.readFloat(raf);
+          coordinates.add(new Coordinate(x, y, z, w));
+        }
+      } else {
+        throw new IOException(String.format("Unexpected flags: 0x%X", flags1));
       }
       junk2 = readJunkData(raf);
     }
@@ -187,24 +219,49 @@ public class BoneAnimation {
     for (Float value : timeValues) {
       baos.write(ByteUtils.fromFloat(value));
     }
-    if (junk1 != null) {
+
+    // Handle alignment
+    int bytesLeftToAlign = 16 - (baos.size() % 16);
+    if (bytesLeftToAlign == 16) {
+      bytesLeftToAlign = 0;
+    }
+    if (junk1 != null && junk1.getBytes(JUNK_ENCODING).length == bytesLeftToAlign) {
+      // Pad with existing junk from original files
       baos.write(junk1.getBytes(JUNK_ENCODING));
+    } else if (bytesLeftToAlign > 0) {
+      // Pad with zeroes
+      baos.write(new byte[bytesLeftToAlign]);
     }
-    // TODO: Use logic to actually pad when more animations are added
-    //if (baos.size() % 16 != 0) {
-    //  // Pad to 16-byte alignment
-    //  int size = 16 - (baos.size() % 16);
-    //  baos.write(new byte[size]);
-    //}
-    for (Coordinate coordinate : coordinates) {
-      baos.write(ByteUtils.fromUint16(coordinate.getX()));
-      baos.write(ByteUtils.fromUint16(coordinate.getY()));
-      baos.write(ByteUtils.fromUint16(coordinate.getZ()));
-      baos.write(ByteUtils.fromUint16(coordinate.getW()));
+
+    if ((flags1 & 0x0002) != 0) {
+      for (Coordinate coordinate : coordinates) {
+        baos.write(ByteUtils.fromUint16(coordinate.getX()));
+        baos.write(ByteUtils.fromUint16(coordinate.getY()));
+        baos.write(ByteUtils.fromUint16(coordinate.getZ()));
+        baos.write(ByteUtils.fromUint16(coordinate.getW()));
+      }
+    } else if ((flags1 & 0x0004) != 0) {
+      for (Coordinate coordinate : coordinates) {
+        baos.write(ByteUtils.fromFloat(coordinate.getFloatX()));
+        baos.write(ByteUtils.fromFloat(coordinate.getFloatY()));
+        baos.write(ByteUtils.fromFloat(coordinate.getFloatZ()));
+        baos.write(ByteUtils.fromFloat(coordinate.getFloatW()));
+      }
     }
-    if (junk2 != null) {
+
+    // Handle alignment
+    bytesLeftToAlign = 16 - (baos.size() % 16);
+    if (bytesLeftToAlign == 16) {
+      bytesLeftToAlign = 0;
+    }
+    if (junk2 != null && junk2.getBytes(JUNK_ENCODING).length == bytesLeftToAlign) {
+      // Pad with existing junk from original files
       baos.write(junk2.getBytes(JUNK_ENCODING));
+    } else if (bytesLeftToAlign > 0) {
+      // Pad with zeroes
+      baos.write(new byte[bytesLeftToAlign]);
     }
+
     return baos.toByteArray();
   }
 

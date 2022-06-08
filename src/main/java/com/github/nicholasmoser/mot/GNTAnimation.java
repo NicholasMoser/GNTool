@@ -118,6 +118,40 @@ public class GNTAnimation {
   }
 
   /**
+   * Rewrite a GNTAnimation to be compatible with GNT4. This involves changing 0x0204 animations
+   * (with floats) to 0x0202 animations (with shorts).
+   */
+  public void rewriteForGNT4() {
+    for (BoneAnimation boneAnimation : boneAnimations) {
+      if (boneAnimation.getFlags1() == 0x0204) {
+        int currentOffset = boneAnimation.getCoordinatesOffset();
+        int lastSize = boneAnimation.getNumOfKeyFrames();
+        boneAnimation.setFlags1((short) 0x0202);
+        for (BoneAnimation boneAnimation1 : boneAnimations) {
+          if (boneAnimation1.getTimeValuesOffset() > currentOffset) {
+            int thisSize = boneAnimation1.getNumOfKeyFrames();
+            int alignment = 0;
+            if ((lastSize*8) % 16 != 0){
+              alignment = 16 - (lastSize*8) % 16;
+            }
+            // int timeValueOffset = currentOffset + (lastSize * 8);
+            boneAnimation1.setTimeValuesOffset(currentOffset + (lastSize * 8) + alignment);
+            if ((thisSize*4) % 16 != 0) {
+              alignment = 16 - (thisSize*4) % 16;
+            } else {
+              alignment = 0;
+            }
+            boneAnimation1.setCoordinatesOffset(boneAnimation1.getTimeValuesOffset() + (thisSize * 4) + alignment);
+            currentOffset = boneAnimation1.getCoordinatesOffset();
+            lastSize = thisSize;
+            boneAnimation1.setFlags1((short) 0x0202);
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * @return The size in bytes of this animation.
    * @throws IOException If an I/O error occurs
    */
