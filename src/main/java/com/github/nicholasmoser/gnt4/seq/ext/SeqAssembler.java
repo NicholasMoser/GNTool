@@ -763,9 +763,41 @@ public class SeqAssembler {
                     ((BranchingOpcode) opcode).setDestinationFunctionName(label.name());
                 }
             } else if (BranchTable.class.isInstance(opcode)) {
-                //TODO
+                if (((BranchTable) opcode).getBranches().size() > 0) {
+                    List<Integer> offsets = new LinkedList<>();
+                    for (String label : ((BranchTable) opcode).getBranches()) {
+                        Integer destination = labelMap.get(label);
+                        if (destination != null) {
+                            offsets.add(destination);
+                        } else {
+                            destination = globalLabelMap.get(label);
+                            if (destination != null) {
+                                offsets.add(destination);
+                            }
+                        }
+                    }
+                    if (offsets.size() == opcode.getBytes().length - 8) {
+                        ((BranchTable) opcode).setOffsets(offsets);
+                    }
+                }
             } else if (BranchTableLink.class.isInstance(opcode)) {
-                //TODO
+                if (((BranchTableLink) opcode).getBranches().size() > 0) {
+                    List<Integer> offsets = new LinkedList<>();
+                    for (String label : ((BranchTableLink) opcode).getBranches()) {
+                        Integer destination = labelMap.get(label);
+                        if (destination != null) {
+                            offsets.add(destination);
+                        } else {
+                            destination = globalLabelMap.get(label);
+                            if (destination != null) {
+                                offsets.add(destination);
+                            }
+                        }
+                    }
+                    if (offsets.size() == opcode.getBytes().length - 8) {
+                        ((BranchTableLink) opcode).setOffsets(offsets);
+                    }
+                }
             }
         }
         return new Pair(opcodes,offset);

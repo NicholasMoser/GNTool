@@ -17,7 +17,7 @@ public class BranchTable implements Opcode {
 
   private final static String MNEMONIC = "branch_table";
   private final int offset;
-  private final byte[] bytes;
+  private byte[] bytes;
   private final String info;
   private List<Integer> offsets;
   private List<String> branches;
@@ -51,20 +51,56 @@ public class BranchTable implements Opcode {
 
   @Override
   public byte[] getBytes(int offset, int size) {
-    if (branches.size() == 0) {
-      return bytes;
-    } else {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      baos.write(bytes, 0, 8);
-      for (Integer branch : offsets) {
-        try {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bytes, 0, 8);
+    for (Integer branch : offsets) {
+      try {
+        int destination = branch;
+        if (destination >= offset && destination <= offset + size) {
+          baos.write(ByteUtils.fromInt32(branch - offset));
+        } else if (destination <= size) {
+          baos.write(ByteUtils.fromInt32(branch + offset));
+        } else {
           baos.write(ByteUtils.fromInt32(branch));
-        } catch (IOException e) {
-          e.printStackTrace();
         }
+      } catch (IOException e) {
+        e.printStackTrace();
       }
-      return baos.toByteArray();
     }
+    return baos.toByteArray();
+  }
+
+  private void setBytes() {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bytes, 0, 8);
+    for (Integer offset : offsets) {
+      try {
+        baos.write(ByteUtils.fromInt32(offset));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    bytes = baos.toByteArray();
+  }
+
+  public String setOffsets(List<Integer> offsets) {
+    if (this.offsets.size() != offsets.size()) {
+      return "Error, wrong number of offsets";
+    }
+    this.offsets = offsets;
+    return null;
+  }
+
+  public List<Integer> getOffsets() {
+    return offsets;
+  }
+
+  public void setBranches(List<String> branches) {
+    this.branches = branches;
+  }
+
+  public List<String> getBranches() {
+    return branches;
   }
 
   @Override
