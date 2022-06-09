@@ -219,8 +219,35 @@ public class SeqAssembler {
                                 }
                                 if (offsets.size() > 0) {
                                     currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], offsets);
+                                } else if (branches.size() > 0) {
+                                    currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], offsets, branches);
                                 } else {
-                                    //currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], branches);
+                                    System.err.println(String.format("Neither offsets nor label names given for branch table at offset %d", offset));
+                                    continue;
+                                }
+                            } else {
+                                baos.write(new byte[] {0x01, 0x51});
+                                baos.write(SEQ_RegCMD1(op[0]));
+                                baos.write(ByteUtils.fromInt32(op.length - 1));
+                                List<Integer> offsets = new LinkedList<>();
+                                List<String> branches = new LinkedList<>();
+                                for (int j = 1; j < op.length; j++) {
+                                    try {
+                                        int off = Integer.decode(op[j]);
+                                        offsets.add(off);
+                                        baos.write(ByteUtils.fromInt32(off));
+                                    } catch (Exception e) {
+                                        baos.write(ByteUtils.fromInt32(0));
+                                        branches.add(op[j]);
+                                    }
+                                }
+                                if (offsets.size() > 0) {
+                                    currentOpcode = new BranchTableLink(offset, baos.toByteArray(), op[0], offsets);
+                                } else if (branches.size() > 0) {
+                                    currentOpcode = new BranchTableLink(offset, baos.toByteArray(), op[0], offsets, branches);
+                                } else {
+                                    System.err.println(String.format("Neither offsets nor label names given for branch table link at offset %d", offset));
+                                    continue;
                                 }
                             }
                             break;
@@ -528,7 +555,13 @@ public class SeqAssembler {
                                 baos.write(Bytes.concat(ByteUtils.fromUint32(0x21040026), ByteUtils.fromUint16(Integer.decode(op[0])), ByteUtils.fromUint16(Integer.decode(op[1])), ByteUtils.fromUint32(0)));
                             } else if (opcode[2].equals("with") && opcode[3].equals("offset")) {
                                 baos.write(ByteUtils.fromUint32(0x21110026));
-                                //TODO
+                                baos.write(ByteUtils.fromUint16(Integer.decode(op[0])));
+                                baos.write(ByteUtils.fromUint16(Integer.decode(op[1])));
+                                baos.write(ByteUtils.fromUint16(Integer.decode(op[2])));
+                                baos.write(ByteUtils.fromUint16(Integer.decode(op[3])));
+                                baos.write(ByteUtils.fromUint16(Integer.decode(op[4])));
+                                baos.write(ByteUtils.fromUint16(0));
+                                baos.write(ByteUtils.fromInt32(Integer.decode(op[5])));
                                 continue;
                             }
                             break;
@@ -693,6 +726,7 @@ public class SeqAssembler {
                     break;
                 case "loadTexture":
                     //TODO
+                    // Still todo
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "op":
@@ -702,7 +736,9 @@ public class SeqAssembler {
                         case "02":
                             switch (secondByte) {
                                 case "08":
+                                    baos.write(UnknownOpcode.of(opcode[1], operands));
                                     //TODO
+                                    // Still TODO
                                     break;
                                 default:
                                     baos.write(UnknownOpcode.of(opcode[1], operands));
@@ -738,7 +774,6 @@ public class SeqAssembler {
                             break;
                     }
                     currentOpcode = new UnknownOpcode(offset,baos.toByteArray());
-                    //currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 default:
                     System.err.println(opcode[0]);
@@ -776,9 +811,7 @@ public class SeqAssembler {
                             }
                         }
                     }
-                    if (offsets.size() == opcode.getBytes().length - 8) {
-                        ((BranchTable) opcode).setOffsets(offsets);
-                    }
+                    ((BranchTable) opcode).setOffsets(offsets);
                 }
             } else if (BranchTableLink.class.isInstance(opcode)) {
                 if (((BranchTableLink) opcode).getBranches().size() > 0) {
@@ -794,9 +827,7 @@ public class SeqAssembler {
                             }
                         }
                     }
-                    if (offsets.size() == opcode.getBytes().length - 8) {
-                        ((BranchTableLink) opcode).setOffsets(offsets);
-                    }
+                    ((BranchTableLink) opcode).setOffsets(offsets);
                 }
             }
         }
@@ -1091,7 +1122,7 @@ public class SeqAssembler {
 
         buffer.put(registerVal);
         if (registerVal > 0x3F) {
-            buffer.putInt(Integer.reverseBytes(opDirect.intValue()));
+            buffer.putInt(opDirect.intValue());
         }
         switch (registerVal & 0x3F) {
             case 0x3F:
@@ -1110,6 +1141,9 @@ public class SeqAssembler {
                         buffer.putShort((short) 0);
                         break;
                 }
+                break;
+            case 0x3E:
+                //TODO
                 break;
         }
 
@@ -1177,9 +1211,11 @@ public class SeqAssembler {
             switch (op1v & 0x3f) {
                 case 0x26:
                 case 0x27:
-                    op2 = op2.substring(op2.indexOf("0x"));
-                    if (op2.contains(")")) {
-                        op2 = op2.replace(")","");
+                    if (op2.contains("(")) {
+                        op2 = op2.substring(op2.indexOf("(") + 1);
+                        if (op2.contains(")")) {
+                            op2 = op2.replace(")", "");
+                        }
                     }
                     break;
             }

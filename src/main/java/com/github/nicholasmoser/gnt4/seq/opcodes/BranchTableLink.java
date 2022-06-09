@@ -82,12 +82,13 @@ public class BranchTableLink implements Opcode {
     bytes = baos.toByteArray();
   }
 
-  public String setOffsets(List<Integer> offsets) {
-    if (this.offsets.size() != offsets.size()) {
-      return "Error, wrong number of offsets";
+  public void setOffsets(List<Integer> offsets) {
+    if (offsets.size() != branches.size()) {
+      System.err.println("Error, wrong number of offsets given");
+      return;
     }
     this.offsets = offsets;
-    return null;
+    setBytes();
   }
 
   public List<Integer> getOffsets() {
