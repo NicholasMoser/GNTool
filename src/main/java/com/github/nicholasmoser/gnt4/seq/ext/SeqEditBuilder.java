@@ -4,6 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -80,6 +81,8 @@ public class SeqEditBuilder {
       throw new IllegalArgumentException("endOffset must be 4-byte aligned");
     } else if (startOffset % 4 != 0) {
       throw new IllegalArgumentException("startOffset must be 4-byte aligned");
+    } else if (endOffset - startOffset < 8) {
+      throw new IllegalArgumentException("endOffset must be more than 8 bytes larger than startOffset");
     } else if (newCodes == null && newBytes.length % 4 != 0 ) {
       throw new IllegalArgumentException("newBytes length must be 4-byte aligned");
     } else if (name == null) {
@@ -90,7 +93,11 @@ public class SeqEditBuilder {
     // Read old bytes from seq file or seq file bytes
     byte[] oldBytes;
     if (seqBytes != null) {
-      oldBytes = Arrays.copyOfRange(seqBytes, startOffset, endOffset);
+      try {
+        oldBytes = Arrays.copyOfRange(seqBytes, startOffset, endOffset);
+      } catch (Exception e) {
+        throw new IOException("Failed to read old bytes at offset " + startOffset);
+      }
     } else if (seqPath != null) {
       try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
         raf.seek(startOffset);
@@ -102,6 +109,9 @@ public class SeqEditBuilder {
       }
     } else {
       throw new IllegalArgumentException("seqBytes and seqPath both are null");
+    }
+    if (oldBytes.length < 8) {
+      throw new IllegalArgumentException("oldBytes less than 8 bytes");
     }
     SeqEdit edit;
     if (newBytes == null) {
