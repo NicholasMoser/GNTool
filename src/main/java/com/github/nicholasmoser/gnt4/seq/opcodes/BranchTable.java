@@ -50,16 +50,16 @@ public class BranchTable implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
+  public byte[] getBytes(int position, int size) {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(bytes, 0, 8);
     for (Integer branch : offsets) {
       try {
         int destination = branch;
-        if (destination >= offset && destination <= offset + size) {
-          baos.write(ByteUtils.fromInt32(branch - offset));
+        if (destination >= position && destination <= position + size) {
+          baos.write(ByteUtils.fromInt32(branch - position));
         } else if (destination <= size) {
-          baos.write(ByteUtils.fromInt32(branch + offset));
+          baos.write(ByteUtils.fromInt32(branch + position));
         } else {
           baos.write(ByteUtils.fromInt32(branch));
         }
@@ -111,24 +111,36 @@ public class BranchTable implements Opcode {
 
   @Override
   public String toAssembly() {
-    StringBuilder branches = new StringBuilder();
-    for (Integer branch : offsets) {
-      branches.append(String.format(", 0x%08X", branch));
+    StringBuilder assembly = new StringBuilder();
+    if (branches.size() > 0) {
+      for (String branch : branches) {
+        assembly.append(String.format(", %s", branch));
+      }
+    } else {
+      for (Integer branch : offsets) {
+        assembly.append(String.format(", 0x%08X", branch));
+      }
     }
-    return String.format("%s %s%s",MNEMONIC, info, branches);
+    return String.format("%s %s%s",MNEMONIC, info, assembly);
   }
 
   @Override
   public String toAssembly(int position) {
-    StringBuilder branches = new StringBuilder();
-    for (Integer branch : offsets) {
-      if (branch > position) {
-        branches.append(String.format(", 0x%08X", branch - position));
-      } else {
-        branches.append(String.format(", 0x%08X", branch));
+    StringBuilder assembly = new StringBuilder();
+    if (branches.size() > 0) {
+      for (String branch : branches) {
+        assembly.append(String.format(", %s", branch));
+      }
+    } else {
+      for (Integer branch : offsets) {
+        if (branch > position) {
+          assembly.append(String.format(", 0x%08X", branch - position));
+        } else {
+          assembly.append(String.format(", 0x%08X", branch));
+        }
       }
     }
-    return String.format("%s %s%s",MNEMONIC, info, branches);
+    return String.format("%s %s%s",MNEMONIC, info, assembly);
   }
 
   @Override
