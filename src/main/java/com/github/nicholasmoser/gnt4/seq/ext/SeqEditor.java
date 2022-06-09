@@ -500,7 +500,7 @@ public class SeqEditor {
         if (label != null) {
           ((BranchingOpcode) opcode).setDestinationFunctionName(label);
         }
-      } else if (BranchTable.class.isInstance(opcode) || BranchTableLink.class.isInstance(opcode)) {
+      } else if (BranchTable.class.isInstance(opcode)) {
         List<String> labels = new LinkedList<>();
         for (Integer destination : ((BranchTable) opcode).getOffsets()) {
           destination = destination - position;
@@ -514,6 +514,20 @@ public class SeqEditor {
           }
         }
         ((BranchTable) opcode).setBranches(labels);
+      } else if (BranchTableLink.class.isInstance(opcode)) {
+        List<String> labels = new LinkedList<>();
+        for (Integer destination : ((BranchTableLink) opcode).getOffsets()) {
+          destination = destination - position;
+          String label = labelMap.get(destination);
+          if (destination <= size && destination >= 0 && label == null) {
+            label = String.format("label%d", labelMap.size());
+            labelMap.put(destination, label);
+          }
+          if (label != null) {
+            labels.add(label);
+          }
+        }
+        ((BranchTableLink) opcode).setBranches(labels);
       }
     }
     for (Opcode opcode : newCodes) {
@@ -523,9 +537,6 @@ public class SeqEditor {
       }
       newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes(position, this.selectedEdit.getSize()))));
       opcodesText.append(String.format("%s\n", opcode.toAssembly(position)));
-    }
-    for (Entry<Integer, String> e : labelMap.entrySet()) {
-      System.err.println(e);
     }
     return new Pair<>(newBytesText.toString(), opcodesText.toString());
   }
