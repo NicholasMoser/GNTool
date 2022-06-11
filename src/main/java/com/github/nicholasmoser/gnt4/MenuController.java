@@ -21,8 +21,7 @@ import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
-import com.github.nicholasmoser.gnt4.dol.CodeCaves;
-import com.github.nicholasmoser.gnt4.dol.CodeCaves.Location;
+import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
 import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
@@ -44,7 +43,6 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1182,7 +1180,7 @@ public class MenuController {
     GeckoReader reader = new GeckoReader();
     try {
       List<GeckoCode> codes = reader.parseCodes(text);
-      if (DolHijack.checkHijackOverflow(codeGroups, codes, Location.EXI2)) {
+      if (DolHijack.checkHijackOverflow(codeGroups, codes, CodeCave.EXI2)) {
         return;
       }
       if (targetAddressOverlap(codes)) {
@@ -1201,7 +1199,7 @@ public class MenuController {
     GeckoReader reader = new GeckoReader();
     try {
       List<GeckoCode> codes = reader.parseCodes(text);
-      if (DolHijack.checkHijackOverflow(codeGroups, codes, Location.EXI2)) {
+      if (DolHijack.checkHijackOverflow(codeGroups, codes, CodeCave.EXI2)) {
         return;
       }
       if (targetAddressOverlap(codes)) {
@@ -1211,7 +1209,7 @@ public class MenuController {
       if (!checkNameValid((name))) {
         return;
       }
-      long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups, Location.EXI2);
+      long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups, CodeCave.EXI2);
       Path dolPath = uncompressedDirectory.resolve(DOL);
       GeckoWriter writer = new GeckoWriter(dolPath);
       GeckoCodeGroup group = writer.writeCodes(codes, name, hijackStartAddress);
@@ -1362,8 +1360,8 @@ public class MenuController {
         Path dol = uncompressedDirectory.resolve(DOL);
         Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
 
-        if (DolHijack.isUsingCodeCave(dol, Location.RECORDING)) {
-          if (DolHijack.isUsingCodeCave(dol, Location.EXI2)) {
+        if (DolHijack.isUsingCodeCave(dol, CodeCave.RECORDING)) {
+          if (DolHijack.isUsingCodeCave(dol, CodeCave.EXI2)) {
             throw new IOException("You are overwriting both recording code and EXI2 code, please log an issue to get this fixed.");
           }
           String msg = "Your Gecko codes are currently overwriting recording functionality. ";
@@ -1371,11 +1369,11 @@ public class MenuController {
           if (Message.warnConfirmation("Need to Move Codes", msg)) {
             if (!Files.isRegularFile(codeFile)) {
               // We need the code file to do the conversion, create a code file with the old code cave
-              if (!DolHijack.handleActiveCodesButNoCodeFile(dol, Location.RECORDING)) {
+              if (!DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.RECORDING)) {
                 throw new IOException("Recording code is modified, but unable to get code file.");
               }
               // Do the conversion
-              DolHijack.moveCodes(dol, codeFile, Location.EXI2);
+              DolHijack.moveCodes(dol, codeFile, CodeCave.EXI2);
             }
           } else {
             throw new IOException("Codes must be converted to use code hijacking.");
@@ -1388,7 +1386,7 @@ public class MenuController {
           for (GeckoCodeGroup codeGroup : codeGroups) {
             addedCodes.getItems().add(codeGroup.getName());
           }
-        } else if (DolHijack.handleActiveCodesButNoCodeFile(dol, Location.EXI2)) {
+        } else if (DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.EXI2)) {
           // This ISO has injected codes but no associated JSON code file. The previous method
           // call successfully created one, so now let's parse it.
           codeGroups = GeckoCodeJSON.parseFile(codeFile);
@@ -1667,7 +1665,7 @@ public class MenuController {
   private void defragCodeGroups(List<GeckoCodeGroup> codeGroups) {
     try {
       Path dolPath = uncompressedDirectory.resolve(DOL);
-      DolDefragger defragger = new DolDefragger(dolPath, codeGroups, Location.EXI2);
+      DolDefragger defragger = new DolDefragger(dolPath, codeGroups, CodeCave.EXI2);
       defragger.run();
       Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
       GeckoCodeJSON.writeFile(codeGroups, codeFile);

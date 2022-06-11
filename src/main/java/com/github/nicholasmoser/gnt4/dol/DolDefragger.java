@@ -4,7 +4,7 @@ import com.github.nicholasmoser.dol.DolUtil;
 import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
-import com.github.nicholasmoser.gnt4.dol.CodeCaves.Location;
+import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
 import com.github.nicholasmoser.ppc.Branch;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -25,9 +25,9 @@ public class DolDefragger {
   private final List<ActiveInsertAsmCode> activeInsertAsmCodes;
   private final long codeCaveStartAddress;
   private final long codeCaveStartOffset;
-  private final Location codeCave;
+  private final CodeCave codeCave;
 
-  public DolDefragger(Path dolPath, List<GeckoCodeGroup> codeGroups, Location codeCave) {
+  public DolDefragger(Path dolPath, List<GeckoCodeGroup> codeGroups, CodeCave codeCave) {
     this.dolPath = dolPath;
     this.codeCaveBytes = CodeCaves.getBytes(codeCave);
     this.activeInsertAsmCodes = getActiveInsertAsmCodes(codeGroups);
@@ -153,7 +153,7 @@ public class DolDefragger {
    * @param codeCave The code cave to use.
    * @return The end of hijacked bytes in the dol.
    */
-  public static long getEndOfHijacking(List<ActiveInsertAsmCode> activeInsertAsmCodes, Location codeCave) {
+  public static long getEndOfHijacking(List<ActiveInsertAsmCode> activeInsertAsmCodes, CodeCave codeCave) {
     long furthestEnd = CodeCaves.getStartAddress(codeCave);
     long endRamAddress = CodeCaves.getEndAddress(codeCave);
     for (ActiveInsertAsmCode insertCode : activeInsertAsmCodes) {

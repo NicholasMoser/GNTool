@@ -8,7 +8,7 @@ import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gecko.InsertAsmCode;
 import com.github.nicholasmoser.gecko.Write32BitsCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
-import com.github.nicholasmoser.gnt4.dol.CodeCaves.Location;
+import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.HttpUtils;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class DolHijack {
    * @return If the Gecko codes overflow the limit of hijacked code.
    */
   public static boolean checkHijackOverflow(List<GeckoCodeGroup> existingCodeGroups,
-      List<GeckoCode> newCodes, Location codeCave) {
+      List<GeckoCode> newCodes, CodeCave codeCave) {
     long furthestEnd = getEndOfHijacking(existingCodeGroups, codeCave);
     long bytesLeft = CodeCaves.getEndAddress(codeCave) - furthestEnd;
     long totalBytes = 0;
@@ -75,7 +75,7 @@ public class DolHijack {
    * @param codeCave           The code cave to write codes to.
    * @return The address at the end of hijacking.
    */
-  public static long getEndOfHijacking(List<GeckoCodeGroup> existingCodeGroups, Location codeCave) {
+  public static long getEndOfHijacking(List<GeckoCodeGroup> existingCodeGroups, CodeCave codeCave) {
     long furthestEnd = CodeCaves.getStartAddress(codeCave);
     long endRamAddress = CodeCaves.getEndAddress(codeCave);
     for (GeckoCodeGroup group : existingCodeGroups) {
@@ -106,7 +106,7 @@ public class DolHijack {
    * @return If codes were found to be injected and a new codes JSON file was created.
    * @throws IOException if an I/O error occurs
    */
-  public static boolean handleActiveCodesButNoCodeFile(Path dolPath, Location codeCave)
+  public static boolean handleActiveCodesButNoCodeFile(Path dolPath, CodeCave codeCave)
       throws IOException {
     byte[] currentBytes = getCurrentBytes(dolPath, codeCave);
     byte[] originalBytes = CodeCaves.getBytes(codeCave);
@@ -253,7 +253,7 @@ public class DolHijack {
    * @return The code bytes of the code cave.
    * @throws IOException if an I/O error occurs
    */
-  private static byte[] getCurrentBytes(Path dolPath, Location codeCave) throws IOException {
+  private static byte[] getCurrentBytes(Path dolPath, CodeCave codeCave) throws IOException {
     int size = CodeCaves.getSize(codeCave);
     byte[] currentBytes = new byte[size];
     try (RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "r")) {
@@ -309,7 +309,7 @@ public class DolHijack {
    * @return If the dol is using the old way of code hijacking.
    * @throws IOException if an I/O error occurs
    */
-  public static boolean isUsingCodeCave(Path dolPath, Location codeCave) throws IOException {
+  public static boolean isUsingCodeCave(Path dolPath, CodeCave codeCave) throws IOException {
     int size = CodeCaves.getSize(codeCave);
     long offset = CodeCaves.getStartOffset(codeCave);
     byte[] vanillaBytes = CodeCaves.getBytes(codeCave);
@@ -331,7 +331,7 @@ public class DolHijack {
    * @param to The code cave to move the codes to.
    * @throws IOException if an I/O error occurs
    */
-  public static void moveCodes(Path dol, Path codeFile, Location to)
+  public static void moveCodes(Path dol, Path codeFile, CodeCave to)
       throws IOException {
     long hijackAddress = CodeCaves.getStartAddress(to);
     GeckoWriter writer = new GeckoWriter(dol);

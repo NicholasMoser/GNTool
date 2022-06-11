@@ -9,54 +9,54 @@ import java.io.InputStream;
  */
 public class CodeCaves {
 
-  public enum Location {
+  public enum CodeCave {
     EXI2,
     TRK,
     RECORDING
   }
 
-  public static long getStartAddress(Location location) {
-    return switch (location) {
+  public static long getStartAddress(CodeCave codeCave) {
+    return switch (codeCave) {
       case EXI2 -> EXI2_START_ADDRESS;
       case TRK -> TRK_START_ADDRESS;
       case RECORDING -> RECORDING_START_ADDRESS;
     };
   }
 
-  public static long getEndAddress(Location location) {
-    return switch (location) {
+  public static long getEndAddress(CodeCave codeCave) {
+    return switch (codeCave) {
       case EXI2 -> EXI2_END_ADDRESS;
       case TRK -> TRK_END_ADDRESS;
       case RECORDING -> RECORDING_END_ADDRESS;
     };
   }
 
-  public static long getStartOffset(Location location) {
-    return switch (location) {
+  public static long getStartOffset(CodeCave codeCave) {
+    return switch (codeCave) {
       case EXI2 -> EXI2_START_OFFSET;
       case TRK -> TRK_START_OFFSET;
       case RECORDING -> RECORDING_START_OFFSET;
     };
   }
 
-  public static long getEndOffset(Location location) {
-    return switch (location) {
+  public static long getEndOffset(CodeCave codeCave) {
+    return switch (codeCave) {
       case EXI2 -> EXI2_END_OFFSET;
       case TRK -> TRK_END_OFFSET;
       case RECORDING -> RECORDING_END_OFFSET;
     };
   }
 
-  public static int getSize(Location location) {
-    return switch (location) {
+  public static int getSize(CodeCave codeCave) {
+    return switch (codeCave) {
       case EXI2 -> EXI2_SIZE;
       case TRK -> TRK_SIZE;
       case RECORDING -> RECORDING_SIZE;
     };
   }
 
-  public static byte[] getBytes(Location location) {
-    return switch (location) {
+  public static byte[] getBytes(CodeCave codeCave) {
+    return switch (codeCave) {
       case EXI2 -> getEXI2Bytes();
       case TRK -> getTRKBytes();
       case RECORDING -> getRecordingBytes();

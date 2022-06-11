@@ -3,7 +3,7 @@ package com.github.nicholasmoser.gnt4.dol;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.github.nicholasmoser.gnt4.dol.CodeCaves.Location;
+import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
 import com.github.nicholasmoser.testing.Prereqs;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
@@ -13,11 +13,11 @@ public class CodeCavesTest {
 
   @Test
   public void testEXI2CodeCave() throws Exception {
-    assertEquals(CodeCaves.EXI2_START_ADDRESS, CodeCaves.getStartAddress(Location.EXI2));
-    assertEquals(CodeCaves.EXI2_END_ADDRESS, CodeCaves.getEndAddress(Location.EXI2));
-    assertEquals(CodeCaves.EXI2_START_OFFSET, CodeCaves.getStartOffset(Location.EXI2));
-    assertEquals(CodeCaves.EXI2_END_OFFSET, CodeCaves.getEndOffset(Location.EXI2));
-    assertEquals(CodeCaves.EXI2_SIZE, CodeCaves.getSize(Location.EXI2));
+    assertEquals(CodeCaves.EXI2_START_ADDRESS, CodeCaves.getStartAddress(CodeCave.EXI2));
+    assertEquals(CodeCaves.EXI2_END_ADDRESS, CodeCaves.getEndAddress(CodeCave.EXI2));
+    assertEquals(CodeCaves.EXI2_START_OFFSET, CodeCaves.getStartOffset(CodeCave.EXI2));
+    assertEquals(CodeCaves.EXI2_END_OFFSET, CodeCaves.getEndOffset(CodeCave.EXI2));
+    assertEquals(CodeCaves.EXI2_SIZE, CodeCaves.getSize(CodeCave.EXI2));
     assertEquals(CodeCaves.EXI2_SIZE, CodeCaves.EXI2_END_ADDRESS - CodeCaves.EXI2_START_ADDRESS);
     assertEquals(CodeCaves.EXI2_SIZE, CodeCaves.EXI2_END_OFFSET - CodeCaves.EXI2_START_OFFSET);
     byte[] expectedBytes = CodeCaves.getEXI2Bytes();
@@ -32,11 +32,11 @@ public class CodeCavesTest {
 
   @Test
   public void testTRKCodeCave() throws Exception {
-    assertEquals(CodeCaves.TRK_START_ADDRESS, CodeCaves.getStartAddress(Location.TRK));
-    assertEquals(CodeCaves.TRK_END_ADDRESS, CodeCaves.getEndAddress(Location.TRK));
-    assertEquals(CodeCaves.TRK_START_OFFSET, CodeCaves.getStartOffset(Location.TRK));
-    assertEquals(CodeCaves.TRK_END_OFFSET, CodeCaves.getEndOffset(Location.TRK));
-    assertEquals(CodeCaves.TRK_SIZE, CodeCaves.getSize(Location.TRK));
+    assertEquals(CodeCaves.TRK_START_ADDRESS, CodeCaves.getStartAddress(CodeCave.TRK));
+    assertEquals(CodeCaves.TRK_END_ADDRESS, CodeCaves.getEndAddress(CodeCave.TRK));
+    assertEquals(CodeCaves.TRK_START_OFFSET, CodeCaves.getStartOffset(CodeCave.TRK));
+    assertEquals(CodeCaves.TRK_END_OFFSET, CodeCaves.getEndOffset(CodeCave.TRK));
+    assertEquals(CodeCaves.TRK_SIZE, CodeCaves.getSize(CodeCave.TRK));
     assertEquals(CodeCaves.TRK_SIZE, CodeCaves.TRK_END_ADDRESS - CodeCaves.TRK_START_ADDRESS);
     assertEquals(CodeCaves.TRK_SIZE, CodeCaves.TRK_END_OFFSET - CodeCaves.TRK_START_OFFSET);
     byte[] expectedBytes = CodeCaves.getTRKBytes();
@@ -51,11 +51,11 @@ public class CodeCavesTest {
 
   @Test
   public void testRecordingCodeCave() throws Exception {
-    assertEquals(CodeCaves.RECORDING_START_ADDRESS, CodeCaves.getStartAddress(Location.RECORDING));
-    assertEquals(CodeCaves.RECORDING_END_ADDRESS, CodeCaves.getEndAddress(Location.RECORDING));
-    assertEquals(CodeCaves.RECORDING_START_OFFSET, CodeCaves.getStartOffset(Location.RECORDING));
-    assertEquals(CodeCaves.RECORDING_END_OFFSET, CodeCaves.getEndOffset(Location.RECORDING));
-    assertEquals(CodeCaves.RECORDING_SIZE, CodeCaves.getSize(Location.RECORDING));
+    assertEquals(CodeCaves.RECORDING_START_ADDRESS, CodeCaves.getStartAddress(CodeCave.RECORDING));
+    assertEquals(CodeCaves.RECORDING_END_ADDRESS, CodeCaves.getEndAddress(CodeCave.RECORDING));
+    assertEquals(CodeCaves.RECORDING_START_OFFSET, CodeCaves.getStartOffset(CodeCave.RECORDING));
+    assertEquals(CodeCaves.RECORDING_END_OFFSET, CodeCaves.getEndOffset(CodeCave.RECORDING));
+    assertEquals(CodeCaves.RECORDING_SIZE, CodeCaves.getSize(CodeCave.RECORDING));
     assertEquals(CodeCaves.RECORDING_SIZE,
         CodeCaves.RECORDING_END_ADDRESS - CodeCaves.RECORDING_START_ADDRESS);
     assertEquals(CodeCaves.RECORDING_SIZE,
