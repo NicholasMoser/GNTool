@@ -162,7 +162,7 @@ public class SeqEditor {
     offsetTextField.setText(Integer.toString(seqEdit.getOffset()));
     hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
     hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
-    Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes, seqEdit.getSize());
+    Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes, seqEdit.getPosition(), seqEdit.getSize());
     //newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
     //opcodesTextArea.setText(getOpcodesString(newBytes, seqEdit.getPosition()));
     newBytesTextArea.setText(opcodesStrings.getKey());
@@ -484,8 +484,7 @@ public class SeqEditor {
    * @param newCodes The opcode byte array.
    * @return Pair of the human-readable text of the bytes and opcodes.
    */
-  private Pair<String, String> getOpcodesStrings(List<Opcode> newCodes, int size) {
-    int position = this.selectedEdit.getPosition();
+  public static Pair<String, String> getOpcodesStrings(List<Opcode> newCodes, int position, int size) {
     Map<Integer, String> labelMap = new HashMap<>();
     StringBuilder newBytesText = new StringBuilder();
     StringBuilder opcodesText = new StringBuilder();
@@ -535,7 +534,7 @@ public class SeqEditor {
       if (label != null) {
         opcodesText.append(String.format("%s:\n",label));
       }
-      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes(position, this.selectedEdit.getSize()))));
+      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes(position, size))));
       opcodesText.append(String.format("%s\n", opcode.toAssembly(position)));
     }
     return new Pair<>(newBytesText.toString(), opcodesText.toString());

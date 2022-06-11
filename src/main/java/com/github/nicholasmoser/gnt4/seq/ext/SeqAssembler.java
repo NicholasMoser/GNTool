@@ -29,10 +29,13 @@ public class SeqAssembler {
         LinkedList<Opcode> opcodes = new LinkedList<>();
         int offset = 0;
         Map<String, Integer> labelMap = new HashMap<>();
-        Map<Integer, Function> globalFunctionMap = Functions.getFunctions(SEQPath.toString());
         Map<String, Integer> globalLabelMap = new HashMap<>();
-        for (Entry<Integer, Function> me : globalFunctionMap.entrySet()) {
-            globalLabelMap.put(me.getValue().name(), me.getKey());
+        Map<Integer, Function> globalFunctionMap = new HashMap<>();
+        if (SEQPath != null) {
+            globalFunctionMap = Functions.getFunctions(SEQPath.toString());
+            for (Entry<Integer, Function> me : globalFunctionMap.entrySet()) {
+                globalLabelMap.put(me.getValue().name(), me.getKey());
+            }
         }
         for (int i = 0; i < lines.length; i++) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
