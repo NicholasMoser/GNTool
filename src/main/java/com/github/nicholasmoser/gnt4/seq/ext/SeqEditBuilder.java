@@ -82,7 +82,7 @@ public class SeqEditBuilder {
     } else if (startOffset % 4 != 0) {
       throw new IllegalArgumentException("startOffset must be 4-byte aligned");
     } else if (endOffset - startOffset < 8) {
-      throw new IllegalArgumentException("endOffset must be more than 8 bytes larger than startOffset");
+      throw new IllegalArgumentException("endOffset must be more than or equal to 8 bytes larger than startOffset");
     } else if (newCodes == null && newBytes.length % 4 != 0 ) {
       throw new IllegalArgumentException("newBytes length must be 4-byte aligned");
     } else if (name == null) {
