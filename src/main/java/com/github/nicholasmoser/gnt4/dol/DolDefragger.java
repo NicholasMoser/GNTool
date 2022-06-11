@@ -4,6 +4,7 @@ import com.github.nicholasmoser.dol.DolUtil;
 import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
+import com.github.nicholasmoser.gnt4.dol.CodeCaves.Location;
 import com.github.nicholasmoser.ppc.Branch;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -20,13 +21,19 @@ public class DolDefragger {
 
   private static final Logger LOGGER = Logger.getLogger(DolDefragger.class.getName());
   private final Path dolPath;
-  private final byte[] hijackedBytes;
+  private final byte[] codeCaveBytes;
   private final List<ActiveInsertAsmCode> activeInsertAsmCodes;
+  private final long codeCaveStartAddress;
+  private final long codeCaveStartOffset;
+  private final Location codeCave;
 
-  public DolDefragger(Path dolPath, List<GeckoCodeGroup> codeGroups, byte[] hijackedBytes) {
+  public DolDefragger(Path dolPath, List<GeckoCodeGroup> codeGroups, Location codeCave) {
     this.dolPath = dolPath;
-    this.hijackedBytes = hijackedBytes;
+    this.codeCaveBytes = CodeCaves.getBytes(codeCave);
     this.activeInsertAsmCodes = getActiveInsertAsmCodes(codeGroups);
+    this.codeCaveStartAddress = CodeCaves.getStartAddress(codeCave);
+    this.codeCaveStartOffset = CodeCaves.getStartOffset(codeCave);
+    this.codeCave = codeCave;
   }
 
   /**
@@ -40,15 +47,15 @@ public class DolDefragger {
     if (activeInsertAsmCodes.isEmpty()) {
       return;
     }
-    long oldEndOfHijacking = getEndOfHijacking(activeInsertAsmCodes);
+    long oldEndOfHijacking = getEndOfHijacking(activeInsertAsmCodes, codeCave);
 
     // Update the codes and the dol bytes
     try (RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "rw")) {
       // Adjust the first code if necessary
       ActiveInsertAsmCode firstCode = activeInsertAsmCodes.get(0);
-      if (firstCode.getHijackedAddress() != DolHijack.START_RAM_ADDRESS) {
+      if (firstCode.getHijackedAddress() != codeCaveStartAddress) {
         LOGGER.info("Defragging code:     " + firstCode);
-        writeBytesAndUpdateCode(raf, firstCode, DolHijack.START_RAM_ADDRESS);
+        writeBytesAndUpdateCode(raf, firstCode, codeCaveStartAddress);
         LOGGER.info("Defragging complete: " + firstCode);
       }
       // Adjust the rest of the codes if necessary (and they exist)
@@ -115,9 +122,9 @@ public class DolDefragger {
    * @param currCode The code to update.
    */
   private void updateHijackedBytes(ActiveInsertAsmCode currCode) {
-    int offset = (int) (DolUtil.ram2dol(currCode.getHijackedAddress()) - DolHijack.START_DOL_OFFSET);
+    int offset = (int) (DolUtil.ram2dol(currCode.getHijackedAddress()) - codeCaveStartOffset);
     int length = currCode.getBytes().length;
-    byte[] originalBytes = Arrays.copyOfRange(hijackedBytes, offset, offset + length);
+    byte[] originalBytes = Arrays.copyOfRange(codeCaveBytes, offset, offset + length);
     currCode.setHijackedBytes(originalBytes);
   }
 
@@ -143,15 +150,17 @@ public class DolDefragger {
    * Return the current end of hijacked bytes in the dol.
    *
    * @param activeInsertAsmCodes The active asm insertion codes.
+   * @param codeCave The code cave to use.
    * @return The end of hijacked bytes in the dol.
    */
-  public static long getEndOfHijacking(List<ActiveInsertAsmCode> activeInsertAsmCodes) {
-    long furthestEnd = DolHijack.START_RAM_ADDRESS;
+  public static long getEndOfHijacking(List<ActiveInsertAsmCode> activeInsertAsmCodes, Location codeCave) {
+    long furthestEnd = CodeCaves.getStartAddress(codeCave);
+    long endRamAddress = CodeCaves.getEndAddress(codeCave);
     for (ActiveInsertAsmCode insertCode : activeInsertAsmCodes) {
       long hijackedAddress = insertCode.getHijackedAddress();
       int length = insertCode.getHijackedBytes().length;
       long end = hijackedAddress + length;
-      if (end > DolHijack.END_RAM_ADDRESS) {
+      if (end > endRamAddress) {
         throw new IllegalStateException("codeGroups extends past max hijack: " + activeInsertAsmCodes);
       } else if (end > furthestEnd) {
         furthestEnd = end;
@@ -169,7 +178,7 @@ public class DolDefragger {
    * @return If defragging has occurred.
    */
   private boolean hasDefraggingOccurred(long oldEndOfHijacking) {
-    long newEndOfHijacking = getEndOfHijacking(activeInsertAsmCodes);
+    long newEndOfHijacking = getEndOfHijacking(activeInsertAsmCodes, codeCave);
     long diff = oldEndOfHijacking - newEndOfHijacking;
     if (diff < 0) {
       String msg = "Somehow the new end of hijacking is further than before, this is unexpected.";
@@ -189,15 +198,15 @@ public class DolDefragger {
    * @throws IOException If any I/O issues occur
    */
   private void updateBytesAfterDefrag(RandomAccessFile raf, long oldEndOfHijacking) throws IOException {
-    long newEndOfHijacking = getEndOfHijacking(activeInsertAsmCodes);
+    long newEndOfHijacking = getEndOfHijacking(activeInsertAsmCodes, codeCave);
     long diff = oldEndOfHijacking - newEndOfHijacking;
-    long dolStartOffset = DolUtil.ram2dol(newEndOfHijacking);
-    int hijackOffset = (int) (dolStartOffset - DolHijack.START_DOL_OFFSET);
+    long start = DolUtil.ram2dol(newEndOfHijacking);
+    int hijackOffset = (int) (start - codeCaveStartOffset);
     int hijackEnd = (int) (hijackOffset + diff);
 
     // Write the original bytes from the dol back to the dol
-    byte[] originalBytes = Arrays.copyOfRange(hijackedBytes, hijackOffset, hijackEnd);
-    raf.seek(dolStartOffset);
+    byte[] originalBytes = Arrays.copyOfRange(codeCaveBytes, hijackOffset, hijackEnd);
+    raf.seek(start);
     raf.write(originalBytes);
   }
 }

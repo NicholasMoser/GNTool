@@ -3,8 +3,12 @@ package com.github.nicholasmoser.gnt4.dol;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
+import com.github.nicholasmoser.gecko.GeckoCodeJSON;
+import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gecko.InsertAsmCode;
+import com.github.nicholasmoser.gecko.Write32BitsCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
+import com.github.nicholasmoser.gnt4.dol.CodeCaves.Location;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.HttpUtils;
 import java.io.IOException;
@@ -12,6 +16,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,36 +26,13 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * Class for hijacking code in the dol for GNT4. The code currently hijacked is a space of 2744
- * bytes relating to AMC EXI2 stub library code. This code was used for debugging actual hardware
- * and can be safely overridden.
- *
- * We used to override the recording functionality ({@link #OLD_START_RAM_ADDRESS}), but recording
- * can now be used; therefore we cannot override this code anymore.
+ * Class for hijacking code in the dol for GNT4. It is considered hijacking since code will be
+ * overwritten in the dol. Ideally we only write over unused code. These unused code locations that
+ * we overwrite are called {@link CodeCaves}.
  */
 public class DolHijack {
 
   private static final Logger LOGGER = Logger.getLogger(DolHijack.class.getName());
-
-  // Inclusive
-  public static final int START_RAM_ADDRESS = 0x80196824;
-  public static final int START_DOL_OFFSET = 0x193824;
-
-  // Exclusive
-  public static final int END_RAM_ADDRESS = 0x801972dc;
-  public static final int END_DOL_OFFSET = 0x1942DC;
-
-  public static final int SIZE = 0xAB8; // 2744
-
-  // Inclusive
-  public final static long OLD_START_RAM_ADDRESS = 0x80086F58L;
-  public final static long OLD_START_DOL_OFFSET = 0x83F58L;
-
-  // Exclusive
-  public final static long OLD_END_RAM_ADDRESS = 0x800873FCL;
-  public final static long OLD_END_DOL_OFFSET = 0x843FC;
-
-  public final static int OLD_SIZE = 0x4A4; // 1188
 
   private final static String KNOWN_CODES_RESOURCE = "known_codes.json";
   private final static String KNOWN_CODES_URL = "https://raw.githubusercontent.com/NicholasMoser/GNTool/master/src/main/resources/com/github/nicholasmoser/gnt4/dol/known_codes.json";
@@ -61,13 +43,15 @@ public class DolHijack {
    * Returns whether or not the given Gecko codes overflow the limit of hijacked code. Logs and
    * displays a message if so.
    *
-   * @param newCodes The GeckoCode List to check.
+   * @param existingCodeGroups The existing code groups.
+   * @param newCodes           The GeckoCode List to check.
+   * @param codeCave           The code cave to write to.
    * @return If the Gecko codes overflow the limit of hijacked code.
    */
   public static boolean checkHijackOverflow(List<GeckoCodeGroup> existingCodeGroups,
-      List<GeckoCode> newCodes) {
-    long furthestEnd = getEndOfHijacking(existingCodeGroups);
-    long bytesLeft = DolHijack.END_RAM_ADDRESS - furthestEnd;
+      List<GeckoCode> newCodes, Location codeCave) {
+    long furthestEnd = getEndOfHijacking(existingCodeGroups, codeCave);
+    long bytesLeft = CodeCaves.getEndAddress(codeCave) - furthestEnd;
     long totalBytes = 0;
     for (GeckoCode code : newCodes) {
       if (code instanceof InsertAsmCode insertCode) {
@@ -88,17 +72,19 @@ public class DolHijack {
    * Returns the end of hijacked codes in the given list of code groups.
    *
    * @param existingCodeGroups The existing code groups to find the furthest end of hijacking.
+   * @param codeCave           The code cave to write codes to.
    * @return The address at the end of hijacking.
    */
-  public static long getEndOfHijacking(List<GeckoCodeGroup> existingCodeGroups) {
-    long furthestEnd = DolHijack.START_RAM_ADDRESS;
+  public static long getEndOfHijacking(List<GeckoCodeGroup> existingCodeGroups, Location codeCave) {
+    long furthestEnd = CodeCaves.getStartAddress(codeCave);
+    long endRamAddress = CodeCaves.getEndAddress(codeCave);
     for (GeckoCodeGroup group : existingCodeGroups) {
       for (GeckoCode code : group.getCodes()) {
         if (code instanceof ActiveInsertAsmCode insertCode) {
           long hijackedAddress = insertCode.getHijackedAddress();
           int length = insertCode.getHijackedBytes().length;
           long end = hijackedAddress + length;
-          if (end > DolHijack.END_RAM_ADDRESS) {
+          if (end > endRamAddress) {
             throw new IllegalStateException(
                 "codeGroups extends past max hijack: " + existingCodeGroups);
           } else if (end > furthestEnd) {
@@ -115,13 +101,16 @@ public class DolHijack {
    * return false. If there are, create a new codes JSON file and return true. This will only work
    * with known codes.
    *
-   * @param dolPath The path to the dol.
-   * @param originalBytes The original bytes in the dol that can be hijacked.
+   * @param dolPath  The path to the dol.
+   * @param codeCave The code cave to write codes to.
    * @return If codes were found to be injected and a new codes JSON file was created.
    * @throws IOException if an I/O error occurs
    */
-  public static boolean handleActiveCodesButNoCodeFile(Path dolPath, byte[] originalBytes) throws IOException {
-    byte[] currentBytes = getCurrentBytes(dolPath);
+  public static boolean handleActiveCodesButNoCodeFile(Path dolPath, Location codeCave)
+      throws IOException {
+    byte[] currentBytes = getCurrentBytes(dolPath, codeCave);
+    byte[] originalBytes = CodeCaves.getBytes(codeCave);
+    long codeCaveStartAddress = CodeCaves.getStartAddress(codeCave);
     assertSameSize(originalBytes, currentBytes);
     if (Arrays.equals(originalBytes, currentBytes)) {
       return false;
@@ -130,7 +119,7 @@ public class DolHijack {
     JSONArray codesList = new JSONArray();
     int i = 0;
     while (true) {
-      CodeMatchResult result = findCodeMatch(currentBytes, originalBytes, i);
+      CodeMatchResult result = findCodeMatch(currentBytes, originalBytes, i, codeCaveStartAddress);
       i = result.getNewIndex();
       if (result.isCodeMatch()) {
         JSONObject codeGroup = result.getCodeGroup().get();
@@ -148,14 +137,15 @@ public class DolHijack {
         if (isAtMatchingWord(subsection1, subsection2)) {
           // Check for empty space between codes
           // TODO: Be smart and remove empty space
-          while(originalBytes[i] == currentBytes[i]) {
+          while (originalBytes[i] == currentBytes[i]) {
             i++;
           }
           continue;
         }
         // There's a lot of different reasons this could occur, but they all will require manual
         // inspection of the user's dol. Ask them to just log an issue.
-        throw new IOException("A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
+        throw new IOException(
+            "A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
       }
       // Write the codes list to the codes.json file
       Path codesJson = dolPath.getParent().resolve("../../codes.json");
@@ -197,12 +187,14 @@ public class DolHijack {
   /**
    * Attempts to find and return a matching code in the current set of bytes.
    *
-   * @param currentBytes The current bytes to search for a matching code.
-   * @param originalBytes The original bytes at the same location of the current bytes.
-   * @param i The index in the current and original bytes.
+   * @param currentBytes         The current bytes to search for a matching code.
+   * @param originalBytes        The original bytes at the same location of the current bytes.
+   * @param i                    The index in the current and original bytes.
+   * @param codeCaveStartAddress The starting address of the code cave.
    * @return The result of trying to find a code match.
    */
-  private static CodeMatchResult findCodeMatch(byte[] currentBytes, byte[] originalBytes, int i) throws IOException {
+  private static CodeMatchResult findCodeMatch(byte[] currentBytes, byte[] originalBytes, int i,
+      long codeCaveStartAddress) throws IOException {
     if (CODES == null) {
       CODES = loadCodes();
     }
@@ -225,7 +217,7 @@ public class DolHijack {
           if (Arrays.equals(subsection, codeBytes)) {
             // Code match
             byte[] hijackedBytes = Arrays.copyOfRange(originalBytes, i, i + codeBytes.length + 4);
-            code.put("hijackedAddress",  ByteUtils.fromLong(START_RAM_ADDRESS + i));
+            code.put("hijackedAddress", ByteUtils.fromLong(codeCaveStartAddress + i));
             code.put("hijackedBytes", ByteUtils.bytesToHexString(hijackedBytes));
             code.put("bytes", ByteUtils.bytesToHexString(codeBytes) + "00000000");
             i += codeBytes.length;
@@ -254,17 +246,19 @@ public class DolHijack {
   }
 
   /**
-   * Gets the current bytes of the dol injection area of the given dol path.
+   * Gets the current bytes of the code cave from the given dol.
    *
-   * @param dolPath The path to the dol.
-   * @return The code bytes of the injection area.
+   * @param dolPath  The path to the dol.
+   * @param codeCave The code cave.
+   * @return The code bytes of the code cave.
    * @throws IOException if an I/O error occurs
    */
-  private static byte[] getCurrentBytes(Path dolPath) throws IOException {
-    byte[] currentBytes = new byte[SIZE];
+  private static byte[] getCurrentBytes(Path dolPath, Location codeCave) throws IOException {
+    int size = CodeCaves.getSize(codeCave);
+    byte[] currentBytes = new byte[size];
     try (RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "r")) {
-      raf.seek(START_DOL_OFFSET);
-      if (raf.read(currentBytes) != SIZE) {
+      raf.seek(CodeCaves.getStartOffset(codeCave));
+      if (raf.read(currentBytes) != size) {
         throw new IOException("Unable to check for active codes with no code file.");
       }
     }
@@ -308,28 +302,60 @@ public class DolHijack {
   }
 
   /**
-   * Returns whether this dol is using the old way of code hijacking, that is, overriding the
-   * recording code.
+   * Returns whether this dol is using a specific code cave.
    *
    * @param dolPath The dol to check.
+   * @param codeCave The code cave to check.
    * @return If the dol is using the old way of code hijacking.
    * @throws IOException if an I/O error occurs
    */
-  public static boolean isUsingOldCodeHihacking(Path dolPath) throws IOException {
-    byte[] originalHijackedBytes;
-    try(InputStream is = DolHijack.class.getResourceAsStream("old_hijack_original_bytes.bin")) {
-      if (is == null) {
-        throw new IllegalStateException("Unable to find resource old_hijack_original_bytes.bin");
+  public static boolean isUsingCodeCave(Path dolPath, Location codeCave) throws IOException {
+    int size = CodeCaves.getSize(codeCave);
+    long offset = CodeCaves.getStartOffset(codeCave);
+    byte[] vanillaBytes = CodeCaves.getBytes(codeCave);
+    byte[] actualBytes = new byte[size];
+    try (RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "r")) {
+      raf.seek(offset);
+      if (raf.read(actualBytes) != size) {
+        throw new IOException("Failed to read bytes for code cave: " + codeCave);
       }
-      originalHijackedBytes = is.readAllBytes();
+      return !Arrays.equals(actualBytes, vanillaBytes);
     }
-    try(RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "r")) {
-      byte[] currentRecordingCodeBytes = new byte[OLD_SIZE];
-      raf.seek(OLD_START_DOL_OFFSET);
-      if (raf.read(currentRecordingCodeBytes) != OLD_SIZE) {
-        throw new IOException("Failed to read bytes for recording code");
+  }
+
+  /**
+   * Moves codes in the dol given a code file to a different code cave.
+   *
+   * @param dol The dol file with the codes.
+   * @param codeFile The current code file describing codes in the dol.
+   * @param to The code cave to move the codes to.
+   * @throws IOException if an I/O error occurs
+   */
+  public static void moveCodes(Path dol, Path codeFile, Location to)
+      throws IOException {
+    long hijackAddress = CodeCaves.getStartAddress(to);
+    GeckoWriter writer = new GeckoWriter(dol);
+    List<GeckoCodeGroup> oldCodeGroups = GeckoCodeJSON.parseFile(codeFile);
+    List<GeckoCodeGroup> newCodeGroups = new ArrayList<>(oldCodeGroups.size());
+    for (GeckoCodeGroup codeGroup : oldCodeGroups) {
+      List<GeckoCode> oldCodes = codeGroup.getCodes();
+      List<GeckoCode> newCodes = new ArrayList<>(oldCodes.size());
+      // Convert old codes to new codes
+      for (GeckoCode oldCode : oldCodes) {
+        if (oldCode instanceof InsertAsmCode code) {
+          newCodes.add(new InsertAsmCode(code.getBytes(), code.getTargetAddress()));
+        } else if (oldCode instanceof Write32BitsCode code) {
+          newCodes.add(new Write32BitsCode(code.getBytes(), code.getTargetAddress()));
+        } else {
+          throw new IOException("Code not yet supported");
+        }
       }
-      return !Arrays.equals(currentRecordingCodeBytes, originalHijackedBytes);
+      // Remove existing codes and write new codes
+      writer.removeCodes(codeGroup);
+      GeckoCodeGroup group = writer.writeCodes(newCodes, codeGroup.getName(), hijackAddress);
+      newCodeGroups.add(group);
+      hijackAddress = getEndOfHijacking(newCodeGroups, to);
     }
+    GeckoCodeJSON.writeFile(newCodeGroups, codeFile);
   }
 }
