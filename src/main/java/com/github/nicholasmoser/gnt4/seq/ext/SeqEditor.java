@@ -10,6 +10,7 @@ import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.Ranges;
 import java.awt.Desktop;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URI;
@@ -18,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -156,12 +156,26 @@ public class SeqEditor {
     this.selectedEdit = seqEdit;
     String editName = seqEdit.getName();
     byte[] oldBytes = seqEdit.getOldBytes();
-    //byte[] newBytes = seqEdit.getNewBytes();
+    List<Opcode> oldCodes = new LinkedList<>();
+    ByteStream bs = new ByteStream(oldBytes);
+    while (bs.bytesAreLeft()) {
+      try {
+        oldCodes.add(SeqHelper.getSeqOpcode(bs, bs.peekBytes(2)[0], bs.peekBytes(2)[1]));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    StringBuilder sb = new StringBuilder();
+    for (Opcode op : oldCodes) {
+      sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes(seqEdit.getOffset(), oldBytes.length))));
+    }
     List<Opcode> newCodes = seqEdit.getNewCodes();
     nameTextArea.setText(editName);
     offsetTextField.setText(Integer.toString(seqEdit.getOffset()));
     hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
-    hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
+    //hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
+    hijackedBytesTextArea.setText(sb.toString());
     Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes, seqEdit.getPosition(), seqEdit.getSize());
     //newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
     //opcodesTextArea.setText(getOpcodesString(newBytes, seqEdit.getPosition()));

@@ -40,6 +40,10 @@ public class SeqAssembler {
         for (int i = 0; i < lines.length; i++) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             String operation = lines[i];
+            if (operation.contains("//")) {
+                operation = operation.substring(0, operation.indexOf("//"));
+            }
+            operation = operation.replaceAll("\\s+$", "");
             if (operation.endsWith(":")) {
                 labelMap.put(operation.replace(":","").replace(" ",""),offset);
                 continue;
