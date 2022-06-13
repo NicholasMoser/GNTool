@@ -21,6 +21,7 @@ import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
+import com.github.nicholasmoser.gnt4.cpu.CPUFlags;
 import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
 import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
@@ -116,6 +117,8 @@ public class MenuController {
   public Button validateCodes;
   public Button addCodes;
   public Button removeCode;
+  public ComboBox<String> recordingFlag;
+  public ComboBox<String> recordingCounterFlag;
 
   /**
    * Toggles the code for fixing the audio.
@@ -485,6 +488,42 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Zabuza Phantom Sword Fix", e);
       Message.error("Failed to Apply Zabuza Phantom Sword Fix", e.getMessage());
+    }
+  }
+
+  @FXML
+  public void setRecordingFlag() {
+    try {
+      String flag = recordingFlag.getValue();
+      int index = CPUFlags.getRecordingCPUFlag(uncompressedDirectory);
+      if (index != -1) {
+        CPUFlags.setCPUFlag(uncompressedDirectory, index, CPUFlags.CPU_BRANCHES.get(index));
+      }
+      if (!flag.equals("UNUSED")) {
+        CPUFlags.setCPUFlag(uncompressedDirectory, CPUFlags.actionToCPUFlag(flag),
+            CPUFlags.RECORDING_OFFSET);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Setting Recording Flag", e);
+      Message.error("Error Setting Recording Flag", e.getMessage());
+    }
+  }
+
+  @FXML
+  public void setRecordingCounterFlag() {
+    try {
+      String flag = recordingCounterFlag.getValue();
+      int index = CPUFlags.getRecordingCounterCPUFlag(uncompressedDirectory);
+      if (index != -1) {
+        CPUFlags.setCPUFlag(uncompressedDirectory, index, CPUFlags.CPU_BRANCHES.get(index));
+      }
+      if (!flag.equals("UNUSED")) {
+        CPUFlags.setCPUFlag(uncompressedDirectory, CPUFlags.actionToCPUFlag(flag),
+            CPUFlags.RECORDING_COUNTER_OFFSET);
+      }
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Setting Recording Counter Flag", e);
+      Message.error("Error Setting Recording Counter Flag", e.getMessage());
     }
   }
 
@@ -1263,6 +1302,7 @@ public class MenuController {
     selectedSeq.getSelectionModel().selectFirst();
     mainMenuCharacter.getItems().setAll(GNT4Characters.MAIN_MENU_CHARS);
     mainMenuCharacter.getSelectionModel().select(GNT4Characters.SAKURA);
+    initRecordingComboboxes();
     asyncRefresh();
   }
 
@@ -1362,7 +1402,8 @@ public class MenuController {
 
         if (DolHijack.isUsingCodeCave(dol, CodeCave.RECORDING)) {
           if (DolHijack.isUsingCodeCave(dol, CodeCave.EXI2)) {
-            throw new IOException("You are overwriting both recording code and EXI2 code, please log an issue to get this fixed.");
+            throw new IOException(
+                "You are overwriting both recording code and EXI2 code, please log an issue to get this fixed.");
           }
           String msg = "Your Gecko codes are currently overwriting recording functionality. ";
           msg += "These codes need to be moved so that recording functionality can be used. Are you okay with this?";
@@ -1536,9 +1577,7 @@ public class MenuController {
         LOGGER.log(Level.SEVERE, "Error Opening File", e);
       }
     });
-    openFile.setOnAction(event -> {
-      new Thread(task).start();
-    });
+    openFile.setOnAction(event -> new Thread(task).start());
     MenuItem openDirectory = new MenuItem("Open Directory");
     Task<Void> task2 = new Task<>() {
       @Override
@@ -1552,9 +1591,7 @@ public class MenuController {
         LOGGER.log(Level.SEVERE, "Error Opening Directory", e);
       }
     });
-    openDirectory.setOnAction(event -> {
-      new Thread(task2).start();
-    });
+    openDirectory.setOnAction(event -> new Thread(task2).start());
     MenuItem revertChanges = new MenuItem("Revert Changes");
     revertChanges.setOnAction(event -> {
       try {
@@ -1720,6 +1757,33 @@ public class MenuController {
       }
       files.remove();
       changedFiles.getItems().add(file);
+    }
+  }
+
+  private void initRecordingComboboxes() {
+    try {
+      CPUFlags.verify0010FilesConsistent(uncompressedDirectory);
+      int flag = CPUFlags.getRecordingCPUFlag(uncompressedDirectory);
+      int counterFlag = CPUFlags.getRecordingCounterCPUFlag(uncompressedDirectory);
+      recordingFlag.getItems().add("UNUSED");
+      recordingFlag.getItems().addAll(CPUFlags.CPU_FLAG_TO_ACTION.values());
+      if (flag == -1) {
+        recordingFlag.getSelectionModel().selectFirst();
+      } else {
+        recordingFlag.getSelectionModel().select(CPUFlags.CPU_FLAG_TO_ACTION.get(flag));
+      }
+      recordingCounterFlag.getItems().add("UNUSED");
+      recordingCounterFlag.getItems().addAll(CPUFlags.CPU_FLAG_TO_ACTION.values());
+      if (counterFlag == -1) {
+        recordingCounterFlag.getSelectionModel().selectFirst();
+      } else {
+        recordingCounterFlag.getSelectionModel().select(CPUFlags.CPU_FLAG_TO_ACTION.get(flag));
+      }
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Unable to Init CPU Flags for Recording", e);
+      Message.error("Unable to Init CPU Flags for Recording", e.getMessage());
+      recordingFlag.setDisable(true);
+      recordingCounterFlag.setDisable(true);
     }
   }
 }
