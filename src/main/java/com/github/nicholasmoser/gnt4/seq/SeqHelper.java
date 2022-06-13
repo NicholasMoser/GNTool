@@ -431,6 +431,7 @@ public class SeqHelper {
 
   /**
    * Returns if the ByteStream is currently at unknown binary 5.
+   * Should probably change name to something more fitting
    *
    * @param bs The ByteStream to read from.
    * @return If the ByteStream is at unknown binary 5.
