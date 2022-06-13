@@ -495,6 +495,10 @@ public class MenuController {
   public void setRecordingFlag() {
     try {
       String flag = recordingFlag.getValue();
+      String otherFlag = recordingCounterFlag.getValue();
+      if (flag.equals(otherFlag)) {
+        throw new IOException("Cannot modify CPU flag due to duplicate value.");
+      }
       int index = CPUFlags.getRecordingCPUFlag(uncompressedDirectory);
       if (index != -1) {
         CPUFlags.setCPUFlag(uncompressedDirectory, index, CPUFlags.CPU_BRANCHES.get(index));
@@ -513,6 +517,10 @@ public class MenuController {
   public void setRecordingCounterFlag() {
     try {
       String flag = recordingCounterFlag.getValue();
+      String otherFlag = recordingFlag.getValue();
+      if (flag.equals(otherFlag)) {
+        throw new IOException("Cannot modify CPU flag due to duplicate value.");
+      }
       int index = CPUFlags.getRecordingCounterCPUFlag(uncompressedDirectory);
       if (index != -1) {
         CPUFlags.setCPUFlag(uncompressedDirectory, index, CPUFlags.CPU_BRANCHES.get(index));
