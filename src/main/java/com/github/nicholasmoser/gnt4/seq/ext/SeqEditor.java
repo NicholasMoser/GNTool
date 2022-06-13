@@ -165,7 +165,6 @@ public class SeqEditor {
         e.printStackTrace();
       }
     }
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     StringBuilder sb = new StringBuilder();
     for (Opcode op : oldCodes) {
       sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes(seqEdit.getOffset(), oldBytes.length))));
@@ -267,33 +266,6 @@ public class SeqEditor {
       sb.append(String.format("%s\n",ByteUtils.bytesToHexStringWords(op.getBytes())));
     }
     newBytesTextArea.setText(sb.toString());
-    /*
-    try {
-      // Remove the existing edit
-      SeqExt.removeEdit(selectedEdit, seqPath);
-      editsByName.remove(selectedEdit.getName());
-      editList.getItems().remove(selectedEdit.getName());
-      // Create the new edit
-      String name = nameTextArea.getText();
-      int offset = readNumber(offsetTextField.getText());
-      int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
-      SeqEdit seqEdit = SeqEditBuilder.getBuilder()
-              .name(name)
-              .startOffset(offset)
-              .endOffset(offset + hijackedBytesLength)
-              .newCodes(opcodes.getKey())
-              .newLength(opcodes.getValue())
-              .seqPath(seqPath)
-              .create();
-      // Add the new edit
-      SeqExt.addEdit(seqEdit, seqPath);
-      editsByName.put(name, seqEdit);
-      editList.getItems().add(name);
-      selectedEdit = seqEdit;
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Modify Edit", e);
-      Message.error("Failed to Modify Edit", e.getMessage());
-    }*/
   }
 
   /**
@@ -580,6 +552,19 @@ public class SeqEditor {
         raf.seek(offset);
         if (raf.read(bytes) != hijackedBytesLength) {
           throw new IOException("Failed to read " + hijackedBytesLength + " bytes.");
+        }
+        List<Opcode> oldCodes = new LinkedList<>();
+        ByteStream bs = new ByteStream(bytes);
+        while (bs.bytesAreLeft()) {
+          try {
+            oldCodes.add(SeqHelper.getSeqOpcode(bs, bs.peekBytes(2)[0], bs.peekBytes(2)[1]));
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Opcode op : oldCodes) {
+          sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes(offset, hijackedBytesLength))));
         }
         hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(bytes));
       }
