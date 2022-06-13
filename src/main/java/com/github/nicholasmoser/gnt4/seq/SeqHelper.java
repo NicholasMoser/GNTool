@@ -70,9 +70,11 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Combo;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
+import com.github.nicholasmoser.gnt4.seq.opcodes.FileName;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Push;
+import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import j2html.tags.ContainerTag;
@@ -84,6 +86,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -249,7 +252,8 @@ public class SeqHelper {
             throw new IllegalStateException("There should only be one unknown binary 5.");
           }
           uniqueBinaries.add("foundUnknownBinary5");
-          return Collections.singletonList(SeqHelper.readUnknownBinary5(bs));
+          //return Collections.singletonList(SeqHelper.readUnknownBinary5(bs));
+          return SeqHelper.readUnknownBinary5(bs);
         } else if (SeqHelper.isUnknownBinary6(bs)) {
           if (uniqueBinaries.contains("foundUnknownBinary6")) {
             throw new IllegalStateException("There should only be one unknown binary 6.");
@@ -448,15 +452,42 @@ public class SeqHelper {
    * @return If the ByteStream is at unknown binary 5.
    * @throws IOException If an I/O error occurs.
    */
-  public static Opcode readUnknownBinary5(ByteStream bs) throws IOException {
+  public static List<Opcode> readUnknownBinary5(ByteStream bs) throws IOException {
+    List<Opcode> filenames = new LinkedList<>();
+    filenames.add(UnknownOpcode.of(4, bs));
     int offset = bs.offset();
-    byte[] bytes = new byte[0x1E4];
-    if (bs.read(bytes) != 0x1E4) {
+    byte[] bytes = new byte[0x1E0];
+    if (bs.read(bytes) != 0x1E0) {
       throw new IllegalStateException("Failed to read 0x1E4 bytes");
-    } else if (bytes[0x1DF] != 0x66) {
+    } else if (bytes[0x1DB] != 0x66) {
       throw new IllegalStateException("Byte at size minus 0x5 should be 0x66");
     }
-    return new BinaryData(offset, bytes);
+    ByteStream localBs = new ByteStream(bytes);
+    StringBuilder sb = new StringBuilder();
+    //localBs.skip(4);
+    //for (byte b : bytes) {
+    int off = 4;
+    while (localBs.bytesAreLeft()) {
+      byte b = localBs.peekBytes(1)[0];
+      if (b == 0) {
+        filenames.add(new FileName(offset + off, sb.toString()));
+        sb = new StringBuilder();
+        while (b == 0) {
+          localBs.skip(1);
+          try {
+            b = localBs.peekBytes(1)[0];
+          } catch (Exception e) {
+            break;
+          }
+        }
+        off = localBs.offset();
+        continue;
+      }
+      sb.append((char) b);
+      localBs.skip(1);
+    }
+    //return new BinaryData(offset, bytes);
+    return filenames;
   }
 
   /**
