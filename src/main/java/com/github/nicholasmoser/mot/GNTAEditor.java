@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
@@ -172,6 +173,11 @@ public class GNTAEditor {
     } else {
       Message.info("Repack MOT First", "You must run Repack MOT first.");
     }
+  }
+
+  public void rewriteForGNT4(ActionEvent actionEvent) {
+    gnta.rewriteForGNT4();
+    updateAllControls(0, 0);
   }
 
   public void quit() {

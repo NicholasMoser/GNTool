@@ -4,8 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 
 /**
- * Represents a three-dimensional vertex with a fourth homogeneous vertex coordinate. See the
- * following links:
+ * Represents a three-dimensional vertex with a fourth homogeneous vertex coordinate. For more info
+ * on the fourth coordinate, see the following links:
  * <ul>
  *   <li><a href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">Homogeneous Coordinates</a></li>
  *   <li><a href="https://www.reddit.com/r/computergraphics/comments/9fe1fq/why_xyzw_for_point_projection/">Why xyzw? (For point projection)</a></li>
@@ -14,90 +14,55 @@ import java.util.Objects;
  */
 public class Coordinate {
 
-  private short x;
-  private short y;
-  private short z;
-  private short w;
+  private final float x;
+  private final float y;
+  private final float z;
+  private final float w;
 
   public Coordinate(short x, short y, short z, short w) {
+    this.x = fromShort(x);
+    this.y = fromShort(y);
+    this.z = fromShort(z);
+    this.w = fromShort(w);
+  }
+
+  public Coordinate(float x, float y, float z, float w) {
     this.x = x;
     this.y = y;
     this.z = z;
     this.w = w;
   }
 
-  public Coordinate(float x, float y, float z, float w) {
-    this.x = fromFloat(x);
-    this.y = fromFloat(y);
-    this.z = fromFloat(z);
-    this.w = fromFloat(w);
-  }
-
   public short getX() {
-    return x;
+    return toShort(x);
   }
 
   public short getY() {
-    return y;
+    return toShort(y);
   }
 
   public short getZ() {
-    return z;
+    return toShort(z);
   }
 
   public short getW() {
-    return w;
+    return toShort(w);
   }
 
   public float getFloatX() {
-    return toFloat(x);
+    return x;
   }
 
   public float getFloatY() {
-    return toFloat(y);
+    return y;
   }
 
   public float getFloatZ() {
-    return toFloat(z);
+    return z;
   }
 
   public float getFloatW() {
-    return toFloat(w);
-  }
-
-  /**
-   * Sets the X coordinate. It will be truncated from 32 to 16 bits, resulting in precision loss.
-   * @param value The X coordinate.
-   */
-  public void setFloatX(float value) {
-    x = fromFloat(value);
-  }
-
-
-  /**
-   * Sets the Y coordinate. It will be truncated from 32 to 16 bits, resulting in precision loss.
-   * @param value The Y coordinate.
-   */
-  public void setFloatY(float value) {
-    y = fromFloat(value);
-  }
-
-
-  /**
-   * Sets the Z coordinate. It will be truncated from 32 to 16 bits, resulting in precision loss.
-   * @param value The Z coordinate.
-   */
-  public void setFloatZ(float value) {
-    z = fromFloat(value);
-  }
-
-
-  /**
-   * Sets the W coordinate. It will be truncated from 32 to 16 bits, resulting in precision loss.
-   * @param value The W coordinate.
-   */
-  public void setFloatW(float value) {
-    w = fromFloat(value);
+    return w;
   }
 
   /**
@@ -107,7 +72,7 @@ public class Coordinate {
    * @param value The short to convert to a float.
    * @return The float.
    */
-  private float toFloat(short value) {
+  private float fromShort(short value) {
     ByteBuffer buffer = ByteBuffer.allocate(4);
     buffer.putShort(value);
     buffer.putShort((short) 0);
@@ -124,7 +89,7 @@ public class Coordinate {
    * @param value
    * @return
    */
-  private short fromFloat(float value) {
+  private short toShort(float value) {
     ByteBuffer buffer = ByteBuffer.allocate(4);
     buffer.putFloat(value);
     buffer.flip();
