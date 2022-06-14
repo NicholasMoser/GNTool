@@ -162,7 +162,7 @@ public class SeqEditor {
       try {
         oldCodes.add(SeqHelper.getSeqOpcode(bs, bs.peekBytes(2)[0], bs.peekBytes(2)[1]));
       } catch (IOException e) {
-        e.printStackTrace();
+        break;
       }
     }
     StringBuilder sb = new StringBuilder();
@@ -559,7 +559,7 @@ public class SeqEditor {
           try {
             oldCodes.add(SeqHelper.getSeqOpcode(bs, bs.peekBytes(2)[0], bs.peekBytes(2)[1]));
           } catch (IOException e) {
-            e.printStackTrace();
+            break;
           }
         }
         StringBuilder sb = new StringBuilder();
