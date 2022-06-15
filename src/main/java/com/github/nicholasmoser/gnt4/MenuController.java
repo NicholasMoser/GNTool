@@ -58,6 +58,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -488,6 +489,16 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Apply Zabuza Phantom Sword Fix", e);
       Message.error("Failed to Apply Zabuza Phantom Sword Fix", e.getMessage());
+    }
+  }
+
+  @FXML
+  public void fixRecordingTextSize() {
+    try {
+      CPUFlags.fixRecordingTextSize(uncompressedDirectory.resolve(DOL));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Fixing Recording Text Size", e);
+      Message.error("Error Fixing Recording Text Size", e.getMessage());
     }
   }
 
@@ -1785,7 +1796,7 @@ public class MenuController {
       if (counterFlag == -1) {
         recordingCounterFlag.getSelectionModel().selectFirst();
       } else {
-        recordingCounterFlag.getSelectionModel().select(CPUFlags.CPU_FLAG_TO_ACTION.get(flag));
+        recordingCounterFlag.getSelectionModel().select(CPUFlags.CPU_FLAG_TO_ACTION.get(counterFlag));
       }
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Unable to Init CPU Flags for Recording", e);

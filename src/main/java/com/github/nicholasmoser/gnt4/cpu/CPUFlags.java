@@ -213,4 +213,19 @@ public class CPUFlags {
     }
     throw new IllegalArgumentException(action + " action not found");
   }
+
+  /**
+   * Fixes the recording text size in the dol. This byte is a bit field of text properties for the
+   * recording text (and maybe other text???). The existing bit flag is 0x80. We are adding 0x20,
+   * therefore the new bit field is 0xA0.
+   *
+   * @param dol The dol to fix.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static void fixRecordingTextSize(Path dol) throws IOException {
+    try(RandomAccessFile raf = new RandomAccessFile(dol.toFile(), "rw")) {
+      raf.seek(0x8D337);
+      raf.write(0xA0);
+    }
+  }
 }
