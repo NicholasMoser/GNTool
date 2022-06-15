@@ -1372,9 +1372,9 @@ public class MenuController {
               if (!DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.RECORDING)) {
                 throw new IOException("Recording code is modified, but unable to get code file.");
               }
-              // Do the conversion
-              DolHijack.moveCodes(dol, codeFile, CodeCave.EXI2);
             }
+            // Do the conversion
+            DolHijack.moveCodes(dol, codeFile, CodeCave.EXI2);
           } else {
             throw new IOException("Codes must be converted to use code hijacking.");
           }
