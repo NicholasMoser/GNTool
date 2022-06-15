@@ -29,7 +29,6 @@ public class Functions {
     }
     Map<Integer, Function> functions = FUNCTIONS.get(fileName);
     if (functions == null) {
-      LOGGER.log(Level.INFO, "No functions found for file " + fileName);
       return Collections.emptyMap();
     }
     return functions;

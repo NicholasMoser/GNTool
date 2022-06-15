@@ -3,6 +3,7 @@ package com.github.nicholasmoser.tools;
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.graphics.TXG2TPL;
+import java.io.File;
 import javafx.concurrent.Task;
 
 import java.awt.Desktop;
@@ -19,22 +20,25 @@ public class TXG2TPLTool {
 
   private static final Logger LOGGER = Logger.getLogger(TXG2TPLTool.class.getName());
 
+  private static File currentDirectory = GNTool.USER_HOME;
+
   /**
    * Runs the TXG2TPL tool.
    *
    * @throws IOException If an I/O error occurs
    */
   public static void run() throws IOException {
-    Optional<Path> inputPath = Choosers.getInputTXG(GNTool.USER_HOME);
+    Optional<Path> inputPath = Choosers.getInputTXG(currentDirectory);
     if (inputPath.isEmpty()) {
       return;
     }
     Path input = inputPath.get();
     Optional<Path> outputPath = Choosers.getOutputDirectory(input.getParent().toFile());
-    if (inputPath.isEmpty()) {
+    if (outputPath.isEmpty()) {
       return;
     }
     Path output = outputPath.get();
+    currentDirectory = input.getParent().toFile();
     TXG2TPL.unpack(input, output);
     Task<Void> task = new Task<>() {
       @Override
