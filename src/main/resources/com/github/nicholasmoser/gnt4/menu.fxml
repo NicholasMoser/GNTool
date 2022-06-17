@@ -312,6 +312,9 @@
                      <RowConstraints vgrow="SOMETIMES" />
                      <RowConstraints vgrow="SOMETIMES" />
                    <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
+                     <RowConstraints vgrow="SOMETIMES" />
                  </rowConstraints>
                   <children>
                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#applyZTKDamageMultiplier" prefWidth="217.0" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -407,6 +410,48 @@
                            <Insets bottom="8.0" left="8.0" top="8.0" />
                         </GridPane.margin>
                      </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="CPU Option Set to Recording" GridPane.rowIndex="7">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <ComboBox fx:id="recordingFlag" maxWidth="1.7976931348623157E308" onAction="#setRecordingFlag" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </ComboBox>
+                     <ComboBox fx:id="recordingCounterFlag" maxWidth="1.7976931348623157E308" onAction="#setRecordingCounterFlag" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </ComboBox>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="CPU Option Set to Recording/Counter" GridPane.rowIndex="8">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Fix Recording Text Size" GridPane.rowIndex="6">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets left="8.0" />
+                        </GridPane.margin>
+                     </Text>
+                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#fixRecordingTextSize" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <font>
+                           <Font size="16.0" />
+                        </font>
+                        <GridPane.margin>
+                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        </GridPane.margin>
+                     </Button>
                   </children>
                </GridPane>
         </AnchorPane>
