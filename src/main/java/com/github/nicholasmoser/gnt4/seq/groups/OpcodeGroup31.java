@@ -4,6 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SetText;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.ByteArrayOutputStream;
@@ -26,13 +27,11 @@ public class OpcodeGroup31 {
 
   private static Opcode op_3100(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(bs.readBytes(4));
+    bs.skipWord();
     byte[] textBytes = SeqHelper.readString(bs);
-    baos.write(textBytes);
     String text = SeqHelper.getString(textBytes);
     String info = String.format("with text \"%s\"", text);
-    return new UnknownOpcode(offset, baos.toByteArray(), info);
+    return new SetText(offset, textBytes, info);
   }
 
   private static Opcode op_3101(ByteStream bs) throws IOException {
