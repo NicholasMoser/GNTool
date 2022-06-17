@@ -269,6 +269,20 @@ public class Seqs {
           S_01, S_02, S_03, S_04, S_05, S_06, S_07, S_08, S_09, S_0E, S_10, S_11, S_12, S_13, S_14,
           S_15, S_16, S_17, S_18, S_19, S_1E, S_20, S_21, S_22, S_23, S_24);
 
+  public static final List<String> CHRS_0000 = List
+      .of(ANK_0000, BOU_0000, CHO_0000, DOG_0000, GAI_0000, GAR_0000, HAK_0000, HI2_0000, HIN_0000,
+          INO_0000, IRU_0000, ITA_0000, JIR_0000, KAB_0000, KAK_0000, KAN_0000, KAR_0000, KIB_0000,
+          KID_0000, KIM_0000, KIS_0000, LOC_0000, MIZ_0000, NA9_0000, NAR_0000, NEJ_0000, OBO_0000,
+          ORO_0000, SA2_0000, SAK_0000, SAR_0000, SAS_0000, SIK_0000, SIN_0000, SKO_0000, TA2_0000,
+          TAY_0000, TEM_0000, TEN_0000, TSU_0000, ZAB_0000);
+
+  public static final List<String> CHRS_0010 = List
+      .of(ANK_0010, BOU_0010, CHO_0010, DOG_0010, GAI_0010, GAR_0010, HAK_0010, HI2_0010, HIN_0010,
+          INO_0010, IRU_0010, ITA_0010, JIR_0010, KAB_0010, KAK_0010, KAN_0010, KAR_0010, KIB_0010,
+          KID_0010, KIM_0010, KIS_0010, LOC_0010, MIZ_0010, NA9_0010, NAR_0010, NEJ_0010, OBO_0010,
+          ORO_0010, SA2_0010, SAK_0010, SAR_0010, SAS_0010, SIK_0010, SIN_0010, SKO_0010, TA2_0010,
+          TAY_0010, TEM_0010, TEN_0010, TSU_0010, ZAB_0010);
+
   /**
    * Tries to find the unique path name of the SEQ file from the given SEQ path. Will return an
    * empty optional in such cases as the SEQ file being renamed.
