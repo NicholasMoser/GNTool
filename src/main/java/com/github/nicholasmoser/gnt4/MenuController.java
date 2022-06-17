@@ -21,6 +21,7 @@ import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
+import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
 import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
@@ -42,7 +43,6 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import java.awt.Desktop;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,7 +57,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -90,7 +89,6 @@ public class MenuController {
   private Path uncompressedFiles;
   private GNT4Codes codes;
   private List<GeckoCodeGroup> codeGroups;
-  private byte[] originalHijackedBytes;
   public ListView<String> changedFiles;
   public ListView<String> missingFiles;
   public CheckBox audioFixCode;
@@ -620,8 +618,8 @@ public class MenuController {
         return null;
       }
     };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
+    task.exceptionProperty().addListener((observable, oldValue, e) -> {
+      if (e != null) {
         LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
         Message.error("Error Opening About Page", e.getMessage());
       }
@@ -641,8 +639,8 @@ public class MenuController {
         return null;
       }
     };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
+    task.exceptionProperty().addListener((observable, oldValue, e) -> {
+      if (e != null) {
         LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
         Message.error("Error Opening Workspace Directory", e.getMessage());
       }
@@ -697,8 +695,8 @@ public class MenuController {
         return null;
       }
     };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
+    task.exceptionProperty().addListener((observable, oldValue, e) -> {
+      if (e != null) {
         LOGGER.log(Level.SEVERE, "Error Extracting Audio", e);
         Message.error("Error Extracting Audio", e.getMessage());
       }
@@ -940,11 +938,11 @@ public class MenuController {
         return null;
       }
     };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-        if (e!=null){
-          LOGGER.log(Level.SEVERE, "Error Extracting Textures", e);
-          Message.error("Error Extracting Textures", e.getMessage());
-        }
+    task.exceptionProperty().addListener((observable, oldValue, e) -> {
+      if (e != null) {
+        LOGGER.log(Level.SEVERE, "Error Extracting Textures", e);
+        Message.error("Error Extracting Textures", e.getMessage());
+      }
     });
     new Thread(task).start();
   }
@@ -1182,7 +1180,7 @@ public class MenuController {
     GeckoReader reader = new GeckoReader();
     try {
       List<GeckoCode> codes = reader.parseCodes(text);
-      if (DolHijack.checkHijackOverflow(codeGroups, codes)) {
+      if (DolHijack.checkHijackOverflow(codeGroups, codes, CodeCave.EXI2)) {
         return;
       }
       if (targetAddressOverlap(codes)) {
@@ -1201,7 +1199,7 @@ public class MenuController {
     GeckoReader reader = new GeckoReader();
     try {
       List<GeckoCode> codes = reader.parseCodes(text);
-      if (DolHijack.checkHijackOverflow(codeGroups, codes)) {
+      if (DolHijack.checkHijackOverflow(codeGroups, codes, CodeCave.EXI2)) {
         return;
       }
       if (targetAddressOverlap(codes)) {
@@ -1211,7 +1209,7 @@ public class MenuController {
       if (!checkNameValid((name))) {
         return;
       }
-      long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups);
+      long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups, CodeCave.EXI2);
       Path dolPath = uncompressedDirectory.resolve(DOL);
       GeckoWriter writer = new GeckoWriter(dolPath);
       GeckoCodeGroup group = writer.writeCodes(codes, name, hijackStartAddress);
@@ -1257,12 +1255,6 @@ public class MenuController {
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.uncompressedFiles = uncompressedDirectory.resolve("files");
     this.codes = new GNT4Codes(uncompressedDirectory);
-    try(InputStream is = DolHijack.class.getResourceAsStream("hijack_original.bin")) {
-      if (is == null) {
-        throw new IllegalStateException("Unable to find resource hijack_original.bin");
-      }
-      this.originalHijackedBytes = is.readAllBytes();
-    }
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
@@ -1364,28 +1356,51 @@ public class MenuController {
     Platform.runLater(() -> {
       try {
         addedCodes.getItems().clear();
+
+        Path dol = uncompressedDirectory.resolve(DOL);
         Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+
+        if (DolHijack.isUsingCodeCave(dol, CodeCave.RECORDING)) {
+          if (DolHijack.isUsingCodeCave(dol, CodeCave.EXI2)) {
+            throw new IOException("You are overwriting both recording code and EXI2 code, please log an issue to get this fixed.");
+          }
+          String msg = "Your Gecko codes are currently overwriting recording functionality. ";
+          msg += "These codes need to be moved so that recording functionality can be used. Are you okay with this?";
+          if (Message.warnConfirmation("Need to Move Codes", msg)) {
+            if (!Files.isRegularFile(codeFile)) {
+              // We need the code file to do the conversion, create a code file with the old code cave
+              if (!DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.RECORDING)) {
+                throw new IOException("Recording code is modified, but unable to get code file.");
+              }
+            }
+            // Do the conversion
+            DolHijack.moveCodes(dol, codeFile, CodeCave.EXI2);
+          } else {
+            throw new IOException("Codes must be converted to use code hijacking.");
+          }
+        }
+
+        // Check code file
         if (Files.isRegularFile(codeFile)) {
           codeGroups = GeckoCodeJSON.parseFile(codeFile);
           for (GeckoCodeGroup codeGroup : codeGroups) {
             addedCodes.getItems().add(codeGroup.getName());
           }
-        } else {
-          if (DolHijack.handleActiveCodesButNoCodeFile(uncompressedDirectory.resolve(DOL), originalHijackedBytes)) {
-            // This ISO has injected codes but no associated JSON code file. The previous method
-            // call successfully created one, so now let's parse it.
-            codeGroups = GeckoCodeJSON.parseFile(codeFile);
-            for (GeckoCodeGroup codeGroup : codeGroups) {
-              addedCodes.getItems().add(codeGroup.getName());
-            }
-            String msg = "Codes were found in the dol but no codes.json file exists.\n";
-            LOGGER.info(msg + "The following codes were found: " + String
-                .join(", ", addedCodes.getItems()));
-          } else {
-            // There actually were no codes
-            codeGroups = new ArrayList<>();
+        } else if (DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.EXI2)) {
+          // This ISO has injected codes but no associated JSON code file. The previous method
+          // call successfully created one, so now let's parse it.
+          codeGroups = GeckoCodeJSON.parseFile(codeFile);
+          for (GeckoCodeGroup codeGroup : codeGroups) {
+            addedCodes.getItems().add(codeGroup.getName());
           }
+          String msg = "Codes were found in the dol but no codes.json file exists.\n";
+          LOGGER.info(msg + "The following codes were found: " + String
+              .join(", ", addedCodes.getItems()));
+        } else {
+          // There actually were no codes
+          codeGroups = new ArrayList<>();
         }
+
       } catch (Exception e) {
         validateCodes.setDisable(true);
         addCodes.setDisable(true);
@@ -1516,8 +1531,8 @@ public class MenuController {
         return null;
       }
     };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
+    task.exceptionProperty().addListener((observable, oldValue, e) -> {
+      if (e != null) {
         LOGGER.log(Level.SEVERE, "Error Opening File", e);
       }
     });
@@ -1532,8 +1547,8 @@ public class MenuController {
         return null;
       }
     };
-    task2.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
+    task2.exceptionProperty().addListener((observable, oldValue, e) -> {
+      if (e != null) {
         LOGGER.log(Level.SEVERE, "Error Opening Directory", e);
       }
     });
@@ -1650,7 +1665,7 @@ public class MenuController {
   private void defragCodeGroups(List<GeckoCodeGroup> codeGroups) {
     try {
       Path dolPath = uncompressedDirectory.resolve(DOL);
-      DolDefragger defragger = new DolDefragger(dolPath, codeGroups, originalHijackedBytes);
+      DolDefragger defragger = new DolDefragger(dolPath, codeGroups, CodeCave.EXI2);
       defragger.run();
       Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
@@ -1693,7 +1708,7 @@ public class MenuController {
    */
   private void createMissingFiles() {
     Iterator<String> files = missingFiles.getItems().iterator();
-    byte [] bytes = new byte[1024];
+    byte[] bytes = new byte[1024];
     while (files.hasNext()) {
       String file = files.next();
       Path filePath = uncompressedDirectory.resolve(file);
