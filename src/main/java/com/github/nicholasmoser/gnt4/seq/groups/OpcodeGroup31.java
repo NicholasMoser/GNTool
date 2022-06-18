@@ -19,10 +19,10 @@ public class OpcodeGroup31 {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
     return switch (opcodeByte) {
-      case 0x00 -> op_3100(bs);
+      case 0x00 -> set_text_p(bs);
       case 0x01 -> op_3101(bs);
-      case 0x03 -> op_3103(bs);
-      case 0x06 -> op_3106(bs);
+      case 0x03 -> set_text_size(bs);
+      case 0x06 -> set_text_color(bs);
       case 0x0B -> op_310B(bs);
       case 0x1B -> op_311B(bs);
       case 0x1C -> UnknownOpcode.of(0x4, bs);
@@ -30,7 +30,7 @@ public class OpcodeGroup31 {
     };
   }
 
-  private static Opcode op_3100(ByteStream bs) throws IOException {
+  private static Opcode set_text_p(ByteStream bs) throws IOException {
     int offset = bs.offset();
     bs.skipWord();
     byte[] textBytes = SeqHelper.readString(bs);
@@ -45,13 +45,13 @@ public class OpcodeGroup31 {
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
-  private static Opcode op_3103(ByteStream bs) throws IOException {
+  private static Opcode set_text_size(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     return new SetTextSize(offset, ea.getBytes(), ea.getDescription());
   }
 
-  private static Opcode op_3106(ByteStream bs) throws IOException {
+  private static Opcode set_text_color(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     StringBuilder info = new StringBuilder();
