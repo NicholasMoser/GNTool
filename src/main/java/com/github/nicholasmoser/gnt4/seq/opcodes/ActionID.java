@@ -38,6 +38,14 @@ public class ActionID implements Opcode {
     }
   }
 
+  public String getInfo() {
+    return info;
+  }
+
+  public int getActionId() {
+    return actionId;
+  }
+
   public int getActionOffset() {
     return actionOffset;
   }
