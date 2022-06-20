@@ -4,7 +4,6 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -113,12 +112,10 @@ public class SeqEditBuilder {
     if (oldBytes.length < 8) {
       throw new IllegalArgumentException("oldBytes less than 8 bytes");
     }
-    SeqEdit edit;
     if (newBytes == null) {
-      edit = new SeqEdit(name, startOffset, oldBytes, newCodes, length);
-    } else {
-      edit = new SeqEdit(name, startOffset, oldBytes, newBytes);
+      return new SeqEdit(name, startOffset, oldBytes, newCodes, length);
     }
-    return edit;
+    return new SeqEdit(name, startOffset, oldBytes, newBytes);
+
   }
 }

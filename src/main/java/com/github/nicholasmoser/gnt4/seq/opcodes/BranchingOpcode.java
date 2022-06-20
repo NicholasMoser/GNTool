@@ -10,30 +10,30 @@ import static j2html.TagCreator.div;
 
 public class BranchingOpcode implements Opcode {
 
-  private String MNEMONIC;
+  private String mnemonic;
   private byte[] bytes;
   private int offset;
   private int destination;
   private String destFuncName;
 
-public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destination) {
-    this.MNEMONIC = MNEMONIC;
+public BranchingOpcode(String mnemonic, byte[] bytes, int offset, int destination) {
+    this.mnemonic = mnemonic;
     this.bytes = bytes;
     this.offset = offset;
     this.destination = destination;
     this.destFuncName = null;
   }
 
-  public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, String destFuncName) {
-    this.MNEMONIC = MNEMONIC;
+  public BranchingOpcode(String mnemonic, byte[] bytes, int offset, String destFuncName) {
+    this.mnemonic = mnemonic;
     this.bytes = bytes;
     this.offset = offset;
     this.destination = -1;
     this.destFuncName = destFuncName;
   }
 
-  public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destination, String destFuncName) {
-    this.MNEMONIC = MNEMONIC;
+  public BranchingOpcode(String mnemonic, byte[] bytes, int offset, int destination, String destFuncName) {
+    this.mnemonic = mnemonic;
     this.bytes = bytes;
     this.offset = offset;
     this.destination = destination;
@@ -41,7 +41,7 @@ public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destinatio
   }
 
   public String getMnemonic() {
-    return MNEMONIC;
+    return mnemonic;
   }
 
   public int getDestination() {
@@ -82,27 +82,27 @@ public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destinatio
 
   @Override
   public String toString() {
-    return String.format("%05X | %s 0x%X {%s %08X}", offset, MNEMONIC, destination, ByteUtils.bytesToHexString(bytes), destination);
+    return String.format("%05X | %s 0x%X {%s %08X}", offset, mnemonic, destination, ByteUtils.bytesToHexString(bytes), destination);
   }
 
   @Override
   public String toAssembly() {
     if (destFuncName == null) {
-      return String.format("%s 0x%X", MNEMONIC, destination);
+      return String.format("%s 0x%X", mnemonic, destination);
     }
-    return String.format("%s %s", MNEMONIC, destFuncName);
+    return String.format("%s %s", mnemonic, destFuncName);
   }
 
   @Override
   public String toAssembly(int position) {
     if (destFuncName == null) {
       if (destination < position) {
-        return String.format("%s 0x%X", MNEMONIC, destination);
+        return String.format("%s 0x%X", mnemonic, destination);
       } else {
-        return String.format("%s 0x%X", MNEMONIC, destination - position);
+        return String.format("%s 0x%X", mnemonic, destination - position);
       }
     }
-    return String.format("%s %s", MNEMONIC, destFuncName);
+    return String.format("%s %s", mnemonic, destFuncName);
   }
 
   @Override
@@ -111,7 +111,7 @@ public BranchingOpcode(String MNEMONIC, byte[] bytes, int offset, int destinatio
     String destName = destFuncName != null ? destFuncName : String.format("0x%X", destination);
     String destHref = String.format("#%X", destination);
     return div(attrs(id))
-            .withText(String.format("%05X | %s ", offset, MNEMONIC))
+            .withText(String.format("%05X | %s ", offset, mnemonic))
             .with(a(destName).withHref(destHref))
             .withText(" ")
             .with(formatRawBytesHTML(getBytes()));

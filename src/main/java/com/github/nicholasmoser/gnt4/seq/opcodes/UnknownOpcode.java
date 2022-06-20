@@ -4,10 +4,8 @@ import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
 import com.github.nicholasmoser.utils.ByteStream;
-import com.github.nicholasmoser.utils.ByteUtils;
 import j2html.tags.ContainerTag;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 public class UnknownOpcode implements Opcode {
@@ -45,8 +43,8 @@ public class UnknownOpcode implements Opcode {
     int len = (op.length-1)*4;
     ByteBuffer bytes = ByteBuffer.allocate(len);
     bytes.putShort(Short.parseShort(opcode,16));
-    bytes.put(Byte.decode(op[0]));
-    bytes.put(Byte.decode(op[1]));
+    bytes.put(Short.decode(op[0]).byteValue());
+    bytes.put(Short.decode(op[1]).byteValue());
 
     for (int i = 2; i < op.length; i++){
         bytes.putInt(Long.decode(op[i]).intValue());
