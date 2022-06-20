@@ -459,7 +459,7 @@ public class SeqHelper {
     int offset = bs.offset();
     byte[] bytes = new byte[0x1E0];
     if (bs.read(bytes) != 0x1E0) {
-      throw new IllegalStateException("Failed to read 0x1E4 bytes");
+      throw new IllegalStateException("Failed to read 0x1E0 bytes");
     } else if (bytes[0x1DB] != 0x66) {
       throw new IllegalStateException("Byte at size minus 0x5 should be 0x66");
     }
