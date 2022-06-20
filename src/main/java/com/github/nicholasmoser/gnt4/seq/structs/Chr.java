@@ -1,11 +1,13 @@
 package com.github.nicholasmoser.gnt4.seq.structs;
 
-import java.util.HashMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+
 import java.util.Map;
 import java.util.Optional;
 
 public class Chr {
-  private static Map<Integer, String> OFFSET_TO_FIELD;
+  private static BiMap<Integer, String> OFFSET_TO_FIELD;
   private static Map<String, Integer> FIELD_TO_OFFSET;
 
   public static Optional<String> getField(int offset) {
@@ -22,191 +24,104 @@ public class Chr {
     return Optional.ofNullable(FIELD_TO_OFFSET.get(field));
   }
 
-  private static Map<Integer, String> initOffsetToField() {
-    Map<Integer, String> offsetToField = new HashMap<>();
-    offsetToField.put(0x0, "flags");
-    offsetToField.put(0x4, "player_id");
-    offsetToField.put(0x10, "cpu_flags");
-    offsetToField.put(0x14, "player_id_2");
-    offsetToField.put(0x18, "player_id_3");
-    offsetToField.put(0x1C, "chr_id");
-    offsetToField.put(0x30, "health_multiplier");
-    offsetToField.put(0x38, "seq_struct");
-    offsetToField.put(0x3C, "foe_seq_struct");
-    offsetToField.put(0x40, "foe_chr_p");
-    offsetToField.put(0x110, "movement_stuff");
-    offsetToField.put(0x114, "animation_stuff");
-    offsetToField.put(0x118, "knockback_function_curve_1");
-    offsetToField.put(0x11C, "knockback_function_curve_2");
-    offsetToField.put(0x120, "knockback_speed");
-    offsetToField.put(0x124, "mf_flags");
-    offsetToField.put(0x128, "af_flags");
-    offsetToField.put(0x12C, "pf_flags");
-    offsetToField.put(0x130, "nf_flags");
-    offsetToField.put(0x134, "n2f_flags");
-    offsetToField.put(0x138, "kf_flags");
-    offsetToField.put(0x13C, "k2f_flags");
-    offsetToField.put(0x140, "df_flags");
-    offsetToField.put(0x144, "d2f_flags");
-    offsetToField.put(0x148, "ef_flags");
-    offsetToField.put(0x14C, "rf_flags");
-    offsetToField.put(0x150, "cf_flags");
-    offsetToField.put(0x154, "chr_modifier_flag");
-    offsetToField.put(0x15C, "active_hitbox_check");
-    offsetToField.put(0x164, "combo_count_1");
-    offsetToField.put(0x166, "combo_count_2");
-    offsetToField.put(0x19C, "x_pos");
-    offsetToField.put(0x1A0, "y_pos");
-    offsetToField.put(0x1A4, "z_pos");
-    offsetToField.put(0x1BC, "facing_opponent");
-    offsetToField.put(0x1CC, "movement_flags");
-    offsetToField.put(0x1D4, "horizontal_push_speed");
-    offsetToField.put(0x1D8, "horizontal_push_acceleration");
-    offsetToField.put(0x1DC, "vertical_push_speed");
-    offsetToField.put(0x1E0, "vertical_push_acceleration");
-    offsetToField.put(0x1E8, "horizontal_air_speed");
-    offsetToField.put(0x1F4, "knockback_speed");
-    offsetToField.put(0x1F8, "knockback_acceleration");
-    offsetToField.put(0x230, "chr_tbl");
-    offsetToField.put(0x234, "chr_cam");
-    offsetToField.put(0x238, "act_counter_difference");
-    offsetToField.put(0x23C, "act_id");
-    offsetToField.put(0x240, "act_id_2");
-    offsetToField.put(0x258, "act_counter");
-    offsetToField.put(0x25C, "current_recoverable_damage");
-    offsetToField.put(0x260, "current_damage");
-    offsetToField.put(0x264, "current_rec");
-    offsetToField.put(0x26C, "health_frame_counter");
-    offsetToField.put(0x27C, "max_damage");
-    offsetToField.put(0x280, "new_damage");
-    offsetToField.put(0x288, "last_damage");
-    offsetToField.put(0x28C, "current_chakra");
-    offsetToField.put(0x290, "new_chakra");
-    offsetToField.put(0x294, "current_block_guard");
-    offsetToField.put(0x298, "max_block_guard");
-    offsetToField.put(0x29C, "GRD");
-    offsetToField.put(0x2A0, "confusion_flag");
-    offsetToField.put(0x2A4, "confusion_timer");
-    offsetToField.put(0x2A8, "idle_counter_2");
-    offsetToField.put(0x2AC, "hitbox_removal_timer");
-    offsetToField.put(0x2B0, "hitbox_appearance_timer");
-    offsetToField.put(0x2B4, "sync_timer_after_hitbox");
-    offsetToField.put(0x2B8, "attack_angle");
-    offsetToField.put(0x2BC, "POW");
-    offsetToField.put(0x2C0, "ANG");
-    offsetToField.put(0x2C4, "atk_multiplier");
-    offsetToField.put(0x2C8, "DMG");
-    offsetToField.put(0x2D0, "REV");
-    offsetToField.put(0x2D4, "REV2");
-    offsetToField.put(0x2D8, "block_stun");
-    offsetToField.put(0x2DC, "stand_up_timer");
-    offsetToField.put(0x2EC, "inactionable_timer");
-    offsetToField.put(0x2F0, "intangible_timer");
-    offsetToField.put(0x2F8, "grab_break_counter");
-    offsetToField.put(0x54C, "active_throws");
-    offsetToField.put(0x7D8, "starting_string_offset");
-    offsetToField.put(0x7E2, "next_attack_id");
-    offsetToField.put(0x854, "transformation_flag");
-    offsetToField.put(0x87C, "sf_flags");
-    offsetToField.put(0x894, "air_fall_combo_counter");
-    offsetToField.put(0x8C8, "synchronous_timer");
-    offsetToField.put(0x954, "throw_target");
-    offsetToField.put(0x960, "foe_target");
-    offsetToField.put(0x974, "foe_struct");
-    return offsetToField;
+  private static BiMap<Integer, String> initOffsetToField() {
+    return new ImmutableBiMap.Builder<Integer, String>()
+      .put(0x0, "flags")
+      .put(0x4, "player_id")
+      .put(0x10, "cpu_flags")
+      .put(0x14, "player_id_2")
+      .put(0x18, "player_id_3")
+      .put(0x1C, "chr_id")
+      .put(0x30, "health_multiplier")
+      .put(0x38, "seq_struct")
+      .put(0x3C, "foe_seq_struct")
+      .put(0x40, "foe_chr_p")
+      .put(0x110, "movement_stuff")
+      .put(0x114, "animation_stuff")
+      .put(0x118, "knockback_function_curve_1")
+      .put(0x11C, "knockback_function_curve_2")
+      .put(0x120, "knockback_speed")
+      .put(0x124, "mf_flags")
+      .put(0x128, "af_flags")
+      .put(0x12C, "pf_flags")
+      .put(0x130, "nf_flags")
+      .put(0x134, "n2f_flags")
+      .put(0x138, "kf_flags")
+      .put(0x13C, "k2f_flags")
+      .put(0x140, "df_flags")
+      .put(0x144, "d2f_flags")
+      .put(0x148, "ef_flags")
+      .put(0x14C, "rf_flags")
+      .put(0x150, "cf_flags")
+      .put(0x154, "chr_modifier_flag")
+      .put(0x15C, "active_hitbox_check")
+      .put(0x164, "combo_count_1")
+      .put(0x166, "combo_count_2")
+      .put(0x19C, "x_pos")
+      .put(0x1A0, "y_pos")
+      .put(0x1A4, "z_pos")
+      .put(0x1BC, "facing_opponent")
+      .put(0x1CC, "movement_flags")
+      .put(0x1D4, "horizontal_push_speed")
+      .put(0x1D8, "horizontal_push_acceleration")
+      .put(0x1DC, "vertical_push_speed")
+      .put(0x1E0, "vertical_push_acceleration")
+      .put(0x1E8, "horizontal_air_speed")
+      .put(0x1F4, "knockback_speed")
+      .put(0x1F8, "knockback_acceleration")
+      .put(0x230, "chr_tbl")
+      .put(0x234, "chr_cam")
+      .put(0x238, "act_counter_difference")
+      .put(0x23C, "act_id")
+      .put(0x240, "act_id_2")
+      .put(0x258, "act_counter")
+      .put(0x25C, "current_recoverable_damage")
+      .put(0x260, "current_damage")
+      .put(0x264, "current_rec")
+      .put(0x26C, "health_frame_counter")
+      .put(0x27C, "max_damage")
+      .put(0x280, "new_damage")
+      .put(0x288, "last_damage")
+      .put(0x28C, "current_chakra")
+      .put(0x290, "new_chakra")
+      .put(0x294, "current_block_guard")
+      .put(0x298, "max_block_guard")
+      .put(0x29C, "GRD")
+      .put(0x2A0, "confusion_flag")
+      .put(0x2A4, "confusion_timer")
+      .put(0x2A8, "idle_counter_2")
+      .put(0x2AC, "hitbox_removal_timer")
+      .put(0x2B0, "hitbox_appearance_timer")
+      .put(0x2B4, "sync_timer_after_hitbox")
+      .put(0x2B8, "attack_angle")
+      .put(0x2BC, "POW")
+      .put(0x2C0, "ANG")
+      .put(0x2C4, "atk_multiplier")
+      .put(0x2C8, "DMG")
+      .put(0x2D0, "REV")
+      .put(0x2D4, "REV2")
+      .put(0x2D8, "block_stun")
+      .put(0x2DC, "stand_up_timer")
+      .put(0x2EC, "inactionable_timer")
+      .put(0x2F0, "intangible_timer")
+      .put(0x2F8, "grab_break_counter")
+      .put(0x54C, "active_throws")
+      .put(0x7D8, "starting_string_offset")
+      .put(0x7E2, "next_attack_id")
+      .put(0x854, "transformation_flag")
+      .put(0x87C, "sf_flags")
+      .put(0x894, "air_fall_combo_counter")
+      .put(0x8C8, "synchronous_timer")
+      .put(0x954, "throw_target")
+      .put(0x960, "foe_target")
+      .put(0x974, "foe_struct")
+      .build();
   }
 
   private static Map<String, Integer> initFieldToOffset() {
-    Map<String, Integer> offsetToField = new HashMap<>();
-    offsetToField.put("flags", 0x0);
-    offsetToField.put("player_id", 0x4);
-    offsetToField.put("cpu_flags", 0x10);
-    offsetToField.put("player_id_2", 0x14);
-    offsetToField.put("player_id_3", 0x18);
-    offsetToField.put("chr_id", 0x1C);
-    offsetToField.put("health_multiplier", 0x30);
-    offsetToField.put("seq_struct", 0x38);
-    offsetToField.put("foe_seq_struct", 0x3C);
-    offsetToField.put("foe_chr_p", 0x40);
-    offsetToField.put("movement_stuff", 0x110);
-    offsetToField.put("animation_stuff", 0x114);
-    offsetToField.put("knockback_function_curve_1", 0x118);
-    offsetToField.put("knockback_function_curve_2", 0x11C);
-    offsetToField.put("knockback_speed", 0x120);
-    offsetToField.put("mf_flags", 0x124);
-    offsetToField.put("af_flags", 0x128);
-    offsetToField.put("pf_flags", 0x12C);
-    offsetToField.put("nf_flags", 0x130);
-    offsetToField.put("n2f_flags", 0x134);
-    offsetToField.put("kf_flags", 0x138);
-    offsetToField.put("k2f_flags", 0x13C);
-    offsetToField.put("df_flags", 0x140);
-    offsetToField.put("d2f_flags", 0x144);
-    offsetToField.put("ef_flags", 0x148);
-    offsetToField.put("rf_flags", 0x14C);
-    offsetToField.put("cf_flags", 0x150);
-    offsetToField.put("chr_modifier_flag", 0x154);
-    offsetToField.put("active_hitbox_check", 0x15C);
-    offsetToField.put("combo_count_1", 0x164);
-    offsetToField.put("combo_count_2", 0x166);
-    offsetToField.put("x_pos", 0x19C);
-    offsetToField.put("y_pos", 0x1A0);
-    offsetToField.put("z_pos", 0x1A4);
-    offsetToField.put("facing_opponent", 0x1BC);
-    offsetToField.put("movement_flags", 0x1CC);
-    offsetToField.put("horizontal_push_speed", 0x1D4);
-    offsetToField.put("horizontal_push_acceleration", 0x1D8);
-    offsetToField.put("vertical_push_speed", 0x1DC);
-    offsetToField.put("vertical_push_acceleration", 0x1E0);
-    offsetToField.put("horizontal_air_speed", 0x1E8);
-    offsetToField.put("knockback_speed", 0x1F4);
-    offsetToField.put("knockback_acceleration", 0x1F8);
-    offsetToField.put("chr_tbl", 0x230);
-    offsetToField.put("chr_cam", 0x234);
-    offsetToField.put("act_counter_difference", 0x238);
-    offsetToField.put("act_id", 0x23C);
-    offsetToField.put("act_id_2", 0x240);
-    offsetToField.put("act_counter", 0x258);
-    offsetToField.put("current_recoverable_damage", 0x25C);
-    offsetToField.put("current_damage", 0x260);
-    offsetToField.put("current_rec", 0x264);
-    offsetToField.put("health_frame_counter", 0x26C);
-    offsetToField.put("max_damage", 0x27C);
-    offsetToField.put("new_damage", 0x280);
-    offsetToField.put("last_damage", 0x288);
-    offsetToField.put("current_chakra", 0x28C);
-    offsetToField.put("new_chakra", 0x290);
-    offsetToField.put("current_block_guard", 0x294);
-    offsetToField.put("max_block_guard", 0x298);
-    offsetToField.put("GRD", 0x29C);
-    offsetToField.put("confusion_flag", 0x2A0);
-    offsetToField.put("confusion_timer", 0x2A4);
-    offsetToField.put("idle_counter_2", 0x2A8);
-    offsetToField.put("hitbox_removal_timer", 0x2AC);
-    offsetToField.put("hitbox_appearance_timer", 0x2B0);
-    offsetToField.put("sync_timer_after_hitbox", 0x2B4);
-    offsetToField.put("attack_angle", 0x2B8);
-    offsetToField.put("POW", 0x2BC);
-    offsetToField.put("ANG", 0x2C0);
-    offsetToField.put("atk_multiplier", 0x2C4);
-    offsetToField.put("DMG", 0x2C8);
-    offsetToField.put("REV", 0x2D0);
-    offsetToField.put("REV2", 0x2D4);
-    offsetToField.put("block_stun", 0x2D8);
-    offsetToField.put("stand_up_timer", 0x2DC);
-    offsetToField.put("inactionable_timer", 0x2EC);
-    offsetToField.put("intangible_timer", 0x2F0);
-    offsetToField.put("grab_break_counter", 0x2F8);
-    offsetToField.put("active_throws", 0x54C);
-    offsetToField.put("starting_string_offset", 0x7D8);
-    offsetToField.put("next_attack_id", 0x7E2);
-    offsetToField.put("transformation_flag", 0x854);
-    offsetToField.put("sf_flags", 0x87C);
-    offsetToField.put("air_fall_combo_counter", 0x894);
-    offsetToField.put("synchronous_timer", 0x8C8);
-    offsetToField.put("throw_target", 0x954);
-    offsetToField.put("foe_target", 0x960);
-    offsetToField.put("foe_struct", 0x974);
-    return offsetToField;
+    if (OFFSET_TO_FIELD == null) {
+      OFFSET_TO_FIELD = initOffsetToField();
+    }
+    return OFFSET_TO_FIELD.inverse();
   }
 }
