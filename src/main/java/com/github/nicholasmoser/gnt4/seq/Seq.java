@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -273,7 +274,7 @@ public class Seq {
 
   public static final Map<String, Integer> NF_FLAGS_GET = NF_FLAGS.inverse();
 
-  public static final BiMap<Integer, String> N2F_FLAGS = new ImmutableBiMap.Builder<Integer, String>()
+  public static final Map<Integer, String> N2F_FLAGS = new ImmutableMap.Builder<Integer, String>()
           .put(0x00000001, "KAMAE")
           .put(0x00000002, "KAWARIMI")
           .put(0x00000004, "NAGENUKE")
@@ -308,7 +309,20 @@ public class Seq {
           .put(0x80000000, "NULL")
           .build();
 
-  public static final Map<String, Integer> N2F_FLAGS_GET = N2F_FLAGS.inverse();
+  public static final Map<String, Integer> N2F_FLAGS_GET = new ImmutableMap.Builder<String, Integer>()
+          .put("KAMAE", 0x00000001)
+          .put("KAWARIMI", 0x00000002)
+          .put("NAGENUKE", 0x00000004)
+          .put("PUSH", 0x00000008)
+          .put("DEFEFT", 0x00000010)
+          .put("HITSHOCK", 0x00000020)
+          .put("DEFSHOCK", 0x00000040)
+          .put("GAGE", 0x00000080)
+          .put("TYAKURA", 0x00000100)
+          .put("CAMERAOFF", 0x00000200)
+          .put("CUTOFF", 0x00000400)
+          .put("KABEHITSP", 0x00000800)
+          .build();
 
   public static final BiMap<Integer, String> KF_FLAGS = new ImmutableBiMap.Builder<Integer, String>()
           .put(0x00000001, "REPLAY")
@@ -347,7 +361,7 @@ public class Seq {
 
   public static final Map<String, Integer> KF_FLAGS_GET = KF_FLAGS.inverse();
 
-  public static final BiMap<Integer, String> K2F_FLAGS = new ImmutableBiMap.Builder<Integer, String>()
+  public static final Map<Integer, String> K2F_FLAGS = new ImmutableMap.Builder<Integer, String>()
           .put(0x00000001, "YORO2")
           .put(0x00000002, "HIKI")
           .put(0x00000004, "HIKI2")
@@ -382,7 +396,21 @@ public class Seq {
           .put(0x80000000, "NULL")
           .build();
 
-  public static final Map<String, Integer> K2F_FLAGS_GET = K2F_FLAGS.inverse();
+  public static final Map<String, Integer> K2F_FLAGS_GET = new ImmutableMap.Builder<String, Integer>()
+          .put("YORO2", 0x00000001)
+          .put("HIKI", 0x00000002)
+          .put("HIKI2", 0x00000004)
+          .put("MISSION", 0x00000008)
+          .put("NATEMI", 0x00000010)
+          .put("SUPERARMOR", 0x00000020)
+          .put("MOTO2", 0x00000040)
+          .put("ATKALLCAN", 0x00000080)
+          .put("TOJI", 0x00000100)
+          .put("HASA", 0x00000200)
+          .put("SHAVE", 0x00000400)
+          .put("NEMU", 0x00000800)
+          .put("WING", 0x00001000)
+          .build();
 
   public static final BiMap<Integer, String> DF_FLAGS = new ImmutableBiMap.Builder<Integer, String>()
           .put(0x00000001, "F")
@@ -421,7 +449,7 @@ public class Seq {
 
   public static final Map<String, Integer> DF_FLAGS_GET = DF_FLAGS.inverse();
 
-  public static final BiMap<Integer, String> D2F_FLAGS = new ImmutableBiMap.Builder<Integer, String>()
+  public static final Map<Integer, String> D2F_FLAGS = new ImmutableMap.Builder<Integer, String>()
           .put(0x00000001, "MATO")
           .put(0x00000002, "HIKI")
           .put(0x00000004, "HIKI2")
@@ -456,7 +484,17 @@ public class Seq {
           .put(0x80000000, "NULL")
           .build();
 
-  public static final Map<String, Integer> D2F_FLAGS_GET = D2F_FLAGS.inverse();
+  public static final Map<String, Integer> D2F_FLAGS_GET = new ImmutableMap.Builder<String, Integer>()
+          .put("MATO", 0x00000001)
+          .put("HIKI", 0x00000002)
+          .put("HIKI2", 0x00000004)
+          .put("MISSION", 0x00000008)
+          .put("BDGUARD", 0x00000010)
+          .put("MOTO2", 0x00000020)
+          .put("TOJI", 0x00000040)
+          .put("HASA", 0x00000080)
+          .put("NEMU", 0x00000100)
+          .build();
 
   public static final BiMap<Integer, String> EF_FLAGS = new ImmutableBiMap.Builder<Integer, String>()
           .put(0x00000001, "KABE")
