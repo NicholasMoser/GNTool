@@ -93,6 +93,7 @@ public class SeqEdit {
    * @param offset The offset in the seq file of this seq edit.
    * @param oldBytes The old bytes that this seq edit overrides.
    * @param newCodes The new codes that this seq edit executes.
+   * @param size The total size in bytes for the new edit
    */
   public SeqEdit(String name, int offset, byte[] oldBytes, List<Opcode> newCodes, int size) {
     if (name == null) {
