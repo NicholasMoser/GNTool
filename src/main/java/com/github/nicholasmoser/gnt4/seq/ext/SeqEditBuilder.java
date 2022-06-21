@@ -101,7 +101,7 @@ public class SeqEditBuilder {
       try {
         oldBytes = Arrays.copyOfRange(seqBytes, startOffset, endOffset);
       } catch (Exception e) {
-        throw new IOException("Failed to read old bytes at offset " + startOffset);
+        throw new IOException("Failed to read old bytes at offset " + startOffset, e);
       }
     } else if (seqPath != null) {
       try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
