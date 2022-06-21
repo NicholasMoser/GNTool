@@ -22,8 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SeqAssembler {
+
+    private static final Logger LOGGER = Logger.getLogger(SeqAssembler.class.getName());
 
     /**
      *
@@ -234,7 +238,7 @@ public class SeqAssembler {
                                 } else if (branches.size() > 0) {
                                     currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], offsets, branches);
                                 } else {
-                                    System.err.printf("Neither offsets nor label names given for branch table at offset %d%n", offset);
+                                    LOGGER.log(Level.SEVERE, String.format("Neither offsets nor label names given for branch table at offset %d%n", offset));
                                     continue;
                                 }
                             } else {
@@ -776,24 +780,24 @@ public class SeqAssembler {
             offset += currentOpcode.getBytes().length;
         }
         for (Opcode opcode : opcodes) {
-            if (opcode instanceof BranchingOpcode) {
-                Integer destination = labelMap.get(((BranchingOpcode) opcode).getDestinationFunctionName());
+            if (opcode instanceof BranchingOpcode branchingOpcode) {
+                Integer destination = labelMap.get(branchingOpcode.getDestinationFunctionName());
                 if (destination != null) {
                     ((BranchingOpcode) opcode).setDestination(destination);
                 } else {
-                    destination = globalLabelMap.get(((BranchingOpcode) opcode).getDestinationFunctionName());
+                    destination = globalLabelMap.get(branchingOpcode.getDestinationFunctionName());
                     if (destination != null) {
-                        ((BranchingOpcode) opcode).setDestination(destination);
+                        branchingOpcode.setDestination(destination);
                     }
                 }
-                Function label = globalFunctionMap.get(((BranchingOpcode) opcode).getDestination());
+                Function label = globalFunctionMap.get(branchingOpcode.getDestination());
                 if (label != null) {
-                    ((BranchingOpcode) opcode).setDestinationFunctionName(label.name());
+                    branchingOpcode.setDestinationFunctionName(label.name());
                 }
-            } else if (opcode instanceof BranchTable) {
-                if (((BranchTable) opcode).getBranches().size() > 0) {
+            } else if (opcode instanceof BranchTable branchTable) {
+                if (branchTable.getBranches().size() > 0) {
                     List<Integer> offsets = new LinkedList<>();
-                    for (String label : ((BranchTable) opcode).getBranches()) {
+                    for (String label : branchTable.getBranches()) {
                         Integer destination = labelMap.get(label);
                         if (destination != null) {
                             offsets.add(destination);
@@ -804,12 +808,12 @@ public class SeqAssembler {
                             }
                         }
                     }
-                    ((BranchTable) opcode).setOffsets(offsets);
+                    branchTable.setOffsets(offsets);
                 }
-            } else if (opcode instanceof BranchTableLink) {
-                if (((BranchTableLink) opcode).getBranches().size() > 0) {
+            } else if (opcode instanceof BranchTableLink branchTableLink) {
+                if (branchTableLink.getBranches().size() > 0) {
                     List<Integer> offsets = new LinkedList<>();
-                    for (String label : ((BranchTableLink) opcode).getBranches()) {
+                    for (String label : branchTableLink.getBranches()) {
                         Integer destination = labelMap.get(label);
                         if (destination != null) {
                             offsets.add(destination);
@@ -820,7 +824,7 @@ public class SeqAssembler {
                             }
                         }
                     }
-                    ((BranchTableLink) opcode).setOffsets(offsets);
+                    branchTableLink.setOffsets(offsets);
                 }
             }
         }
