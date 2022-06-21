@@ -14,6 +14,7 @@ public class SeqKingTest {
   // For unit testing: compare mode is off, verbose is off, and output files are deleted
   private static final boolean COMPARE_MODE = false;
   private static final boolean VERBOSE = false;
+  private static final boolean PERMISSIVE = false;
   private static final boolean DELETE_FILE = true;
 
   @Test
@@ -532,7 +533,7 @@ public class SeqKingTest {
       String output = seq.toString().replace(".seq", "_test.html");
       outputPath = Paths.get(output);
       Optional<String> fileName = Seqs.getFileName(seq);
-      SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE);
+      SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE, PERMISSIVE);
       String expected = seq.toString().replace(".seq", ".html");
       Path expectedPath = Paths.get(expected);
       byte[] expectedBytes = Files.readAllBytes(expectedPath);
@@ -551,7 +552,7 @@ public class SeqKingTest {
       String output = seq.toString().replace(".seq", ".html");
       outputPath = Paths.get(output);
       Optional<String> fileName = Seqs.getFileName(seq);
-      SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE);
+      SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE, PERMISSIVE);
     } finally {
       if (DELETE_FILE && outputPath != null) {
         Files.deleteIfExists(outputPath);

@@ -27,10 +27,11 @@ public class SeqKing {
    * @param fileName   The name of the seq file from {@link Seqs}
    * @param outputPath The output HTML report file path.
    * @param verbose    If the txt output should be printed to the console.
+   * @param permissive If invalid opcodes should be ignored.
    * @throws IOException If an I/O error occurs.
    */
-  public static void generateHTML(Path seqPath, String fileName, Path outputPath, boolean verbose) throws IOException {
-    List<Opcode> opcodes = getOpcodes(seqPath, fileName, verbose);
+  public static void generateHTML(Path seqPath, String fileName, Path outputPath, boolean verbose, boolean permissive) throws IOException {
+    List<Opcode> opcodes = getOpcodes(seqPath, fileName, verbose, permissive);
     SeqKingHtml.generate(fileName, opcodes, outputPath);
   }
 
@@ -41,10 +42,11 @@ public class SeqKing {
    * @param fileName   The name of the seq file from {@link Seqs}
    * @param outputPath The output HTML report file path.
    * @param verbose    If the txt output should be printed to the console.
+   * @param permissive If invalid opcodes should be ignored.
    * @throws IOException If an I/O error occurs.
    */
-  public static void generateTXT(Path seqPath, String fileName, Path outputPath, boolean verbose) throws IOException {
-    List<Opcode> opcodes = getOpcodes(seqPath, fileName, verbose);
+  public static void generateTXT(Path seqPath, String fileName, Path outputPath, boolean verbose, boolean permissive) throws IOException {
+    List<Opcode> opcodes = getOpcodes(seqPath, fileName, verbose, permissive);
     try(OutputStream os = Files.newOutputStream(outputPath)) {
       for (Opcode opcode : opcodes) {
         os.write(opcode.toString().getBytes(StandardCharsets.UTF_8));
@@ -59,10 +61,11 @@ public class SeqKing {
    * @param seqPath The path to the seq file.
    * @param fileName   The name of the seq file from {@link Seqs}
    * @param verbose If the txt output should be printed to the console.
+   * @param permissive If invalid opcodes should be ignored.
    * @return The list of opcodes.
    * @throws IOException If an I/O error occurs.
    */
-  public static List<Opcode> getOpcodes(Path seqPath, String fileName, boolean verbose) throws IOException {
+  public static List<Opcode> getOpcodes(Path seqPath, String fileName, boolean verbose, boolean permissive) throws IOException {
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(fileName);
     SeqType seqType = SeqHelper.getSeqType(fileName);
@@ -144,7 +147,19 @@ public class SeqKing {
       }
 
       // Otherwise, parse the seq opcode
-      Opcode newOpcode = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode);
+      Opcode newOpcode;
+      int tempOffset = bs.offset();
+      try {
+        newOpcode = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode);
+      } catch (Exception e) {
+        if (permissive) {
+          // Invalid opcode, mark it as binary data and continue
+          bs.seek(tempOffset);
+          newOpcode = new BinaryData(tempOffset, bs.readNBytes(4));
+        } else {
+          throw e;
+        }
+      }
       opcodes.add(newOpcode);
       if (verbose) {
         System.out.println(newOpcode);

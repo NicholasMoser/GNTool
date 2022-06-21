@@ -122,14 +122,11 @@ public class ByteStream extends ByteArrayInputStream {
    * @param num The number of bytes to read.
    * @return The bytes read in an array.
    * @throws IOException If an I/O error occurs.
+   * @deprecated why did I write this, there's already a readNBytes
    */
+  @Deprecated
   public byte[] readBytes(int num) throws IOException {
-    int startingOffset = pos;
-    byte[] bytes = new byte[num];
-    if (read(bytes) != num) {
-      throw new IOException(String.format("Failed to read %d bytes at offset %d", num, startingOffset));
-    }
-    return bytes;
+    return readNBytes(num);
   }
 
   /**
