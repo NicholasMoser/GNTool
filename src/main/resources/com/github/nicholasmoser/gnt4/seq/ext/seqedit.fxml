@@ -178,10 +178,14 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextArea fx:id="opcodesTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="737.0" prefWidth="387.0" VBox.vgrow="ALWAYS">
+                  <TextArea fx:id="opcodesTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="737.0" prefWidth="387.0" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </VBox.margin></TextArea>
+                   <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#assemble" prefHeight="41.0" prefWidth="383.0" text="Assemble" VBox.vgrow="NEVER">
+                       <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" />
+                       </VBox.margin></Button>
                </children>
             </VBox>
       </items>

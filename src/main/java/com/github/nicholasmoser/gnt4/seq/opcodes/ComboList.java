@@ -36,10 +36,25 @@ public class ComboList implements Opcode {
   }
 
   @Override
+  public byte[] getBytes(int offset, int size) {
+    return getBytes();
+  }
+
+  @Override
   public String toString() {
     return combos.stream()
         .map(Combo::toString)
         .collect(Collectors.joining("\n"));
+  }
+
+  @Override
+  public String toAssembly() {
+    return toString();
+  }
+
+  @Override
+  public String toAssembly(int offset) {
+    return toAssembly();
   }
 
   @Override

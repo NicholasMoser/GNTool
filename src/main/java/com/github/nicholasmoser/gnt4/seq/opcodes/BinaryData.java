@@ -35,8 +35,23 @@ public class BinaryData implements Opcode {
   }
 
   @Override
+  public byte[] getBytes(int offset, int size) {
+    return bytes;
+  }
+
+  @Override
   public String toString() {
     return String.format("%05X | %s 0x%X bytes %s %s", offset, MNEMONIC, bytes.length, info, formatRawBytes(bytes));
+  }
+
+  @Override
+  public String toAssembly() {
+    return String.format("%s",MNEMONIC);
+  }
+
+  @Override
+  public String toAssembly(int offset) {
+    return toAssembly();
   }
 
   @Override

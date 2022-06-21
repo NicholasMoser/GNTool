@@ -91,53 +91,53 @@ public class SeqExtTest {
     byte[] invalidBytes = Bytes.concat(nullWord, SeqEdit.STOP, nullWord);
     byte[] validBytes = new byte[]{0x67, 0x45, 0x23, 0x12};
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, invalidBytes, validBytes));
+        () -> new SeqEdit("Name", 0x8, 0, invalidBytes, validBytes));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, validBytes, invalidBytes));
+        () -> new SeqEdit("Name", 0x8, 0, validBytes, invalidBytes));
   }
 
   @Test
   void testInvalidBytesSize() {
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[0], new byte[1]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[0], new byte[1]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[0], new byte[2]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[0], new byte[2]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[0], new byte[3]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[0], new byte[3]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[0], new byte[4]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[0], new byte[4]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[0], new byte[5]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[0], new byte[5]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[1], new byte[0]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[1], new byte[0]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[2], new byte[0]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[2], new byte[0]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[3], new byte[0]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[3], new byte[0]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[4], new byte[0]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[4], new byte[0]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[5], new byte[0]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[5], new byte[0]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[1], new byte[1]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[1], new byte[1]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[2], new byte[2]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[2], new byte[2]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[3], new byte[3]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[3], new byte[3]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[4], new byte[4]));
-    new SeqEdit("Name", 0x8, new byte[8], new byte[8]);
+        () -> new SeqEdit("Name", 0x8, 0, new byte[4], new byte[4]));
+    new SeqEdit("Name", 0x8, 0, new byte[8], new byte[8]);
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[8], new byte[9]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[8], new byte[9]));
     assertThrows(IllegalArgumentException.class,
-        () -> new SeqEdit("Name", 0x8, new byte[9], new byte[8]));
+        () -> new SeqEdit("Name", 0x8, 0, new byte[9], new byte[8]));
   }
 
   @Test
   void testOneEdit() throws Exception {
     byte[] nameAndOffset = new byte[]{0x73, 0x65, 0x71, 0x00, 0x00, 0x00, 0x01, 0x00};
     byte[] oldBytes = new byte[]{0x12, 0x23, 0x45, 0x67, 0x19, 0x1A, 0x1B, 0x1C};
-    byte[] newBytes = new byte[]{0x67, 0x45, 0x23, 0x12};
+    byte[] newBytes = new byte[]{0x61, 0x50, 0x23, 0x12};
     byte[] branchBack = new byte[]{0x01, 0x32, 0x00, 0x00, 0x00, 0x00, 0x01, 0x08};
     byte[] edit = Bytes.concat(nameAndOffset, oldBytes, SeqEdit.STOP, newBytes, branchBack,
         SeqEdit.STOP);
@@ -158,7 +158,7 @@ public class SeqExtTest {
     byte[] nameAndOffset2 = new byte[]{0x77, 0x65, 0x71, 0x00, 0x7F, (byte) 0xFF, 0x00, 0x01};
     byte[] nameAndOffset3 = new byte[]{0x77, 0x6F, 0x77, 0x00, 0x10, 0x00, 0x00, 0x27};
     byte[] bytes1 = new byte[]{0x12, 0x23, 0x45, 0x67, 0x00, 0x01, 0x02, 0x03};
-    byte[] bytes2 = new byte[]{0x67, 0x45, 0x23, 0x12};
+    byte[] bytes2 = new byte[]{0x61, 0x50, 0x23, 0x12};
     byte[] bytes3 = new byte[]{(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0, 0, 0, 0};
     byte[] bytes4 = new byte[]{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
     byte[] bytes5 = new byte[0x1000];

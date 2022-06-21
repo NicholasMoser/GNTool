@@ -17,7 +17,7 @@ public class SeqEditBuilderTest {
   void testSeqBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x19};
     SeqEdit seqEdit = SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
@@ -37,7 +37,7 @@ public class SeqEditBuilderTest {
     Path seqPath = Paths.get("src/test/resources/gnt4/seq/ext/small.seq");
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x19};
     SeqEdit seqEdit = SeqEditBuilder.getBuilder()
         .seqPath(seqPath)
         .startOffset(offset)
@@ -56,7 +56,7 @@ public class SeqEditBuilderTest {
   void testFirstFourBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     SeqEdit seqEdit = SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
@@ -75,7 +75,7 @@ public class SeqEditBuilderTest {
   void testLastFourBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0x8;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     SeqEdit seqEdit = SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15})
         .startOffset(offset)
@@ -113,7 +113,7 @@ public class SeqEditBuilderTest {
   void testLargeOldBytes() throws Exception {
     String name = "Test Edit";
     int offset = 0x444;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     SeqEdit seqEdit = SeqEditBuilder.getBuilder()
         .seqBytes(new byte[0x1000])
         .startOffset(offset)
@@ -131,7 +131,7 @@ public class SeqEditBuilderTest {
   @Test
   void testNullStartOffsetErrors() {
     String name = "Test Edit";
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .endOffset(0x8)
@@ -144,7 +144,7 @@ public class SeqEditBuilderTest {
   void testNullEndOffsetErrors() {
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
@@ -168,7 +168,7 @@ public class SeqEditBuilderTest {
   @Test
   void testNullNameErrors() {
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
@@ -181,7 +181,7 @@ public class SeqEditBuilderTest {
   void testNoSeqBytesOrPathErrors() {
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .startOffset(offset)
         .endOffset(0x8)
@@ -195,11 +195,11 @@ public class SeqEditBuilderTest {
     Path invalidPath = Paths.get("doesnotexist");
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     assertThrows(IOException.class, () -> SeqEditBuilder.getBuilder()
         .seqPath(invalidPath)
         .startOffset(offset)
-        .endOffset(0x8)
+        .endOffset(0xC)
         .name(name)
         .newBytes(newBytes)
         .create());
@@ -209,7 +209,7 @@ public class SeqEditBuilderTest {
   void testStartOffsetNot4ByteAligned() {
     String name = "Test Edit";
     int offset = 0x5;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
@@ -223,7 +223,7 @@ public class SeqEditBuilderTest {
   void testEndOffsetNot4ByteAligned() {
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
@@ -237,7 +237,7 @@ public class SeqEditBuilderTest {
   void testNewBytesNot4ByteAligned() {
     String name = "Test Edit";
     int offset = 0x4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78, 0x11, 0x22, 0x33};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26, 0x11, 0x07, 0x02};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
@@ -251,7 +251,7 @@ public class SeqEditBuilderTest {
   void testOldBytesMustBeEightOrGreater() throws Exception {
     String name = "Test Edit";
     int offset = 4;
-    byte[] newBytes = new byte[]{0x12, 0x34, 0x56, 0x78, 0x11, 0x22, 0x33, 0x44};
+    byte[] newBytes = new byte[]{0x12, 0x20, 0x02, 0x26, 0x11, 0x07, 0x02, 0x26};
     assertThrows(IllegalArgumentException.class, () -> SeqEditBuilder.getBuilder()
         .seqBytes(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})
         .startOffset(offset)
