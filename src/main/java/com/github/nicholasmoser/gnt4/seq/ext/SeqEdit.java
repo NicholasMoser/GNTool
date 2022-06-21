@@ -12,12 +12,15 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A single edit made to a seq file.
  */
 public class SeqEdit {
 
+  private static final Logger LOGGER = Logger.getLogger(SeqEdit.class.getName());
   // stop, used to signal end of old and new bytes
   public static final byte[] STOP = { 0x73, 0x74, 0x6F, 0x70 };
 
@@ -77,7 +80,7 @@ public class SeqEdit {
         Opcode op = SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]);
         this.newCodes.add(op);
       } catch (IOException e) {
-        e.printStackTrace();
+        LOGGER.log(Level.SEVERE, "Unable to get seq opcode.", e);
       }
     }
     this.size = newBytes.length;

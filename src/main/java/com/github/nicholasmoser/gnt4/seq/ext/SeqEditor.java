@@ -10,7 +10,6 @@ import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.Ranges;
 import java.awt.Desktop;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URI;
