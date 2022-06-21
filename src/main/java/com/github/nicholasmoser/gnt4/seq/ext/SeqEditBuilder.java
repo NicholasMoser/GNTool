@@ -21,6 +21,7 @@ public class SeqEditBuilder {
   private List<Opcode> newCodes;
   private String name;
   private int length;
+  private int position;
 
   private SeqEditBuilder() {
 
@@ -62,6 +63,11 @@ public class SeqEditBuilder {
 
   public SeqEditBuilder newLength(int length) {
     this.length = length;
+    return this;
+  }
+
+  public SeqEditBuilder position(int position) {
+    this.position = position;
     return this;
   }
 
@@ -113,9 +119,8 @@ public class SeqEditBuilder {
       throw new IllegalArgumentException("oldBytes less than 8 bytes");
     }
     if (newBytes == null) {
-      return new SeqEdit(name, startOffset, oldBytes, newCodes, length);
+      return new SeqEdit(name, startOffset, position, oldBytes, newCodes, length);
     }
-    return new SeqEdit(name, startOffset, oldBytes, newBytes);
-
+    return new SeqEdit(name, startOffset, position, oldBytes, newBytes);
   }
 }

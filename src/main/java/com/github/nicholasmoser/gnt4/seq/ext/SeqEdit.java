@@ -1,6 +1,9 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTable;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTableLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -38,11 +41,12 @@ public class SeqEdit {
    * Constructor for a seq edit.
    *
    * @param name The name of this seq edit (do not include null bytes).
-   * @param offset The offset in the seq file of this seq edit.
+   * @param offset The offset in the seq file of the original code for this seq edit.
+   * @param position The position in the seq file of the seq edit.
    * @param oldBytes The old bytes that this seq edit overrides.
    * @param newBytes The new bytes that this seq edit executes.
    */
-  public SeqEdit(String name, int offset, byte[] oldBytes, byte[] newBytes) {
+  public SeqEdit(String name, int offset, int position, byte[] oldBytes, byte[] newBytes) {
     if (name == null) {
       throw new IllegalArgumentException("name cannot be null");
     } else if (oldBytes == null) {
@@ -68,6 +72,8 @@ public class SeqEdit {
     this.offset = offset;
     this.oldBytes = oldBytes;
     this.newBytes = newBytes;
+    this.size = newBytes.length;
+    this.position = position;
     // Add the branch back
     byte[] branch = new byte[] { 0x01, 0x32, 0x00, 0x00 };
     byte[] branchOffset = ByteUtils.fromInt32(offset + oldBytes.length);
@@ -78,12 +84,36 @@ public class SeqEdit {
     while (bs.bytesAreLeft()) {
       try {
         Opcode op = SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]);
+        if (op instanceof BranchingOpcode branchingOpcode) {
+          if (branchingOpcode.getDestination() - position >= 0 && branchingOpcode.getDestination() - position <= size) {
+            branchingOpcode.setDestination(branchingOpcode.getDestination() - position);
+          }
+        } else if (op instanceof BranchTable branchTable) {
+          List<Integer> newOffsets = new LinkedList<>();
+          for (Integer targetOffset : branchTable.getOffsets()) {
+            if (targetOffset - position >= 0 && targetOffset - position <= size) {
+              newOffsets.add(targetOffset - position);
+            } else {
+              newOffsets.add(targetOffset);
+            }
+          }
+          branchTable.setOffsets(newOffsets);
+        } else if (op instanceof BranchTableLink branchTableLink) {
+          List<Integer> newOffsets = new LinkedList<>();
+          for (Integer targetOffset : branchTableLink.getOffsets()) {
+            if (targetOffset - position >= 0 && targetOffset - position <= size) {
+              newOffsets.add(targetOffset - position);
+            } else {
+              newOffsets.add(targetOffset);
+            }
+          }
+          branchTableLink.setOffsets(newOffsets);
+        }
         this.newCodes.add(op);
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Unable to get seq opcode.", e);
       }
     }
-    this.size = newBytes.length;
   }
 
   /**
@@ -91,11 +121,12 @@ public class SeqEdit {
    *
    * @param name The name of this seq edit (do not include null bytes).
    * @param offset The offset in the seq file of this seq edit.
+   * @param position
    * @param oldBytes The old bytes that this seq edit overrides.
    * @param newCodes The new codes that this seq edit executes.
    * @param size The total size in bytes for the new edit
    */
-  public SeqEdit(String name, int offset, byte[] oldBytes, List<Opcode> newCodes, int size) {
+  public SeqEdit(String name, int offset, int position, byte[] oldBytes, List<Opcode> newCodes, int size) {
     if (name == null) {
       throw new IllegalArgumentException("name cannot be null");
     } else if (oldBytes == null) {
@@ -117,6 +148,7 @@ public class SeqEdit {
     this.offset = offset;
     this.oldBytes = oldBytes;
     this.newCodes = newCodes;
+    this.position = position;
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     for (Opcode opcode : newCodes) {
       try {
@@ -213,14 +245,37 @@ public class SeqEdit {
       baos.write(ByteUtils.fromInt32(offset));
       baos.write(oldBytes);
       baos.write(STOP);
-      //if (newBytesWithBranchBack != null) {
-      //  baos.write(newBytesWithBranchBack);
-      //} else {
-        for (Opcode op : newCodes) {
-          baos.write(op.getBytes(position, size));
+      for (Opcode op : newCodes) {
+        if (op instanceof BranchingOpcode branchingOpcode) {
+          if (branchingOpcode.getDestination() - position >= 0 && branchingOpcode.getDestination() - position <= size) {
+            branchingOpcode.setDestination(branchingOpcode.getDestination() - position);
+          }
+        } else if (op instanceof BranchTable branchTable) {
+          List<Integer> newOffsets = new LinkedList<>();
+          for (Integer targetOffset : branchTable.getOffsets()) {
+            if (targetOffset - position >= 0 && targetOffset - position <= size) {
+              newOffsets.add(targetOffset - position);
+            } else {
+              newOffsets.add(targetOffset);
+            }
+          }
+          System.out.println(newOffsets);
+          branchTable.setOffsets(newOffsets);
+        } else if (op instanceof BranchTableLink branchTableLink) {
+          List<Integer> newOffsets = new LinkedList<>();
+          for (Integer targetOffset : branchTableLink.getOffsets()) {
+            if (targetOffset - position >= 0 && targetOffset - position <= size) {
+              newOffsets.add(targetOffset - position);
+            } else {
+              newOffsets.add(targetOffset);
+            }
+          }
+          System.out.println(newOffsets);
+          branchTableLink.setOffsets(newOffsets);
         }
-        baos.write(branchBack);
-      //}
+        baos.write(op.getBytes(position, size));
+      }
+      baos.write(branchBack);
       baos.write(STOP);
       return baos.toByteArray();
     } catch (Exception e) {
@@ -229,24 +284,52 @@ public class SeqEdit {
   }
 
   /**
+   * @param oldPosition The previous position of the seq edit.
    * @return The full bytes for this seq edit, to be appended to the seq extension section of the
    * seq file.
    */
-  public byte[] getFullBytes(int offset) {
+  public byte[] getFullBytes(int oldPosition) {
     try {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       baos.write(getNameBytes());
-      baos.write(ByteUtils.fromInt32(this.offset));
+      baos.write(ByteUtils.fromInt32(offset));
       baos.write(oldBytes);
       baos.write(STOP);
-      if (newBytesWithBranchBack != null) {
-        baos.write(newBytesWithBranchBack);
-      } else {
-        for (Opcode op : newCodes) {
-          baos.write(op.getBytes(offset, size));
+      for (Opcode op : newCodes) {
+        if (op instanceof BranchingOpcode branchingOpcode) {
+          if (branchingOpcode.getDestination() - oldPosition >= 0 && branchingOpcode.getDestination() - oldPosition <= size) {
+            branchingOpcode.setDestination(branchingOpcode.getDestination() - oldPosition);
+          }
+        } else if (op instanceof BranchTable branchTable) {
+          List<Integer> newOffsets = new LinkedList<>();
+          for (Integer targetOffset : branchTable.getOffsets()) {
+            if (targetOffset - oldPosition >= 0 && targetOffset - oldPosition <= size) {
+              newOffsets.add(targetOffset - oldPosition);
+            } else  if (targetOffset - position >= 0 && targetOffset - position <= size) {
+              newOffsets.add(targetOffset - position);
+            } else {
+              newOffsets.add(targetOffset);
+            }
+          }
+          System.out.println(newOffsets);
+          branchTable.setOffsets(newOffsets);
+        } else if (op instanceof BranchTableLink branchTableLink) {
+          List<Integer> newOffsets = new LinkedList<>();
+          for (Integer targetOffset : branchTableLink.getOffsets()) {
+            if (targetOffset - oldPosition >= 0 && targetOffset - oldPosition <= size) {
+              newOffsets.add(targetOffset - oldPosition);
+            } else if (targetOffset - position >= 0 && targetOffset - position <= size) {
+              newOffsets.add(targetOffset - position);
+            } else {
+              newOffsets.add(targetOffset);
+            }
+          }
+          System.out.println(newOffsets);
+          branchTableLink.setOffsets(newOffsets);
         }
-        baos.write(branchBack);
+        baos.write(op.getBytes(position, size));
       }
+      baos.write(branchBack);
       baos.write(STOP);
       return baos.toByteArray();
     } catch (Exception e) {

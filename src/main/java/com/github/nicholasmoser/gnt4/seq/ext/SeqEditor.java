@@ -172,11 +172,8 @@ public class SeqEditor {
     nameTextArea.setText(editName);
     offsetTextField.setText(Integer.toString(seqEdit.getOffset()));
     hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
-    //hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
     hijackedBytesTextArea.setText(sb.toString());
-    Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes, seqEdit.getPosition(), seqEdit.getSize());
-    //newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
-    //opcodesTextArea.setText(getOpcodesString(newBytes, seqEdit.getPosition()));
+    Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes, seqEdit.getSize());
     newBytesTextArea.setText(opcodesStrings.getKey());
     opcodesTextArea.setText(opcodesStrings.getValue());
   }
@@ -370,6 +367,7 @@ public class SeqEditor {
    */
   private void applyExistingEdit() {
     try {
+      int position = selectedEdit.getPosition();
       // Remove the existing edit
       SeqExt.removeEdit(selectedEdit, seqPath);
       editsByName.remove(selectedEdit.getName());
@@ -385,6 +383,7 @@ public class SeqEditor {
           .endOffset(offset + hijackedBytesLength)
           .newBytes(newBytes)
           .seqPath(seqPath)
+          .position(position)
           .create();
       // Add the new edit
       SeqExt.addEdit(seqEdit, seqPath);
@@ -469,25 +468,24 @@ public class SeqEditor {
    * @param newCodes The opcode byte array.
    * @return Pair of the human-readable text of the bytes and opcodes.
    */
-  public static Pair<String, String> getOpcodesStrings(List<Opcode> newCodes, int position, int size) {
+  public static Pair<String, String> getOpcodesStrings(List<Opcode> newCodes, int size) {
     Map<Integer, String> labelMap = new HashMap<>();
     StringBuilder newBytesText = new StringBuilder();
     StringBuilder opcodesText = new StringBuilder();
     for (Opcode opcode : newCodes) {
-      if (BranchingOpcode.class.isInstance(opcode)) {
-        int destination = ((BranchingOpcode) opcode).getDestination() - position;
+      if (opcode instanceof BranchingOpcode branchingOpcode) {
+        int destination = branchingOpcode.getDestination();
         String label = labelMap.get(destination);
         if (destination <= size && destination >= 0 && label == null) {
           label = String.format("label%d", labelMap.size());
           labelMap.put(destination, String.format("%s", label));
         }
         if (label != null) {
-          ((BranchingOpcode) opcode).setDestinationFunctionName(label);
+          branchingOpcode.setDestinationFunctionName(label);
         }
       } else if (opcode instanceof BranchTable branchTable) {
         List<String> labels = new LinkedList<>();
         for (Integer destination : branchTable.getOffsets()) {
-          destination = destination - position;
           String label = labelMap.get(destination);
           if (destination <= size && destination >= 0 && label == null) {
             label = String.format("label%d", labelMap.size());
@@ -501,7 +499,6 @@ public class SeqEditor {
       } else if (opcode instanceof BranchTableLink branchTableLink) {
         List<String> labels = new LinkedList<>();
         for (Integer destination : branchTableLink.getOffsets()) {
-          destination = destination - position;
           String label = labelMap.get(destination);
           if (destination <= size && destination >= 0 && label == null) {
             label = String.format("label%d", labelMap.size());
@@ -519,8 +516,8 @@ public class SeqEditor {
       if (label != null) {
         opcodesText.append(String.format("%s:\n",label));
       }
-      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes(position, size))));
-      opcodesText.append(String.format("%s\n", opcode.toAssembly(position)));
+      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes())));//opcode.getBytes(position, size))));
+      opcodesText.append(String.format("%s\n", opcode.toAssembly()));//toAssembly(position)));
     }
     return new Pair<>(newBytesText.toString(), opcodesText.toString());
   }

@@ -136,7 +136,7 @@ public class SeqSection {
       byte[] oldBytes = readEditBytes(bs);
       byte[] newBytes = readEditBytes(bs);
       byte[] newBytesWithoutBranchBack = Arrays.copyOfRange(newBytes, 0, newBytes.length - 8);
-      SeqEdit edit = new SeqEdit(name, hijackOffset, oldBytes, newBytesWithoutBranchBack);
+      SeqEdit edit = new SeqEdit(name, hijackOffset, offset, oldBytes, newBytesWithoutBranchBack);
       opcodes.add(new SeqEditOpcode(offset, edit));
     }
     offset = bs.offset();

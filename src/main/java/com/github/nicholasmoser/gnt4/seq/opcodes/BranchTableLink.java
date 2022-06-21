@@ -12,9 +12,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BranchTableLink implements Opcode {
 
+  private static final Logger LOGGER = Logger.getLogger(Opcode.class.getName());
   private final static String MNEMONIC = "branch_table_link";
   private final int offset;
   private byte[] bytes;
@@ -83,8 +86,8 @@ public class BranchTableLink implements Opcode {
   }
 
   public void setOffsets(List<Integer> offsets) {
-    if (offsets.size() != branches.size()) {
-      System.err.println("Error, wrong number of offsets given");
+    if (offsets.size() != branches.size() && offsets.size() != this.offsets.size()) {
+      LOGGER.log(Level.SEVERE, "Error, wrong number of offsets given");
       return;
     }
     this.offsets = offsets;
