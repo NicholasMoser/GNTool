@@ -258,7 +258,7 @@ public class SeqEditor {
     try {
       opcodes = SeqAssembler.assembleLines(lines, this.seqPath);
     } catch (IOException e) {
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Unable to assemble lines.", e);
     }
 
     StringBuilder sb = new StringBuilder();
@@ -485,9 +485,9 @@ public class SeqEditor {
         if (label != null) {
           ((BranchingOpcode) opcode).setDestinationFunctionName(label);
         }
-      } else if (BranchTable.class.isInstance(opcode)) {
+      } else if (opcode instanceof BranchTable branchTable) {
         List<String> labels = new LinkedList<>();
-        for (Integer destination : ((BranchTable) opcode).getOffsets()) {
+        for (Integer destination : branchTable.getOffsets()) {
           destination = destination - position;
           String label = labelMap.get(destination);
           if (destination <= size && destination >= 0 && label == null) {
@@ -498,10 +498,10 @@ public class SeqEditor {
             labels.add(label);
           }
         }
-        ((BranchTable) opcode).setBranches(labels);
-      } else if (BranchTableLink.class.isInstance(opcode)) {
+        branchTable.setBranches(labels);
+      } else if (opcode instanceof BranchTableLink branchTableLink) {
         List<String> labels = new LinkedList<>();
-        for (Integer destination : ((BranchTableLink) opcode).getOffsets()) {
+        for (Integer destination : branchTableLink.getOffsets()) {
           destination = destination - position;
           String label = labelMap.get(destination);
           if (destination <= size && destination >= 0 && label == null) {
@@ -512,7 +512,7 @@ public class SeqEditor {
             labels.add(label);
           }
         }
-        ((BranchTableLink) opcode).setBranches(labels);
+        branchTableLink.setBranches(labels);
       }
     }
     for (Opcode opcode : newCodes) {
@@ -566,7 +566,7 @@ public class SeqEditor {
         for (Opcode op : oldCodes) {
           sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes(offset, hijackedBytesLength))));
         }
-        hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(bytes));
+        hijackedBytesTextArea.setText(sb.toString());
       }
     } catch (Exception e) {
       hijackedBytesTextArea.setText(e.getMessage());
