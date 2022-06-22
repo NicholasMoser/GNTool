@@ -126,7 +126,12 @@ public class SeqKing {
         List<Opcode> section = SeqSection.handleSeqSection(bs);
         for (Opcode sectionPart : section) {
           if (sectionPart instanceof ActionID actionID) {
-            Functions.getFunctions(fileName).put(actionID.getActionOffset(), new Function(String.format("ACT %X", actionID.getActionId()), List.of(actionID.getInfo())));
+            Function act = Functions.getFunctions(fileName).get(actionID.getActionOffset());
+            if (act == null) {
+              Functions.getFunctions(fileName).put(actionID.getActionOffset(), new Function(String.format("ACT %X", actionID.getActionId()), List.of(actionID.getInfo())));
+            } else {
+              Functions.getFunctions(fileName).put(actionID.getActionOffset(), new Function(String.format("%s, ACT %X", act.name(), actionID.getActionId()), List.of(actionID.getInfo())));
+            }
           }
           if (verbose) {
             System.out.println(sectionPart);
