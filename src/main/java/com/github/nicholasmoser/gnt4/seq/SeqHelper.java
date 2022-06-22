@@ -65,11 +65,17 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup56;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup5B;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveAttack;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveAttacks;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveString;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveStrings;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
+import com.github.nicholasmoser.gnt4.seq.opcodes.CharacterStats;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Combo;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ExtraData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FileName;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
@@ -82,7 +88,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -240,7 +245,8 @@ public class SeqHelper {
             throw new IllegalStateException("There should only be one unknown binary 1.");
           }
           uniqueBinaries.add("foundUnknownBinary1");
-          return Collections.singletonList(SeqHelper.readUnknownBinary1(bs));
+          //return Collections.singletonList(SeqHelper.readUnknownBinary1(bs));
+          return SeqHelper.readUnknownBinary1(bs);
         } else if (SeqHelper.isUnknownBinary4(bs)) {
           if (uniqueBinaries.contains("foundUnknownBinary4")) {
             throw new IllegalStateException("There should only be one unknown binary 4.");
@@ -335,13 +341,61 @@ public class SeqHelper {
    * @return The binary data for unknown binary 1.
    * @throws IOException If an I/O error occurs.
    */
-  public static Opcode readUnknownBinary1(ByteStream bs) throws IOException {
+  public static List<Opcode> readUnknownBinary1(ByteStream bs) throws IOException {
+    List<Opcode> data = new LinkedList<>();
     int offset = bs.offset();
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte[] expected = new byte[]{0x00, 0x02, 0x00, 0x6A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    //while (!Arrays.equals(bs.peekBytes(16),expected)) {
+    //  baos.write(bs.readBytes(4));
+    //}
+    //baos.write(bs.readBytes(4));
+    //baos.write(bs.readBytes(4));
+    //baos.write(bs.readBytes(4));
+    //baos.write(bs.readBytes(4));
+    while (!Arrays.equals(bs.peekBytes(4), new byte[]{0x00, 0x00, 0x00, 0x00})) {
+      data.add(new ActiveAttack(bs.offset(), bs.readBytes(20)));
+    }
+    data.add(new ActiveAttack(bs.offset(), bs.readBytes(20)));
+    while (!Arrays.equals(bs.peekBytes(8), new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})) {
+      ExtraData ed = new ExtraData(bs.offset(), bs);
+      data.add(ed);
+    }
+    while (bs.peekWord() == 0) {
+      ExtraData ed = new ExtraData(bs.offset(), bs);
+      data.add(ed);
+    }
+    //data.add(new ActiveAttacks(bs));
+    data.add(new ActiveStrings(bs));
+    while (!Arrays.equals(bs.peekBytes(4), new byte[]{0x00, 0x00, 0x00, 0x00})) {
+      ActiveString as = new ActiveString(bs);
+      data.add(as);
+    }
+    /*
+    offset = bs.offset();
+    expected = new byte[]{0x00, 0x01, 0x22, 0x7F, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, (byte)0x97, 0x00, 0x00, 0x00, 0x00};
+    while (!Arrays.equals(bs.peekBytes(16), expected)) {
+      baos.write(bs.readBytes(4));
+    }
+    baos.write(bs.readBytes(4));
+    baos.write(bs.readBytes(4));
+    baos.write(bs.readBytes(4));
+    baos.write(bs.readBytes(4));
+    */
+    try {
+
+    } catch (Exception e) {
+
+    }
+    System.out.println(String.format("%s", data));
+    offset = bs.offset();
+    baos = new ByteArrayOutputStream();
     while (bs.peekWord() != 0x04026B00) {
       baos.write(bs.readBytes(4));
     }
-    return new BinaryData(offset, baos.toByteArray());
+    data.add(new CharacterStats(offset, baos.toByteArray()));
+    return data;
+    //return new BinaryData(offset, baos.toByteArray());
   }
 
   /**
