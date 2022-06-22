@@ -27,3 +27,5 @@
 *.gif           binary
 *.jpg           binary
 *.png           binary
+*.seq           binary
+*.seqa          binary
