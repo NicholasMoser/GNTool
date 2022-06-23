@@ -38,6 +38,10 @@ public class ActiveStrings implements Opcode{
         return info;
     }
 
+    public List<Integer> getStringOffsets() {
+        return stringOffsets;
+    }
+
     @Override
     public int getOffset() {
         return offset;

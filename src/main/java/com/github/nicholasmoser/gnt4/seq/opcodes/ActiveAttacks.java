@@ -33,12 +33,12 @@ public class ActiveAttacks implements Opcode{
         extraData = new LinkedList<>();
         delimiter = new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         while (!Arrays.equals(bs.peekBytes(8),delimiter)) {
-            ExtraData ed = new ExtraData(bs.offset(), bs);
+            ExtraData ed = new ExtraData(bs);
             extraData.add(ed);
             baos.write(ed.getBytes());
         }
         while (bs.peekWord() == 0) {
-            ExtraData ed = new ExtraData(bs.offset(), bs);
+            ExtraData ed = new ExtraData(bs);
             extraData.add(ed);
             baos.write(ed.getBytes());
         }

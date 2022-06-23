@@ -74,17 +74,43 @@ public class ActiveString implements Opcode {
         baos.write(bs.peekBytes(2));
         to_atk = bs.readShort();
         if (followType == 0x062270) {
-            while (!Arrays.equals(bs.peekBytes(4), new byte[]{0x00, 0x00, 0x00, 0x01})) {
+            if (to_atk == 0) {
+                baos.write(bs.readBytes(4));
+            }
+            baos.write(bs.peekBytes(2));
+            to_atk = bs.readShort();
+            //baos.write(bs.readBytes(2));
+            if (bs.peekWord() == 0x28) {
+                baos.write(bs.readBytes(4));
+            }
+            if (bs.peekWord() == 4) {
                 baos.write(bs.readBytes(2));
+            }
+            while (!Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
+                if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x28})) {
+                    baos.write(bs.readBytes(2));
+                    continue;
+                }
+                FollowUp fu = new FollowUp(bs);
+                followUps.add(fu);
+                baos.write(fu.bytes);
+                if (bs.peekWord() == 4) {
+                    baos.write(bs.readBytes(2));
+                }
+            }
+            if (bs.peekWord() == 0) {
+                baos.write(bs.readBytes(2));
+            } else {
+                baos.write(bs.readBytes(2));
+            }
+        } else if (followType == 0x06227F) {
+            while (!Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
+                baos.write(bs.readBytes(12));
             }
             baos.write(bs.readBytes(2));
-        } else if (followType == 0x06227F) {
-            while (!Arrays.equals(bs.peekBytes(6), new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00})) {
-                baos.write(bs.readBytes(2));
-            }
         }
         this.bytes = baos.toByteArray();
-        System.out.println(this);
+        //System.out.println(this);
     }
 
     @Override
@@ -138,6 +164,7 @@ public class ActiveString implements Opcode {
         private short before;
         private short delayPress;
         private short delay;
+        private short unknown;
         private short nrPress;
         private int followType;
         private short input;
@@ -154,6 +181,8 @@ public class ActiveString implements Opcode {
             baos.write(bs.peekBytes(2));
             delay = bs.readShort();
             baos.write(bs.peekBytes(2));
+            unknown = bs.readShort();
+            baos.write(bs.peekBytes(2));
             nrPress = bs.readShort();
             baos.write(bs.peekBytes(4));
             followType = bs.readWord();
@@ -165,9 +194,16 @@ public class ActiveString implements Opcode {
             followUpAllowed = bs.readShort();
             baos.write(bs.peekBytes(2));
             to_atk = bs.readShort();
-            baos.write(bs.peekBytes(2));
+            System.out.println(String.format("%X",bs.peekWord()));
+            if (bs.peekWord() == 0x280000) {
+                baos.write(bs.readBytes(2));
+            } /*else if (bs.peekWord() == 0x00) {
+                baos.write(bs.readBytes(2));
+            }*/ else if (bs.peekWord() == 0x28) {
+                baos.write(bs.readBytes(4));
+            }
             bytes = baos.toByteArray();
-            System.out.println(this);
+            //System.out.println(this);
         }
 
         @Override

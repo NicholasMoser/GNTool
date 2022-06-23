@@ -343,59 +343,48 @@ public class SeqHelper {
    */
   public static List<Opcode> readUnknownBinary1(ByteStream bs) throws IOException {
     List<Opcode> data = new LinkedList<>();
-    int offset = bs.offset();
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    byte[] expected = new byte[]{0x00, 0x02, 0x00, 0x6A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    //while (!Arrays.equals(bs.peekBytes(16),expected)) {
-    //  baos.write(bs.readBytes(4));
-    //}
-    //baos.write(bs.readBytes(4));
-    //baos.write(bs.readBytes(4));
-    //baos.write(bs.readBytes(4));
-    //baos.write(bs.readBytes(4));
     while (!Arrays.equals(bs.peekBytes(4), new byte[]{0x00, 0x00, 0x00, 0x00})) {
       data.add(new ActiveAttack(bs.offset(), bs.readBytes(20)));
     }
     data.add(new ActiveAttack(bs.offset(), bs.readBytes(20)));
-    while (!Arrays.equals(bs.peekBytes(8), new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})) {
-      ExtraData ed = new ExtraData(bs.offset(), bs);
+    while (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x01})) {
+      ExtraData ed = new ExtraData(bs);
       data.add(ed);
     }
-    while (bs.peekWord() == 0) {
-      ExtraData ed = new ExtraData(bs.offset(), bs);
-      data.add(ed);
+    if (bs.offset()%4 != 0) {
+      bs.skip(4 - (bs.offset() % 4));
     }
-    //data.add(new ActiveAttacks(bs));
-    data.add(new ActiveStrings(bs));
-    while (!Arrays.equals(bs.peekBytes(4), new byte[]{0x00, 0x00, 0x00, 0x00})) {
+    ActiveStrings as = new ActiveStrings(bs);
+    data.add(as);
+    List<Integer> stringOffsets = new LinkedList<>();
+    for (int i : as.getStringOffsets()) {
+      stringOffsets.add(i);
+    }
+    Collections.sort(stringOffsets);
+    for (Integer i : stringOffsets) {
+      if (i == 0) {
+        continue;
+      }
+      bs.seek(i);
+      ActiveString activeString = new ActiveString(bs);
+      data.add(activeString);
+      System.out.printf("%X%n", bs.offset());
+    }
+    /*while (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x01})) {
       ActiveString as = new ActiveString(bs);
       data.add(as);
+    }*/
+    System.out.printf("%X%n", bs.offset());
+    if (bs.offset()%4 != 0) {
+      bs.skip(4 - (bs.offset() % 4));
     }
-    /*
-    offset = bs.offset();
-    expected = new byte[]{0x00, 0x01, 0x22, 0x7F, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, (byte)0x97, 0x00, 0x00, 0x00, 0x00};
-    while (!Arrays.equals(bs.peekBytes(16), expected)) {
-      baos.write(bs.readBytes(4));
-    }
-    baos.write(bs.readBytes(4));
-    baos.write(bs.readBytes(4));
-    baos.write(bs.readBytes(4));
-    baos.write(bs.readBytes(4));
-    */
-    try {
-
-    } catch (Exception e) {
-
-    }
-    System.out.println(String.format("%s", data));
-    offset = bs.offset();
-    baos = new ByteArrayOutputStream();
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     while (bs.peekWord() != 0x04026B00) {
       baos.write(bs.readBytes(4));
     }
     data.add(new CharacterStats(offset, baos.toByteArray()));
     return data;
-    //return new BinaryData(offset, baos.toByteArray());
   }
 
   /**
