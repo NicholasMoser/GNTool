@@ -73,20 +73,25 @@ public class ActiveString implements Opcode {
         followUpAllowed = bs.readShort();
         baos.write(bs.peekBytes(2));
         to_atk = bs.readShort();
-        if (followType == 0x062270) {
+        if (Arrays.equals(bs.peekBytes(8), new byte[]{0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x01})) {
+            baos.write(bs.readBytes(6));
+        } else if (followType == 0x062270) {
             if (to_atk == 0) {
                 baos.write(bs.readBytes(4));
+                baos.write(bs.peekBytes(2));
+                to_atk = bs.readShort();
             }
-            baos.write(bs.peekBytes(2));
-            to_atk = bs.readShort();
             //baos.write(bs.readBytes(2));
             if (bs.peekWord() == 0x28) {
                 baos.write(bs.readBytes(4));
+                if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00}) && bs.peekWord() != 0) {
+                    baos.write(bs.readBytes(2));
+                }
             }
             if (bs.peekWord() == 4) {
                 baos.write(bs.readBytes(2));
             }
-            while (!Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
+            while (true) {
                 if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x28})) {
                     baos.write(bs.readBytes(2));
                     continue;
@@ -94,8 +99,12 @@ public class ActiveString implements Opcode {
                 FollowUp fu = new FollowUp(bs);
                 followUps.add(fu);
                 baos.write(fu.bytes);
-                if (bs.peekWord() == 4) {
-                    baos.write(bs.readBytes(2));
+                if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
+                    if (bs.peekWord() == 4) {
+                        baos.write(bs.readBytes(2));
+                    } else {
+                        break;
+                    }
                 }
             }
             if (bs.peekWord() == 0) {
@@ -104,13 +113,21 @@ public class ActiveString implements Opcode {
                 baos.write(bs.readBytes(2));
             }
         } else if (followType == 0x06227F) {
-            while (!Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
+            while (true) {
+                System.out.println(formatRawBytes(baos.toByteArray()));
+                if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
+                    if (bs.peekWord() == 0x28) {
+                        baos.write(bs.readBytes(10));
+                    } else {
+                        break;
+                    }
+                }
                 baos.write(bs.readBytes(12));
             }
             baos.write(bs.readBytes(2));
         }
         this.bytes = baos.toByteArray();
-        //System.out.println(this);
+        System.out.println(this);
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.github.nicholasmoser.gnt4.seq.opcodes;
 
+import com.github.nicholasmoser.utils.ByteStream;
 import j2html.tags.ContainerTag;
+
+import java.io.IOException;
 
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
@@ -12,9 +15,9 @@ public class CharacterStats implements Opcode{
     private final byte[] bytes;
     private String info;
 
-    public CharacterStats(int offset, byte[] bytes) {
-        this.offset = offset;
-        this.bytes = bytes;
+    public CharacterStats(ByteStream bs) throws IOException {
+        this.offset = bs.offset();
+        this.bytes = bs.readBytes(0x68);
     }
 
     public String getInfo() {

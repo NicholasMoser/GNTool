@@ -368,22 +368,20 @@ public class SeqHelper {
       bs.seek(i);
       ActiveString activeString = new ActiveString(bs);
       data.add(activeString);
-      System.out.printf("%X%n", bs.offset());
     }
-    /*while (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x01})) {
-      ActiveString as = new ActiveString(bs);
-      data.add(as);
-    }*/
-    System.out.printf("%X%n", bs.offset());
+    while (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x01})) {
+      data.add(new ActiveString(bs));
+    }
     if (bs.offset()%4 != 0) {
       bs.skip(4 - (bs.offset() % 4));
     }
+    /*
     int offset = bs.offset();
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     while (bs.peekWord() != 0x04026B00) {
       baos.write(bs.readBytes(4));
-    }
-    data.add(new CharacterStats(offset, baos.toByteArray()));
+    }*/
+    data.add(new CharacterStats(bs));
     return data;
   }
 
