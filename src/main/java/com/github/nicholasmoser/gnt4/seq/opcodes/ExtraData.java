@@ -69,7 +69,11 @@ public class ExtraData implements Opcode{
                     if (inputType == 0x2270) {
                         baos.write(bs.readBytes(14));
                     } else if (inputType == 0x227F) {
-                        baos.write(bs.readBytes(24));
+                        baos.write(bs.readBytes(22));
+                        while (!Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
+                            baos.write(bs.readBytes(10));
+                        }
+                        baos.write(bs.readBytes(2));
                     } else if (inputType == 0x4000) {
                         while (!Arrays.equals(bs.peekBytes(8), new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})) {
                             baos.write(bs.readBytes(4));

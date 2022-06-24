@@ -47,7 +47,7 @@ public class ActiveString implements Opcode {
         } else {
             baos.write(bs.peekBytes(2));
             short tmp = bs.readShort();
-            from_atk.add(tmp);
+            //from_atk.add(tmp);
             for (short i = 0; i < (tmp & 0x0FFF); i++) {
                 baos.write(bs.peekBytes(2));
                 from_atk.add(bs.readShort());
@@ -160,11 +160,16 @@ public class ActiveString implements Opcode {
     public ContainerTag toHTML() {
         String id = String.format("#%X", offset);
         StringBuilder sb = new StringBuilder();
-        for (Short atk : from_atk) {
-            sb.append(String.format(" ATK ID %X", atk));
-        }
+        sb.append("from ATK_ID:");
+        sb.append(String.format(" %s", from_atk));
+        sb.append(String.format(" to ATK_ID %X",to_atk));
+        sb.append(String.format(" DELAY_PRESS %d", delayPress));
+        sb.append(String.format(" DELAY_START: %d", delay));
+        sb.append(String.format(" #PRESS: %d", nrPress));
+        String whiffable = followUpAllowed == 3 ? "true" : "false";
+        sb.append(String.format(" WHIFFABLE: %s", whiffable));
         return div(attrs(id))
-                .withText(String.format("%05X | %s from%s", offset, MNEMONIC, sb))
+                .withText(String.format("%05X | %s %s", offset, MNEMONIC, sb))
                 .withText(" ")
                 .with(formatRawBytesHTML(bytes));
     }
