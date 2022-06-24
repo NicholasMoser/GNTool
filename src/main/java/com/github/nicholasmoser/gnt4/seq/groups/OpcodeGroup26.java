@@ -219,9 +219,11 @@ public class OpcodeGroup26 {
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
-  private static Opcode handle_playback(ByteStream bs) {
+  private static Opcode handle_playback(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    return new HandlePlayback(offset);
+    bs.skipNBytes(3);
+    int option = bs.read();
+    return new HandlePlayback(offset, option == 0);
   }
 
   private static Opcode nop_e7(ByteStream bs) {
