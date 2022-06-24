@@ -45,6 +45,6 @@ public class SeqOperand implements Operand {
   public String toString() {
     String prefix = pointer ? "" : "*";
     String field = getFieldDisplay(fieldOffset);
-    return String.format("%sseq_p_sp->field_0x%02X%s%s", prefix, index * 4, field, infoBuilder);
+    return String.format("%sseq_p_sp%d%s%s", prefix, index, field, infoBuilder);
   }
 }

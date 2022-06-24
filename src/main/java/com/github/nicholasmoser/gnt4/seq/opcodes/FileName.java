@@ -1,21 +1,22 @@
 package com.github.nicholasmoser.gnt4.seq.opcodes;
 
+import j2html.tags.ContainerTag;
+
+import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
-import j2html.tags.ContainerTag;
+public class FileName implements Opcode {
 
-public class FloatVectorAdd implements Opcode {
-
-  private final static String MNEMONIC = "fvec_add";
+  private final static String MNEMONIC = "filename";
   private final int offset;
   private final byte[] bytes;
-  private final String info;
+  private final String filename;
 
-  public FloatVectorAdd(int offset, byte[] bytes, String info) {
+  public FileName(int offset, String filename) {
     this.offset = offset;
-    this.bytes = bytes;
-    this.info = info;
+    this.filename = filename;
+    this.bytes = filename.getBytes();
   }
 
   @Override
@@ -30,17 +31,17 @@ public class FloatVectorAdd implements Opcode {
 
   @Override
   public byte[] getBytes(int offset, int size) {
-    return getBytes();
+    return bytes;
   }
 
   @Override
   public String toString() {
-    return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
+    return String.format("%05X | %s \"%s\" ", offset, MNEMONIC, filename);
   }
 
   @Override
   public String toAssembly() {
-    return String.format("%s %s",MNEMONIC,info);
+    return String.format("%s 0x%X //%s", MNEMONIC, offset, filename);
   }
 
   @Override
@@ -51,8 +52,6 @@ public class FloatVectorAdd implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    return div(attrs(id))
-        .withText(String.format("%05X | %s %s ", offset, MNEMONIC, info))
-        .with(formatRawBytesHTML(bytes));
+    return div(attrs(id)).withText(toString()).with(a()).with(formatRawBytesHTML(bytes));
   }
 }

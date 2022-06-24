@@ -11,6 +11,12 @@ public interface Opcode {
 
   byte[] getBytes();
 
+  byte[] getBytes(int offset, int size);
+
+  String toAssembly();
+
+  String toAssembly(int offset);
+
   ContainerTag toHTML();
 
   default String formatRawBytes(byte[] bytes) {
@@ -36,4 +42,5 @@ public interface Opcode {
     }
     return span(sb.toString()).withClass("g");
   }
+
 }

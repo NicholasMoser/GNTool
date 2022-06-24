@@ -2,6 +2,10 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTable;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTableLink;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.Ranges;
@@ -11,6 +15,7 @@ import java.io.RandomAccessFile;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +35,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 /**
  * A class to represent the GUI for the seq editor tool. This allows the user to modify a seq file
@@ -149,13 +155,27 @@ public class SeqEditor {
     this.selectedEdit = seqEdit;
     String editName = seqEdit.getName();
     byte[] oldBytes = seqEdit.getOldBytes();
-    byte[] newBytes = seqEdit.getNewBytes();
+    List<Opcode> oldCodes = new LinkedList<>();
+    ByteStream bs = new ByteStream(oldBytes);
+    while (bs.bytesAreLeft()) {
+      try {
+        oldCodes.add(SeqHelper.getSeqOpcode(bs, bs.peekBytes(2)[0], bs.peekBytes(2)[1]));
+      } catch (IOException e) {
+        break;
+      }
+    }
+    StringBuilder sb = new StringBuilder();
+    for (Opcode op : oldCodes) {
+      sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes(seqEdit.getOffset(), oldBytes.length))));
+    }
+    List<Opcode> newCodes = seqEdit.getNewCodes();
     nameTextArea.setText(editName);
     offsetTextField.setText(Integer.toString(seqEdit.getOffset()));
     hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
-    hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(oldBytes));
-    newBytesTextArea.setText(ByteUtils.bytesToHexStringWords(newBytes));
-    opcodesTextArea.setText(getOpcodesString(newBytes));
+    hijackedBytesTextArea.setText(sb.toString());
+    Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes, seqEdit.getSize());
+    newBytesTextArea.setText(opcodesStrings.getKey());
+    opcodesTextArea.setText(opcodesStrings.getValue());
   }
 
   /**
@@ -223,6 +243,25 @@ public class SeqEditor {
     } else {
       Message.error("No Edit Opened", "Cannot apply, no edit is opened.");
     }
+  }
+
+  /**
+   * Assemble the opcodes to bytes
+   */
+  public void assemble() {
+    String[] lines = opcodesTextArea.getText().split("\n");
+    Pair<List<Opcode>, Integer> opcodes = null;
+    try {
+      opcodes = SeqAssembler.assembleLines(lines, this.seqPath);
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Unable to assemble lines.", e);
+    }
+
+    StringBuilder sb = new StringBuilder();
+    for (Opcode op : opcodes.getKey()) {
+      sb.append(String.format("%s\n",ByteUtils.bytesToHexStringWords(op.getBytes())));
+    }
+    newBytesTextArea.setText(sb.toString());
   }
 
   /**
@@ -328,6 +367,7 @@ public class SeqEditor {
    */
   private void applyExistingEdit() {
     try {
+      int position = selectedEdit.getPosition();
       // Remove the existing edit
       SeqExt.removeEdit(selectedEdit, seqPath);
       editsByName.remove(selectedEdit.getName());
@@ -343,6 +383,7 @@ public class SeqEditor {
           .endOffset(offset + hijackedBytesLength)
           .newBytes(newBytes)
           .seqPath(seqPath)
+          .position(position)
           .create();
       // Add the new edit
       SeqExt.addEdit(seqEdit, seqPath);
@@ -422,6 +463,66 @@ public class SeqEditor {
   }
 
   /**
+   * Get the opcodes, and bytes in human-readable text form from a given opcode list.
+   *
+   * @param newCodes The opcode byte array.
+   * @return Pair of the human-readable text of the bytes and opcodes.
+   */
+  public static Pair<String, String> getOpcodesStrings(List<Opcode> newCodes, int size) {
+    Map<Integer, String> labelMap = new HashMap<>();
+    StringBuilder newBytesText = new StringBuilder();
+    StringBuilder opcodesText = new StringBuilder();
+    for (Opcode opcode : newCodes) {
+      if (opcode instanceof BranchingOpcode branchingOpcode) {
+        int destination = branchingOpcode.getDestination();
+        String label = labelMap.get(destination);
+        if (destination <= size && destination >= 0 && label == null) {
+          label = String.format("label%d", labelMap.size());
+          labelMap.put(destination, String.format("%s", label));
+        }
+        if (label != null) {
+          branchingOpcode.setDestinationFunctionName(label);
+        }
+      } else if (opcode instanceof BranchTable branchTable) {
+        List<String> labels = new LinkedList<>();
+        for (Integer destination : branchTable.getOffsets()) {
+          String label = labelMap.get(destination);
+          if (destination <= size && destination >= 0 && label == null) {
+            label = String.format("label%d", labelMap.size());
+            labelMap.put(destination, label);
+          }
+          if (label != null) {
+            labels.add(label);
+          }
+        }
+        branchTable.setBranches(labels);
+      } else if (opcode instanceof BranchTableLink branchTableLink) {
+        List<String> labels = new LinkedList<>();
+        for (Integer destination : branchTableLink.getOffsets()) {
+          String label = labelMap.get(destination);
+          if (destination <= size && destination >= 0 && label == null) {
+            label = String.format("label%d", labelMap.size());
+            labelMap.put(destination, label);
+          }
+          if (label != null) {
+            labels.add(label);
+          }
+        }
+        branchTableLink.setBranches(labels);
+      }
+    }
+    for (Opcode opcode : newCodes) {
+      String label = labelMap.get(opcode.getOffset());
+      if (label != null) {
+        opcodesText.append(String.format("%s:\n",label));
+      }
+      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes())));//opcode.getBytes(position, size))));
+      opcodesText.append(String.format("%s\n", opcode.toAssembly()));//toAssembly(position)));
+    }
+    return new Pair<>(newBytesText.toString(), opcodesText.toString());
+  }
+
+  /**
    * Sets the disabled status of the fields.
    *
    * @param value If the fields are to be disabled.
@@ -448,7 +549,20 @@ public class SeqEditor {
         if (raf.read(bytes) != hijackedBytesLength) {
           throw new IOException("Failed to read " + hijackedBytesLength + " bytes.");
         }
-        hijackedBytesTextArea.setText(ByteUtils.bytesToHexStringWords(bytes));
+        List<Opcode> oldCodes = new LinkedList<>();
+        ByteStream bs = new ByteStream(bytes);
+        while (bs.bytesAreLeft()) {
+          try {
+            oldCodes.add(SeqHelper.getSeqOpcode(bs, bs.peekBytes(2)[0], bs.peekBytes(2)[1]));
+          } catch (IOException e) {
+            break;
+          }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Opcode op : oldCodes) {
+          sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes(offset, hijackedBytesLength))));
+        }
+        hijackedBytesTextArea.setText(sb.toString());
       }
     } catch (Exception e) {
       hijackedBytesTextArea.setText(e.getMessage());

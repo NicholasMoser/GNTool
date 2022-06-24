@@ -75,7 +75,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("seq_p_sp->field_0x28", ea.getDescription());
+    assertEquals("seq_p_sp10", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -98,7 +98,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("seq_p_sp->field_0x34", ea.getDescription());
+    assertEquals("seq_p_sp13", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -233,7 +233,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*seq_p_sp->field_0x5C + *gpr23 + 0000", ea.getDescription());
+    assertEquals("*seq_p_sp23 + *gpr23 + 0000", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -372,7 +372,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*seq_p_sp->field_0x40->field_0x5C", ea.getDescription());
+    assertEquals("*seq_p_sp16->field_0x5C", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
@@ -394,7 +394,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*seq_p_sp->field_0x34->field_0x20", ea.getDescription());
+    assertEquals("*seq_p_sp13->field_0x20", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof SeqOperand);
     SeqOperand seqOperand = (SeqOperand) operand;
