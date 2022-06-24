@@ -10,11 +10,11 @@ public class HandlePlayback implements Opcode {
 
   private final static String MNEMONIC = "handle_playback";
   private final int offset;
-  private final String info;
+  private final boolean updatePC;
 
   public HandlePlayback(int offset, boolean updatePC) {
     this.offset = offset;
-    this.info = updatePC ? "(update pc)" : "(update cr)";
+    this.updatePC = updatePC;
   }
 
   @Override
@@ -24,7 +24,8 @@ public class HandlePlayback implements Opcode {
 
   @Override
   public byte[] getBytes() {
-    return new byte[4];
+    byte option = (byte) (updatePC ? 0x00 : 0x01);
+    return new byte[]{0x26, (byte) 0xE5, 0x00, option};
   }
 
   @Override
@@ -39,7 +40,8 @@ public class HandlePlayback implements Opcode {
 
   @Override
   public String toAssembly() {
-    return String.format("%s %s",MNEMONIC,info);
+    String info = updatePC ? "(update pc)" : "(update cr)";
+    return String.format("%s %s", MNEMONIC, info);
   }
 
   @Override
@@ -50,8 +52,9 @@ public class HandlePlayback implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
+    String info = updatePC ? "(update pc)" : "(update cr)";
     return div(attrs(id))
-        .withText(String.format("%05X | %s ", offset, MNEMONIC))
-        .with(span("00010000").withClass("g"));
+        .withText(String.format("%05X | %s %s ", offset, MNEMONIC, info))
+        .with(formatRawBytesHTML(getBytes()));
   }
 }
