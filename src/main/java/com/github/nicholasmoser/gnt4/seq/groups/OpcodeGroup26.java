@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
+import com.github.nicholasmoser.gnt4.seq.opcodes.HandlePlayback;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -103,12 +104,12 @@ public class OpcodeGroup26 {
       case (byte) 0xE0 -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xE1 -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xE2 -> UnknownOpcode.of(0x4, bs);
-      case (byte) 0xE5 -> UnknownOpcode.of(0x4, bs);
-      case (byte) 0xE6 -> UnknownOpcode.of(0x4, bs); //noop?
-      case (byte) 0xE7 -> UnknownOpcode.of(0x4, bs); //noop?
-      case (byte) 0xE8 -> op_26E8(bs);
-      case (byte) 0xE9 -> UnknownOpcode.of(0x4, bs);
-      case (byte) 0xEA -> UnknownOpcode.of(0x4, bs);
+      case (byte) 0xE5 -> handle_playback(bs);
+      case (byte) 0xE6 -> nop_e6(bs);
+      case (byte) 0xE7 -> nop_e7(bs);
+      case (byte) 0xE8 -> init_recording(bs);
+      case (byte) 0xE9 -> handle_record(bs);
+      case (byte) 0xEA -> get_recording_percent(bs);
       case (byte) 0xEB -> op_26EB(bs);
       case (byte) 0xEC -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xF0 -> UnknownOpcode.of(0x4, bs);
@@ -218,10 +219,31 @@ public class OpcodeGroup26 {
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
-  private static Opcode op_26E8(ByteStream bs) throws IOException {
+  private static Opcode handle_playback(ByteStream bs) {
+    int offset = bs.offset();
+    return new HandlePlayback(offset);
+  }
+
+  private static Opcode nop_e7(ByteStream bs) {
+    return null;
+  }
+
+  private static Opcode nop_e6(ByteStream bs) {
+    return null;
+  }
+
+  private static Opcode init_recording(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode handle_record(ByteStream bs) {
+    return null;
+  }
+
+  private static Opcode get_recording_percent(ByteStream bs) {
+    return null;
   }
 
   private static Opcode op_26EB(ByteStream bs) throws IOException {
