@@ -13,7 +13,7 @@ public class HandleRecording implements Opcode {
 
   /**
    * @param offset The offset.
-   * @param thisChr If this is to apply to this character, otherwise is the other character.
+   * @param thisChr If this is to apply to this character, otherwise is the foe character.
    */
   public HandleRecording(int offset, boolean thisChr) {
     this.offset = offset;
@@ -57,7 +57,7 @@ public class HandleRecording implements Opcode {
     String id = String.format("#%X", offset);
     String chr = thisChr ? "chr_p" : "foe_chr_p";
     return div(attrs(id))
-        .withText(String.format("%05X | %s (%s) ", offset, chr, MNEMONIC))
+        .withText(String.format("%05X | %s (%s) ", offset, MNEMONIC, chr))
         .with(formatRawBytesHTML(getBytes()));
   }
 }

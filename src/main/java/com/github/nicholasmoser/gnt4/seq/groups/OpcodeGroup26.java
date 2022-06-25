@@ -261,7 +261,7 @@ public class OpcodeGroup26 {
     int chr = opcode >> 8 & 0xff;
     if (option == 2) {
       return new RemoveRecordingFlag(offset);
-    } else if (option == 1) {
+    } else if (option == 0) {
       if (chr == 0) {
         return new HandleRecording(offset, true);
       } else {
