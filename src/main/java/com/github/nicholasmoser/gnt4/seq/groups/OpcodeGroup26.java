@@ -117,7 +117,7 @@ public class OpcodeGroup26 {
       case (byte) 0xE7 -> nop_25E7(bs);
       case (byte) 0xE8 -> free_action_stack_or_init_recording(bs);
       case (byte) 0xE9 -> remove_recording_flag_or_handle_or_finish_recording(bs);
-      case (byte) 0xEA -> get_recording_percent(bs);
+      case (byte) 0xEA -> get_playback_or_recording_percent(bs);
       case (byte) 0xEB -> op_26EB(bs);
       case (byte) 0xEC -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xF0 -> UnknownOpcode.of(0x4, bs);
@@ -272,7 +272,7 @@ public class OpcodeGroup26 {
     }
   }
 
-  private static Opcode get_recording_percent(ByteStream bs) throws IOException {
+  private static Opcode get_playback_or_recording_percent(ByteStream bs) throws IOException {
     int offset = bs.offset();
     int opcode = bs.readWord();
     int option = opcode & 0xff;
