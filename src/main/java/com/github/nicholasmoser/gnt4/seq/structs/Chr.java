@@ -105,6 +105,7 @@ public class Chr {
       .put(0x2EC, "inactionable_timer")
       .put(0x2F0, "intangible_timer")
       .put(0x2F8, "grab_break_counter")
+      .put(0x3BE, "current_buttons_held")
       .put(0x54C, "active_throws")
       .put(0x7D8, "starting_string_offset")
       .put(0x7E2, "next_attack_id")

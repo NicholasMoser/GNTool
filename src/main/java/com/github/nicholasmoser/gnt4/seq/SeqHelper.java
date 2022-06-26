@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.GNT4Characters;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup02;
@@ -75,6 +76,8 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Push;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
+import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import j2html.tags.ContainerTag;
@@ -88,6 +91,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class SeqHelper {
@@ -748,5 +752,41 @@ public class SeqHelper {
   public static String getString(byte[] bytes) throws UnsupportedEncodingException {
     String text = new String(bytes, "shift-jis");
     return text.replace("\0", "").replace("\n", "\\n");
+  }
+
+  /**
+   * Checks the operands for a chr operand and immediate operand. If so, checks the chr field to
+   * see if it has known fields. If so, returns a better description including the name of the
+   * field values. Otherwise returns an empty optional.
+   *
+   * @param ea The two operands
+   * @param size The size of an immediate value operand (e.g. 4-byte word)
+   * @return given known chr_p fields, optional more descriptive description
+   */
+  public static Optional<String> getChrFieldDescription(SEQ_RegCMD2 ea, int size) throws IOException {
+    if (ea.getFirstOperand() instanceof ChrOperand chr && ea.getSecondOperand() instanceof ImmediateOperand immediate) {
+      int value = immediate.getImmediateValue();
+      if (size == 2) {
+        value >>= 0x10;
+      } else if (size == 1) {
+        value >>= 0x18;
+      } else if (size > 4) {
+        throw new IOException("size not supported " + size);
+      }
+      if (chr.get() == 0x1C) { // chr_id
+        String chrName = GNT4Characters.INTERNAL_CHAR_ORDER.inverse().get(value);
+        if (chrName == null) {
+          throw new IOException("Unknown character for chr_id " + value);
+        }
+        return Optional.of(String.format("%s, %s (0x%X)", chr, chrName, value));
+      } else if (chr.get() == 0x23C) { // act_id
+        String action = Seq.getActionDescription(value);
+        return Optional.of(String.format("%s, %s (0x%X)", chr, action, value));
+      } else if (chr.get() == 0x3BE) { // current_buttons_held
+        String buttons = Seq.getButtonDescriptions(value);
+        return Optional.of(String.format("%s, %s (0x%X)", chr, buttons, value));
+      }
+    }
+    return Optional.empty();
   }
 }
