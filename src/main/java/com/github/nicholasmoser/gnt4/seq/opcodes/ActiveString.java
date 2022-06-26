@@ -47,7 +47,6 @@ public class ActiveString implements Opcode {
         } else {
             baos.write(bs.peekBytes(2));
             short tmp = bs.readShort();
-            //from_atk.add(tmp);
             for (short i = 0; i < (tmp & 0x0FFF); i++) {
                 baos.write(bs.peekBytes(2));
                 from_atk.add(bs.readShort());
@@ -75,18 +74,16 @@ public class ActiveString implements Opcode {
         to_atk = bs.readShort();
         if (Arrays.equals(bs.peekBytes(8), new byte[]{0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x01})) {
             baos.write(bs.readBytes(6));
+        } else if (bs.peekWord() == 0) {
+            baos.write(bs.readBytes(4));
         } else if (followType == 0x062270) {
-            if (to_atk == 0) {
-                baos.write(bs.readBytes(4));
-                baos.write(bs.peekBytes(2));
-                to_atk = bs.readShort();
-            }
-            //baos.write(bs.readBytes(2));
             if (bs.peekWord() == 0x28) {
                 baos.write(bs.readBytes(4));
                 if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00}) && bs.peekWord() != 0) {
                     baos.write(bs.readBytes(2));
                 }
+            } else if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00}) && bs.peekWord() != 0) {
+                baos.write(bs.readBytes(2));
             }
             if (bs.peekWord() == 4) {
                 baos.write(bs.readBytes(2));
@@ -114,7 +111,6 @@ public class ActiveString implements Opcode {
             }
         } else if (followType == 0x06227F) {
             while (true) {
-                System.out.println(formatRawBytes(baos.toByteArray()));
                 if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
                     if (bs.peekWord() == 0x28) {
                         baos.write(bs.readBytes(10));
@@ -127,7 +123,6 @@ public class ActiveString implements Opcode {
             baos.write(bs.readBytes(2));
         }
         this.bytes = baos.toByteArray();
-        System.out.println(this);
     }
 
     @Override
@@ -216,16 +211,12 @@ public class ActiveString implements Opcode {
             followUpAllowed = bs.readShort();
             baos.write(bs.peekBytes(2));
             to_atk = bs.readShort();
-            System.out.println(String.format("%X",bs.peekWord()));
             if (bs.peekWord() == 0x280000) {
                 baos.write(bs.readBytes(2));
-            } /*else if (bs.peekWord() == 0x00) {
-                baos.write(bs.readBytes(2));
-            }*/ else if (bs.peekWord() == 0x28) {
+            } else if (bs.peekWord() == 0x28) {
                 baos.write(bs.readBytes(4));
             }
             bytes = baos.toByteArray();
-            //System.out.println(this);
         }
 
         @Override

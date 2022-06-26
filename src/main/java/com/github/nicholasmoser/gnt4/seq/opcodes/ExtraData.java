@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
@@ -37,28 +36,11 @@ public class ExtraData implements Opcode{
         sixth = bs.readShort();
         switch (type) {
             case 1 -> {
-                /*
-                baos.write(bs.readBytes(8));
-                if (fourth != 2) {
-                    while (!Arrays.equals(bs.peekBytes(10), new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})) {
-                        baos.write(bs.readBytes(2));
-                    }
-                    baos.write(bs.readBytes(10));
-                } else if (fourth == 2) {
-                    while (!Arrays.equals(bs.peekBytes(12), new byte[]{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})) {
-                        baos.write(bs.readBytes(2));
-                    }
-                    baos.write(bs.readBytes(12));
-                }*/
                 baos.write(bs.readBytes(12));
                 while (!Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x00})) {
                     baos.write(bs.readBytes(10));
                 }
                 baos.write(bs.readBytes(2));
-                /*
-                if (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x6C})) {
-                    baos.write(bs.readBytes())
-                }*/
             }
             case 2 -> {
                 inputType = fourth;
@@ -88,14 +70,7 @@ public class ExtraData implements Opcode{
                 baos.write(bs.readBytes(4));
             }
         }
-        /*
-        while (!Arrays.equals(bs.peekBytes(6), new byte[]{0x00, 0x01})) {
-            baos.write(bs.readBytes(2));
-        }
-
-         */
         this.bytes = baos.toByteArray();
-        //System.out.println(this);
     }
 
     @Override

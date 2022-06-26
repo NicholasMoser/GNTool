@@ -347,7 +347,19 @@ public class SeqHelper {
       data.add(new ActiveAttack(bs.offset(), bs.readBytes(20)));
     }
     data.add(new ActiveAttack(bs.offset(), bs.readBytes(20)));
-    while (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x01})) {
+    List<Integer> edl = new LinkedList<>();
+    for (Opcode op : data) {
+      ActiveAttack aa = (ActiveAttack) op;
+      if (!edl.contains(aa.getExtra_data_offset())) {
+        edl.add(aa.getExtra_data_offset());
+      }
+    }
+    Collections.sort(edl);
+    for (int i : edl) {
+      bs.seek(i);
+      data.add(new ExtraData(bs));
+    }
+    while (Arrays.equals(bs.peekBytes(4), new byte[]{0x00, 0x01, 0x00, 0x0A})) {
       ExtraData ed = new ExtraData(bs);
       data.add(ed);
     }
@@ -375,12 +387,6 @@ public class SeqHelper {
     if (bs.offset()%4 != 0) {
       bs.skip(4 - (bs.offset() % 4));
     }
-    /*
-    int offset = bs.offset();
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    while (bs.peekWord() != 0x04026B00) {
-      baos.write(bs.readBytes(4));
-    }*/
     data.add(new CharacterStats(bs));
     return data;
   }
