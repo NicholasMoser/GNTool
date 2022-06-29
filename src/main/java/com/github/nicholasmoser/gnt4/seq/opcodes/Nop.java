@@ -2,17 +2,20 @@ package com.github.nicholasmoser.gnt4.seq.opcodes;
 
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
-import static j2html.TagCreator.span;
 
 import j2html.tags.ContainerTag;
 
-public class HardReset implements Opcode {
+public class Nop implements Opcode {
 
-  private final static String MNEMONIC = "hard_reset";
+  private final static String MNEMONIC = "nop";
   private final int offset;
+  private final byte[] bytes;
+  private final String type;
 
-  public HardReset(int offset) {
+  public Nop(int offset, byte[] bytes) {
     this.offset = offset;
+    this.bytes = bytes;
+    this.type = String.format("%02X%02X", bytes[0], bytes[1]);
   }
 
   @Override
@@ -22,7 +25,7 @@ public class HardReset implements Opcode {
 
   @Override
   public byte[] getBytes() {
-    return new byte[]{0x00, 0x01, 0x00, 0x00};
+    return bytes;
   }
 
   @Override
@@ -32,12 +35,12 @@ public class HardReset implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | %s {00010000}", offset, MNEMONIC);
+    return String.format("%05X | %s_%s %s", offset, MNEMONIC, type, formatRawBytes(bytes));
   }
 
   @Override
   public String toAssembly() {
-    return String.format("%s",MNEMONIC);
+    return String.format("%s_%s",MNEMONIC,type);
   }
 
   @Override
@@ -49,7 +52,7 @@ public class HardReset implements Opcode {
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     return div(attrs(id))
-        .withText(String.format("%05X | %s ", offset, MNEMONIC))
-        .with(span("00010000").withClass("g"));
+        .withText(String.format("%05X | %s_%s ", offset, MNEMONIC, type))
+        .with(formatRawBytesHTML(bytes));
   }
 }

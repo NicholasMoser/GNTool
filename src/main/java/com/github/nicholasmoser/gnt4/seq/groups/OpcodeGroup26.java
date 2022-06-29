@@ -1,7 +1,16 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
+import com.github.nicholasmoser.gnt4.seq.opcodes.FinishRecording;
+import com.github.nicholasmoser.gnt4.seq.opcodes.FreeActionStack;
+import com.github.nicholasmoser.gnt4.seq.opcodes.GetPlaybackPercent;
+import com.github.nicholasmoser.gnt4.seq.opcodes.GetRecordingPercent;
+import com.github.nicholasmoser.gnt4.seq.opcodes.HandlePlayback;
+import com.github.nicholasmoser.gnt4.seq.opcodes.HandleRecording;
+import com.github.nicholasmoser.gnt4.seq.opcodes.InitRecording;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Nop;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.RemoveRecordingFlag;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.google.common.primitives.Bytes;
@@ -103,12 +112,12 @@ public class OpcodeGroup26 {
       case (byte) 0xE0 -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xE1 -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xE2 -> UnknownOpcode.of(0x4, bs);
-      case (byte) 0xE5 -> UnknownOpcode.of(0x4, bs);
-      case (byte) 0xE6 -> UnknownOpcode.of(0x4, bs); //noop?
-      case (byte) 0xE7 -> UnknownOpcode.of(0x4, bs); //noop?
-      case (byte) 0xE8 -> op_26E8(bs);
-      case (byte) 0xE9 -> UnknownOpcode.of(0x4, bs);
-      case (byte) 0xEA -> UnknownOpcode.of(0x4, bs);
+      case (byte) 0xE5 -> handle_playback(bs);
+      case (byte) 0xE6 -> nop_26E6(bs);
+      case (byte) 0xE7 -> nop_25E7(bs);
+      case (byte) 0xE8 -> free_action_stack_or_init_recording(bs);
+      case (byte) 0xE9 -> remove_recording_flag_or_handle_or_finish_recording(bs);
+      case (byte) 0xEA -> get_playback_or_recording_percent(bs);
       case (byte) 0xEB -> op_26EB(bs);
       case (byte) 0xEC -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xF0 -> UnknownOpcode.of(0x4, bs);
@@ -218,10 +227,62 @@ public class OpcodeGroup26 {
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
-  private static Opcode op_26E8(ByteStream bs) throws IOException {
+  private static Opcode handle_playback(ByteStream bs) throws IOException {
     int offset = bs.offset();
+    bs.skipNBytes(3);
+    int option = bs.read();
+    return new HandlePlayback(offset, option == 0);
+  }
+
+  private static Opcode nop_25E7(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    return new Nop(offset, bs.readBytes(4));
+  }
+
+  private static Opcode nop_26E6(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    return new Nop(offset, bs.readBytes(4));
+  }
+
+  private static Opcode free_action_stack_or_init_recording(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    int option = bs.peekWord() >> 8 & 0xff;
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
-    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+    if (option == 2) {
+      return new FreeActionStack(offset, ea.getBytes(), ea.getDescription());
+    }
+    return new InitRecording(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode remove_recording_flag_or_handle_or_finish_recording(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    int opcode = bs.readWord();
+    int option = opcode & 0xff;
+    int chr = opcode >> 8 & 0xff;
+    if (option == 2) {
+      return new RemoveRecordingFlag(offset);
+    } else if (option == 0) {
+      if (chr == 0) {
+        return new HandleRecording(offset, true);
+      } else {
+        return new HandleRecording(offset, false);
+      }
+    } else {
+      return new FinishRecording(offset);
+    }
+  }
+
+  private static Opcode get_playback_or_recording_percent(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    int opcode = bs.readWord();
+    int option = opcode & 0xff;
+    if (option == 1) {
+      return new GetPlaybackPercent(offset);
+    } else if (option != 0) {
+      throw new IOException("Option not yet supported");
+    } else {
+      return new GetRecordingPercent(offset);
+    }
   }
 
   private static Opcode op_26EB(ByteStream bs) throws IOException {

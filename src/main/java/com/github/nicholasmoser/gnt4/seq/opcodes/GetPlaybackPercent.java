@@ -6,12 +6,12 @@ import static j2html.TagCreator.span;
 
 import j2html.tags.ContainerTag;
 
-public class HardReset implements Opcode {
+public class GetPlaybackPercent implements Opcode {
 
-  private final static String MNEMONIC = "hard_reset";
+  private final static String MNEMONIC = "get_playback_percent";
   private final int offset;
 
-  public HardReset(int offset) {
+  public GetPlaybackPercent(int offset) {
     this.offset = offset;
   }
 
@@ -22,7 +22,7 @@ public class HardReset implements Opcode {
 
   @Override
   public byte[] getBytes() {
-    return new byte[]{0x00, 0x01, 0x00, 0x00};
+    return new byte[]{0x26, (byte) 0xEA, 0x00, 0x01};
   }
 
   @Override
@@ -32,7 +32,7 @@ public class HardReset implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | %s {00010000}", offset, MNEMONIC);
+    return String.format("%05X | %s {26E90001}", offset, MNEMONIC);
   }
 
   @Override
@@ -50,6 +50,6 @@ public class HardReset implements Opcode {
     String id = String.format("#%X", offset);
     return div(attrs(id))
         .withText(String.format("%05X | %s ", offset, MNEMONIC))
-        .with(span("00010000").withClass("g"));
+        .with(span("26EA0001").withClass("g"));
   }
 }
