@@ -775,7 +775,7 @@ public class Seq {
     actionDescriptions.put(0x059, "Hit into the air (e.g. by Temari 4B)");
     actionDescriptions.put(0x05A, "Landing from hit Soft into the Air");
     actionDescriptions.put(0x05B, "Hit soft into the air (e.g. by Naruto 6A)");
-    actionDescriptions.put(0x05C, "Hit hard");
+    actionDescriptions.put(0x05C, "Collapse to one knee, head in hands (unused?)");
     actionDescriptions.put(0x05D, "Hard knockdown");
     actionDescriptions.put(0x05E, "Hit with furi (turns you around, from BR)");
     actionDescriptions.put(0x05F, "Hit with furi (turns you around, from BR)");
