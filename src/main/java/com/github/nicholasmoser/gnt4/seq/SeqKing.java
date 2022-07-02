@@ -4,6 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.comment.Function;
 import com.github.nicholasmoser.gnt4.seq.comment.Functions;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.InvalidBytes;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
@@ -153,9 +154,9 @@ public class SeqKing {
         newOpcode = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode);
       } catch (Exception e) {
         if (permissive) {
-          // Invalid opcode, mark it as binary data and continue
+          // Invalid opcode, mark it as invalid bytes and continue
           bs.seek(tempOffset);
-          newOpcode = new BinaryData(tempOffset, bs.readNBytes(4));
+          newOpcode = new InvalidBytes(tempOffset, bs.readNBytes(4));
         } else {
           throw e;
         }
