@@ -9,6 +9,7 @@ module com.github.nicholasmoser {
   opens com.github.nicholasmoser.gnt4 to javafx.fxml;
   opens com.github.nicholasmoser.gnt4.seq to javafx.fxml;
   opens com.github.nicholasmoser.gnt4.seq.ext to javafx.fxml;
+  opens com.github.nicholasmoser.gnt4.ui to javafx.fxml;
   opens com.github.nicholasmoser.mot to javafx.fxml;
 
   requires com.google.common;

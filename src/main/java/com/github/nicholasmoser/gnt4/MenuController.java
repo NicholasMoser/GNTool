@@ -32,6 +32,9 @@ import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
+import com.github.nicholasmoser.gnt4.ui.ChrOrder;
+import com.github.nicholasmoser.gnt4.ui.ChrOrderSaveTask;
+import com.github.nicholasmoser.gnt4.ui.OrderController;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
 import com.github.nicholasmoser.tools.DolphinSeqListenerTool;
@@ -58,9 +61,10 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
@@ -89,6 +93,7 @@ public class MenuController {
   private Path uncompressedDirectory;
   private Path workspaceDirectory;
   private Path uncompressedFiles;
+  private Path dolPath;
   private GNT4Codes codes;
   private List<GeckoCodeGroup> codeGroups;
   public ListView<String> changedFiles;
@@ -341,6 +346,34 @@ public class MenuController {
     }
   }
 
+  public void reorderCharacters() {
+    try {
+      FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
+      Scene scene = new Scene(loader.load());
+      GUIUtils.initDarkMode(scene);
+      OrderController orderController = loader.getController();
+      Stage stage = new Stage();
+      GUIUtils.setIcons(stage);
+      orderController.init(ChrOrder.getCurrentChrOrder(dolPath), new ChrOrderSaveTask(dolPath));
+      stage.setScene(scene);
+      stage.setTitle("Reorder Characters");
+      stage.centerOnScreen();
+      stage.show();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Reorder Characters", e);
+      Message.error("Failed to Reorder Characters", e.getMessage());
+    }
+  }
+
+  public void reorderStages() {
+    try {
+
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Reorder Stages", e);
+      Message.error("Failed to Reorder Stages", e.getMessage());
+    }
+  }
+
   @FXML
   protected void defaultTimeOut() {
     demoTimeOut.getValueFactory().setValue(DEFAULT_DEMO_TIME_OUT_SECONDS);
@@ -495,7 +528,7 @@ public class MenuController {
   @FXML
   public void fixRecordingTextSize() {
     try {
-      CPUFlags.fixRecordingTextSize(uncompressedDirectory.resolve(DOL));
+      CPUFlags.fixRecordingTextSize(dolPath);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Fixing Recording Text Size", e);
       Message.error("Error Fixing Recording Text Size", e.getMessage());
@@ -1268,7 +1301,6 @@ public class MenuController {
         return;
       }
       long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups, CodeCave.EXI2);
-      Path dolPath = uncompressedDirectory.resolve(DOL);
       GeckoWriter writer = new GeckoWriter(dolPath);
       GeckoCodeGroup group = writer.writeCodes(codes, name, hijackStartAddress);
       codeGroups.add(group);
@@ -1312,6 +1344,7 @@ public class MenuController {
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.uncompressedFiles = uncompressedDirectory.resolve("files");
+    this.dolPath = uncompressedDirectory.resolve(DOL);
     this.codes = new GNT4Codes(uncompressedDirectory);
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
@@ -1416,11 +1449,10 @@ public class MenuController {
       try {
         addedCodes.getItems().clear();
 
-        Path dol = uncompressedDirectory.resolve(DOL);
         Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
 
-        if (DolHijack.isUsingCodeCave(dol, CodeCave.RECORDING)) {
-          if (DolHijack.isUsingCodeCave(dol, CodeCave.EXI2)) {
+        if (DolHijack.isUsingCodeCave(dolPath, CodeCave.RECORDING)) {
+          if (DolHijack.isUsingCodeCave(dolPath, CodeCave.EXI2)) {
             throw new IOException(
                 "You are overwriting both recording code and EXI2 code, please log an issue to get this fixed.");
           }
@@ -1429,12 +1461,12 @@ public class MenuController {
           if (Message.warnConfirmation("Need to Move Codes", msg)) {
             if (!Files.isRegularFile(codeFile)) {
               // We need the code file to do the conversion, create a code file with the old code cave
-              if (!DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.RECORDING)) {
+              if (!DolHijack.handleActiveCodesButNoCodeFile(dolPath, CodeCave.RECORDING)) {
                 throw new IOException("Recording code is modified, but unable to get code file.");
               }
             }
             // Do the conversion
-            DolHijack.moveCodes(dol, codeFile, CodeCave.EXI2);
+            DolHijack.moveCodes(dolPath, codeFile, CodeCave.EXI2);
           } else {
             throw new IOException("Codes must be converted to use code hijacking.");
           }
@@ -1446,7 +1478,7 @@ public class MenuController {
           for (GeckoCodeGroup codeGroup : codeGroups) {
             addedCodes.getItems().add(codeGroup.getName());
           }
-        } else if (DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.EXI2)) {
+        } else if (DolHijack.handleActiveCodesButNoCodeFile(dolPath, CodeCave.EXI2)) {
           // This ISO has injected codes but no associated JSON code file. The previous method
           // call successfully created one, so now let's parse it.
           codeGroups = GeckoCodeJSON.parseFile(codeFile);
@@ -1720,7 +1752,6 @@ public class MenuController {
    */
   private void defragCodeGroups(List<GeckoCodeGroup> codeGroups) {
     try {
-      Path dolPath = uncompressedDirectory.resolve(DOL);
       DolDefragger defragger = new DolDefragger(dolPath, codeGroups, CodeCave.EXI2);
       defragger.run();
       Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
@@ -1739,7 +1770,6 @@ public class MenuController {
    */
   private void removeCodeGroup(GeckoCodeGroup group) {
     try {
-      Path dolPath = uncompressedDirectory.resolve(DOL);
       GeckoWriter writer = new GeckoWriter(dolPath);
       boolean successful = writer.removeCodes(group);
       if (!successful) {
