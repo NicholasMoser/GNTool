@@ -1,11 +1,7 @@
 package com.github.nicholasmoser.gnt4.ui;
 
-import com.github.nicholasmoser.Message;
-import com.github.nicholasmoser.gnt4.MenuController;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
@@ -21,8 +17,7 @@ import javafx.scene.input.TransferMode;
 public class OrderController {
 
   public ListView<String> listView;
-  private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
-  private SaveTask<Void> saveTask;
+  private OrderSave orderSave;
 
   public void moveUp() {
     int curr = listView.getSelectionModel().getSelectedIndex();
@@ -44,20 +39,14 @@ public class OrderController {
     listView.getSelectionModel().select(curr + 1);
   }
 
-  public void init(List<String> items, SaveTask<Void> saveTask) {
+  public void init(List<String> items, OrderSave orderSave) {
     listView.getItems().setAll(items);
-    this.saveTask = saveTask;
+    this.orderSave = orderSave;
   }
 
   public void save() {
-    saveTask.exceptionProperty().addListener((observable, oldValue, e) -> {
-      if (e != null) {
-        LOGGER.log(Level.SEVERE, "Error Changing Order", e);
-        Message.error("Error Changing Order", e.getMessage());
-      }
-    });
-    saveTask.setValues(listView.getItems());
-    new Thread(saveTask).start();
+    orderSave.setValues(listView.getItems());
+    new Thread(orderSave).start();
   }
 
   private class ImageCell extends ListCell<String> {

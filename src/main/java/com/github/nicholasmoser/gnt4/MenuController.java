@@ -33,7 +33,7 @@ import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.gnt4.ui.ChrOrder;
-import com.github.nicholasmoser.gnt4.ui.ChrOrderSaveTask;
+import com.github.nicholasmoser.gnt4.ui.ChrOrderSave;
 import com.github.nicholasmoser.gnt4.ui.OrderController;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
@@ -354,7 +354,7 @@ public class MenuController {
       OrderController orderController = loader.getController();
       Stage stage = new Stage();
       GUIUtils.setIcons(stage);
-      orderController.init(ChrOrder.getCurrentChrOrder(dolPath), new ChrOrderSaveTask(dolPath));
+      orderController.init(ChrOrder.getCurrentChrOrder(dolPath), new ChrOrderSave(dolPath));
       stage.setScene(scene);
       stage.setTitle("Reorder Characters");
       stage.centerOnScreen();

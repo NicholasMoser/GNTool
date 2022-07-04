@@ -1,16 +1,15 @@
 package com.github.nicholasmoser.gnt4.ui;
 
 import java.util.List;
-import javafx.concurrent.Task;
 
-public class SaveTask<Void> extends Task<Void> {
+public class OrderSave implements Runnable {
 
   public void setValues(List<String> values) {
     throw new RuntimeException("Must override");
   }
 
   @Override
-  protected Void call() throws Exception {
+  public void run() {
     throw new RuntimeException("Must override");
   }
 }

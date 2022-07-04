@@ -1,18 +1,19 @@
 package com.github.nicholasmoser.gnt4.ui;
 
-import com.github.nicholasmoser.gnt4.GNT4Characters;
+import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.utils.ByteUtils;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class ChrOrderSaveTask extends SaveTask<Void> {
+public class ChrOrderSave extends OrderSave {
+  private static final Logger LOGGER = Logger.getLogger(ChrOrderSave.class.getName());
   private final Path dolPath;
   private List<String> characters;
 
-  public ChrOrderSaveTask(Path dolPath) {
+  public ChrOrderSave(Path dolPath) {
     this.dolPath = dolPath;
   }
 
@@ -21,7 +22,7 @@ public class ChrOrderSaveTask extends SaveTask<Void> {
   }
 
   @Override
-  protected Void call() throws Exception {
+  public void run() {
     if (characters == null) {
       throw new IllegalArgumentException("Must first call setValues");
     }
@@ -34,7 +35,9 @@ public class ChrOrderSaveTask extends SaveTask<Void> {
         int index = ChrOrder.getChrIdIndex(id, cssChrIds);
         raf.write(ByteUtils.fromInt32(index));
       }
-      return null;
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Changing Order", e);
+      Message.error("Error Changing Order", e.getMessage());
     }
   }
 }
