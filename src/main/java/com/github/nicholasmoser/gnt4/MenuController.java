@@ -35,6 +35,8 @@ import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.gnt4.ui.ChrOrder;
 import com.github.nicholasmoser.gnt4.ui.ChrOrderSave;
 import com.github.nicholasmoser.gnt4.ui.OrderController;
+import com.github.nicholasmoser.gnt4.ui.StageOrder;
+import com.github.nicholasmoser.gnt4.ui.StageOrderSave;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
 import com.github.nicholasmoser.tools.DolphinSeqListenerTool;
@@ -367,7 +369,17 @@ public class MenuController {
 
   public void reorderStages() {
     try {
-
+      FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
+      Scene scene = new Scene(loader.load());
+      GUIUtils.initDarkMode(scene);
+      OrderController orderController = loader.getController();
+      Stage stage = new Stage();
+      GUIUtils.setIcons(stage);
+      orderController.init(StageOrder.getCurrentStageOrder(uncompressedDirectory), new StageOrderSave(uncompressedDirectory));
+      stage.setScene(scene);
+      stage.setTitle("Reorder Stages");
+      stage.centerOnScreen();
+      stage.show();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Reorder Stages", e);
       Message.error("Failed to Reorder Stages", e.getMessage());

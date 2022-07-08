@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 
 public class ChrOrderSave extends OrderSave {
   private static final Logger LOGGER = Logger.getLogger(ChrOrderSave.class.getName());
@@ -24,7 +25,11 @@ public class ChrOrderSave extends OrderSave {
   @Override
   public void run() {
     if (characters == null) {
-      throw new IllegalArgumentException("Must first call setValues");
+      Platform.runLater(() -> {
+        LOGGER.log(Level.SEVERE, "Must first call setValues");
+        Message.error("Must First Call setValues", "Must first call setValues");
+      });
+      return;
     }
     try(RandomAccessFile raf = new RandomAccessFile(dolPath.toFile(), "rw")) {
       List<Integer> cssChrIds = ChrOrder.readCssChrIds(raf);
@@ -36,8 +41,11 @@ public class ChrOrderSave extends OrderSave {
         raf.write(ByteUtils.fromInt32(index));
       }
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Error Changing Order", e);
-      Message.error("Error Changing Order", e.getMessage());
+      Platform.runLater(() -> {
+        LOGGER.log(Level.SEVERE, "Error Changing Order", e);
+        Message.error("Error Changing Order", e.getMessage());
+      });
+      return;
     }
   }
 }
