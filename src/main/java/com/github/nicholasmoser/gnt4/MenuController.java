@@ -349,6 +349,25 @@ public class MenuController {
   }
 
   public void reorderCharacters() {
+    for (GeckoCodeGroup group : codeGroups) {
+      if ("Add Random Select and Reorder CSS [Nick]".equals(group.getName()) ||
+          "Add Random Select to Character Select Screen [Nick]".equals(group.getName()) ||
+          "Add Random Select to Character Select Screen v2 [Nick]".equals(group.getName())) {
+        String msg = """
+            The random select Gecko code defines the specific CSS index to put random select,
+            which cannot be changed without writing a new Gecko code.
+            Therefore, this Gecko code must be removed before you are allowed to change the CSS character order.
+            Confirm removal of the random select Gecko code?
+            """;
+        boolean ok = Message.warnConfirmation("Conflicting Code", msg);
+        if (!ok) {
+          return;
+        }
+        removeCodeGroup(group);
+        defragCodeGroups(codeGroups);
+      }
+    }
+    //
     try {
       FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
       Scene scene = new Scene(loader.load());
@@ -375,7 +394,8 @@ public class MenuController {
       OrderController orderController = loader.getController();
       Stage stage = new Stage();
       GUIUtils.setIcons(stage);
-      orderController.init(StageOrder.getCurrentStageOrder(uncompressedDirectory), new StageOrderSave(uncompressedDirectory));
+      orderController.init(StageOrder.getCurrentStageOrder(uncompressedDirectory),
+          new StageOrderSave(uncompressedDirectory));
       stage.setScene(scene);
       stage.setTitle("Reorder Stages");
       stage.centerOnScreen();
@@ -1838,7 +1858,8 @@ public class MenuController {
       if (counterFlag == -1) {
         recordingCounterFlag.getSelectionModel().selectFirst();
       } else {
-        recordingCounterFlag.getSelectionModel().select(CPUFlags.CPU_FLAG_TO_ACTION.get(counterFlag));
+        recordingCounterFlag.getSelectionModel()
+            .select(CPUFlags.CPU_FLAG_TO_ACTION.get(counterFlag));
       }
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Unable to Init CPU Flags for Recording", e);
