@@ -176,7 +176,8 @@ public class SeqKing {
       case Seqs.CHARSEL -> {
         binaryOffsetToSize.put(0x950, 0x14);
         binaryOffsetToSize.put(0x9A0, 0xc);
-        binaryOffsetToSize.put(0x2370, 0x100);
+        binaryOffsetToSize.put(0x2370, 0x80);
+        binaryOffsetToSize.put(0x23F0, 0x80);
         binaryOffsetToSize.put(0xF3E0, 0x43C);
         binaryOffsetToSize.put(0xFAA0, 0x14B4);
         // GNT4 TE
