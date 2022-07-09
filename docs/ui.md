@@ -6,6 +6,8 @@
 - [Allow duplicate characters in 4-player battles](#allow-duplicate-characters-in-4-player-battles)
 - [Character Selection Speed](#character-selection-speed)
 - [Frames Until Model is Loaded in Character Select Screen](#frames-until-model-is-loaded-in-character-select-screen)
+- [Reorder Characters](#reorder-characters)
+- [Reorder Stages](#reorder-stages)
 
 ![User Interface](/docs/ui.png?raw=true "User Interface")
 
