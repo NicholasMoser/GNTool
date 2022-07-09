@@ -34,10 +34,16 @@ public class StageOrderSave extends OrderSave {
       return;
     }
     try(RandomAccessFile raf = new RandomAccessFile(charSel.toFile(), "rw")) {
-      raf.seek(StageOrder.OFFSET);
+      raf.seek(StageOrder.STAGE_IDS_OFFSET);
       for (String stage : stages) {
         // Get each chr id, find the index of that chr id, and write it out to the dol
         int id = StageOrder.getStageId(stage);
+        raf.write(ByteUtils.fromInt32(id));
+      }
+      raf.seek(StageOrder.STAGE_DISPLAY_IDS_OFFSET);
+      for (String stage : stages) {
+        // Get each chr id, find the index of that chr id, and write it out to the dol
+        int id = StageOrder.getStageOrderId(stage);
         raf.write(ByteUtils.fromInt32(id));
       }
     } catch (Exception e) {
@@ -48,10 +54,16 @@ public class StageOrderSave extends OrderSave {
       return;
     }
     try(RandomAccessFile raf = new RandomAccessFile(charSel4.toFile(), "rw")) {
-      raf.seek(StageOrder.OFFSET);
+      raf.seek(StageOrder.STAGE_IDS_OFFSET);
       for (String stage : stages) {
         // Get each chr id, find the index of that chr id, and write it out to the dol
         int id = StageOrder.getStageId(stage);
+        raf.write(ByteUtils.fromInt32(id));
+      }
+      raf.seek(StageOrder.STAGE_DISPLAY_IDS_OFFSET);
+      for (String stage : stages) {
+        // Get each chr id, find the index of that chr id, and write it out to the dol
+        int id = StageOrder.getStageOrderId(stage);
         raf.write(ByteUtils.fromInt32(id));
       }
     } catch (Exception e) {

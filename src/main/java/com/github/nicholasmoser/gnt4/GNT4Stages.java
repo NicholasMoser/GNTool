@@ -36,6 +36,42 @@ public class GNT4Stages {
   public static final String OROCHIMARUS_LAID = "Orochimaru's Lair";
   public static final String SHAMBLED_PLAINS = "Shambled Plains";
   public static final String FINAL_VALLEY = "Final Valley";
+  public static final String RANDOM = "Random Select";
+
+  public static final BiMap<Integer, String> STAGE_DISPLAY_IDS = new ImmutableBiMap.Builder<Integer, String>()
+      .put(0x00000000, KONOHA_HOSPITAL_ROOFTOPS)
+      .put(0x00000001, KONOHA_POLICE_DEPARTMENT)
+      .put(0x00000002, SNOW_VALLEY)
+      .put(0x00000003, FINAL_VALLEY)
+      .put(0x00000004, GREAT_NARUTO_BRIDGE_FOG)
+      .put(0x00000005, CHUNIN_EXAMS_FINALS)
+      .put(0x00000006, THREE_WAY_DEADLOCK)
+      .put(0x00000007, KONOHA_HOT_SPRINTS)
+      .put(0x00000008, SUNAGAKURE)
+      .put(0x00000009, KONOHA_SHRINE)
+      .put(0x0000000A, AMID_TOADS_1)
+      .put(0x0000000B, ACADEMY_ROOFTOP_DAY)
+      .put(0x0000000C, ICHIRAKU_RAMEN_SUNSET)
+      .put(0x0000000D, GREAT_NARUTO_BRIDGE_CLEAR)
+      .put(0x0000000E, KONOHA_GATE_NIGHT)
+      .put(0x0000000F, DEEP_FOREST_EMERGENCY)
+      .put(0x00000010, ABANDONED_UCHIHA_DISTRICT)
+      .put(0x00000011, ACADEMY_SCHOOLYARD_SUNSET)
+      .put(0x00000012, FOREST_OF_DEATH_NIGHT)
+      .put(0x00000013, AMID_TOADS_2)
+      .put(0x00000014, CHUNIN_EXAMS_QUALIFIERS)
+      .put(0x00000015, ACADEMY_ROOFTOP_NIGHT)
+      .put(0x00000016, TANZAKU_CASTLE)
+      .put(0x00000017, OROCHIMARUS_LAID)
+      .put(0x00000018, ICHIRAKU_RAMEN_NIGHT)
+      .put(0x00000019, KONOHA_GATE_DAY)
+      .put(0x0000001A, ACADEMY_SCHOOLYARD_DAY)
+      .put(0x0000001B, CHUNIN_EXAMS_ROOFTOP)
+      .put(0x0000001C, FOREST_OF_DEATH_MORNING)
+      .put(0x0000001D, NINE_TAILED_FOX_ROOM)
+      .put(0x0000001E, SHAMBLED_PLAINS)
+      .put(0x0000001F, RANDOM)
+      .build();
 
   public static final BiMap<Integer, String> STAGE_IDS = new ImmutableBiMap.Builder<Integer, String>()
       .put(0x00000001, AMID_TOADS_1)
@@ -55,7 +91,7 @@ public class GNT4Stages {
       .put(0x0000000F, CHUNIN_EXAMS_QUALIFIERS)
       .put(0x00000010, CHUNIN_EXAMS_FINALS)
       .put(0x00000011, CHUNIN_EXAMS_ROOFTOP)
-      .put(0x00000012, "GUARD")
+      // .put(0x00000012, "UNKNOWN") <- Unknown and invalid
       .put(0x00000013, KONOHA_HOT_SPRINTS)
       .put(0x00000014, SUNAGAKURE)
       .put(0x00000015, DEEP_FOREST_EMERGENCY)
