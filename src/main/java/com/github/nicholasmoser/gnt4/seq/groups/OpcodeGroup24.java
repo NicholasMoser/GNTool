@@ -82,14 +82,14 @@ public class OpcodeGroup24 {
         return new PlaySound(offset, buffer.array(), "general" + sound);
       case 0x1:
         return new PlaySound(offset, buffer.array(), "hit");
-      case 0x2:
-      case 0x4:
       case 0x7:
       case 0xA:
-      case 0xE:
       default:
         throw new IOException("Unknown, not yet supported: " + thirdByte);
+      case 0x2:
       case 0x3:
+      case 0x4:
+      case 0xE:
         return new PlaySound(offset, buffer.array(), "unknown");
       case 0x5:
         return new PlaySound(offset, buffer.array(), "running");
