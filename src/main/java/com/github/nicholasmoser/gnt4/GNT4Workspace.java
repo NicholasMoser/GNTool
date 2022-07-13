@@ -1,14 +1,13 @@
 package com.github.nicholasmoser.gnt4;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.Workspace;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A Workspace for GNT4 decompressed files.
@@ -49,11 +48,6 @@ public class GNT4Workspace implements Workspace {
   @Override
   public Path getUncompressedDirectory() {
     return uncompressed;
-  }
-
-  @Override
-  public Path getWorkspaceState() {
-    return workspaceState;
   }
 
   @Override

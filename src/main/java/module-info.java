@@ -15,6 +15,7 @@ module com.github.nicholasmoser {
   requires com.google.common;
   requires com.google.protobuf;
 
+  requires java.sql;
   requires java.desktop;
   requires java.logging;
   requires java.net.http;

@@ -1,13 +1,12 @@
 package com.github.nicholasmoser;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A workspace for GNTool. Represented by a directory of decompressed game files.
@@ -28,11 +27,6 @@ public interface Workspace {
    * @return The uncompressed directory in the workspace.
    */
   Path getUncompressedDirectory();
-
-  /**
-   * @return The workspace state protobuf binary file.
-   */
-  Path getWorkspaceState();
 
   /**
    * Initializes the workspace state.
