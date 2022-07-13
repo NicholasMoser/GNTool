@@ -36,12 +36,13 @@ If you plan on making many changes to a game, such as for a mod, it is recommend
 
 For descriptions of each workspace option, see the following reference documents:
 
-- [Menu](/docs/menu.md)
+- [General](/docs/general.md)
 - [Changed and Missing Files](/docs/changed_missing_files.md)
 - [Characters](/docs/characters.md)
 - [Audio](/docs/audio.md)
 - [Graphics](/docs/graphics.md)
 - [Animation](/docs/animation.md)
+- [User Interface](/docs/ui.md)
 - [Sequence](/docs/sequence.md)
 - [Code Injection](/docs/code_injection.md)
 

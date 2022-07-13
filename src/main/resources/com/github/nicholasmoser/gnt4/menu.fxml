@@ -43,7 +43,7 @@
   </MenuBar>
   <AnchorPane VBox.vgrow="ALWAYS">
     <TabPane layoutX="131.0" layoutY="70.0" prefHeight="375.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <Tab text="Menu">
+      <Tab text="General">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                  <content>
@@ -62,17 +62,9 @@
                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                              </rowConstraints>
                               <children>
@@ -92,74 +84,7 @@
                                        <Font size="16.0" />
                                     </font>
                                  </CheckBox>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#translate" text="Translate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Translate text in the game to English (by Kosheh)" GridPane.rowIndex="7">
-                                    <GridPane.margin>
-                                       <Insets left="8.0" />
-                                    </GridPane.margin>
-                                    <font>
-                                       <Font size="16.0" />
-                                    </font>
-                                 </Text>
-                          <Spinner fx:id="cssInitialSpeed" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssInitialSpeed" onMouseReleased="#setCssInitialSpeed" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                            <valueFactory>
-                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
-                            </valueFactory>
-                          </Spinner>
-                          <Spinner fx:id="cssMaxSpeed" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssMaxSpeed" onMouseReleased="#setCssMaxSpeed" GridPane.columnIndex="1" GridPane.rowIndex="11">
-                            <valueFactory>
-                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
-                            </valueFactory>
-                          </Spinner>
-                          <Spinner fx:id="demoTimeOut" maxWidth="1.7976931348623157E308" onKeyReleased="#setDemoTimeOut" onMouseReleased="#setDemoTimeOut" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                            <valueFactory>
-                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="86400" min="0" />
-                            </valueFactory>
-                          </Spinner>
-                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Initial Speed" GridPane.rowIndex="10">
-                                    <GridPane.margin>
-                                       <Insets left="8.0" />
-                                    </GridPane.margin>
-                                    <font>
-                                       <Font size="16.0" />
-                                    </font>
-                                 </Text>
-                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Max Speed" GridPane.rowIndex="11">
-                                    <GridPane.margin>
-                                       <Insets left="8.0" />
-                                    </GridPane.margin>
-                                    <font>
-                                       <Font size="16.0" />
-                                    </font>
-                                 </Text>
-                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Title Timeout to Demo (seconds)" GridPane.rowIndex="6">
-                                    <GridPane.margin>
-                                       <Insets left="8.0" />
-                                    </GridPane.margin>
-                                    <font>
-                                       <Font size="16.0" />
-                                    </font>
-                                 </Text>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxTimeOut" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="6">
-                                    <GridPane.margin>
-                                       <Insets left="2.0" right="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultTimeOut" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="6">
-                                    <GridPane.margin>
-                                       <Insets left="2.0" right="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
-                          <ComboBox fx:id="mainMenuCharacter" maxWidth="1.7976931348623157E308" onAction="#changeMainMenuCharacter" prefHeight="25.0" prefWidth="179.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Main Menu Character" GridPane.rowIndex="5">
-                                    <GridPane.margin>
-                                       <Insets left="8.0" />
-                                    </GridPane.margin>
-                                    <font>
-                                       <Font size="16.0" />
-                                    </font>
-                                 </Text>
-                          <CheckBox fx:id="playAudioWhilePaused" mnemonicParsing="false" onAction="#playAudioWhilePaused" text="Play Audio While Paused" GridPane.rowIndex="14">
+                          <CheckBox fx:id="playAudioWhilePaused" mnemonicParsing="false" onAction="#playAudioWhilePaused" text="Play Audio While Paused" GridPane.rowIndex="6">
                                     <GridPane.margin>
                                        <Insets left="8.0" />
                                     </GridPane.margin>
@@ -167,7 +92,7 @@
                                        <Font size="16.0" />
                                     </font>
                                  </CheckBox>
-                          <CheckBox fx:id="noSlowDownOnKill" mnemonicParsing="false" onAction="#noSlowDownOnKill" text="No Slow Down on Kill" GridPane.rowIndex="15">
+                          <CheckBox fx:id="noSlowDownOnKill" mnemonicParsing="false" onAction="#noSlowDownOnKill" text="No Slow Down on Kill" GridPane.rowIndex="7">
                                     <GridPane.margin>
                                        <Insets left="8.0" />
                                     </GridPane.margin>
@@ -191,7 +116,7 @@
                                        <Font size="16.0" />
                                     </font>
                                  </CheckBox>
-                          <CheckBox mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" GridPane.rowIndex="16" fx:id="xDoesNotBreakThrows">
+                          <CheckBox mnemonicParsing="false" onAction="#xDoesNotBreakThrows" text="X Does Not Break Throws" GridPane.rowIndex="8" fx:id="xDoesNotBreakThrows">
                                     <GridPane.margin>
                                        <Insets left="8.0" />
                                     </GridPane.margin>
@@ -199,42 +124,6 @@
                                        <Font size="16.0" />
                                     </font>
                                  </CheckBox>
-                          <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#allow4pDupeChrs" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                    <GridPane.margin>
-                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
-                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Allow duplicate characters in 4-player battles" GridPane.rowIndex="9">
-                                    <GridPane.margin>
-                                       <Insets left="8.0" />
-                                    </GridPane.margin>
-                                    <font>
-                                       <Font size="16.0" />
-                                    </font>
-                                 </Text>
-                          <Spinner fx:id="cssModelLoad" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssModelLoad" onMouseReleased="#setCssModelLoad" GridPane.columnIndex="1" GridPane.rowIndex="12">
-                            <valueFactory>
-                              <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="2147483391" min="0" />
-                            </valueFactory>
-                          </Spinner>
-                          <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Frames Until Character Model is Loaded " GridPane.rowIndex="12">
-                                    <GridPane.margin>
-                                       <Insets left="8.0" />
-                                    </GridPane.margin>
-                                    <font>
-                                       <Font size="16.0" />
-                                    </font>
-                                 </Text>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSModelLoad" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="12">
-                                    <GridPane.margin>
-                                       <Insets left="2.0" right="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
-                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSModelLoad" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="12">
-                                    <GridPane.margin>
-                                       <Insets left="2.0" right="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="General Changes">
                                     <font>
                                        <Font name="System Bold" size="16.0" />
@@ -243,15 +132,7 @@
                                        <Insets bottom="8.0" left="8.0" top="8.0" />
                                     </GridPane.margin>
                                  </Text>
-                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Select Screen Changes" GridPane.rowIndex="8">
-                                    <GridPane.margin>
-                                       <Insets bottom="8.0" left="8.0" top="8.0" />
-                                    </GridPane.margin>
-                                    <font>
-                                      <Font name="System Bold" size="16.0" />
-                                    </font>
-                                 </Text>
-                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Battle Mode Changes" GridPane.rowIndex="13">
+                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Battle Mode Changes" GridPane.rowIndex="5">
                                     <GridPane.margin>
                                        <Insets bottom="8.0" left="8.0" top="8.0" />
                                     </GridPane.margin>
@@ -259,26 +140,6 @@
                                        <Font name="System Bold" size="16.0" />
                                     </font>
                                  </Text>
-                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSInitialSpeed" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="10">
-                                    <GridPane.margin>
-                                       <Insets left="2.0" right="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
-                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSInitialSpeed" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="10">
-                                    <GridPane.margin>
-                                       <Insets left="2.0" right="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
-                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSMaxSpeed" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="11">
-                                    <GridPane.margin>
-                                       <Insets left="2.0" right="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
-                                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSMaxSpeed" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="11">
-                                    <GridPane.margin>
-                                       <Insets left="2.0" right="2.0" />
-                                    </GridPane.margin>
-                                 </Button>
                               </children>
                            </GridPane>
                         </children>
@@ -708,6 +569,242 @@
                                  <Insets bottom="8.0" left="8.0" top="8.0" />
                               </GridPane.margin>
                            </Text>
+                        </children>
+                     </GridPane>
+                  </children>
+               </AnchorPane>
+           </content>
+         </Tab>
+         <Tab text="User Interface">
+           <content>
+             <AnchorPane>
+                  <children>
+                     <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                       <columnConstraints>
+                         <ColumnConstraints hgrow="SOMETIMES" />
+                         <ColumnConstraints hgrow="SOMETIMES" />
+                           <ColumnConstraints hgrow="SOMETIMES" />
+                           <ColumnConstraints hgrow="SOMETIMES" />
+                       </columnConstraints>
+                       <rowConstraints>
+                         <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="SOMETIMES" />
+                         <RowConstraints vgrow="SOMETIMES" />
+                         <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints vgrow="SOMETIMES" />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                       </rowConstraints>
+                        <children>
+                    <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSModelLoad" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="8">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Main Menu Character" GridPane.rowIndex="1">
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Text>
+                    <ComboBox fx:id="mainMenuCharacter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#changeMainMenuCharacter" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                           </ComboBox>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Title Timeout to Demo (seconds)" GridPane.rowIndex="2">
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Text>
+                    <Spinner fx:id="demoTimeOut" maxWidth="1.7976931348623157E308" onKeyReleased="#setDemoTimeOut" onMouseReleased="#setDemoTimeOut" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                      <valueFactory>
+                        <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="86400" min="0" />
+                      </valueFactory>
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                    </Spinner>
+                    <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultTimeOut" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                    <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxTimeOut" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Main Menu Changes">
+                              <font>
+                                 <Font name="System Bold" size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets bottom="8.0" left="8.0" top="8.0" />
+                              </GridPane.margin>
+                           </Text>
+                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Select Screen Changes" GridPane.rowIndex="4">
+                              <GridPane.margin>
+                                 <Insets bottom="8.0" left="8.0" top="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                <Font name="System Bold" size="16.0" />
+                              </font>
+                           </Text>
+                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Translate text in the game to English (by Kosheh)" GridPane.rowIndex="3">
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                           </Text>
+                           <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#translate" text="Translate" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Allow duplicate characters in 4-player battles" GridPane.rowIndex="5">
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Text>
+                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#allow4pDupeChrs" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Initial Speed" GridPane.rowIndex="6">
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Text>
+                    <Spinner fx:id="cssInitialSpeed" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssInitialSpeed" onMouseReleased="#setCssInitialSpeed" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                      <valueFactory>
+                        <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
+                      </valueFactory>
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                    </Spinner>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSInitialSpeed" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSInitialSpeed" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Character Selection Max Speed" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Text>
+                    <Spinner fx:id="cssMaxSpeed" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssMaxSpeed" onMouseReleased="#setCssMaxSpeed" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                      <valueFactory>
+                        <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="15" min="1" />
+                      </valueFactory>
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                    </Spinner>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSMaxSpeed" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSMaxSpeed" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="7">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Frames Until Character Model is Loaded " GridPane.rowIndex="8">
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Text>
+                    <Spinner fx:id="cssModelLoad" maxWidth="1.7976931348623157E308" onKeyReleased="#setCssModelLoad" onMouseReleased="#setCssModelLoad" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                      <valueFactory>
+                        <javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory max="2147483391" min="0" />
+                      </valueFactory>
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                    </Spinner>
+                    <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#maxCSSModelLoad" text="Max" GridPane.columnIndex="3" GridPane.rowIndex="8">
+                              <GridPane.margin>
+                                 <Insets left="2.0" right="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#reorderCharacters" text="Reorder Characters" GridPane.rowIndex="9">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#reorderStages" text="Reorder Stages" GridPane.rowIndex="10">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
                         </children>
                      </GridPane>
                   </children>
