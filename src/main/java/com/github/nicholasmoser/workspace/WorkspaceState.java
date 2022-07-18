@@ -11,6 +11,8 @@ public interface WorkspaceState {
 
   void insertFile(String filePath, int hash, long modifyDtTm, String fpkFilePath) throws IOException;
 
+  List<WorkspaceFile> getAllFiles() throws IOException;
+
   List<String> getFPKFilePaths() throws IOException;
 
   void close();

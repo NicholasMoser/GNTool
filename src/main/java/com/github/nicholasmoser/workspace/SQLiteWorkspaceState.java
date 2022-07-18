@@ -43,6 +43,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
       """;
   public static final String INSERT_FILE = "INSERT INTO file(file_path,hash,modified_dt_tm,fpk_file_path) VALUES(?,?,?,?)";
   public static final String SELECT_DISTINCT_FPK_FILE_PATHS = "SELECT DISTINCT fpk_file_path FROM file";
+  public static final String SELECT_ALL_FILES = "SELECT file_path,hash,modified_dt_tm,fpk_file_path FROM FILE";
   private final Connection conn;
 
   private SQLiteWorkspaceState(Connection conn) {
@@ -176,6 +177,20 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   }
 
   @Override
+  public List<WorkspaceFile> getAllFiles() throws IOException {
+    List<WorkspaceFile> files = new ArrayList<>();
+    try (PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_FILES);
+        ResultSet rs = stmt.executeQuery()) {
+      while (rs.next()) {
+        files.add(new WorkspaceFile(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4)));
+      }
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+    return files;
+  }
+
+  @Override
   public List<String> getFPKFilePaths() throws IOException {
     List<String> fpkFilePaths = new ArrayList<>();
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_DISTINCT_FPK_FILE_PATHS);
@@ -216,7 +231,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
    *
    * @param workspaceDir
    * @param gntFiles
-   * @throws IOException
+   * @throws IOException If an I/O error occurs
    * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
    */
   @Deprecated
@@ -236,6 +251,15 @@ public class SQLiteWorkspaceState implements WorkspaceState {
           continue;
         } else if (filePath.equals("files/omake/0010.txg")) {
           addOmake0010(stmt, file, uncompressedDir);
+          continue;
+        } else if (filePath.contains("game/3003")) {
+          addGame3003(stmt, file, uncompressedDir);
+          continue;
+        } else if (filePath.contains("stg/010/3000")) {
+          addStg00103000(stmt, file, uncompressedDir);
+          continue;
+        } else if (filePath.contains("files/omake/0002.txg")) {
+          addOmake0002(stmt, file, uncompressedDir);
           continue;
         }
         FileTime time = Files.getLastModifiedTime(uncompressedDir.resolve(filePath));
@@ -275,6 +299,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
    * @param stmt The statement to append to.
    * @param file The file to add.
    * @param uncompressedDir The uncompressed directory.
+   * @throws IOException If an I/O error occurs
    * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
    */
   @Deprecated
@@ -305,6 +330,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
    * @param stmt The statement to append to.
    * @param file The file to add.
    * @param uncompressedDir The uncompressed directory.
+   * @throws IOException If an I/O error occurs
    * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
    */
   @Deprecated
@@ -334,6 +360,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
    * @param stmt The statement to append to.
    * @param file The file to add.
    * @param uncompressedDir The uncompressed directory.
+   * @throws IOException If an I/O error occurs
    * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
    */
   @Deprecated
@@ -350,6 +377,104 @@ public class SQLiteWorkspaceState implements WorkspaceState {
       stmt.setInt(2, file.getHash());
       stmt.setLong(3, time.toMillis());
       stmt.setString(4, "files/fpack/game0008.fpk");
+      stmt.addBatch();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+  }
+
+  /**
+   * files/game/3003.poo, files/game/3003.pro, files/game/3003.sam, and files/game/3003.sdi exist
+   * in two different FPK files: files/fpack/game0001.fpk and files/fpack/game3003.fpk. This method
+   * adds both of them to the insertions.
+   *
+   * @param stmt The statement to append to.
+   * @param file The file to add.
+   * @param uncompressedDir The uncompressed directory.
+   * @throws IOException If an I/O error occurs
+   * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
+   */
+  @Deprecated
+  private void addGame3003(PreparedStatement stmt, GNTFile file, Path uncompressedDir) throws IOException {
+    try {
+      String filePath = file.getFilePath();
+      FileTime time = Files.getLastModifiedTime(uncompressedDir.resolve(filePath));
+      stmt.setString(1, filePath);
+      stmt.setInt(2, file.getHash());
+      stmt.setLong(3, time.toMillis());
+      stmt.setString(4, "files/fpack/game0001.fpk");
+      stmt.addBatch();
+      stmt.setString(1, filePath);
+      stmt.setInt(2, file.getHash());
+      stmt.setLong(3, time.toMillis());
+      stmt.setString(4, "files/fpack/game3003.fpk");
+      stmt.addBatch();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+  }
+
+  /**
+   * files/stg/010/3000.poo, files/stg/010/3000.pro, files/stg/010/3000.sam, and
+   * files/stg/010/3000.sdi exist in three separate FPK files: files/fpack/stg/0100000.fpk,
+   * files/fpack/story/story0190.fpk, and files/fpack/story/story0191.fpk. This method adds both
+   * of them to the insertions.
+   *
+   * @param stmt The statement to append to.
+   * @param file The file to add.
+   * @param uncompressedDir The uncompressed directory.
+   * @throws IOException If an I/O error occurs
+   * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
+   */
+  @Deprecated
+  private void addStg00103000(PreparedStatement stmt, GNTFile file, Path uncompressedDir) throws IOException {
+    try {
+      String filePath = file.getFilePath();
+      FileTime time = Files.getLastModifiedTime(uncompressedDir.resolve(filePath));
+      stmt.setString(1, filePath);
+      stmt.setInt(2, file.getHash());
+      stmt.setLong(3, time.toMillis());
+      stmt.setString(4, "files/fpack/stg/0100000.fpk");
+      stmt.addBatch();
+      stmt.setString(1, filePath);
+      stmt.setInt(2, file.getHash());
+      stmt.setLong(3, time.toMillis());
+      stmt.setString(4, "files/fpack/story/story0190.fpk");
+      stmt.addBatch();
+      stmt.setString(1, filePath);
+      stmt.setInt(2, file.getHash());
+      stmt.setLong(3, time.toMillis());
+      stmt.setString(4, "files/fpack/story/story0191.fpk");
+      stmt.addBatch();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+  }
+
+  /**
+   * files/omake/0002.txg exists in two separate FPK files: files/fpack/game0003.fpk and
+   * files/fpack/game0004.fpk. This method adds both of them to the insertions.
+   *
+   * @param stmt The statement to append to.
+   * @param file The file to add.
+   * @param uncompressedDir The uncompressed directory.
+   * @throws IOException If an I/O error occurs
+   * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
+   */
+  @Deprecated
+  private void addOmake0002(PreparedStatement stmt, GNTFile file, Path uncompressedDir) throws IOException {
+    try {
+      String filePath = file.getFilePath();
+      FileTime time = Files.getLastModifiedTime(uncompressedDir.resolve(filePath));
+      stmt.setString(1, filePath);
+      stmt.setInt(2, file.getHash());
+      stmt.setLong(3, time.toMillis());
+      stmt.setString(4, "files/fpack/game0003.fpk");
+      stmt.addBatch();
+      stmt.setString(1, filePath);
+      stmt.setInt(2, file.getHash());
+      stmt.setLong(3, time.toMillis());
+      stmt.setString(4, "files/fpack/game0004.fpk");
       stmt.addBatch();
     } catch (SQLException e) {
       throw new IOException(e);

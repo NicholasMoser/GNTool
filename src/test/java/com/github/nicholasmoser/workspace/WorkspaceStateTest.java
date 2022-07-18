@@ -47,10 +47,13 @@ public class WorkspaceStateTest {
     // Assert that the new and old workspaces are the same
     List<String> freshFPKFilePaths = freshState.getFPKFilePaths();
     List<String> existingFPKFilePaths = existingState.getFPKFilePaths();
-    System.out.println("Fresh: " + freshFPKFilePaths.size());
-    System.out.println("Existing: " + existingFPKFilePaths.size());
     freshFPKFilePaths.sort(Comparator.nullsFirst(Comparator.comparing(String::toString)));
     existingFPKFilePaths.sort(Comparator.nullsFirst(Comparator.comparing(String::toString)));
     assertThat(freshFPKFilePaths, is(existingFPKFilePaths));
+    List<WorkspaceFile> freshFiles = freshState.getAllFiles();
+    List<WorkspaceFile> existingFiles = existingState.getAllFiles();
+    freshFiles.sort(Comparator.nullsFirst(Comparator.comparing(WorkspaceFile::filePath)));
+    existingFiles.sort(Comparator.nullsFirst(Comparator.comparing(WorkspaceFile::filePath)));
+    assertThat(freshFiles, is(existingFiles));
   }
 }
