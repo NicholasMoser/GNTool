@@ -29,6 +29,7 @@ dependencies {
     testImplementation(platform('org.junit:junit-bom:5.8.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     testImplementation 'net.java.dev.jna:jna:5.9.0'
+    testImplementation('org.hamcrest:hamcrest-core:2.2')
 }
 
 group = 'com.github.nicholasmoser'
