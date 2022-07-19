@@ -4,6 +4,7 @@ import com.github.nicholasmoser.fpk.FPKOptions;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 public interface WorkspaceState {
 
@@ -14,6 +15,8 @@ public interface WorkspaceState {
   List<WorkspaceFile> getAllFiles() throws IOException;
 
   List<String> getFPKFilePaths() throws IOException;
+
+  Map<String, Long> getFilePathToModifiedDtTm() throws IOException;
 
   void close();
 }

@@ -19,7 +19,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -44,6 +46,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   public static final String INSERT_FILE = "INSERT INTO file(file_path,hash,modified_dt_tm,fpk_file_path) VALUES(?,?,?,?)";
   public static final String SELECT_DISTINCT_FPK_FILE_PATHS = "SELECT DISTINCT fpk_file_path FROM file";
   public static final String SELECT_ALL_FILES = "SELECT file_path,hash,modified_dt_tm,fpk_file_path FROM FILE";
+  public static final String SELECT_MODIFIED_DT_TM = "SELECT file_path,modified_dt_tm FROM FILE";
   private final Connection conn;
 
   private SQLiteWorkspaceState(Connection conn) {
@@ -202,6 +205,22 @@ public class SQLiteWorkspaceState implements WorkspaceState {
       throw new IOException(e);
     }
     return fpkFilePaths;
+  }
+
+  @Override
+  public Map<String, Long> getFilePathToModifiedDtTm() throws IOException {
+    Map<String, Long> mapping = new HashMap<>();
+    try (PreparedStatement stmt = conn.prepareStatement(SELECT_MODIFIED_DT_TM);
+        ResultSet rs = stmt.executeQuery()) {
+      while (rs.next()) {
+        String filePath = rs.getString(1);
+        long modifiedDtTm = rs.getLong(2);
+        mapping.put(filePath, modifiedDtTm);
+      }
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+    return mapping;
   }
 
   @Override
