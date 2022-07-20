@@ -1,12 +1,15 @@
 package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.fpk.FileNames;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 /**
  * Class to help fix GNT4 file names extracted from fpk files.
  */
 public class GNT4FileNames implements FileNames {
 
+  @Override
   public String fix(String fileName) {
     if (fileName.startsWith("aki/")) {
       fileName = fileName.replace("aki/", "maki/");
@@ -32,5 +35,19 @@ public class GNT4FileNames implements FileNames {
       fileName = "vs/" + fileName;
     }
     return fileName;
+  }
+
+  @Override
+  public String getCompressedName(String fileName) {
+    try {
+      byte[] bytes = fileName.getBytes("shift-jis");
+      if (bytes.length < 16) {
+        return fileName;
+      }
+      byte[] concatBytes = Arrays.copyOfRange(bytes, bytes.length - 15, bytes.length);
+      return new String(concatBytes, "shift-jis");
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
