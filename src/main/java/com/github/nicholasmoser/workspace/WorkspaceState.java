@@ -28,6 +28,15 @@ public interface WorkspaceState {
   void insertFile(WorkspaceFile file) throws IOException;
 
   /**
+   * Gets a workspace file given the file path.
+   *
+   * @param filePath The file path to retrieve the file for.
+   * @return The workspace file.
+   * @throws IOException If any I/O exception occurs.
+   */
+  WorkspaceFile getFile(String filePath) throws IOException;
+
+  /**
    * @return All files in the workspace state
    * @throws IOException If any I/O exception occurs.
    */

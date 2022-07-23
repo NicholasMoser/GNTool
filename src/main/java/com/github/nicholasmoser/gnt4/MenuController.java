@@ -46,6 +46,7 @@ import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
+import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -1407,11 +1408,9 @@ public class MenuController {
    * @throws IOException If an I/O error occurs.
    */
   private void syncRefresh() throws IOException {
-    // getNewWorkspaceState() is pretty slow and can take 30 seconds or more on a HDD
-    // TODO: Look into ways to speed it up
-    GNTFiles newFiles = workspace.getNewWorkspaceState();
-    refreshMissingFiles(newFiles);
-    refreshChangedFiles(newFiles);
+    List<WorkspaceFile> allFiles = workspace.getAllFiles();
+    refreshMissingFiles(allFiles);
+    refreshChangedFiles(allFiles);
     refreshActiveCodes();
     refreshOptions();
     refreshMainMenuCharacter();
@@ -1448,12 +1447,12 @@ public class MenuController {
   /**
    * Refreshes the missing files tab from a set of GNTFiles.
    *
-   * @param newFiles The GNTFiles to check against.
+   * @param allFiles All the workspace files.
    */
-  private void refreshMissingFiles(GNTFiles newFiles) {
+  private void refreshMissingFiles(List<WorkspaceFile> allFiles) {
     Platform.runLater(() -> {
       try {
-        Set<String> missingFilenames = workspace.getMissingFiles(newFiles);
+        Set<String> missingFilenames = workspace.getMissingFiles(allFiles);
         missingFiles.getItems().setAll(missingFilenames);
         Collections.sort(missingFiles.getItems());
       } catch (Exception e) {
@@ -1466,12 +1465,12 @@ public class MenuController {
   /**
    * Refreshes the changed files tab from a set of GNTFiles.
    *
-   * @param newFiles The GNTFiles to check against.
+   * @param allFiles All the workspace files.
    */
-  private void refreshChangedFiles(GNTFiles newFiles) {
+  private void refreshChangedFiles(List<WorkspaceFile> allFiles) {
     Platform.runLater(() -> {
       try {
-        Set<String> changedFilenames = workspace.getChangedFiles(newFiles);
+        Set<String> changedFilenames = workspace.getChangedFiles(allFiles);
         changedFiles.getItems().setAll(changedFilenames);
         Collections.sort(changedFiles.getItems());
       } catch (Exception e) {
@@ -1689,7 +1688,7 @@ public class MenuController {
         if (DOL.equals(filePath) && dolModded()) {
           return;
         }
-        workspace.revertFile(filePath);
+        workspace.revertFiles(Collections.singletonList(filePath));
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Error Reverting File", e);
       }

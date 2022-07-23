@@ -5,6 +5,7 @@ import com.github.nicholasmoser.fpk.FPKOptions;
 import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -40,39 +41,25 @@ public interface Workspace {
   /**
    * Finds the list of files that are missing from the workspace.
    *
-   * @param newGntFiles The GNTFiles to compare to the existing workspace files.
+   * @param allFiles All files currently in the workspace state.
    * @return The list of files that are missing from the workspace.
    */
-  Set<String> getMissingFiles(GNTFiles newGntFiles) throws IOException;
+  Set<String> getMissingFiles(List<WorkspaceFile> allFiles);
 
   /**
    * Returns the files that have been changed.
    *
-   * @param newGntFiles The GNTFiles to see which changed in.
+   * @param allFiles All files currently in the workspace state.
    * @return The collection of changed files.
    */
-  Set<String> getChangedFiles(GNTFiles newGntFiles) throws IOException;
+  Set<String> getChangedFiles(List<WorkspaceFile> allFiles) throws IOException;
 
   /**
-   * Attempts to find the parent FPK file paths of a child file path. It is possible for there to
-   * be more than one, although that is rare.
+   * Reverts changed files.
    *
-   * @param changedFile The child file path.
-   * @return The parent FPK files.
+   * @param filePaths The file paths.
    */
-  Set<String> getParentFPKs(String changedFile) throws IOException;
-
-  /**
-   * Reverts a changed file.
-   *
-   * @param filePath The file path.
-   */
-  void revertFile(String filePath) throws IOException;
-
-  /**
-   * @return A new GNTFiles object reflecting the current workspace state.
-   */
-  GNTFiles getNewWorkspaceState() throws IOException;
+  void revertFiles(Collection<String> filePaths) throws IOException;
 
   /**
    * @return The FPK options for this workspace.

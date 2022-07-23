@@ -47,6 +47,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
       """;
   public static final String INSERT_FILE = "INSERT INTO file(file_path,hash,modified_dt_tm,fpk_file_path,compressed) VALUES(?,?,?,?,?)";
   public static final String SELECT_DISTINCT_FPK_FILE_PATHS = "SELECT DISTINCT fpk_file_path FROM file";
+  public static final String SELECT_FILE = "SELECT file_path,hash,modified_dt_tm,fpk_file_path,compressed FROM FILE WHERE file_path = ?";
   public static final String SELECT_ALL_FILES = "SELECT file_path,hash,modified_dt_tm,fpk_file_path,compressed FROM FILE";
   public static final String SELECT_ALL_FILE_PATHS = "SELECT file_path FROM FILE";
   public static final String SELECT_MODIFIED_DT_TM = "SELECT file_path,modified_dt_tm FROM FILE";
@@ -162,6 +163,19 @@ public class SQLiteWorkspaceState implements WorkspaceState {
       stmt.setString(4, file.fpkFilePath());
       stmt.setBoolean(5, file.compressed());
       stmt.execute();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+  }
+
+  @Override
+  public WorkspaceFile getFile(String filePath) throws IOException {
+    try (PreparedStatement stmt = conn.prepareStatement(SELECT_FILE)) {
+      stmt.setString(1, filePath);
+      try (ResultSet rs = stmt.executeQuery()) {
+        return new WorkspaceFile(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4),
+            rs.getBoolean(5));
+      }
     } catch (SQLException e) {
       throw new IOException(e);
     }

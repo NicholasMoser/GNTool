@@ -1,14 +1,17 @@
 package com.github.nicholasmoser.gnt4;
 
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.fpk.FPKOptions;
+import com.github.nicholasmoser.utils.CRC32;
+import com.github.nicholasmoser.utils.FPKUtils;
 import com.github.nicholasmoser.workspace.SQLiteWorkspaceState;
 import com.github.nicholasmoser.workspace.WorkspaceFile;
 import com.github.nicholasmoser.workspace.WorkspaceState;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,38 +77,58 @@ public class GNT4Workspace implements Workspace {
   }
 
   @Override
-  public Set<String> getMissingFiles(GNTFiles newGntFiles) throws IOException {
-    Set<String> filePaths = state.getFilePaths();
+  public Set<String> getMissingFiles(List<WorkspaceFile> allFiles) {
     Set<String> missingFiles = new HashSet<>();
-    for (String filePath : filePaths) {
-      if (!Files.exists(uncompressed.resolve(filePath))) {
-        missingFiles.add(filePath);
+    for (WorkspaceFile filePath : allFiles) {
+      if (!Files.exists(uncompressed.resolve(filePath.filePath()))) {
+        missingFiles.add(filePath.filePath());
       }
     }
     return missingFiles;
   }
 
   @Override
-  public Set<String> getChangedFiles(GNTFiles newGntFiles) throws IOException {
-    return null;
-    //return gnt4Files.getChangedFiles(newGntFiles);
+  public Set<String> getChangedFiles(List<WorkspaceFile> allFiles) throws IOException {
+    Set<String> filesChanged = new HashSet<>();
+    for (WorkspaceFile file : allFiles) {
+      String filePath = file.filePath();
+      Path fullPath = uncompressed.resolve(filePath);
+      if (!Files.exists(fullPath)) {
+        // The file has been changed if it has been removed
+        filesChanged.add(filePath);
+      } else {
+        if (Files.getLastModifiedTime(fullPath).toMillis() > file.modifiedDtTm()) {
+          // File has been modified, check hash to confirm there was an actual change
+          if (CRC32.getHash(fullPath) != file.hash()) {
+            // File has been changed
+            filesChanged.add(filePath);
+          }
+        }
+      }
+    }
+    return filesChanged;
   }
 
   @Override
-  public Set<String> getParentFPKs(String changedFile) throws IOException {
-    return null;
-    //return gnt4Files.getParentFPKs(changedFile);
-  }
-
-  @Override
-  public void revertFile(String filePath) throws IOException {
-    //gnt4Files.revertFile(uncompressed, compressed, filePath);
-  }
-
-  @Override
-  public GNTFiles getNewWorkspaceState() throws IOException {
-    return null;
-    //return gnt4Files.getNewWorkspaceState();
+  public void revertFiles(Collection<String> filePaths) throws IOException {
+    for (String filePath : filePaths) {
+      WorkspaceFile file = state.getFile(filePath);
+      String fpkFilePath = file.fpkFilePath();
+      if (fpkFilePath != null) {
+        // FPK child file
+        Path saved = compressed.resolve(filePath);
+        Path current = uncompressed.resolve(filePath);
+        String compressedPath = options.fileNames().getCompressedName(filePath);
+        byte[] bytes = FPKUtils.getChildBytes(saved, compressedPath, options.longPaths(),
+            options.bigEndian());
+        Files.write(current, bytes);
+      } else {
+        // Non-FPK file
+        Path saved = compressed.resolve(filePath);
+        Path current = uncompressed.resolve(filePath);
+        Files.copy(saved, current, StandardCopyOption.REPLACE_EXISTING);
+      }
+    }
   }
 
   @Override
