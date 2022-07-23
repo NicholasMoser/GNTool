@@ -173,7 +173,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_FILE)) {
       stmt.setString(1, filePath);
       try (ResultSet rs = stmt.executeQuery()) {
-        return new WorkspaceFile(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4),
+        return new WorkspaceFile(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getString(4),
             rs.getBoolean(5));
       }
     } catch (SQLException e) {
@@ -187,7 +187,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_FILES);
         ResultSet rs = stmt.executeQuery()) {
       while (rs.next()) {
-        files.add(new WorkspaceFile(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getString(4),
+        files.add(new WorkspaceFile(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getString(4),
             rs.getBoolean(5)));
       }
     } catch (SQLException e) {
