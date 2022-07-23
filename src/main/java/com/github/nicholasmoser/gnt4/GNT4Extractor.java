@@ -67,7 +67,7 @@ public class GNT4Extractor implements Extractor {
       unpacker.unpackDirectory();
       unpacked = true;
     }
-    return new GNT4Workspace(extractionPath);
+    return GNT4Workspace.create(extractionPath);
   }
 
   @Override

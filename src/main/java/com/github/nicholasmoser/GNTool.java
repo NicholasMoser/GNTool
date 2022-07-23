@@ -162,16 +162,15 @@ public class GNTool extends Application {
         try {
           Path directory = directoryResponse.get();
           GameCubeISO.checkWorkspace(directory);
-          Workspace workspace = new GNT4Workspace(directory);
-          workspace.loadExistingState();
+          Workspace workspace = GNT4Workspace.load(directory);
           WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
           workspaceView.init(primaryStage);
         } catch (IllegalStateException e) {
           LOGGER.log(Level.SEVERE, "Invalid Workspace", e);
-          Message.error("Invalid Workspace", "See the log for more information.");
+          Message.error("Invalid Workspace", e.getMessage());
         } catch (IOException e) {
           LOGGER.log(Level.SEVERE, "Error Loading Workspace", e);
-          Message.error("Error Loading Workspace", "Error loading workspace defintion.");
+          Message.error("Error Loading Workspace", e.getMessage());
         }
       }
     }

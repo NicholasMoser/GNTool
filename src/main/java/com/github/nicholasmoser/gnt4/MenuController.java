@@ -2,7 +2,6 @@ package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.FPKPacker;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
@@ -58,6 +57,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -691,7 +691,7 @@ public class MenuController {
         try {
           if (repack) {
             updateMessage("Repacking FPKs...");
-            FPKPacker fpkPacker = new FPKPacker(workspace, false, true);
+            FPKPacker fpkPacker = new FPKPacker(workspace);
             fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");
@@ -1452,10 +1452,14 @@ public class MenuController {
    */
   private void refreshMissingFiles(GNTFiles newFiles) {
     Platform.runLater(() -> {
-      List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
-          .map(GNTFile::getFilePath).collect(Collectors.toList());
-      missingFiles.getItems().setAll(missingFilenames);
-      Collections.sort(missingFiles.getItems());
+      try {
+        Set<String> missingFilenames = workspace.getMissingFiles(newFiles);
+        missingFiles.getItems().setAll(missingFilenames);
+        Collections.sort(missingFiles.getItems());
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Failed to Refresh Missing Files", e);
+        Message.error("Failed to Refresh Missing Files", e.getMessage());
+      }
     });
   }
 
@@ -1466,10 +1470,14 @@ public class MenuController {
    */
   private void refreshChangedFiles(GNTFiles newFiles) {
     Platform.runLater(() -> {
-      List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
-          .map(GNTFile::getFilePath).collect(Collectors.toList());
-      changedFiles.getItems().setAll(changedFilenames);
-      Collections.sort(changedFiles.getItems());
+      try {
+        Set<String> changedFilenames = workspace.getChangedFiles(newFiles);
+        changedFiles.getItems().setAll(changedFilenames);
+        Collections.sort(changedFiles.getItems());
+      } catch (Exception e) {
+        LOGGER.log(Level.SEVERE, "Failed to Refresh Changed Files", e);
+        Message.error("Failed to Refresh Changed Files", e.getMessage());
+      }
     });
   }
 

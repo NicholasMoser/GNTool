@@ -2,17 +2,21 @@ package com.github.nicholasmoser;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.fpk.FPKFile;
 import com.github.nicholasmoser.fpk.FPKFileHeader;
+import com.github.nicholasmoser.fpk.FPKOptions;
+import com.github.nicholasmoser.fpk.FileNames;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.FPKUtils;
+import com.github.nicholasmoser.workspace.WorkspaceFile;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.primitives.Bytes;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,17 +40,21 @@ public class FPKPacker {
 
   private final boolean bigEndian;
 
+  private final FileNames fileNames;
+
   /**
    * Creates a new FPK packer for a workspace.
    *
    * @param workspace The workspace to pack the FPKs for.
    */
-  public FPKPacker(Workspace workspace, boolean longPaths, boolean bigEndian) {
+  public FPKPacker(Workspace workspace) {
     this.workspace = workspace;
     this.compressedDirectory = workspace.getCompressedDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
-    this.longPaths = longPaths;
-    this.bigEndian = bigEndian;
+    FPKOptions options = workspace.getFPKOptions();
+    this.longPaths = options.longPaths();
+    this.bigEndian = options.bigEndian();
+    this.fileNames = options.fileNames();
   }
 
   /**
@@ -61,51 +69,76 @@ public class FPKPacker {
    * @throws IOException If there is an I/O issue repacking or moving the files.
    */
   public void pack(List<String> changedFiles, boolean parallel) throws IOException {
-    Set<GNTFile> changedFPKs = new HashSet<>();
-    Set<String> changedNonFPKs = new HashSet<>();
+    // Get data needed to repack
+    Set<String> changedFPKFiles = new HashSet<>();
+    Set<String> changedNonFPKFiles = new HashSet<>();
+    List<WorkspaceFile> allFiles = workspace.getAllFiles();
+    Multimap<String, WorkspaceFile> fpkToFiles = getFPKToFiles(allFiles);
 
-    for (String changedFile : changedFiles) {
-      List<GNTFile> parents = workspace.getParentFPKs(changedFile);
-      // If there is no parent, it does not belong to an FPK
-      if (parents.isEmpty()) {
-        changedNonFPKs.add(changedFile);
-      } else {
-        changedFPKs.addAll(parents);
+    // Get changed FPK files and non-FPK files
+    for (WorkspaceFile file : allFiles) {
+      if (changedFiles.contains(file.filePath())) {
+        String fpkFilePath = file.fpkFilePath();
+        if (fpkFilePath != null) {
+          changedFPKFiles.add(fpkFilePath);
+        } else {
+          changedNonFPKFiles.add(file.filePath());
+        }
       }
     }
 
-    for (String changedNonFPK : changedNonFPKs) {
+    // Copy non-FPK files as-is
+    for (String changedNonFPK : changedNonFPKFiles) {
       Path newFile = uncompressedDirectory.resolve(changedNonFPK);
       Path oldFile = compressedDirectory.resolve(changedNonFPK);
       Files.copy(newFile, oldFile, REPLACE_EXISTING);
     }
-    if (changedNonFPKs.isEmpty()) {
+    if (changedNonFPKFiles.isEmpty()) {
       LOGGER.info("No non-FPK files were copied.");
     } else {
-      LOGGER.info(String.format("The following files were copied: %s", changedNonFPKs));
+      LOGGER.info(String.format("The following files were copied: %s", changedNonFPKFiles));
     }
 
-    LOGGER.info(String.format("%d FPK file(s) need to be packed.", changedFPKs.size()));
+    // Repack FPK files
+    LOGGER.info(String.format("%d FPK file(s) need to be packed.", changedFPKFiles.size()));
     if (parallel) {
-      changedFPKs.parallelStream().forEach(fpk -> {
+      changedFPKFiles.parallelStream().forEach(fpk -> {
             try {
-              LOGGER.info(String.format("Packing %s...", fpk.getFilePath()));
-              repackFPK(fpk);
-              LOGGER.info(String.format("Packed %s", fpk.getFilePath()));
+              LOGGER.info(String.format("Packing %s...", fpk));
+              repackFPK(fpk, fpkToFiles.get(fpk));
+              LOGGER.info(String.format("Packed %s", fpk));
             } catch (IOException e) {
-              String message = String.format("Failed to pack %s", fpk.getFilePath());
+              String message = String.format("Failed to pack %s", fpk);
               throw new RuntimeException(message, e);
             }
           }
       );
     } else {
-      for (GNTFile fpk : changedFPKs) {
-        LOGGER.info(String.format("Packing %s...", fpk.getFilePath()));
-        repackFPK(fpk);
-        LOGGER.info(String.format("Packed %s", fpk.getFilePath()));
+      for (String fpk : changedFPKFiles) {
+        LOGGER.info(String.format("Packing %s...", fpk));
+        repackFPK(fpk, fpkToFiles.get(fpk));
+        LOGGER.info(String.format("Packed %s", fpk));
       }
     }
     LOGGER.info("FPK files have been packed at " + compressedDirectory);
+  }
+
+  /**
+   * Returns a multimapping of FPK file paths to their file children. The only FPK file paths that
+   * will be included are those with children included in the method parameter.
+   *
+   * @param files The FPK child files.
+   * @return A multimapping of FPK file paths to their file children.
+   */
+  Multimap<String, WorkspaceFile> getFPKToFiles(List<WorkspaceFile> files) {
+    Multimap<String, WorkspaceFile> fpktoFiles = ArrayListMultimap.create();
+    for (WorkspaceFile file : files) {
+      String fpkFilePath = file.fpkFilePath();
+      if (fpkFilePath != null) {
+        fpktoFiles.put(fpkFilePath, file);
+      }
+    }
+    return fpktoFiles;
   }
 
   /**
@@ -114,18 +147,24 @@ public class FPKPacker {
    * already exists in the output directory it will be overridden. The input directory must have the
    * uncompressed child files.
    *
-   * @param fpk The FPK GNTFile.
-   * @return The path to the repacked FPK file.
-   * @throws IOException If there is an issue reading/writing bytes to the file.
+   * @param fpkPath The FPK file to repack.
+   * @param files   The children files of the FPK file.
+   * @return The repacked FPK full file path.
+   * @throws IOException If there is an I/O issue repacking or moving the files.
    */
-  public Path repackFPK(GNTFile fpk) throws IOException {
-    List<GNTChildFile> fpkChildren = fpk.getGntChildFileList();
-    List<FPKFile> newFPKs = new ArrayList<>(fpkChildren.size());
-    for (GNTChildFile child : fpkChildren) {
-      byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(child.getFilePath()));
+  public Path repackFPK(String fpkPath, Collection<WorkspaceFile> files) throws IOException {
+    for (WorkspaceFile file : files) {
+      if (!fpkPath.equals(file.fpkFilePath())) {
+        throw new IllegalArgumentException(
+            String.format("fpk parent paths differ: %s %s", fpkPath, file.fpkFilePath()));
+      }
+    }
+    List<FPKFile> fpkChildren = new ArrayList<>(files.size());
+    for (WorkspaceFile file : files) {
+      byte[] input = Files.readAllBytes(uncompressedDirectory.resolve(file.filePath()));
       byte[] output;
 
-      if (child.getCompressed()) {
+      if (file.compressed()) {
         PRSCompressor compressor = new PRSCompressor(input);
         output = compressor.compress();
       } else {
@@ -134,17 +173,19 @@ public class FPKPacker {
 
       // Set the offset to -1 for now, we cannot figure it out until we have all of
       // the files
-      String shiftJisPath = ByteUtils.encodeShiftJis(child.getCompressedPath());
+      String compressedName = fileNames.getCompressedName(file.filePath());
+      String shiftJisPath = ByteUtils.encodeShiftJis(compressedName);
       // TODO: Remove GameCube FPK format assumption (short paths, big endian)
-      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length, false, true);
-      newFPKs.add(new FPKFile(header, output));
+      FPKFileHeader header = new FPKFileHeader(shiftJisPath, output.length, input.length, false,
+          true);
+      fpkChildren.add(new FPKFile(header, output));
       LOGGER.info(String.format("%s has been compressed from %d bytes to %d bytes.",
-          child.getFilePath(), input.length, output.length));
+          file.filePath(), input.length, output.length));
     }
 
     int outputSize = 16; // FPK header is 16 bytes so start with that.
-    outputSize += newFPKs.size() * 32; // Each FPK file header is 32 bytes
-    for (FPKFile file : newFPKs) {
+    outputSize += fpkChildren.size() * 32; // Each FPK file header is 32 bytes
+    for (FPKFile file : fpkChildren) {
       FPKFileHeader header = file.getHeader();
       header.setOffset(outputSize);
       int compressedSize = header.getCompressedSize();
@@ -158,16 +199,16 @@ public class FPKPacker {
     }
 
     // FPK Header
-    byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize, bigEndian);
+    byte[] fpkBytes = FPKUtils.createFPKHeader(fpkChildren.size(), outputSize, bigEndian);
     // File headers
-    for (FPKFile file : newFPKs) {
+    for (FPKFile file : fpkChildren) {
       fpkBytes = Bytes.concat(fpkBytes, file.getHeader().getBytes());
     }
     // File Data
-    for (FPKFile file : newFPKs) {
+    for (FPKFile file : fpkChildren) {
       fpkBytes = Bytes.concat(fpkBytes, file.getData());
     }
-    Path outputFPK = compressedDirectory.resolve(fpk.getFilePath());
+    Path outputFPK = compressedDirectory.resolve(fpkPath);
     if (!Files.isDirectory(outputFPK.getParent())) {
       Files.createDirectories(outputFPK.getParent());
     }

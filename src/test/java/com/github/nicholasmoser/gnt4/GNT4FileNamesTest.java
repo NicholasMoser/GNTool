@@ -8,8 +8,9 @@ import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import org.junit.jupiter.api.Test;
 
 public class GNT4FileNamesTest {
+
   @Test
-  public void test() throws Exception {
+  public void canConvertToAndFromCompressedName() throws Exception {
     GNT4FileNames names = new GNT4FileNames();
     GNTFiles files = GNT4Files.getVanillaFiles();
     for (GNTFile file : files.getGntFileList()) {

@@ -1,8 +1,8 @@
 package com.github.nicholasmoser;
 
-import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
+import com.github.nicholasmoser.fpk.FPKOptions;
+import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,12 +35,7 @@ public interface Workspace {
    */
   void initState() throws IOException;
 
-  /**
-   * Loads the existing workspace state file.
-   *
-   * @throws IOException If any I/O exception occurs.
-   */
-  void loadExistingState() throws IOException;
+  List<WorkspaceFile> getAllFiles() throws IOException;
 
   /**
    * Finds the list of files that are missing from the workspace.
@@ -48,7 +43,7 @@ public interface Workspace {
    * @param newGntFiles The GNTFiles to compare to the existing workspace files.
    * @return The list of files that are missing from the workspace.
    */
-  Set<GNTFile> getMissingFiles(GNTFiles newGntFiles);
+  Set<String> getMissingFiles(GNTFiles newGntFiles) throws IOException;
 
   /**
    * Returns the files that have been changed.
@@ -56,15 +51,7 @@ public interface Workspace {
    * @param newGntFiles The GNTFiles to see which changed in.
    * @return The collection of changed files.
    */
-  Set<GNTFile> getChangedFiles(GNTFiles newGntFiles);
-
-  /**
-   * Returns the GNTChildFile list for a given FPK file path.
-   *
-   * @param filePath The FPK file path.
-   * @return The children of the FPK.
-   */
-  List<GNTChildFile> getFPKChildren(String filePath);
+  Set<String> getChangedFiles(GNTFiles newGntFiles) throws IOException;
 
   /**
    * Attempts to find the parent FPK file paths of a child file path. It is possible for there to
@@ -73,7 +60,7 @@ public interface Workspace {
    * @param changedFile The child file path.
    * @return The parent FPK files.
    */
-  List<GNTFile> getParentFPKs(String changedFile);
+  Set<String> getParentFPKs(String changedFile) throws IOException;
 
   /**
    * Reverts a changed file.
@@ -86,4 +73,9 @@ public interface Workspace {
    * @return A new GNTFiles object reflecting the current workspace state.
    */
   GNTFiles getNewWorkspaceState() throws IOException;
+
+  /**
+   * @return The FPK options for this workspace.
+   */
+  FPKOptions getFPKOptions();
 }
