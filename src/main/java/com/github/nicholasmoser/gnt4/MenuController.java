@@ -1450,15 +1450,10 @@ public class MenuController {
    * @param allFiles All the workspace files.
    */
   private void refreshMissingFiles(List<WorkspaceFile> allFiles) {
+    Set<String> missingFilenames = workspace.getMissingFiles(allFiles);
     Platform.runLater(() -> {
-      try {
-        Set<String> missingFilenames = workspace.getMissingFiles(allFiles);
-        missingFiles.getItems().setAll(missingFilenames);
-        Collections.sort(missingFiles.getItems());
-      } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Failed to Refresh Missing Files", e);
-        Message.error("Failed to Refresh Missing Files", e.getMessage());
-      }
+      missingFiles.getItems().setAll(missingFilenames);
+      Collections.sort(missingFiles.getItems());
     });
   }
 
@@ -1467,16 +1462,11 @@ public class MenuController {
    *
    * @param allFiles All the workspace files.
    */
-  private void refreshChangedFiles(List<WorkspaceFile> allFiles) {
+  private void refreshChangedFiles(List<WorkspaceFile> allFiles) throws IOException {
+    Set<String> changedFilenames = workspace.getChangedFiles(allFiles);
     Platform.runLater(() -> {
-      try {
-        Set<String> changedFilenames = workspace.getChangedFiles(allFiles);
-        changedFiles.getItems().setAll(changedFilenames);
-        Collections.sort(changedFiles.getItems());
-      } catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Failed to Refresh Changed Files", e);
-        Message.error("Failed to Refresh Changed Files", e.getMessage());
-      }
+      changedFiles.getItems().setAll(changedFilenames);
+      Collections.sort(changedFiles.getItems());
     });
   }
 
