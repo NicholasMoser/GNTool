@@ -1,6 +1,5 @@
 package com.github.nicholasmoser;
 
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.fpk.FPKOptions;
 import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.io.IOException;
@@ -36,6 +35,17 @@ public interface Workspace {
    */
   void initState() throws IOException;
 
+  /**
+   * Update the workspace state.
+   *
+   * @throws IOException If any I/O exception occurs.
+   */
+  void updateState() throws IOException;
+
+  /**
+   * @return All files in the workspace state.
+   * @throws IOException If any I/O exception occurs.
+   */
   List<WorkspaceFile> getAllFiles() throws IOException;
 
   /**
@@ -51,6 +61,7 @@ public interface Workspace {
    *
    * @param allFiles All files currently in the workspace state.
    * @return The collection of changed files.
+   * @throws IOException If any I/O exception occurs.
    */
   Set<String> getChangedFiles(List<WorkspaceFile> allFiles) throws IOException;
 
@@ -58,6 +69,7 @@ public interface Workspace {
    * Reverts changed files.
    *
    * @param filePaths The file paths.
+   * @throws IOException If any I/O exception occurs.
    */
   void revertFiles(Collection<String> filePaths) throws IOException;
 

@@ -72,6 +72,12 @@ public class GNT4Workspace implements Workspace {
   }
 
   @Override
+  public void updateState() throws IOException {
+    state.delete();
+    state.init(workspaceDir, new FPKOptions(false, true, new GNT4FileNames()));
+  }
+
+  @Override
   public List<WorkspaceFile> getAllFiles() throws IOException {
     return state.getAllFiles();
   }

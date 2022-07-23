@@ -46,6 +46,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
       );
       """;
   public static final String INSERT_FILE = "INSERT INTO file(file_path,hash,modified_dt_tm,fpk_file_path,compressed) VALUES(?,?,?,?,?)";
+  public static final String DELETE_ALL_FILES = "DELETE FROM file";
   public static final String SELECT_DISTINCT_FPK_FILE_PATHS = "SELECT DISTINCT fpk_file_path FROM file";
   public static final String SELECT_FILE = "SELECT file_path,hash,modified_dt_tm,fpk_file_path,compressed FROM FILE WHERE file_path = ?";
   public static final String SELECT_ALL_FILES = "SELECT file_path,hash,modified_dt_tm,fpk_file_path,compressed FROM FILE";
@@ -169,6 +170,15 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   }
 
   @Override
+  public void delete() throws IOException {
+    try (PreparedStatement stmt = conn.prepareStatement(DELETE_ALL_FILES)) {
+      stmt.execute();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+  }
+
+  @Override
   public WorkspaceFile getFile(String filePath) throws IOException {
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_FILE)) {
       stmt.setString(1, filePath);
@@ -285,8 +295,8 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   /**
    * Insert a GNTFiles protobuf into the SQLite database.
    *
-   * @param workspaceDir
-   * @param gntFiles
+   * @param workspaceDir The workspace directory.
+   * @param gntFiles The existing GNTFiles protobuf binary.
    * @throws IOException If an I/O error occurs
    * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
    */

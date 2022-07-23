@@ -1396,7 +1396,7 @@ public class MenuController {
    */
   private void saveWorkspaceState() {
     try {
-      workspace.initState();
+      workspace.updateState();
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to save workspace state.", e);
     }

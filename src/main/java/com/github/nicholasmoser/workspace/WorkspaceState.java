@@ -28,6 +28,11 @@ public interface WorkspaceState {
   void insertFile(WorkspaceFile file) throws IOException;
 
   /**
+   * Deletes the entire workspace state.
+   */
+  void delete() throws IOException;
+
+  /**
    * Gets a workspace file given the file path.
    *
    * @param filePath The file path to retrieve the file for.
