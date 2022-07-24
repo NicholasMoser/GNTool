@@ -634,6 +634,7 @@ public class MenuController {
   @FXML
   protected void build() {
     // Force refresh
+    // TODO: Changed files list is updated on FX Application Thread which is slower than this code runs, resulting in not all changed files being included
     try {
       syncRefresh();
     } catch (IOException e) {
@@ -1408,6 +1409,7 @@ public class MenuController {
    * @throws IOException If an I/O error occurs.
    */
   private void syncRefresh() throws IOException {
+    LOGGER.log(Level.INFO, "Refreshing workspace.");
     List<WorkspaceFile> allFiles = workspace.getAllFiles();
     refreshMissingFiles(allFiles);
     refreshChangedFiles(allFiles);

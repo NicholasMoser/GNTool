@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4;
 
+import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.fpk.FPKOptions;
 import com.github.nicholasmoser.utils.CRC32;
@@ -8,6 +9,7 @@ import com.github.nicholasmoser.workspace.SQLiteWorkspaceState;
 import com.github.nicholasmoser.workspace.WorkspaceFile;
 import com.github.nicholasmoser.workspace.WorkspaceState;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -15,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * A Workspace for GNT4 decompressed files.
@@ -40,13 +43,13 @@ public class GNT4Workspace implements Workspace {
   }
 
   public static GNT4Workspace create(Path directory) throws IOException {
-    Path dbFile = directory.resolve(SQLiteWorkspaceState.DEFAULT_NAME);
+    Path dbFile = directory.resolve(SQLiteWorkspaceState.FILE_NAME);
     WorkspaceState state = SQLiteWorkspaceState.create(dbFile);
     return new GNT4Workspace(directory, state);
   }
 
   public static GNT4Workspace load(Path directory) throws IOException {
-    Path dbFile = directory.resolve(SQLiteWorkspaceState.DEFAULT_NAME);
+    Path dbFile = directory.resolve(SQLiteWorkspaceState.FILE_NAME);
     WorkspaceState state = SQLiteWorkspaceState.load(dbFile);
     return new GNT4Workspace(directory, state);
   }
@@ -140,5 +143,23 @@ public class GNT4Workspace implements Workspace {
   @Override
   public FPKOptions getFPKOptions() {
     return options;
+  }
+
+  /**
+   * Inserts GNTFiles into the workspace state.
+   *
+   * @throws IOException If an I/O error occurs
+   * @deprecated Protobuf in GNTool is no longer supported and is set to eventually be removed
+   */
+  @Deprecated
+  public void insertGNTFiles() throws IOException {
+    Path oldState = workspaceDir.resolve(GNT4Files.WORKSPACE_STATE);
+    if (!Files.exists(oldState)) {
+      throw new IllegalStateException("Old protobuf state workspace.bin does not exist");
+    }
+    try(InputStream is = Files.newInputStream(oldState)) {
+      GNTFiles gntFiles = GNTFiles.parseFrom(is);
+      state.insertGNTFiles(workspaceDir, gntFiles);
+    }
   }
 }

@@ -5,9 +5,11 @@ import com.github.nicholasmoser.gnt4.GNT4Extractor;
 import com.github.nicholasmoser.gnt4.GNT4Workspace;
 import com.github.nicholasmoser.gnt4.GNT4WorkspaceView;
 import com.github.nicholasmoser.utils.GUIUtils;
+import com.github.nicholasmoser.workspace.SQLiteWorkspaceState;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -162,9 +164,19 @@ public class GNTool extends Application {
         try {
           Path directory = directoryResponse.get();
           GameCubeISO.checkWorkspace(directory);
-          Workspace workspace = GNT4Workspace.load(directory);
-          WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
-          workspaceView.init(primaryStage);
+          if (Files.exists(directory.resolve(SQLiteWorkspaceState.FILE_NAME))) {
+            // Load the sqlite state into the workspace
+            Workspace workspace = GNT4Workspace.load(directory);
+            WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
+            workspaceView.init(primaryStage);
+          } else {
+            // Convert old protobuf state to new sqlite state and load it into the workspace
+            LOGGER.log(Level.INFO, "Converting old protobuf workspace to sqlite workspace");
+            GNT4Workspace workspace = GNT4Workspace.create(directory);
+            workspace.insertGNTFiles();
+            WorkspaceView workspaceView = new GNT4WorkspaceView(workspace);
+            workspaceView.init(primaryStage);
+          }
         } catch (IllegalStateException e) {
           LOGGER.log(Level.SEVERE, "Invalid Workspace", e);
           Message.error("Invalid Workspace", e.getMessage());

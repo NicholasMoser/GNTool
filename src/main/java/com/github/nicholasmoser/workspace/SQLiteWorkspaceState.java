@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class SQLiteWorkspaceState implements WorkspaceState {
 
-  public static final String DEFAULT_NAME = "state.db";
+  public static final String FILE_NAME = "state.db";
   /**
    * The primary key is a combination of the file_path and the fpk_file_path because both
    * game0003.fpk and game0004.fpk have a file named omake\0002.txg
@@ -67,6 +67,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
    * @throws IOException If any I/O issues occur
    */
   public static SQLiteWorkspaceState create(Path filePath) throws IOException {
+    LOGGER.info("Creating SQLite database at " + filePath);
     String url = "jdbc:sqlite:" + filePath;
     try {
       Connection conn = DriverManager.getConnection(url);
@@ -87,6 +88,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
    * @throws IOException If any I/O issues occur
    */
   public static WorkspaceState load(Path filePath) throws IOException {
+    LOGGER.info("Loading SQLite database at " + filePath);
     String url = "jdbc:sqlite:" + filePath;
     try {
       Connection conn = DriverManager.getConnection(url);
@@ -157,6 +159,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   @Override
   public void insertFile(WorkspaceFile file)
       throws IOException {
+    LOGGER.info("Inserting file " + file.filePath() + " into workspace state");
     try (PreparedStatement stmt = conn.prepareStatement(INSERT_FILE)) {
       stmt.setString(1, file.filePath());
       stmt.setInt(2, file.hash());
@@ -171,6 +174,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
 
   @Override
   public void delete() throws IOException {
+    LOGGER.info("Deleting all files from workspace state");
     try (PreparedStatement stmt = conn.prepareStatement(DELETE_ALL_FILES)) {
       stmt.execute();
     } catch (SQLException e) {
@@ -180,6 +184,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
 
   @Override
   public WorkspaceFile getFile(String filePath) throws IOException {
+    LOGGER.info("Getting file " + filePath + " from workspace state");
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_FILE)) {
       stmt.setString(1, filePath);
       try (ResultSet rs = stmt.executeQuery()) {
@@ -193,6 +198,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
 
   @Override
   public List<WorkspaceFile> getAllFiles() throws IOException {
+    LOGGER.info("Getting all files from workspace state");
     List<WorkspaceFile> files = new ArrayList<>();
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_FILES);
         ResultSet rs = stmt.executeQuery()) {
@@ -208,6 +214,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
 
   @Override
   public Set<String> getFilePaths() throws IOException {
+    LOGGER.info("Getting all file paths from workspace state");
     Set<String> filePaths = new HashSet<>();
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_FILE_PATHS);
         ResultSet rs = stmt.executeQuery()) {
@@ -222,6 +229,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
 
   @Override
   public List<String> getFPKFilePaths() throws IOException {
+    LOGGER.info("Getting all FPK file paths from workspace state");
     List<String> fpkFilePaths = new ArrayList<>();
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_DISTINCT_FPK_FILE_PATHS);
         ResultSet rs = stmt.executeQuery()) {
@@ -236,6 +244,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
 
   @Override
   public Map<String, Long> getFilePathToModifiedDtTm() throws IOException {
+    LOGGER.info("Getting file modified date/times from workspace state");
     Map<String, Long> mapping = new HashMap<>();
     try (PreparedStatement stmt = conn.prepareStatement(SELECT_MODIFIED_DT_TM);
         ResultSet rs = stmt.executeQuery()) {
@@ -252,6 +261,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
 
   @Override
   public void close() {
+    LOGGER.info("Closing workspace state");
     try {
       conn.close();
     } catch (SQLException e) {
@@ -303,6 +313,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   @Deprecated
   @Override
   public void insertGNTFiles(Path workspaceDir, GNTFiles gntFiles) throws IOException {
+    LOGGER.info("Inserting GNT files");
     Path uncompressedDir = workspaceDir.resolve("uncompressed");
     GNTFiles vanilla = GNT4Files.getVanillaFiles();
     // Create a new batch insertion and disable auto commit so that we only commit once
@@ -359,6 +370,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
     } catch (SQLException e) {
       throw new IOException(e);
     }
+    LOGGER.info("Finished inserting GNT files");
   }
 
   /**
