@@ -40,9 +40,11 @@ public class GNT4FileNames implements FileNames {
   @Override
   public String getCompressedName(String fileName) {
     try {
-      byte[] bytes = fileName.getBytes("shift-jis");
+      String[] parts = fileName.split("files/");
+      String afterFiles = parts[parts.length - 1];
+      byte[] bytes = afterFiles.getBytes("shift-jis");
       if (bytes.length < 16) {
-        return fileName;
+        return afterFiles;
       }
       byte[] concatBytes = Arrays.copyOfRange(bytes, bytes.length - 15, bytes.length);
       return new String(concatBytes, "shift-jis");
