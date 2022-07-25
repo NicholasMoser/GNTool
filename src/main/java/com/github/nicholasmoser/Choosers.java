@@ -1,10 +1,10 @@
 package com.github.nicholasmoser;
 
 import com.github.nicholasmoser.gamecube.GameCubeISO;
+import com.github.nicholasmoser.gnt4.GNT4Files;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
-import com.github.nicholasmoser.gnt4.GNT4Files;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -26,7 +26,7 @@ public class Choosers {
 
   /**
    * Asks the user to select an input workspace directory.
-   * 
+   *
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return An optional workspace directory. Empty if none is chosen.
    */
@@ -69,7 +69,7 @@ public class Choosers {
 
   /**
    * Asks the user to select an output workspace directory.
-   * 
+   *
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return An optional output workspace directory. Empty if none is chosen.
    */
@@ -97,7 +97,7 @@ public class Choosers {
 
   /**
    * Asks the user to select an input ISO file.
-   * 
+   *
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return An optional input ISO. Empty if none is chosen.
    */
@@ -201,7 +201,7 @@ public class Choosers {
 
   /**
    * Asks the user to select an output ISO file.
-   * 
+   *
    * @param initialDirectory The location to set the directory chooser to start at.
    * @return An optional output ISO. Empty if none is chosen.
    */
@@ -290,7 +290,8 @@ public class Choosers {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Gnta File");
     fileChooser.setInitialDirectory(initialDirectory);
-    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Gnta File (*.gnta)", "*.gnta");
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Gnta File (*.gnta)",
+        "*.gnta");
     fileChooser.getExtensionFilters().add(fileExtensions);
     File selection = fileChooser.showOpenDialog(null);
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
@@ -404,10 +405,72 @@ public class Choosers {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Create Output HTML File");
     fileChooser.setInitialDirectory(initialDirectory);
-    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("HTML File (*.html)", "*.html");
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("HTML File (*.html)",
+        "*.html");
     fileChooser.getExtensionFilters().add(fileExtensions);
     File selection = fileChooser.showSaveDialog(null);
 
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Gets an input file from the provided uncompressed directory and enforces that the selected file
+   * is from that directory.
+   *
+   * @param uncompressedDirectory The uncompressed directory.
+   * @param initialDirectory Where to set the file chooser initial directory to.
+   * @return The optional selected file.
+   */
+  public static Optional<Path> getInputUncompressedFile(Path uncompressedDirectory, Path initialDirectory) {
+    boolean validFile = false;
+    Path filePath = null;
+    while (!validFile) {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Select File");
+      fileChooser.setInitialDirectory(initialDirectory.toFile());
+      File selection = fileChooser.showOpenDialog(null);
+      if (selection == null) {
+        return Optional.empty();
+      }
+      filePath = selection.toPath();
+      if (!filePath.toAbsolutePath().startsWith(uncompressedDirectory.toAbsolutePath())) {
+        Message.info("Invalid File", "Please select a file in " + uncompressedDirectory);
+      } else {
+        validFile = true;
+      }
+    }
+    return Optional.of(filePath);
+  }
+
+  /**
+   * Gets an output FPK file from the provided compressed directory and enforces that the selected
+   * file is an FPK file from that directory.
+   *
+   * @param compressedDirectory The compressed directory.
+   * @param initialDirectory Where to set the file chooser initial directory to.
+   * @return The optional selected file.
+   */
+  public static Optional<Path> getOutputCompressedFPK(Path compressedDirectory, Path initialDirectory) {
+    boolean validFile = false;
+    Path filePath = null;
+    while (!validFile) {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Select File");
+      fileChooser.setInitialDirectory(initialDirectory.toFile());
+      ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("FPK File (*.fpk)",
+          "*.fpk");
+      fileChooser.getExtensionFilters().add(fileExtensions);
+      File selection = fileChooser.showOpenDialog(null);
+      if (selection == null) {
+        return Optional.empty();
+      }
+      filePath = selection.toPath();
+      if (!filePath.toAbsolutePath().startsWith(compressedDirectory.toAbsolutePath())) {
+        Message.info("Invalid File", "Please select an FPK file in " + compressedDirectory);
+      } else {
+        validFile = true;
+      }
+    }
+    return Optional.of(filePath);
   }
 }

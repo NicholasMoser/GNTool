@@ -30,6 +30,7 @@
     <Menu mnemonicParsing="false" text="File">
       <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace" />
       <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+         <MenuItem mnemonicParsing="false" onAction="#addFile" text="Add File" />
       <MenuItem accelerator="F6" mnemonicParsing="false" onAction="#toggleDarkMode" text="Toggle Dark Mode" />
       <CheckMenuItem fx:id="parallelBuild" mnemonicParsing="false" selected="true" text="Parallel Build" />
       <CheckMenuItem fx:id="pushToBackOfISO" mnemonicParsing="false" selected="true" text="Push Files to Back of ISO" />

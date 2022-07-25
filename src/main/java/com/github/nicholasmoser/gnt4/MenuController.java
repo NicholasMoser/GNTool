@@ -2,7 +2,6 @@ package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.FPKPacker;
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.Randomizer;
@@ -93,7 +92,10 @@ public class MenuController {
   private static final String DOL = "sys/main.dol";
   private Workspace workspace;
   private Stage stage;
+  private Path compressedDirectory;
   private Path uncompressedDirectory;
+  private Path lastCompressedSubdirectory;
+  private Path lastUncompressedSubdirectory;
   private Path workspaceDirectory;
   private Path uncompressedFiles;
   private Path dolPath;
@@ -621,6 +623,45 @@ public class MenuController {
   }
 
   /**
+   * Add a new file to the GNT4 workspace.
+   */
+  @FXML
+  public void addFile() {
+    // Get input file
+    if (lastUncompressedSubdirectory == null) {
+      lastUncompressedSubdirectory = uncompressedDirectory;
+    }
+    Optional<Path> input = Choosers.getInputUncompressedFile(uncompressedDirectory,
+        lastUncompressedSubdirectory);
+    if (input.isEmpty()) {
+      return;
+    }
+    lastUncompressedSubdirectory = input.get().getParent();
+
+    // Get output file
+    if (lastCompressedSubdirectory == null) {
+      lastCompressedSubdirectory = compressedDirectory;
+    }
+    Optional<Path> output = Choosers.getOutputCompressedFPK(compressedDirectory,
+        lastCompressedSubdirectory);
+    if (output.isEmpty()) {
+      return;
+    }
+    lastCompressedSubdirectory = output.get().getParent();
+
+    boolean compress = Message.infoConfirmation("Compress File", "Should this file be compressed?");
+
+    String filePath = uncompressedDirectory.relativize(input.get()).toString().replace("\\", "/");
+    String fpkFilePath = compressedDirectory.relativize(output.get()).toString().replace("\\", "/");
+    try {
+      workspace.addFile(new WorkspaceFile(filePath, 0, 0, fpkFilePath, compress));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Adding File", e);
+      Message.error("Error Adding File", e.getMessage());
+    }
+  }
+
+  /**
    * Toggles dark mode on and off.
    */
   @FXML
@@ -697,7 +738,7 @@ public class MenuController {
             fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");
-          GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get(),
+          GameCubeISO.importFiles(compressedDirectory, isoResponse.get(),
               pushToBackOfISO.isSelected());
           updateProgress(1, 1);
           return null;
@@ -712,8 +753,7 @@ public class MenuController {
     task.setOnSucceeded(event -> {
       Message.info("ISO Build Complete", "The new ISO was successfully created.");
       loadingWindow.close();
-      saveWorkspaceState();
-      asyncRefresh();
+      asyncPostBuild();
     });
     task.setOnFailed(event -> {
       Message.error("ISO Build Failure", "See the log for more information");
@@ -1376,6 +1416,7 @@ public class MenuController {
     this.workspace = workspace;
     this.stage = stage;
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
+    this.compressedDirectory = workspace.getCompressedDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.uncompressedFiles = uncompressedDirectory.resolve("files");
     this.dolPath = uncompressedDirectory.resolve(DOL);
@@ -1393,13 +1434,14 @@ public class MenuController {
   }
 
   /**
-   * Saves the workspace state. This means that refresh will be cleared of changes.
+   * Rebuilds the workspace state. This means that refresh will be cleared of changes.
    */
-  private void saveWorkspaceState() {
+  private void rebuildWorkspace() {
     try {
       workspace.updateState();
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to save workspace state.", e);
+      Message.error("Failed to save workspace state.", e.getMessage());
     }
   }
 
@@ -1441,6 +1483,35 @@ public class MenuController {
     task.setOnSucceeded(event -> loadingWindow.close());
     task.setOnFailed(event -> {
       Message.error("Error Refreshing Workspace", "See the log for more information");
+      loadingWindow.close();
+    });
+    new Thread(task).start();
+  }
+
+  /**
+   * Rebuild and refresh the workspace asynchronously. Will create a loading window for progress.
+   */
+  private void asyncPostBuild() {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        try {
+          updateMessage("Rebuilding workspace...");
+          rebuildWorkspace();
+          syncRefresh();
+          updateProgress(1, 1);
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, "Failed to rebuild workspace.", e);
+          throw e;
+        }
+        return null;
+      }
+    };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Rebuilding Workspace", task);
+
+    task.setOnSucceeded(event -> loadingWindow.close());
+    task.setOnFailed(event -> {
+      Message.error("Error Rebuilding Workspace", "See the log for more information");
       loadingWindow.close();
     });
     new Thread(task).start();

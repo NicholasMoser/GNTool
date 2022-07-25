@@ -25,7 +25,7 @@ public interface WorkspaceState {
    * @param file The new file to insert.
    * @throws IOException If any I/O exception occurs.
    */
-  void insertFile(WorkspaceFile file) throws IOException;
+  void addFile(WorkspaceFile file) throws IOException;
 
   /**
    * Deletes the entire workspace state.

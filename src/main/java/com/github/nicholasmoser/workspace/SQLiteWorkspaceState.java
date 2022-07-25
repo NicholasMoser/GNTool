@@ -157,7 +157,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   }
 
   @Override
-  public void insertFile(WorkspaceFile file)
+  public void addFile(WorkspaceFile file)
       throws IOException {
     LOGGER.info("Inserting file " + file.filePath() + " into workspace state");
     try (PreparedStatement stmt = conn.prepareStatement(INSERT_FILE)) {

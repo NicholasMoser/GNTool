@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * A Workspace for GNT4 decompressed files.
@@ -78,6 +77,11 @@ public class GNT4Workspace implements Workspace {
   public void updateState() throws IOException {
     state.delete();
     state.init(workspaceDir, new FPKOptions(false, true, new GNT4FileNames()));
+  }
+
+  @Override
+  public void addFile(WorkspaceFile file) throws IOException {
+    state.addFile(file);
   }
 
   @Override

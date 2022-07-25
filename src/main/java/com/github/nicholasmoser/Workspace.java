@@ -43,6 +43,13 @@ public interface Workspace {
   void updateState() throws IOException;
 
   /**
+   * Add a file to the workspace state.
+   *
+   * @throws IOException If any I/O exception occurs.
+   */
+  void addFile(WorkspaceFile file) throws IOException;
+
+  /**
    * @return All files in the workspace state.
    * @throws IOException If any I/O exception occurs.
    */
