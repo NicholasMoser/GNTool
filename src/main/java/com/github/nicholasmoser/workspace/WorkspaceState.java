@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A class that tracks the current state of the workspace and the files in it. Responsible for
+ * tracking what files should be built into the ISO and which are part of FPK archive files.
+ */
 public interface WorkspaceState {
 
   /**

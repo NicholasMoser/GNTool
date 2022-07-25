@@ -28,6 +28,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * A workspace state backed by a local SQLite database file.
+ */
 public class SQLiteWorkspaceState implements WorkspaceState {
 
   public static final String FILE_NAME = "state.db";
