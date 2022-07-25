@@ -63,6 +63,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -627,6 +628,31 @@ public class MenuController {
    */
   @FXML
   public void addFile() {
+    // Get input file
+    if (lastUncompressedSubdirectory == null) {
+      lastUncompressedSubdirectory = uncompressedDirectory;
+    }
+    Optional<Path> input = Choosers.getInputUncompressedFile(uncompressedDirectory,
+        lastUncompressedSubdirectory);
+    if (input.isEmpty()) {
+      return;
+    }
+    lastUncompressedSubdirectory = input.get().getParent();
+
+    String filePath = uncompressedDirectory.relativize(input.get()).toString().replace("\\", "/");
+    try {
+      workspace.addFile(new WorkspaceFile(filePath, 0, 0, null, false));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Adding File", e);
+      Message.error("Error Adding File", e.getMessage());
+    }
+  }
+
+  /**
+   * Add a new file to an FPK file in the GNT4 workspace.
+   */
+  @FXML
+  public void addFileToFPK() {
     // Get input file
     if (lastUncompressedSubdirectory == null) {
       lastUncompressedSubdirectory = uncompressedDirectory;
