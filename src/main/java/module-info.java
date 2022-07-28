@@ -4,6 +4,7 @@ module com.github.nicholasmoser {
   exports com.github.nicholasmoser.gnt4;
   exports com.github.nicholasmoser.utils;
   exports com.github.nicholasmoser.fpk;
+  exports com.github.nicholasmoser.workspace;
 
   opens com.github.nicholasmoser to javafx.fxml;
   opens com.github.nicholasmoser.gnt4 to javafx.fxml;
@@ -15,6 +16,7 @@ module com.github.nicholasmoser {
   requires com.google.common;
   requires com.google.protobuf;
 
+  requires java.sql;
   requires java.desktop;
   requires java.logging;
   requires java.net.http;
@@ -25,4 +27,5 @@ module com.github.nicholasmoser {
 
   requires org.json;
   requires com.j2html;
+  requires org.xerial.sqlitejdbc;
 }

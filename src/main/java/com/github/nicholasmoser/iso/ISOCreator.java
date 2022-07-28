@@ -139,13 +139,10 @@ public class ISOCreator {
    * @param os       The OutputStream to write to.
    * @param filePath The path to the file bytes to write.
    * @param total    The total number of bytes to write including padding of zeroes.
-   * @throws IOException If an I/O error occurs or more bytes are written than total.
+   * @throws IOException If an I/O error occurs.
    */
   private void writeAndPad(OutputStream os, Path filePath, int total) throws IOException {
     byte[] bytes = Files.readAllBytes(filePath);
-    if (bytes.length > total) {
-      throw new IOException(String.format("%d bytes greater than %d", bytes.length, total));
-    }
     os.write(bytes);
     if (bytes.length < total) {
       os.write(new byte[total - bytes.length]);

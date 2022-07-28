@@ -2,8 +2,6 @@ package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.FPKPacker;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.Randomizer;
@@ -47,6 +45,7 @@ import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
+import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -58,11 +57,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -92,7 +93,10 @@ public class MenuController {
   private static final String DOL = "sys/main.dol";
   private Workspace workspace;
   private Stage stage;
+  private Path compressedDirectory;
   private Path uncompressedDirectory;
+  private Path lastCompressedSubdirectory;
+  private Path lastUncompressedSubdirectory;
   private Path workspaceDirectory;
   private Path uncompressedFiles;
   private Path dolPath;
@@ -620,6 +624,70 @@ public class MenuController {
   }
 
   /**
+   * Add a new file to the GNT4 workspace.
+   */
+  @FXML
+  public void addFile() {
+    // Get input file
+    if (lastUncompressedSubdirectory == null) {
+      lastUncompressedSubdirectory = uncompressedDirectory;
+    }
+    Optional<Path> input = Choosers.getInputUncompressedFile(uncompressedDirectory,
+        lastUncompressedSubdirectory);
+    if (input.isEmpty()) {
+      return;
+    }
+    lastUncompressedSubdirectory = input.get().getParent();
+
+    String filePath = uncompressedDirectory.relativize(input.get()).toString().replace("\\", "/");
+    try {
+      workspace.addFile(new WorkspaceFile(filePath, 0, 0, null, false));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Adding File", e);
+      Message.error("Error Adding File", e.getMessage());
+    }
+  }
+
+  /**
+   * Add a new file to an FPK file in the GNT4 workspace.
+   */
+  @FXML
+  public void addFileToFPK() {
+    // Get input file
+    if (lastUncompressedSubdirectory == null) {
+      lastUncompressedSubdirectory = uncompressedDirectory;
+    }
+    Optional<Path> input = Choosers.getInputUncompressedFile(uncompressedDirectory,
+        lastUncompressedSubdirectory);
+    if (input.isEmpty()) {
+      return;
+    }
+    lastUncompressedSubdirectory = input.get().getParent();
+
+    // Get output file
+    if (lastCompressedSubdirectory == null) {
+      lastCompressedSubdirectory = compressedDirectory;
+    }
+    Optional<Path> output = Choosers.getOutputCompressedFPK(compressedDirectory,
+        lastCompressedSubdirectory);
+    if (output.isEmpty()) {
+      return;
+    }
+    lastCompressedSubdirectory = output.get().getParent();
+
+    boolean compress = Message.infoConfirmation("Compress File", "Should this file be compressed?");
+
+    String filePath = uncompressedDirectory.relativize(input.get()).toString().replace("\\", "/");
+    String fpkFilePath = compressedDirectory.relativize(output.get()).toString().replace("\\", "/");
+    try {
+      workspace.addFile(new WorkspaceFile(filePath, 0, 0, fpkFilePath, compress));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Adding File", e);
+      Message.error("Error Adding File", e.getMessage());
+    }
+  }
+
+  /**
    * Toggles dark mode on and off.
    */
   @FXML
@@ -633,6 +701,7 @@ public class MenuController {
   @FXML
   protected void build() {
     // Force refresh
+    // TODO: Changed files list is updated on FX Application Thread which is slower than this code runs, resulting in not all changed files being included
     try {
       syncRefresh();
     } catch (IOException e) {
@@ -691,11 +760,11 @@ public class MenuController {
         try {
           if (repack) {
             updateMessage("Repacking FPKs...");
-            FPKPacker fpkPacker = new FPKPacker(workspace, false, true);
+            FPKPacker fpkPacker = new FPKPacker(workspace);
             fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");
-          GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get(),
+          GameCubeISO.importFiles(compressedDirectory, isoResponse.get(),
               pushToBackOfISO.isSelected());
           updateProgress(1, 1);
           return null;
@@ -710,8 +779,7 @@ public class MenuController {
     task.setOnSucceeded(event -> {
       Message.info("ISO Build Complete", "The new ISO was successfully created.");
       loadingWindow.close();
-      saveWorkspaceState();
-      asyncRefresh();
+      asyncPostBuild();
     });
     task.setOnFailed(event -> {
       Message.error("ISO Build Failure", "See the log for more information");
@@ -1374,6 +1442,7 @@ public class MenuController {
     this.workspace = workspace;
     this.stage = stage;
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
+    this.compressedDirectory = workspace.getCompressedDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.uncompressedFiles = uncompressedDirectory.resolve("files");
     this.dolPath = uncompressedDirectory.resolve(DOL);
@@ -1391,13 +1460,14 @@ public class MenuController {
   }
 
   /**
-   * Saves the workspace state. This means that refresh will be cleared of changes.
+   * Rebuilds the workspace state. This means that refresh will be cleared of changes.
    */
-  private void saveWorkspaceState() {
+  private void rebuildWorkspace() {
     try {
-      workspace.initState();
+      workspace.updateState();
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to save workspace state.", e);
+      Message.error("Failed to save workspace state.", e.getMessage());
     }
   }
 
@@ -1407,11 +1477,10 @@ public class MenuController {
    * @throws IOException If an I/O error occurs.
    */
   private void syncRefresh() throws IOException {
-    // getNewWorkspaceState() is pretty slow and can take 30 seconds or more on a HDD
-    // TODO: Look into ways to speed it up
-    GNTFiles newFiles = workspace.getNewWorkspaceState();
-    refreshMissingFiles(newFiles);
-    refreshChangedFiles(newFiles);
+    LOGGER.log(Level.INFO, "Refreshing workspace.");
+    List<WorkspaceFile> allFiles = workspace.getAllFiles();
+    refreshMissingFiles(allFiles);
+    refreshChangedFiles(allFiles);
     refreshActiveCodes();
     refreshOptions();
     refreshMainMenuCharacter();
@@ -1446,14 +1515,42 @@ public class MenuController {
   }
 
   /**
+   * Rebuild and refresh the workspace asynchronously. Will create a loading window for progress.
+   */
+  private void asyncPostBuild() {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        try {
+          updateMessage("Rebuilding workspace...");
+          rebuildWorkspace();
+          syncRefresh();
+          updateProgress(1, 1);
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, "Failed to rebuild workspace.", e);
+          throw e;
+        }
+        return null;
+      }
+    };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Rebuilding Workspace", task);
+
+    task.setOnSucceeded(event -> loadingWindow.close());
+    task.setOnFailed(event -> {
+      Message.error("Error Rebuilding Workspace", "See the log for more information");
+      loadingWindow.close();
+    });
+    new Thread(task).start();
+  }
+
+  /**
    * Refreshes the missing files tab from a set of GNTFiles.
    *
-   * @param newFiles The GNTFiles to check against.
+   * @param allFiles All the workspace files.
    */
-  private void refreshMissingFiles(GNTFiles newFiles) {
+  private void refreshMissingFiles(List<WorkspaceFile> allFiles) {
+    Set<String> missingFilenames = workspace.getMissingFiles(allFiles);
     Platform.runLater(() -> {
-      List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
-          .map(GNTFile::getFilePath).collect(Collectors.toList());
       missingFiles.getItems().setAll(missingFilenames);
       Collections.sort(missingFiles.getItems());
     });
@@ -1462,12 +1559,11 @@ public class MenuController {
   /**
    * Refreshes the changed files tab from a set of GNTFiles.
    *
-   * @param newFiles The GNTFiles to check against.
+   * @param allFiles All the workspace files.
    */
-  private void refreshChangedFiles(GNTFiles newFiles) {
+  private void refreshChangedFiles(List<WorkspaceFile> allFiles) throws IOException {
+    Set<String> changedFilenames = workspace.getChangedFiles(allFiles);
     Platform.runLater(() -> {
-      List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
-          .map(GNTFile::getFilePath).collect(Collectors.toList());
       changedFiles.getItems().setAll(changedFilenames);
       Collections.sort(changedFiles.getItems());
     });
@@ -1681,7 +1777,7 @@ public class MenuController {
         if (DOL.equals(filePath) && dolModded()) {
           return;
         }
-        workspace.revertFile(filePath);
+        workspace.revertFiles(Collections.singletonList(filePath));
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Error Reverting File", e);
       }

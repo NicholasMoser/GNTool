@@ -17,17 +17,19 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:31.0.1-jre'
-    implementation 'org.openjfx:javafx-controls:17.0.2'
-    implementation 'org.openjfx:javafx-graphics:17.0.2'
-    implementation 'org.openjfx:javafx-base:17.0.2'
-    implementation 'org.openjfx:javafx-fxml:17.0.2'
-    implementation 'com.google.protobuf:protobuf-java:3.19.4'
-    implementation 'org.json:json:20211205'
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'org.openjfx:javafx-controls:18.0.1'
+    implementation 'org.openjfx:javafx-graphics:18.0.1'
+    implementation 'org.openjfx:javafx-base:18.0.1'
+    implementation 'org.openjfx:javafx-fxml:18.0.1'
+    implementation 'com.google.protobuf:protobuf-java:3.21.1'
+    implementation 'org.json:json:20220320'
     implementation 'com.j2html:j2html:1.5.0'
+    implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
     testImplementation(platform('org.junit:junit-bom:5.8.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     testImplementation 'net.java.dev.jna:jna:5.9.0'
+    testImplementation('org.assertj:assertj-core:3.23.1')
 }
 
 group = 'com.github.nicholasmoser'

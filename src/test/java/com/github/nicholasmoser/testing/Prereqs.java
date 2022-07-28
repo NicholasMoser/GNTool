@@ -20,6 +20,25 @@ public class Prereqs {
   private static final String GNT4_PATH = "src/test/gnt/gnt4";
 
   /**
+   * Gets the workspace GNT4 directory for testing. The files in this directory should be
+   * unmodified. Avoid running tests concurrency on this directory or race conditions may occur
+   * relating to the guarantee of files in this directory being unmodified.
+   *
+   * @return The workspace GNT4 directory.
+   * @throws IOException If there are any issues decompressing GNT4.
+   */
+  public static Path getWorkspaceDir() throws IOException {
+    validateGNT4Iso();
+    Path gnt4Path = Paths.get(GNT4_PATH);
+    Path uncompressed = gnt4Path.resolve("uncompressed");
+    if (Files.isDirectory(uncompressed)) {
+      return gnt4Path;
+    }
+    createGNT4();
+    return gnt4Path;
+  }
+
+  /**
    * Gets the uncompressed GNT4 directory for testing. The files in this directory should be
    * unmodified. Avoid running tests concurrency on this directory or race conditions may occur
    * relating to the guarantee of files in this directory being unmodified.
