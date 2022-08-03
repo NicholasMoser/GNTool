@@ -32,6 +32,7 @@ import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.gnt4.ui.ChrOrder;
 import com.github.nicholasmoser.gnt4.ui.ChrOrderSave;
+import com.github.nicholasmoser.gnt4.ui.CostumeController;
 import com.github.nicholasmoser.gnt4.ui.OrderController;
 import com.github.nicholasmoser.gnt4.ui.StageOrder;
 import com.github.nicholasmoser.gnt4.ui.StageOrderSave;
@@ -352,6 +353,7 @@ public class MenuController {
     }
   }
 
+  @FXML
   public void reorderCharacters() {
     for (GeckoCodeGroup group : codeGroups) {
       if ("Add Random Select and Reorder CSS [Nick]".equals(group.getName()) ||
@@ -390,6 +392,7 @@ public class MenuController {
     }
   }
 
+  @FXML
   public void reorderStages() {
     try {
       FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
@@ -407,6 +410,26 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Reorder Stages", e);
       Message.error("Failed to Reorder Stages", e.getMessage());
+    }
+  }
+
+  @FXML
+  public void modifyCostumes() {
+    try {
+      FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("costumes.fxml"));
+      Scene scene = new Scene(loader.load());
+      GUIUtils.initDarkMode(scene);
+      CostumeController costumeController = loader.getController();
+      Stage stage = new Stage();
+      GUIUtils.setIcons(stage);
+      costumeController.init();
+      stage.setScene(scene);
+      stage.setTitle("Add New Costumes");
+      stage.centerOnScreen();
+      stage.show();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Add Costumes", e);
+      Message.error("Failed to Add Costumes", e.getMessage());
     }
   }
 

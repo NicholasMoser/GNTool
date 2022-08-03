@@ -32,6 +32,7 @@ public class Chr {
       .put(0x14, "player_id_2")
       .put(0x18, "player_id_3")
       .put(0x1C, "chr_id")
+      .put(0x20, "costume_id")
       .put(0x30, "health_multiplier")
       .put(0x38, "seq_struct")
       .put(0x3C, "foe_seq_struct")
