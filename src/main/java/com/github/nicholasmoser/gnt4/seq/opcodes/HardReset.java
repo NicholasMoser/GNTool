@@ -22,7 +22,7 @@ public class HardReset implements Opcode {
 
   @Override
   public byte[] getBytes() {
-    return new byte[4];
+    return new byte[]{0x00, 0x01, 0x00, 0x00};
   }
 
   @Override

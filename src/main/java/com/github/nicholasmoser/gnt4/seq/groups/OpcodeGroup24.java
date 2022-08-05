@@ -3,12 +3,14 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FlagOperation;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.PlaySound;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,7 +36,7 @@ public class OpcodeGroup24 {
       case 0x14 -> UnknownOpcode.of(0x8, bs);
       case 0x15 -> UnknownOpcode.of(0x8, bs);
       case 0x16 -> UnknownOpcode.of(0xC, bs);
-      case 0x17 -> UnknownOpcode.of(0x8, bs);
+      case 0x17 -> play_sound(bs);
       case 0x18 -> UnknownOpcode.of(0x8, bs);
       case 0x19 -> UnknownOpcode.of(0x8, bs);
       case 0x1A -> op_241A(bs);
@@ -56,6 +58,54 @@ public class OpcodeGroup24 {
     byte[] bytes = bs.readBytes(8);
     baos.write(bytes);
     return new UnknownOpcode(offset, baos.toByteArray());
+  }
+
+  private static Opcode play_sound(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    int word = bs.readWord();
+    int thirdByte = (word >> 0x8) & 0xFF;
+    int lastByte = word & 0xFF;
+    short operandOne = bs.readShort();
+    short operandTwo = bs.readShort();
+    boolean thisChr = lastByte == 0; // Otherwise, foe_chr_p
+    if (!thisChr) {
+      throw new IOException("Not yet supported");
+    }
+    ByteBuffer buffer = ByteBuffer.allocate(8);
+    buffer.putInt(word).putShort(operandOne).putShort(operandTwo);
+    switch(thirdByte) {
+      case 0x0:
+        String sound = String.format(" 0x%X", operandOne);
+        if ((operandOne & 0xf00) == 0xb00) {
+          sound += " plus offset";
+        }
+        return new PlaySound(offset, buffer.array(), "general" + sound);
+      case 0x1:
+        return new PlaySound(offset, buffer.array(), "hit");
+      case 0x7:
+      case 0xA:
+      default:
+        throw new IOException("Unknown, not yet supported: " + thirdByte);
+      case 0x2:
+      case 0x3:
+      case 0x4:
+      case 0xE:
+        return new PlaySound(offset, buffer.array(), "unknown");
+      case 0x5:
+        return new PlaySound(offset, buffer.array(), "running");
+      case 0x6:
+        return new PlaySound(offset, buffer.array(), "unused");
+      case 0x8:
+        return new PlaySound(offset, buffer.array(), "soft_land");
+      case 0x9:
+        return new PlaySound(offset, buffer.array(), "hard_land");
+      case 0xB:
+        return new PlaySound(offset, buffer.array(), "grunt");
+      case 0xC:
+        return new PlaySound(offset, buffer.array(), "hiki/hiki2");
+      case 0xD:
+        return new PlaySound(offset, buffer.array(), "walking");
+    }
   }
 
   private static Opcode op_241A(ByteStream bs) throws IOException {

@@ -3,10 +3,12 @@ package com.github.nicholasmoser.gnt4.seq;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
-
-import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class Seq {
 
@@ -775,7 +777,7 @@ public class Seq {
     actionDescriptions.put(0x059, "Hit into the air (e.g. by Temari 4B)");
     actionDescriptions.put(0x05A, "Landing from hit Soft into the Air");
     actionDescriptions.put(0x05B, "Hit soft into the air (e.g. by Naruto 6A)");
-    actionDescriptions.put(0x05C, "Hit hard");
+    actionDescriptions.put(0x05C, "Collapse to one knee, head in hands (unused?)");
     actionDescriptions.put(0x05D, "Hard knockdown");
     actionDescriptions.put(0x05E, "Hit with furi (turns you around, from BR)");
     actionDescriptions.put(0x05F, "Hit with furi (turns you around, from BR)");
@@ -991,5 +993,38 @@ public class Seq {
     actionDescriptions.put(0x225, "Hit by special team super (e.g. team NarSasSak)");
 
     return actionDescriptions;
+  }
+
+  public static Map<Integer, String> BUTTON_DESCRIPTIONS;
+
+  public static String getButtonDescriptions(int buttonBitFields) {
+    if (BUTTON_DESCRIPTIONS == null) {
+      BUTTON_DESCRIPTIONS = initButtonDescriptions();
+    }
+    List<String> buttons = new ArrayList<>();
+    for (Entry<Integer, String> entry : BUTTON_DESCRIPTIONS.entrySet()) {
+      int button = entry.getKey();
+      if ((buttonBitFields & button) == button) {
+        buttons.add(entry.getValue());
+      }
+    }
+    return String.join("; ", buttons);
+  }
+
+  private static Map<Integer, String> initButtonDescriptions() {
+    Map<Integer, String> buttonDescriptions = new HashMap<>();
+    buttonDescriptions.put(0x0001, "Forward");
+    buttonDescriptions.put(0x0002, "Back");
+    buttonDescriptions.put(0x0004, "Up");
+    buttonDescriptions.put(0x0008, "Down");
+    buttonDescriptions.put(0x0010, "B");
+    buttonDescriptions.put(0x0020, "A");
+    buttonDescriptions.put(0x0100, "Facing Left"); // Otherwise, Facing Right
+    buttonDescriptions.put(0x0200, "Y");
+    buttonDescriptions.put(0x0800, "L");
+    buttonDescriptions.put(0x1000, "R");
+    buttonDescriptions.put(0x2000, "X");
+    buttonDescriptions.put(0x4000, "Z");
+    return buttonDescriptions;
   }
 }

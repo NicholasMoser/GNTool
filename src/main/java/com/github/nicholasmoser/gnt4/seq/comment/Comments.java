@@ -165,6 +165,8 @@ public class Comments {
 
     Multimap<Integer, String> charSelComments = ArrayListMultimap.create();
     charSelComments.put(0xCE4, "// Random stage value is set here");
+    charSelComments.put(0x2370, "// Stage IDs");
+    charSelComments.put(0x23F0, "// Stage Display IDs");
     allComments.put(Seqs.CHARSEL, charSelComments);
 
     return allComments;

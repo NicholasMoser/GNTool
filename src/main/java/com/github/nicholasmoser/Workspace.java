@@ -1,13 +1,12 @@
 package com.github.nicholasmoser;
 
+import com.github.nicholasmoser.fpk.FPKOptions;
+import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import com.github.nicholasmoser.GNTFileProtos.GNTChildFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 
 /**
  * A workspace for GNTool. Represented by a directory of decompressed game files.
@@ -30,11 +29,6 @@ public interface Workspace {
   Path getUncompressedDirectory();
 
   /**
-   * @return The workspace state protobuf binary file.
-   */
-  Path getWorkspaceState();
-
-  /**
    * Initializes the workspace state.
    *
    * @throws IOException If any I/O exception occurs.
@@ -42,54 +36,52 @@ public interface Workspace {
   void initState() throws IOException;
 
   /**
-   * Loads the existing workspace state file.
+   * Update the workspace state.
    *
    * @throws IOException If any I/O exception occurs.
    */
-  void loadExistingState() throws IOException;
+  void updateState() throws IOException;
+
+  /**
+   * Add a file to the workspace state.
+   *
+   * @throws IOException If any I/O exception occurs.
+   */
+  void addFile(WorkspaceFile file) throws IOException;
+
+  /**
+   * @return All files in the workspace state.
+   * @throws IOException If any I/O exception occurs.
+   */
+  List<WorkspaceFile> getAllFiles() throws IOException;
 
   /**
    * Finds the list of files that are missing from the workspace.
    *
-   * @param newGntFiles The GNTFiles to compare to the existing workspace files.
+   * @param allFiles All files currently in the workspace state.
    * @return The list of files that are missing from the workspace.
    */
-  Set<GNTFile> getMissingFiles(GNTFiles newGntFiles);
+  Set<String> getMissingFiles(List<WorkspaceFile> allFiles);
 
   /**
    * Returns the files that have been changed.
    *
-   * @param newGntFiles The GNTFiles to see which changed in.
+   * @param allFiles All files currently in the workspace state.
    * @return The collection of changed files.
+   * @throws IOException If any I/O exception occurs.
    */
-  Set<GNTFile> getChangedFiles(GNTFiles newGntFiles);
+  Set<String> getChangedFiles(List<WorkspaceFile> allFiles) throws IOException;
 
   /**
-   * Returns the GNTChildFile list for a given FPK file path.
+   * Reverts changed files.
    *
-   * @param filePath The FPK file path.
-   * @return The children of the FPK.
+   * @param filePaths The file paths.
+   * @throws IOException If any I/O exception occurs.
    */
-  List<GNTChildFile> getFPKChildren(String filePath);
+  void revertFiles(Collection<String> filePaths) throws IOException;
 
   /**
-   * Attempts to find the parent FPK file paths of a child file path. It is possible for there to
-   * be more than one, although that is rare.
-   *
-   * @param changedFile The child file path.
-   * @return The parent FPK files.
+   * @return The FPK options for this workspace.
    */
-  List<GNTFile> getParentFPKs(String changedFile);
-
-  /**
-   * Reverts a changed file.
-   *
-   * @param filePath The file path.
-   */
-  void revertFile(String filePath) throws IOException;
-
-  /**
-   * @return A new GNTFiles object reflecting the current workspace state.
-   */
-  GNTFiles getNewWorkspaceState() throws IOException;
+  FPKOptions getFPKOptions();
 }

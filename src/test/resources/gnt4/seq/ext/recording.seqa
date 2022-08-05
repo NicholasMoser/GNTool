@@ -1,0 +1,539 @@
+free_action_stack 0x0
+nop_26E7
+blr
+i32_mov gpr2, *chr_p->cpu_flags
+branch_table gpr2, label0, label1, label2, label3, label4, label5, label6, label7, label8, label9, label10, label11, label12, label13
+hard_reset
+ptr_from_offset gpr1, 0x3A4
+branch_table *chr_p->player_id_3, label14, label15, label16, label17
+ptr_move gpr2, CONTROLLERS->field_0xC0
+end
+ptr_move gpr2, CONTROLLERS->field_0x00
+end
+ptr_move gpr2, CONTROLLERS->field_0x40
+end
+ptr_move gpr2, CONTROLLERS->field_0x80
+end
+ptr_move gpr2, CONTROLLERS->field_0xC0
+end
+i32_mov *seq_p_sp9->field_0x14, *gpr2->field_0x24
+end
+op_0102 0x00, 0x02, 0x00000488
+ptr_from_offset gpr1, 0x3E4
+op_2101 0x00, 0x26
+op_2102 0x00, 0x26
+i32_mov *seq_p_sp9->field_0x14, 0x0
+end
+i32_andc *seq_p_sp10->field_0x00, 0x18
+bnez label18
+i32_andc *chr_p->flags, 0x10000
+beqz label19
+i32_andc *seq_p_sp10->field_0x00, 0x10000
+beqz label20
+i32_mov *seq_p_sp9->field_0x14, 0x0
+i32_mov *chr_p->cpu_flags, seq_p_sp8
+i32_mov gpr1, 0x0
+op_0104 0x00, 0x02
+op_0102 0x00, 0x01, 0x00000078
+end
+i32_mov *seq_p_sp9->field_0x14, 0x0
+end
+i32_mov *seq_p_sp9->field_0x14, 0x0
+end
+i32_mov *seq_p_sp9->field_0x14, 0x0
+i32_andc *chr_p->flags, 0x10000
+bnez label21
+op_0100 0x00, 0x3C
+op_0100 0x00, 0x01
+f32_move gpr19, *chr_p->z_pos
+f32_cmp gpr19, 0xC2480000
+blez label22
+f32_cmp gpr19, 0xC2200000
+blez label23
+b label24
+i32_mov *seq_p_sp9->field_0x14, 0x5
+b label25
+bl label26
+b label25
+bl label26
+b label25
+hard_reset
+i32_andc *chr_p->pf_flags, 0x100000
+beqz label27
+i32_mov *seq_p_sp9->field_0x14, 0x2
+blr
+i32_andc *chr_p->af_flags, 0x400
+bnez label28
+i32_mov *seq_p_sp9->field_0x14, 0x0
+op_0100 0x00, 0x01
+i32_mov *seq_p_sp9->field_0x14, 0x1
+op_0100 0x00, 0x01
+i32_mov *seq_p_sp9->field_0x14, 0x0
+label0:
+op_0100 0x00, 0x01
+i32_mov *seq_p_sp9->field_0x14, 0x1
+blr
+op_0102 0x00, 0x02, 0x000007E8
+i32_mov *seq_p_sp20->field_0x08, 0x1
+label14:
+ptr_from_offset gpr1, 0x5DC
+end
+label15:
+i32_mov *seq_p_sp9->field_0x14, 0x0
+op_2680 0x00, 0x00
+beqz label29
+i32_mov *seq_p_sp9->field_0x08, 0x2
+op_0102 0x00, 0x02, 0x000009C4
+b label30
+op_26B1 0x00, 0x00
+beqz label31
+i32_subc *seq_p_sp9->field_0x08, 0x3
+beqz label30
+i32_mov *seq_p_sp9->field_0x08, 0x3
+op_0102 0x00, 0x02, 0x000009B0
+b label30
+i32_subc *seq_p_sp9->field_0x08, 0x2
+bnez label32
+op_26A9 0x00, 0x00
+beqz label33
+op_26C0 0x00, 0x3F, 0x43480000
+bgez label34
+b label30
+op_26B2 0x00, 0x00
+beqz label33
+i32_subc *seq_p_sp9->field_0x08, 0x4
+beqz label30
+label19:
+i32_mov *seq_p_sp9->field_0x08, 0x4
+label20:
+op_0102 0x00, 0x02, 0x000007EC
+b label30
+op_26C0 0x00, 0x3F, 0x43160000
+bgez label35
+i32_subc *seq_p_sp9->field_0x08, 0x4
+beqz label30
+i32_mov *seq_p_sp9->field_0x08, 0x4
+op_0102 0x00, 0x02, 0x000007EC
+b label30
+op_26C0 0x00, 0x3F, 0x437A0000
+bgez label36
+i32_subc *seq_p_sp9->field_0x08, 0x5
+label22:
+beqz label30
+i32_mov *seq_p_sp9->field_0x08, 0x5
+label23:
+op_0102 0x00, 0x02, 0x000008A8
+b label30
+label24:
+op_26C0 0x00, 0x3F, 0x43AF0000
+bgez label37
+label21:
+i32_subc *seq_p_sp9->field_0x08, 0x6
+beqz label30
+i32_mov *seq_p_sp9->field_0x08, 0x6
+op_0102 0x00, 0x02, 0x000008CC
+label27:
+b label30
+i32_subc *seq_p_sp9->field_0x08, 0x7
+beqz label30
+i32_mov *seq_p_sp9->field_0x08, 0x7
+op_0102 0x00, 0x02, 0x00000910
+end
+hard_reset
+op_26B3 0x00, 0x00
+bnez label38
+op_26A4 0x00, 0x00
+beqz label38
+op_2627 0x00, 0x00
+b label39
+op_2692 0x00, 0x00
+label2:
+bnez label40
+op_26B4 0x00, 0x00
+beqz label41
+op_26B6 0x00, 0x00
+bnez label41
+op_2682 0x00, 0x00
+beqz label42
+op_26C0 0x00, 0x3F, 0x42C80000
+blez label43
+bl 0x1FD0
+b label39
+op_26C0 0x00, 0x3F, 0x42B40000
+blez label43
+bl 0x1F50
+b label39
+op_0100 0x00, 0x01
+bl 0x20D0
+op_26AC 0x00, 0x00
+beqz label44
+op_2625 0x00, 0x08
+op_0100 0x00, 0x01
+b label45
+flags_get_af BACK
+beqz label46
+label31:
+bl 0x1F50
+op_0100 0x00, 0x01
+b label47
+flags_get_af BACK
+beqz label48
+bl 0x1F50
+b label49
+flags_get_af ATTACK, FORWARD
+label32:
+bnez label49
+bl 0x1F90
+op_0100 0x00, 0x01
+b label50
+op_2684 0x00, 0x00
+bnez label51
+flags_get_af BACK
+beqz label51
+bl 0x1F50
+b label52
+op_2602 0x02, 0x00, 0xFFFF0500, 0x00000960, 0xFFFF0500, 0x00000000
+bl 0x2128
+b label53
+bl 0x213C
+op_26AC 0x00, 0x00
+beqz label54
+i32_or *seq_p_sp9->field_0x14, 0x8
+op_0100 0x00, 0x01
+op_26AC 0x00, 0x00
+beqz label52
+i32_or *seq_p_sp9->field_0x14, 0x8
+op_0100 0x00, 0x01
+label34:
+b label55
+bl 0x1F90
+op_0100 0x00, 0x01
+b label56
+op_2693 0x00, 0x00
+label36:
+beqz label57
+bl 0x1F50
+b label58
+op_2627 0x00, 0x00
+op_0100 0x00, 0x01
+b label59
+op_26F0 0x00, 0x00
+end
+op_26E1 0x00, 0x00
+ptr_from_offset gpr1, 0x9F0
+op_0102 0x00, 0x02, 0x00000A10
+end
+label37:
+i32_andc *seq_p_sp9->field_0x04, 0x20000000
+beqz label60
+i32_nimply *seq_p_sp9->field_0x04, 0x20000000
+op_2630 0x00, 0x01
+b label61
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label61
+op_26E1 0x00, 0x00
+ptr_from_offset gpr1, 0x9F0
+op_0102 0x00, 0x02, 0x00000A70
+label38:
+end
+i32_andc *seq_p_sp9->field_0x04, 0x20000000
+beqz label62
+i32_nimply *seq_p_sp9->field_0x04, 0x20000000
+op_2630 0x00, 0x01
+b label63
+op_2691 0x00, 0x00
+bnez label64
+op_2620 0x00, 0x00, 0x00000004, 0x00000001
+label41:
+b label63
+op_2620 0x00, 0x00, 0x00000000, 0x00000002
+b label63
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label63
+op_26E1 0x00, 0x00
+ptr_from_offset gpr1, 0xB44
+label44:
+branch_table *chr_p->player_id_3, label65, label66, label67, label68
+ptr_move gpr2, CONTROLLERS->field_0x00
+label46:
+end
+ptr_move gpr2, CONTROLLERS->field_0x40
+label50:
+end
+ptr_move gpr2, CONTROLLERS->field_0x80
+end
+ptr_move gpr2, CONTROLLERS->field_0xC0
+end
+i32_mov *seq_p_sp9->field_0x14, *gpr2->field_0x24
+op_26EC 0x01, 0x00
+op_26F0 0x00, 0x01
+end
+label49:
+op_26E1 0x00, 0x00
+ptr_from_offset gpr1, 0x9F0
+label55:
+op_0102 0x00, 0x02, 0x00000B78
+end
+i32_andc *seq_p_sp9->field_0x04, 0x20000000
+beqz label69
+i32_nimply *seq_p_sp9->field_0x04, 0x20000000
+op_2630 0x00, 0x01
+b label70
+flags_get_pf BACK
+bnez label71
+op_26C0 0x00, 0x3F, 0x42E60000
+label53:
+bltz label72
+op_2620 0x00, 0x00, 0x00000001, 0x00000001
+b label70
+label54:
+op_26B1 0x00, 0x00
+bnez label73
+op_26A2 0x00, 0x00
+bnez label73
+flags_get_pf THROWOK
+label52:
+beqz label73
+op_2620 0x00, 0x00, 0x00000200, 0x00000005
+b label70
+op_2620 0x00, 0x00, 0x00000002, 0x00000001
+b label70
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+label57:
+b label70
+op_26E1 0x00, 0x00
+ptr_from_offset gpr1, 0x9F0
+op_0102 0x00, 0x02, 0x00000C5C
+end
+i32_andc *seq_p_sp9->field_0x04, 0x20000000
+label61:
+beqz label74
+i32_nimply *seq_p_sp9->field_0x04, 0x20000000
+op_2630 0x00, 0x01
+b label75
+flags_get_af DAMAGE
+bnez label76
+label60:
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label75
+op_26D1 0x00, 0x46
+blez label77
+op_2620 0x00, 0x00, 0x00001000, 0x00000001
+label63:
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label75
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label75
+op_26E1 0x00, 0x00
+ptr_from_offset gpr1, 0x9F0
+label62:
+op_0102 0x00, 0x02, 0x00000D0C
+end
+i32_andc *seq_p_sp9->field_0x04, 0x20000000
+beqz label78
+i32_nimply *seq_p_sp9->field_0x04, 0x20000000
+label64:
+op_2630 0x00, 0x01
+b label79
+flags_get_af DAMAGE
+label4:
+bnez label80
+op_0100 0x00, 0x01
+b label79
+flags_get_af TDOWN
+bnez label81
+flags_get_af FLOAT
+beqz label81
+label66:
+flags_get_af DAMAGE
+beqz label81
+op_2698 0x00, 0x00
+bnez label82
+op_0100 0x00, 0x01
+b label80
+op_2620 0x00, 0x00, 0x00000030, 0x00000001
+op_0100 0x00, 0x01
+b label79
+label5:
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label79
+op_26E1 0x00, 0x00
+label70:
+ptr_from_offset gpr1, 0x9F0
+op_0102 0x00, 0x02, 0x00000DE8
+end
+i32_andc *seq_p_sp9->field_0x04, 0x20000000
+beqz label83
+i32_nimply *seq_p_sp9->field_0x04, 0x20000000
+op_2630 0x00, 0x01
+b label84
+flags_get_af DAMAGE
+bnez label85
+op_0100 0x00, 0x01
+b label84
+flags_get_af DAMAGE
+beqz label86
+op_2620 0x00, 0x00, 0x00000008, 0x00000001
+flags_get_af DAMAGE
+beqz label86
+op_0100 0x00, 0x01
+b label85
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label84
+ptr_mov gpr2, GAME_INFO->field_0x221C
+label73:
+i32_mov *gpr2->field_0x24, 0x0
+i32_mov *chr_p->field_0x980, 0x0
+b label87
+ptr_mov gpr2, GAME_INFO->field_0x221C
+i32_mov *gpr2->field_0x24, 0x55
+i32_mov *chr_p->field_0x980, 0x55
+b label87
+ptr_mov gpr2, GAME_INFO->field_0x221C
+label74:
+i32_mov *gpr2->field_0x24, 0xAA
+i32_mov *chr_p->field_0x980, 0xAA
+b label87
+ptr_mov gpr2, GAME_INFO->field_0x221C
+i32_mov *gpr2->field_0x24, 0xFF
+i32_mov *chr_p->field_0x980, 0xFF
+label77:
+b label87
+b 0x2E34
+end
+label7:
+op_26E1 0x00, 0x00
+ptr_from_offset gpr1, 0x9F0
+op_0102 0x00, 0x02, 0x00001000
+init_recording 0x400
+i16_mov *seq_p_sp9->field_0x26, 0x0
+push 0x3F000000
+push 0x3F000000
+push 0x0
+fvec_movs *seq_p_sp20->field_0x7C
+label78:
+push 0x43FA0000
+push 0x42300000
+push 0xBF800000
+fvec_movs *seq_p_sp20->field_0x8C
+push 0x43FA0000
+push 0x42600000
+push 0xBF800000
+fvec_movs *seq_p_sp20->field_0x9C
+push 0x43FA0000
+push 0x42880000
+push 0xBF800000
+fvec_movs *seq_p_sp20->field_0xAC
+end
+label82:
+i32_andc *seq_p_sp9->field_0x04, 0x20000000
+beqz label88
+label81:
+i32_nimply *seq_p_sp9->field_0x04, 0x20000000
+op_2630 0x00, 0x01
+label8:
+b label89
+set_text_position2 0xB0, 0x194
+label84:
+set_text_size 0x10, 0x10
+i32_mov gpr19, *chr_p->player_id
+bnez label90
+ptr_move gpr6, CONTROLLERS->field_0x00
+ptr_move gpr7, CONTROLLERS->field_0x40
+b label91
+ptr_move gpr6, CONTROLLERS->field_0x40
+ptr_move gpr7, CONTROLLERS->field_0x00
+ptr_mov gpr8, GAME_INFO->field_0x221C
+label85:
+i16_subc *seq_p_sp9->field_0x26, 0x40000
+bnez 0x1208
+i16_andc *seq_p_sp9->field_0x1A, 0x200000
+bnez label92
+set_text_color White; Solid
+label86:
+set_text_p with text "  REPLAY"
+op_2680 0x00, 0x00
+label9:
+bnez 0x13E4
+i32_andc *gpr7->field_0x28, 0x100000
+bnez 0x13D8
+i32_andc *gpr7->field_0x28, 0x200000
+label10:
+bnez 0x11BC
+b label93
+handle_playback (update cr)
+beqz label94
+set_text_position 0x150, 0x194
+set_text_color White; Solid
+set_text_p with text "LOOP\n"
+remove_recording_flag
+i32_mov gpr3, 0x64
+get_playback_percent
+i32_sub gpr3, gpr19
+set_text_position 0x1A0, 0x194
+set_text_color White; Solid
+op_3101 0x03, 0x3F, 0x00000000
+set_text_p with text "\n"
+i16_andc *seq_p_sp9->field_0x14, 0x2000000
+beqz label95
+op_2625 0x04, 0x80
+label13:
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label89
+set_text_position 0x150, 0x194
+set_text_color White; Solid
+set_text_p with text "END"
+i16_mov *seq_p_sp9->field_0x26, 0x0
+init_recording 0x0
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+b label89
+b 0x1210
+i32_andc *gpr7->field_0x28, 0x200000
+beqz 0x1238
+i16_add *seq_p_sp9->field_0x26, 0x10000
+i16_subc *seq_p_sp9->field_0x26, 0x40000
+beqz label93
+i16_subc *seq_p_sp9->field_0x26, 0x30000
+beqz 0x129C
+i16_subc *seq_p_sp9->field_0x26, 0x20000
+bnez 0x12F4
+finish_recording
+i16_add *seq_p_sp9->field_0x26, 0x10000
+b 0x13E8
+set_text_color Yellow; Solid
+set_text_p with text "RECORDING"
+set_text_color Red; Solid
+set_text_p with text " FINISHED"
+i32_nimply *seq_p_sp9->field_0x00, 0x80000
+i32_nimply *gpr8->field_0x00, 0x1000000
+b 0x13E8
+i16_subc *seq_p_sp9->field_0x26, 0x10000
+bnez 0x13E8
+i32_andc *gpr7->field_0x28, 0x100000
+bnez 0x11DC
+i32_or *gpr8->field_0x00, 0x1000000
+i16_andc *seq_p_sp9->field_0x1A, 0x200000
+bnez 0x1364
+set_text_color Yellow; Solid
+set_text_p with text "RECORDING "
+op_26EC 0x00, 0x01
+handle_recording
+beqz 0x1398
+set_text_position 0x150, 0x194
+set_text_color Red; Solid
+set_text_p with text "FULL"
+i32_mov gpr3, 0x64
+get_recording_percent
+i32_sub gpr3, gpr19
+set_text_position 0x1A0, 0x194
+set_text_color White; Solid
+op_3101 0x03, 0x3F, 0x00000000
+set_text_p with text "\n"
+b 0x13E8
+op_2620 0x00, 0x00, 0x00000000, 0x0000003C
+remove_recording_flag
+op_2620 0x00, 0x00, 0x00000000, 0x00000001
+set_text_color White; Solid
+op_311C 0x00, 0x00
+b label89
+end

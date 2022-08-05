@@ -212,6 +212,36 @@
     ],
     "name": "Add Random Select to Character Select Screen [Nick]"
   },
+  ,
+  {
+    "codes": [
+      {
+        "bytes": "2C0000114082000838006DAD7C04412E60000000",
+        "targetAddress": "8015B9E8",
+        "replacedBytes": "7C04412E",
+        "type": "C2"
+      },
+      {
+        "bytes": "7CA6282E2C056DAD408200742C0000984182000C38A00011480000649421FFF090610004900100089081000C386000293CA0801C60A5CE507CA903A64E8004212C0300004081FFE82C03000F4182FFE02C0300114182FFD82C0300144182FFD02C0300294080FFC87C651B788081000C800100088061000438210010",
+        "targetAddress": "80092154",
+        "replacedBytes": "7CA6282E",
+        "type": "C2"
+      },
+      {
+        "bytes": "00000026",
+        "targetAddress": "80213FB4",
+        "replacedBytes": "00000011",
+        "type": "04"
+      },
+      {
+        "bytes": "00000011",
+        "targetAddress": "80214014",
+        "replacedBytes": "00000026",
+        "type": "04"
+      }
+    ],
+    "name": "Add Random Select to Character Select Screen v2 [Nick]"
+  },
   {
     "codes": [
       {

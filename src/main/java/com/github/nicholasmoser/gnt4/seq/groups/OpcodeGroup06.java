@@ -2,6 +2,8 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
+import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.opcodes.IntSubtractCompare;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ShortAdd;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ShortAndCompare;
@@ -16,6 +18,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.ShortSubtractCompare;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
+import java.util.Optional;
 
 public class OpcodeGroup06 {
 
@@ -45,6 +48,10 @@ public class OpcodeGroup06 {
   private static Opcode i16_andc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 2);
+    if (result.isPresent()) {
+      return new ShortAndCompare(offset, ea.getBytes(), result.get());
+    }
     return new ShortAndCompare(offset, ea.getBytes(), ea.getDescription());
   }
 
@@ -87,6 +94,10 @@ public class OpcodeGroup06 {
   private static Opcode i16_subc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 2);
+    if (result.isPresent()) {
+      return new ShortSubtractCompare(offset, ea.getBytes(), result.get());
+    }
     return new ShortSubtractCompare(offset, ea.getBytes(), ea.getDescription());
   }
 

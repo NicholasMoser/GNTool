@@ -2,8 +2,6 @@ package com.github.nicholasmoser.gnt4;
 
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.FPKPacker;
-import com.github.nicholasmoser.GNTFileProtos.GNTFile;
-import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.Randomizer;
@@ -32,6 +30,11 @@ import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
+import com.github.nicholasmoser.gnt4.ui.ChrOrder;
+import com.github.nicholasmoser.gnt4.ui.ChrOrderSave;
+import com.github.nicholasmoser.gnt4.ui.OrderController;
+import com.github.nicholasmoser.gnt4.ui.StageOrder;
+import com.github.nicholasmoser.gnt4.ui.StageOrderSave;
 import com.github.nicholasmoser.graphics.TXG2TPL;
 import com.github.nicholasmoser.graphics.Texture1300;
 import com.github.nicholasmoser.tools.DolphinSeqListenerTool;
@@ -42,6 +45,7 @@ import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
+import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -53,6 +57,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -61,6 +66,8 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
@@ -86,9 +93,13 @@ public class MenuController {
   private static final String DOL = "sys/main.dol";
   private Workspace workspace;
   private Stage stage;
+  private Path compressedDirectory;
   private Path uncompressedDirectory;
+  private Path lastCompressedSubdirectory;
+  private Path lastUncompressedSubdirectory;
   private Path workspaceDirectory;
   private Path uncompressedFiles;
+  private Path dolPath;
   private GNT4Codes codes;
   private List<GeckoCodeGroup> codeGroups;
   public ListView<String> changedFiles;
@@ -341,6 +352,64 @@ public class MenuController {
     }
   }
 
+  public void reorderCharacters() {
+    for (GeckoCodeGroup group : codeGroups) {
+      if ("Add Random Select and Reorder CSS [Nick]".equals(group.getName()) ||
+          "Add Random Select to Character Select Screen [Nick]".equals(group.getName()) ||
+          "Add Random Select to Character Select Screen v2 [Nick]".equals(group.getName())) {
+        String msg = """
+            The random select Gecko code defines the specific CSS index to put random select,
+            which cannot be changed without writing a new Gecko code.
+            Therefore, this Gecko code must be removed before you are allowed to change the CSS character order.
+            Confirm removal of the random select Gecko code?
+            """;
+        boolean ok = Message.warnConfirmation("Conflicting Code", msg);
+        if (!ok) {
+          return;
+        }
+        removeCodeGroup(group);
+        defragCodeGroups(codeGroups);
+      }
+    }
+    //
+    try {
+      FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
+      Scene scene = new Scene(loader.load());
+      GUIUtils.initDarkMode(scene);
+      OrderController orderController = loader.getController();
+      Stage stage = new Stage();
+      GUIUtils.setIcons(stage);
+      orderController.init(ChrOrder.getCurrentChrOrder(dolPath), new ChrOrderSave(dolPath));
+      stage.setScene(scene);
+      stage.setTitle("Reorder Characters");
+      stage.centerOnScreen();
+      stage.show();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Reorder Characters", e);
+      Message.error("Failed to Reorder Characters", e.getMessage());
+    }
+  }
+
+  public void reorderStages() {
+    try {
+      FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
+      Scene scene = new Scene(loader.load());
+      GUIUtils.initDarkMode(scene);
+      OrderController orderController = loader.getController();
+      Stage stage = new Stage();
+      GUIUtils.setIcons(stage);
+      orderController.init(StageOrder.getCurrentStageOrder(uncompressedDirectory),
+          new StageOrderSave(uncompressedDirectory));
+      stage.setScene(scene);
+      stage.setTitle("Reorder Stages");
+      stage.centerOnScreen();
+      stage.show();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Reorder Stages", e);
+      Message.error("Failed to Reorder Stages", e.getMessage());
+    }
+  }
+
   @FXML
   protected void defaultTimeOut() {
     demoTimeOut.getValueFactory().setValue(DEFAULT_DEMO_TIME_OUT_SECONDS);
@@ -495,7 +564,7 @@ public class MenuController {
   @FXML
   public void fixRecordingTextSize() {
     try {
-      CPUFlags.fixRecordingTextSize(uncompressedDirectory.resolve(DOL));
+      CPUFlags.fixRecordingTextSize(dolPath);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Fixing Recording Text Size", e);
       Message.error("Error Fixing Recording Text Size", e.getMessage());
@@ -555,6 +624,70 @@ public class MenuController {
   }
 
   /**
+   * Add a new file to the GNT4 workspace.
+   */
+  @FXML
+  public void addFile() {
+    // Get input file
+    if (lastUncompressedSubdirectory == null) {
+      lastUncompressedSubdirectory = uncompressedDirectory;
+    }
+    Optional<Path> input = Choosers.getInputUncompressedFile(uncompressedDirectory,
+        lastUncompressedSubdirectory);
+    if (input.isEmpty()) {
+      return;
+    }
+    lastUncompressedSubdirectory = input.get().getParent();
+
+    String filePath = uncompressedDirectory.relativize(input.get()).toString().replace("\\", "/");
+    try {
+      workspace.addFile(new WorkspaceFile(filePath, 0, 0, null, false));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Adding File", e);
+      Message.error("Error Adding File", e.getMessage());
+    }
+  }
+
+  /**
+   * Add a new file to an FPK file in the GNT4 workspace.
+   */
+  @FXML
+  public void addFileToFPK() {
+    // Get input file
+    if (lastUncompressedSubdirectory == null) {
+      lastUncompressedSubdirectory = uncompressedDirectory;
+    }
+    Optional<Path> input = Choosers.getInputUncompressedFile(uncompressedDirectory,
+        lastUncompressedSubdirectory);
+    if (input.isEmpty()) {
+      return;
+    }
+    lastUncompressedSubdirectory = input.get().getParent();
+
+    // Get output file
+    if (lastCompressedSubdirectory == null) {
+      lastCompressedSubdirectory = compressedDirectory;
+    }
+    Optional<Path> output = Choosers.getOutputCompressedFPK(compressedDirectory,
+        lastCompressedSubdirectory);
+    if (output.isEmpty()) {
+      return;
+    }
+    lastCompressedSubdirectory = output.get().getParent();
+
+    boolean compress = Message.infoConfirmation("Compress File", "Should this file be compressed?");
+
+    String filePath = uncompressedDirectory.relativize(input.get()).toString().replace("\\", "/");
+    String fpkFilePath = compressedDirectory.relativize(output.get()).toString().replace("\\", "/");
+    try {
+      workspace.addFile(new WorkspaceFile(filePath, 0, 0, fpkFilePath, compress));
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Adding File", e);
+      Message.error("Error Adding File", e.getMessage());
+    }
+  }
+
+  /**
    * Toggles dark mode on and off.
    */
   @FXML
@@ -568,6 +701,7 @@ public class MenuController {
   @FXML
   protected void build() {
     // Force refresh
+    // TODO: Changed files list is updated on FX Application Thread which is slower than this code runs, resulting in not all changed files being included
     try {
       syncRefresh();
     } catch (IOException e) {
@@ -626,11 +760,11 @@ public class MenuController {
         try {
           if (repack) {
             updateMessage("Repacking FPKs...");
-            FPKPacker fpkPacker = new FPKPacker(workspace, false, true);
+            FPKPacker fpkPacker = new FPKPacker(workspace);
             fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");
-          GameCubeISO.importFiles(workspace.getCompressedDirectory(), isoResponse.get(),
+          GameCubeISO.importFiles(compressedDirectory, isoResponse.get(),
               pushToBackOfISO.isSelected());
           updateProgress(1, 1);
           return null;
@@ -645,8 +779,7 @@ public class MenuController {
     task.setOnSucceeded(event -> {
       Message.info("ISO Build Complete", "The new ISO was successfully created.");
       loadingWindow.close();
-      saveWorkspaceState();
-      asyncRefresh();
+      asyncPostBuild();
     });
     task.setOnFailed(event -> {
       Message.error("ISO Build Failure", "See the log for more information");
@@ -1268,7 +1401,6 @@ public class MenuController {
         return;
       }
       long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups, CodeCave.EXI2);
-      Path dolPath = uncompressedDirectory.resolve(DOL);
       GeckoWriter writer = new GeckoWriter(dolPath);
       GeckoCodeGroup group = writer.writeCodes(codes, name, hijackStartAddress);
       codeGroups.add(group);
@@ -1310,8 +1442,10 @@ public class MenuController {
     this.workspace = workspace;
     this.stage = stage;
     this.workspaceDirectory = workspace.getWorkspaceDirectory();
+    this.compressedDirectory = workspace.getCompressedDirectory();
     this.uncompressedDirectory = workspace.getUncompressedDirectory();
     this.uncompressedFiles = uncompressedDirectory.resolve("files");
+    this.dolPath = uncompressedDirectory.resolve(DOL);
     this.codes = new GNT4Codes(uncompressedDirectory);
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
@@ -1326,13 +1460,14 @@ public class MenuController {
   }
 
   /**
-   * Saves the workspace state. This means that refresh will be cleared of changes.
+   * Rebuilds the workspace state. This means that refresh will be cleared of changes.
    */
-  private void saveWorkspaceState() {
+  private void rebuildWorkspace() {
     try {
-      workspace.initState();
+      workspace.updateState();
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to save workspace state.", e);
+      Message.error("Failed to save workspace state.", e.getMessage());
     }
   }
 
@@ -1342,11 +1477,10 @@ public class MenuController {
    * @throws IOException If an I/O error occurs.
    */
   private void syncRefresh() throws IOException {
-    // getNewWorkspaceState() is pretty slow and can take 30 seconds or more on a HDD
-    // TODO: Look into ways to speed it up
-    GNTFiles newFiles = workspace.getNewWorkspaceState();
-    refreshMissingFiles(newFiles);
-    refreshChangedFiles(newFiles);
+    LOGGER.log(Level.INFO, "Refreshing workspace.");
+    List<WorkspaceFile> allFiles = workspace.getAllFiles();
+    refreshMissingFiles(allFiles);
+    refreshChangedFiles(allFiles);
     refreshActiveCodes();
     refreshOptions();
     refreshMainMenuCharacter();
@@ -1381,14 +1515,42 @@ public class MenuController {
   }
 
   /**
+   * Rebuild and refresh the workspace asynchronously. Will create a loading window for progress.
+   */
+  private void asyncPostBuild() {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        try {
+          updateMessage("Rebuilding workspace...");
+          rebuildWorkspace();
+          syncRefresh();
+          updateProgress(1, 1);
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, "Failed to rebuild workspace.", e);
+          throw e;
+        }
+        return null;
+      }
+    };
+    Stage loadingWindow = GUIUtils.createLoadingWindow("Rebuilding Workspace", task);
+
+    task.setOnSucceeded(event -> loadingWindow.close());
+    task.setOnFailed(event -> {
+      Message.error("Error Rebuilding Workspace", "See the log for more information");
+      loadingWindow.close();
+    });
+    new Thread(task).start();
+  }
+
+  /**
    * Refreshes the missing files tab from a set of GNTFiles.
    *
-   * @param newFiles The GNTFiles to check against.
+   * @param allFiles All the workspace files.
    */
-  private void refreshMissingFiles(GNTFiles newFiles) {
+  private void refreshMissingFiles(List<WorkspaceFile> allFiles) {
+    Set<String> missingFilenames = workspace.getMissingFiles(allFiles);
     Platform.runLater(() -> {
-      List<String> missingFilenames = workspace.getMissingFiles(newFiles).stream()
-          .map(GNTFile::getFilePath).collect(Collectors.toList());
       missingFiles.getItems().setAll(missingFilenames);
       Collections.sort(missingFiles.getItems());
     });
@@ -1397,12 +1559,11 @@ public class MenuController {
   /**
    * Refreshes the changed files tab from a set of GNTFiles.
    *
-   * @param newFiles The GNTFiles to check against.
+   * @param allFiles All the workspace files.
    */
-  private void refreshChangedFiles(GNTFiles newFiles) {
+  private void refreshChangedFiles(List<WorkspaceFile> allFiles) throws IOException {
+    Set<String> changedFilenames = workspace.getChangedFiles(allFiles);
     Platform.runLater(() -> {
-      List<String> changedFilenames = workspace.getChangedFiles(newFiles).stream()
-          .map(GNTFile::getFilePath).collect(Collectors.toList());
       changedFiles.getItems().setAll(changedFilenames);
       Collections.sort(changedFiles.getItems());
     });
@@ -1416,11 +1577,10 @@ public class MenuController {
       try {
         addedCodes.getItems().clear();
 
-        Path dol = uncompressedDirectory.resolve(DOL);
         Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
 
-        if (DolHijack.isUsingCodeCave(dol, CodeCave.RECORDING)) {
-          if (DolHijack.isUsingCodeCave(dol, CodeCave.EXI2)) {
+        if (DolHijack.isUsingCodeCave(dolPath, CodeCave.RECORDING)) {
+          if (DolHijack.isUsingCodeCave(dolPath, CodeCave.EXI2)) {
             throw new IOException(
                 "You are overwriting both recording code and EXI2 code, please log an issue to get this fixed.");
           }
@@ -1429,12 +1589,12 @@ public class MenuController {
           if (Message.warnConfirmation("Need to Move Codes", msg)) {
             if (!Files.isRegularFile(codeFile)) {
               // We need the code file to do the conversion, create a code file with the old code cave
-              if (!DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.RECORDING)) {
+              if (!DolHijack.handleActiveCodesButNoCodeFile(dolPath, CodeCave.RECORDING)) {
                 throw new IOException("Recording code is modified, but unable to get code file.");
               }
             }
             // Do the conversion
-            DolHijack.moveCodes(dol, codeFile, CodeCave.EXI2);
+            DolHijack.moveCodes(dolPath, codeFile, CodeCave.EXI2);
           } else {
             throw new IOException("Codes must be converted to use code hijacking.");
           }
@@ -1446,7 +1606,7 @@ public class MenuController {
           for (GeckoCodeGroup codeGroup : codeGroups) {
             addedCodes.getItems().add(codeGroup.getName());
           }
-        } else if (DolHijack.handleActiveCodesButNoCodeFile(dol, CodeCave.EXI2)) {
+        } else if (DolHijack.handleActiveCodesButNoCodeFile(dolPath, CodeCave.EXI2)) {
           // This ISO has injected codes but no associated JSON code file. The previous method
           // call successfully created one, so now let's parse it.
           codeGroups = GeckoCodeJSON.parseFile(codeFile);
@@ -1617,7 +1777,7 @@ public class MenuController {
         if (DOL.equals(filePath) && dolModded()) {
           return;
         }
-        workspace.revertFile(filePath);
+        workspace.revertFiles(Collections.singletonList(filePath));
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Error Reverting File", e);
       }
@@ -1720,7 +1880,6 @@ public class MenuController {
    */
   private void defragCodeGroups(List<GeckoCodeGroup> codeGroups) {
     try {
-      Path dolPath = uncompressedDirectory.resolve(DOL);
       DolDefragger defragger = new DolDefragger(dolPath, codeGroups, CodeCave.EXI2);
       defragger.run();
       Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
@@ -1739,7 +1898,6 @@ public class MenuController {
    */
   private void removeCodeGroup(GeckoCodeGroup group) {
     try {
-      Path dolPath = uncompressedDirectory.resolve(DOL);
       GeckoWriter writer = new GeckoWriter(dolPath);
       boolean successful = writer.removeCodes(group);
       if (!successful) {
@@ -1796,7 +1954,8 @@ public class MenuController {
       if (counterFlag == -1) {
         recordingCounterFlag.getSelectionModel().selectFirst();
       } else {
-        recordingCounterFlag.getSelectionModel().select(CPUFlags.CPU_FLAG_TO_ACTION.get(counterFlag));
+        recordingCounterFlag.getSelectionModel()
+            .select(CPUFlags.CPU_FLAG_TO_ACTION.get(counterFlag));
       }
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Unable to Init CPU Flags for Recording", e);

@@ -149,9 +149,9 @@ public class SeqDisassemblerTool {
         try {
           updateMessage(String.format("Disassembling %s", seqPath.getFileName()));
           if (html) {
-            SeqKing.generateHTML(seqPath, fileName, outputFile, false);
+            SeqKing.generateHTML(seqPath, fileName, outputFile, false, true);
           } else {
-            SeqKing.generateTXT(seqPath, fileName, outputFile, false);
+            SeqKing.generateTXT(seqPath, fileName, outputFile, false, true);
           }
           updateMessage("Complete");
           updateProgress(1, 1);

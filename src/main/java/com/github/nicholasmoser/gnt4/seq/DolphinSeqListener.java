@@ -344,7 +344,7 @@ public class DolphinSeqListener {
               return null;
             }
           }
-          SeqKing.generateHTML(seqPath, fileName.get(), outputHTML, false);
+          SeqKing.generateHTML(seqPath, fileName.get(), outputHTML, false, true);
         }
         int offset = Integer.decode("0x" + message.substring(0, 8));
         String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
