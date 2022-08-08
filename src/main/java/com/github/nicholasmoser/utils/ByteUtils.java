@@ -468,6 +468,19 @@ public class ByteUtils {
   }
 
   /**
+   * Converts multi-line hex test as a String to a byte array.
+   *
+   * @param hex The hex String.
+   * @return The bytes.
+   */
+  public static byte[] hexTextToBytes(String hex) {
+    hex = hex.replace(" ", "");
+    hex = hex.replace("\r", "");
+    hex = hex.replace("\n", "");
+    return BaseEncoding.base16().decode(hex);
+  }
+
+  /**
    * Gets the next byte aligned position using a given modulo.
    *
    * @param currentPosition The current position to check against.
