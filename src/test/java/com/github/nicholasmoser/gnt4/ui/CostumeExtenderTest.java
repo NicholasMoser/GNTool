@@ -1,23 +1,90 @@
 package com.github.nicholasmoser.gnt4.ui;
 
+import static com.github.nicholasmoser.gnt4.GNT4Characters.HAKU;
+import static com.github.nicholasmoser.gnt4.GNT4Characters.INO;
+import static com.github.nicholasmoser.gnt4.GNT4Characters.INTERNAL_CHAR_ORDER;
+import static com.github.nicholasmoser.gnt4.GNT4Characters.SAKURA;
 import static com.github.nicholasmoser.gnt4.ui.CostumeExtender.*;
-import static com.github.nicholasmoser.gnt4.GNT4Characters.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.nicholasmoser.gnt4.seq.Seqs;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.testing.Prereqs;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 public class CostumeExtenderTest {
+
+  @Test
+  public void existingEditsIntegrityVerified() throws Exception {
+    byte[] empty = new byte[4];
+    SeqEdit c3p1_1 = new SeqEdit(C3P1_1V1_NAME, C3P1_1V1_OFFSET, 0, C3P1_1V1_BYTES, empty);
+    SeqEdit c4p1_1 = new SeqEdit(C4P1_1V1_NAME, C4P1_1V1_OFFSET, 0, C4P1_1V1_BYTES, empty);
+    SeqEdit c3p2_1 = new SeqEdit(C3P2_1V1_NAME, C3P2_1V1_OFFSET, 0, C3P2_1V1_BYTES, empty);
+    SeqEdit c4p2_1 = new SeqEdit(C4P2_1V1_NAME, C4P2_1V1_OFFSET, 0, C4P2_1V1_BYTES, empty);
+    SeqEdit c3p1_4 = new SeqEdit(C3P1_4P_NAME, C3P1_4P_OFFSET, 0, C3P1_4P_BYTES, empty);
+    SeqEdit c4p1_4 = new SeqEdit(C4P1_4P_NAME, C4P1_4P_OFFSET, 0, C4P1_4P_BYTES, empty);
+    SeqEdit c3p2_4 = new SeqEdit(C3P2_4P_NAME, C3P2_4P_OFFSET, 0, C3P2_4P_BYTES, empty);
+    SeqEdit c4p2_4 = new SeqEdit(C4P2_4P_NAME, C4P2_4P_OFFSET, 0, C4P2_4P_BYTES, empty);
+    SeqEdit c3p3_4 = new SeqEdit(C3P3_4P_NAME, C3P3_4P_OFFSET, 0, C3P3_4P_BYTES, empty);
+    SeqEdit c4p3_4 = new SeqEdit(C4P3_4P_NAME, C4P3_4P_OFFSET, 0, C4P3_4P_BYTES, empty);
+    SeqEdit c3p4_4 = new SeqEdit(C3P4_4P_NAME, C3P4_4P_OFFSET, 0, C3P4_4P_BYTES, empty);
+    SeqEdit c4p4_4 = new SeqEdit(C4P4_4P_NAME, C4P4_4P_OFFSET, 0, C4P4_4P_BYTES, empty);
+    List<SeqEdit> list_1v1 = List.of(c3p1_1, c3p2_1, c4p1_1, c4p2_1);
+    List<SeqEdit> list_4p = List.of(c3p1_4, c3p2_4, c3p3_4, c3p4_4, c4p1_4, c4p2_4, c4p3_4, c4p4_4);
+
+    // Test all and nothing
+    assertThat(CostumeExtender.hasExistingEdits(list_1v1, list_4p)).isTrue();
+    assertThat(CostumeExtender.hasExistingEdits(Collections.emptyList(), Collections.emptyList()))
+        .isFalse();
+    // Just costume 3
+    list_1v1 = List.of(c3p1_1, c3p2_1);
+    list_4p = List.of(c3p1_4, c3p2_4, c3p3_4, c3p4_4);
+    assertThat(CostumeExtender.hasExistingEdits(list_1v1, list_4p)).isTrue();
+    // Just costume 4
+    list_1v1 = List.of(c4p1_1, c4p2_1);
+    list_4p = List.of(c4p1_4, c4p2_4, c4p3_4, c4p4_4);
+    assertThat(CostumeExtender.hasExistingEdits(list_1v1, list_4p)).isTrue();
+
+    // Test that various inconsistent states error
+    assertThrows(IOException.class, () -> {
+      List<SeqEdit> list1 = List.of(c3p1_1, c3p2_1, c4p1_1);
+      List<SeqEdit> list2 = List.of(c3p1_4, c3p2_4, c3p3_4, c3p4_4, c4p1_4, c4p2_4, c4p3_4, c4p4_4);
+      CostumeExtender.hasExistingEdits(list1, list2);
+    });
+    assertThrows(IOException.class, () -> {
+      List<SeqEdit> list1 = List.of(c3p1_1, c3p2_1, c4p1_1, c4p2_1);
+      List<SeqEdit> list2 = List.of(c3p1_4, c3p2_4, c3p4_4, c4p1_4, c4p2_4, c4p3_4, c4p4_4);
+      CostumeExtender.hasExistingEdits(list1, list2);
+    });
+    assertThrows(IOException.class, () -> {
+      List<SeqEdit> list1 = List.of(c3p1_1, c4p1_1);
+      List<SeqEdit> list2 = List.of(c3p1_4, c3p3_4, c3p4_4, c4p1_4, c4p3_4, c4p4_4);
+      CostumeExtender.hasExistingEdits(list1, list2);
+    });
+    assertThrows(IOException.class, () -> {
+      List<SeqEdit> list1 = List.of(c3p1_1);
+      List<SeqEdit> list2 = List.of(c3p1_4);
+      CostumeExtender.hasExistingEdits(list1, list2);
+    });
+    assertThrows(IOException.class, () -> {
+      List<SeqEdit> list1 = List.of(c3p1_1, c3p2_1, c4p1_1, c4p2_1);
+      CostumeExtender.hasExistingEdits(list1, Collections.emptyList());
+    });
+    assertThrows(IOException.class, () -> {
+      List<SeqEdit> list2 = List.of(c3p1_4, c3p2_4, c3p3_4, c3p4_4, c4p1_4, c4p2_4, c4p3_4, c4p4_4);
+      CostumeExtender.hasExistingEdits(Collections.emptyList(), list2);
+    });
+  }
 
   @Test
   public void existingCostumeBytesCorrect() throws Exception {

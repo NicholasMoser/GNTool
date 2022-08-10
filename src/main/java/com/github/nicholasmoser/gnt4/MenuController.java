@@ -422,7 +422,7 @@ public class MenuController {
       CostumeController costumeController = loader.getController();
       Stage stage = new Stage();
       GUIUtils.setIcons(stage);
-      costumeController.init();
+      costumeController.init(uncompressedDirectory);
       stage.setScene(scene);
       stage.setTitle("Add New Costumes");
       stage.centerOnScreen();

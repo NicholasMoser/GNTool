@@ -2,9 +2,12 @@ package com.github.nicholasmoser.gnt4.ui;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.GNT4Characters;
+import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,20 +20,31 @@ public class CostumeController {
   public ListView<String> costume3;
   public ListView<String> characters;
   public ListView<String> costume4;
+  private Path charSel;
+  private Path charSel4;
 
-  public void init() {
+  public void init(Path uncompressedDirectory) throws IOException {
     costume3.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     characters.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     costume4.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     characters.getItems().addAll(GNT4Characters.CHARACTERS);
 
-    // Default init: add Haku, Sakura, Ino
-    costume3.getItems().add(GNT4Characters.HAKU);
-    costume3.getItems().add(GNT4Characters.SAKURA);
-    costume3.getItems().add(GNT4Characters.INO);
-    costume4.getItems().add(GNT4Characters.HAKU);
-    costume4.getItems().add(GNT4Characters.SAKURA);
-    costume4.getItems().add(GNT4Characters.INO);
+    // Check for existing costume extensions
+    this.charSel = uncompressedDirectory.resolve(Seqs.CHARSEL);
+    this.charSel4 = uncompressedDirectory.resolve(Seqs.CHARSEL_4);
+    List<SeqEdit> charSelEdits = SeqExt.getEdits(charSel);
+    List<SeqEdit> charSel4Edits = SeqExt.getEdits(charSel4);
+    if (CostumeExtender.hasExistingEdits(charSelEdits, charSel4Edits)) {
+
+    } else {
+      // Default init: add Haku, Sakura, Ino
+      costume3.getItems().add(GNT4Characters.HAKU);
+      costume3.getItems().add(GNT4Characters.SAKURA);
+      costume3.getItems().add(GNT4Characters.INO);
+      costume4.getItems().add(GNT4Characters.HAKU);
+      costume4.getItems().add(GNT4Characters.SAKURA);
+      costume4.getItems().add(GNT4Characters.INO);
+    }
   }
 
   public void addCostume3() {
