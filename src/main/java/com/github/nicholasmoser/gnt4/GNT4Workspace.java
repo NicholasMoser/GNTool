@@ -129,7 +129,7 @@ public class GNT4Workspace implements Workspace {
       String fpkFilePath = file.fpkFilePath();
       if (fpkFilePath != null) {
         // FPK child file
-        Path saved = compressed.resolve(filePath);
+        Path saved = compressed.resolve(fpkFilePath);
         Path current = uncompressed.resolve(filePath);
         String compressedPath = options.fileNames().getCompressedName(filePath);
         byte[] bytes = FPKUtils.getChildBytes(saved, compressedPath, options.longPaths(),
