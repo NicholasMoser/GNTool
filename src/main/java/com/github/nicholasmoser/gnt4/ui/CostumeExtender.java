@@ -2,9 +2,12 @@ package com.github.nicholasmoser.gnt4.ui;
 
 import com.github.nicholasmoser.gnt4.GNT4Characters;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqEditBuilder;
+import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -312,7 +315,15 @@ public class CostumeExtender {
     return c3Edit || c4Edit;
   }
 
-  public static List<String> getCostumeThreeCharacters(List<SeqEdit> charSelEdits) throws IOException {
+  /**
+   * Given a list of char_sel.seq edits, return the characters with costume 3 extensions.
+   *
+   * @param charSelEdits The list of char_sel.seq edits.
+   * @return The characters with costume 3 extensions.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static List<String> getCostumeThreeCharacters(List<SeqEdit> charSelEdits)
+      throws IOException {
     List<String> characters = new ArrayList<>();
     Optional<SeqEdit> edit = charSelEdits.stream()
         .filter(x -> x.getName().equals(C3P1_1V1_NAME))
@@ -335,7 +346,15 @@ public class CostumeExtender {
     return characters;
   }
 
-  public static List<String> getCostumeFourCharacters(List<SeqEdit> charSelEdits) throws IOException {
+  /**
+   * Given a list of char_sel.seq edits, return the characters with costume 4 extensions.
+   *
+   * @param charSelEdits The list of char_sel.seq edits.
+   * @return The characters with costume 4 extensions.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static List<String> getCostumeFourCharacters(List<SeqEdit> charSelEdits)
+      throws IOException {
     List<String> characters = new ArrayList<>();
     Optional<SeqEdit> edit = charSelEdits.stream()
         .filter(x -> x.getName().equals(C4P1_1V1_NAME))
@@ -356,5 +375,171 @@ public class CostumeExtender {
       characters.add(chr);
     }
     return characters;
+  }
+
+  /**
+   * Remove all costume extension codes from char_sel.seq and charsel4.seq
+   *
+   * @param charSel The path to char_sel.seq
+   * @param charSel4 The path to charsel4.seq
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static void removeCodes(Path charSel, Path charSel4) throws IOException {
+    for (SeqEdit code : SeqExt.getEdits(charSel)) {
+      if (CODE_NAMES.contains(code)) {
+        SeqExt.removeEdit(code, charSel);
+        System.out.println("Removed code " + code + " from " + charSel);
+      }
+    }
+    for (SeqEdit code : SeqExt.getEdits(charSel4)) {
+      if (CODE_NAMES.contains(code)) {
+        SeqExt.removeEdit(code, charSel4);
+        System.out.println("Removed code " + code + " from " + charSel4);
+      }
+    }
+  }
+
+  /**
+   * For char_sel.seq and charsel4.seq, write new costume 3 extensions code for the given list of
+   * characters.
+   *
+   * @param charSel The path to char_sel.seq
+   * @param charSel4 The path to charsel4.seq
+   * @param characters The list of characters to give costume 3 to.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static void writeCostumeThreeCodes(Path charSel, Path charSel4, List<String> characters)
+      throws IOException {
+    byte[] bytes = CostumeExtender.getCodeBytes(characters, 3, 1, false);
+    SeqEdit edit = SeqEditBuilder.getBuilder()
+        .name(C3P1_1V1_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel)
+        .startOffset(C3P1_1V1_OFFSET)
+        .endOffset(C3P1_1V1_OFFSET + C3P1_1V1_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 3, 2, false);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C3P2_1V1_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel)
+        .startOffset(C3P2_1V1_OFFSET)
+        .endOffset(C3P2_1V1_OFFSET + C3P2_1V1_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 3, 1, true);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C3P1_4P_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel4)
+        .startOffset(C3P1_4P_OFFSET)
+        .endOffset(C3P1_4P_OFFSET + C3P1_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 3, 2, true);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C3P2_4P_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel4)
+        .startOffset(C3P2_4P_OFFSET)
+        .endOffset(C3P2_4P_OFFSET + C3P2_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 3, 3, true);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C3P3_4P_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel4)
+        .startOffset(C3P3_4P_OFFSET)
+        .endOffset(C3P3_4P_OFFSET + C3P3_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 3, 4, true);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C3P4_4P_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel4)
+        .startOffset(C3P4_4P_OFFSET)
+        .endOffset(C3P4_4P_OFFSET + C3P4_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
+  }
+
+  /**
+   * For char_sel.seq and charsel4.seq, write new costume 4 extensions code for the given list of
+   * characters.
+   *
+   * @param charSel The path to char_sel.seq
+   * @param charSel4 The path to charsel4.seq
+   * @param characters The list of characters to give costume 4 to.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static void writeCostumeFourCodes(Path charSel, Path charSel4, List<String> characters)
+      throws IOException {
+    byte[] bytes = CostumeExtender.getCodeBytes(characters, 4, 1, false);
+    SeqEdit edit = SeqEditBuilder.getBuilder()
+        .name(C4P1_1V1_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel)
+        .startOffset(C4P1_1V1_OFFSET)
+        .endOffset(C4P1_1V1_OFFSET + C4P1_1V1_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 4, 2, false);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C4P2_1V1_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel)
+        .startOffset(C4P2_1V1_OFFSET)
+        .endOffset(C4P2_1V1_OFFSET + C4P2_1V1_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 4, 1, true);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C4P1_4P_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel4)
+        .startOffset(C4P1_4P_OFFSET)
+        .endOffset(C4P1_4P_OFFSET + C4P1_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 4, 2, true);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C4P2_4P_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel4)
+        .startOffset(C4P2_4P_OFFSET)
+        .endOffset(C4P2_4P_OFFSET + C4P2_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 4, 3, true);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C4P3_4P_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel4)
+        .startOffset(C4P3_4P_OFFSET)
+        .endOffset(C4P3_4P_OFFSET + C4P3_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
+
+    bytes = CostumeExtender.getCodeBytes(characters, 4, 4, true);
+    edit = SeqEditBuilder.getBuilder()
+        .name(C4P4_4P_NAME)
+        .newBytes(bytes)
+        .seqPath(charSel4)
+        .startOffset(C4P4_4P_OFFSET)
+        .endOffset(C4P4_4P_OFFSET + C4P4_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
   }
 }

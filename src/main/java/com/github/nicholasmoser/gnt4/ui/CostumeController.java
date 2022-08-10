@@ -21,6 +21,7 @@ public class CostumeController {
   public ListView<String> costume4;
   private Path charSel;
   private Path charSel4;
+  private boolean hasCodes = false;
 
   public void init(Path uncompressedDirectory) throws IOException {
     costume3.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -34,10 +35,13 @@ public class CostumeController {
     List<SeqEdit> charSelEdits = SeqExt.getEdits(charSel);
     List<SeqEdit> charSel4Edits = SeqExt.getEdits(charSel4);
     if (CostumeExtender.hasExistingEdits(charSelEdits, charSel4Edits)) {
+      LOGGER.info("Found existing costume extensions");
+      hasCodes = true;
       costume3.getItems().addAll(CostumeExtender.getCostumeThreeCharacters(charSelEdits));
       costume3.getItems().addAll(CostumeExtender.getCostumeFourCharacters(charSelEdits));
     } else {
       // Default init: add Haku, Sakura, Ino
+      LOGGER.info("No costume extensions found");
       costume3.getItems().add(GNT4Characters.HAKU);
       costume3.getItems().add(GNT4Characters.SAKURA);
       costume3.getItems().add(GNT4Characters.INO);
@@ -61,18 +65,17 @@ public class CostumeController {
 
   public void saveCostume3() {
     List<String> characters = costume3.getItems();
-    if (costume3.getItems().isEmpty()) {
+    if (characters.isEmpty()) {
       LOGGER.log(Level.INFO, "Must have at least one custom costume to save.");
       Message.info("Must Have One Costume", "Must have at least one custom costume to save.");
       return;
     }
     try {
-      byte[] bytes = CostumeExtender.getCodeBytes(characters, 3, 1, false);
-      bytes = CostumeExtender.getCodeBytes(characters, 3, 2, false);
-      bytes = CostumeExtender.getCodeBytes(characters, 3, 1, true);
-      bytes = CostumeExtender.getCodeBytes(characters, 3, 2, true);
-      bytes = CostumeExtender.getCodeBytes(characters, 3, 3, true);
-      bytes = CostumeExtender.getCodeBytes(characters, 3, 4, true);
+      if (hasCodes) {
+        CostumeExtender.removeCodes(charSel, charSel4);
+      }
+      hasCodes = true;
+      CostumeExtender.writeCostumeThreeCodes(charSel, charSel4, characters);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to write costume bytes", e);
       Message.info("Failed to write costume bytes", e.getMessage());
@@ -92,10 +95,21 @@ public class CostumeController {
   }
 
   public void saveCostume4() {
-    if (costume4.getItems().isEmpty()) {
+    List<String> characters = costume4.getItems();
+    if (characters.isEmpty()) {
       LOGGER.log(Level.INFO, "Must have at least one custom costume to save.");
       Message.info("Must Have One Costume", "Must have at least one custom costume to save.");
       return;
+    }
+    try {
+      if (hasCodes) {
+        CostumeExtender.removeCodes(charSel, charSel4);
+      }
+      hasCodes = true;
+      CostumeExtender.writeCostumeFourCodes(charSel, charSel4, characters);
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Failed to write costume bytes", e);
+      Message.info("Failed to write costume bytes", e.getMessage());
     }
   }
 }
