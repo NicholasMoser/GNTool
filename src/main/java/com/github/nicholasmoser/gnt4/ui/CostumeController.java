@@ -5,7 +5,6 @@ import com.github.nicholasmoser.gnt4.GNT4Characters;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
-import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,7 +34,8 @@ public class CostumeController {
     List<SeqEdit> charSelEdits = SeqExt.getEdits(charSel);
     List<SeqEdit> charSel4Edits = SeqExt.getEdits(charSel4);
     if (CostumeExtender.hasExistingEdits(charSelEdits, charSel4Edits)) {
-
+      costume3.getItems().addAll(CostumeExtender.getCostumeThreeCharacters(charSelEdits));
+      costume3.getItems().addAll(CostumeExtender.getCostumeFourCharacters(charSelEdits));
     } else {
       // Default init: add Haku, Sakura, Ino
       costume3.getItems().add(GNT4Characters.HAKU);

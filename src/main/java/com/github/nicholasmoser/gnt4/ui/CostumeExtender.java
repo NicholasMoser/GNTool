@@ -5,12 +5,17 @@ import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * The SEQ bytes for checking costumes 3 and 4 is 0x40 bytes each.
  */
 public class CostumeExtender {
+
   // SEQ opcodes and offsets used for adding custom costumes
   static final byte[] P1_VAR = ByteUtils.hexStringToBytes("7FFFFF20");
   static final byte[] P2_VAR = ByteUtils.hexStringToBytes("7FFFFF21");
@@ -38,112 +43,117 @@ public class CostumeExtender {
   static final String C3P1_1V1_NAME = "Extend Costume 3, Player 1 (1v1)";
   static final int C3P1_1V1_OFFSET = 0xECC8;
   static final byte[] C3P1_1V1_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 0000F490 7FFFFF20 7FFFFF24
-        3B010000 0000ED50 00000007 7FFFFF24
-        3B010000 0000ED50 00000002 7FFFFF24
-        3B010000 0000ED50 00000009 7FFFFF24
-        """);
+      3C160000 0000F490 7FFFFF20 7FFFFF24
+      3B010000 0000ED50 00000007 7FFFFF24
+      3B010000 0000ED50 00000002 7FFFFF24
+      3B010000 0000ED50 00000009 7FFFFF24
+      """);
 
   static final String C4P1_1V1_NAME = "Extend Costume 4, Player 1 (1v1)";
   static final int C4P1_1V1_OFFSET = 0xED0C;
   static final byte[] C4P1_1V1_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 0000F490 7FFFFF20 7FFFFF24
-        3B010000 0000ED80 00000007 7FFFFF24
-        3B010000 0000ED80 00000002 7FFFFF24
-        3B010000 0000ED80 00000009 7FFFFF24
-        """);
+      3C160000 0000F490 7FFFFF20 7FFFFF24
+      3B010000 0000ED80 00000007 7FFFFF24
+      3B010000 0000ED80 00000002 7FFFFF24
+      3B010000 0000ED80 00000009 7FFFFF24
+      """);
 
   static final String C3P2_1V1_NAME = "Extend Costume 3, Player 2 (1v1)";
   static final int C3P2_1V1_OFFSET = 0xEE10;
   static final byte[] C3P2_1V1_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 0000F490 7FFFFF21 7FFFFF24
-        3B010000 0000EE98 00000007 7FFFFF24
-        3B010000 0000EE98 00000002 7FFFFF24
-        3B010000 0000EE98 00000009 7FFFFF24
-        """);
+      3C160000 0000F490 7FFFFF21 7FFFFF24
+      3B010000 0000EE98 00000007 7FFFFF24
+      3B010000 0000EE98 00000002 7FFFFF24
+      3B010000 0000EE98 00000009 7FFFFF24
+      """);
 
   static final String C4P2_1V1_NAME = "Extend Costume 4, Player 2 (1v1)";
   static final int C4P2_1V1_OFFSET = 0xEE54;
   static final byte[] C4P2_1V1_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 0000F490 7FFFFF21 7FFFFF24
-        3B010000 0000EEC8 00000007 7FFFFF24
-        3B010000 0000EEC8 00000002 7FFFFF24
-        3B010000 0000EEC8 00000009 7FFFFF24
-        """);
+      3C160000 0000F490 7FFFFF21 7FFFFF24
+      3B010000 0000EEC8 00000007 7FFFFF24
+      3B010000 0000EEC8 00000002 7FFFFF24
+      3B010000 0000EEC8 00000009 7FFFFF24
+      """);
 
   static final String C3P1_4P_NAME = "Extend Costume 3, Player 1 (4p)";
   static final int C3P1_4P_OFFSET = 0x79F0;
   static final byte[] C3P1_4P_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 000140A0 7FFFFF20 7FFFFF24
-        3B010000 00007A38 00000007 7FFFFF24
-        3B010000 00007A38 00000002 7FFFFF24
-        3B010000 00007A38 00000009 7FFFFF24
-        """);
+      3C160000 000140A0 7FFFFF20 7FFFFF24
+      3B010000 00007A38 00000007 7FFFFF24
+      3B010000 00007A38 00000002 7FFFFF24
+      3B010000 00007A38 00000009 7FFFFF24
+      """);
 
   static final String C4P1_4P_NAME = "Extend Costume 4, Player 1 (4p)";
   static final int C4P1_4P_OFFSET = 0x7A60;
   static final byte[] C4P1_4P_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 000140A0 7FFFFF20 7FFFFF24
-        3B010000 00007AA8 00000007 7FFFFF24
-        3B010000 00007AA8 00000002 7FFFFF24
-        3B010000 00007AA8 00000009 7FFFFF24
-        """);
+      3C160000 000140A0 7FFFFF20 7FFFFF24
+      3B010000 00007AA8 00000007 7FFFFF24
+      3B010000 00007AA8 00000002 7FFFFF24
+      3B010000 00007AA8 00000009 7FFFFF24
+      """);
 
   static final String C3P2_4P_NAME = "Extend Costume 3, Player 2 (4p)";
   static final int C3P2_4P_OFFSET = 0x7B20;
   static final byte[] C3P2_4P_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 000140A0 7FFFFF21 7FFFFF24
-        3B010000 00007B68 00000007 7FFFFF24
-        3B010000 00007B68 00000002 7FFFFF24
-        3B010000 00007B68 00000009 7FFFFF24
-        """);
+      3C160000 000140A0 7FFFFF21 7FFFFF24
+      3B010000 00007B68 00000007 7FFFFF24
+      3B010000 00007B68 00000002 7FFFFF24
+      3B010000 00007B68 00000009 7FFFFF24
+      """);
 
   static final String C4P2_4P_NAME = "Extend Costume 4, Player 2 (4p)";
   static final int C4P2_4P_OFFSET = 0x7B90;
   static final byte[] C4P2_4P_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 000140A0 7FFFFF21 7FFFFF24
-        3B010000 00007BD8 00000007 7FFFFF24
-        3B010000 00007BD8 00000002 7FFFFF24
-        3B010000 00007BD8 00000009 7FFFFF24
-        """);
+      3C160000 000140A0 7FFFFF21 7FFFFF24
+      3B010000 00007BD8 00000007 7FFFFF24
+      3B010000 00007BD8 00000002 7FFFFF24
+      3B010000 00007BD8 00000009 7FFFFF24
+      """);
 
   static final String C3P3_4P_NAME = "Extend Costume 3, Player 3 (4p)";
   static final int C3P3_4P_OFFSET = 0x7C50;
   static final byte[] C3P3_4P_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 000140A0 7FFFFF22 7FFFFF24
-        3B010000 00007C98 00000007 7FFFFF24
-        3B010000 00007C98 00000002 7FFFFF24
-        3B010000 00007C98 00000009 7FFFFF24
-        """);
+      3C160000 000140A0 7FFFFF22 7FFFFF24
+      3B010000 00007C98 00000007 7FFFFF24
+      3B010000 00007C98 00000002 7FFFFF24
+      3B010000 00007C98 00000009 7FFFFF24
+      """);
 
   static final String C4P3_4P_NAME = "Extend Costume 4, Player 3 (4p)";
   static final int C4P3_4P_OFFSET = 0x7CC0;
   static final byte[] C4P3_4P_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 000140A0 7FFFFF22 7FFFFF24
-        3B010000 00007D08 00000007 7FFFFF24
-        3B010000 00007D08 00000002 7FFFFF24
-        3B010000 00007D08 00000009 7FFFFF24
-        """);
+      3C160000 000140A0 7FFFFF22 7FFFFF24
+      3B010000 00007D08 00000007 7FFFFF24
+      3B010000 00007D08 00000002 7FFFFF24
+      3B010000 00007D08 00000009 7FFFFF24
+      """);
 
   static final String C3P4_4P_NAME = "Extend Costume 3, Player 4 (4p)";
   static final int C3P4_4P_OFFSET = 0x7D80;
   static final byte[] C3P4_4P_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 000140A0 7FFFFF23 7FFFFF24
-        3B010000 00007DC8 00000007 7FFFFF24
-        3B010000 00007DC8 00000002 7FFFFF24
-        3B010000 00007DC8 00000009 7FFFFF24
-        """);
+      3C160000 000140A0 7FFFFF23 7FFFFF24
+      3B010000 00007DC8 00000007 7FFFFF24
+      3B010000 00007DC8 00000002 7FFFFF24
+      3B010000 00007DC8 00000009 7FFFFF24
+      """);
 
   static final String C4P4_4P_NAME = "Extend Costume 4, Player 4 (4p)";
   static final int C4P4_4P_OFFSET = 0x7DF0;
   static final byte[] C4P4_4P_BYTES = ByteUtils.hexTextToBytes("""
-        3C160000 000140A0 7FFFFF23 7FFFFF24
-        3B010000 00007E38 00000007 7FFFFF24
-        3B010000 00007E38 00000002 7FFFFF24
-        3B010000 00007E38 00000009 7FFFFF24
-        """);
+      3C160000 000140A0 7FFFFF23 7FFFFF24
+      3B010000 00007E38 00000007 7FFFFF24
+      3B010000 00007E38 00000002 7FFFFF24
+      3B010000 00007E38 00000009 7FFFFF24
+      """);
 
-  public static byte[] getCodeBytes(List<String> characters, int costume, int player, boolean fourPlayerMode) throws IOException {
+  private static final Set<String> CODE_NAMES = Set.of(C3P1_1V1_NAME, C4P1_1V1_NAME, C3P2_1V1_NAME,
+      C4P2_1V1_NAME, C3P1_4P_NAME, C4P1_4P_NAME, C3P2_4P_NAME, C4P2_4P_NAME, C3P3_4P_NAME,
+      C4P3_4P_NAME, C3P4_4P_NAME, C4P4_4P_NAME);
+
+  public static byte[] getCodeBytes(List<String> characters, int costume, int player,
+      boolean fourPlayerMode) throws IOException {
     // Get input bytes
     byte[] playerVar;
     byte[] costumeVar;
@@ -233,27 +243,28 @@ public class CostumeExtender {
    * Returns if the character select for 1v1 and 4-player mode have costume extensions. Throws an
    * IOException if there are inconsistencies between the two list of SEQ edits.
    *
-   * @param charSelEdits The SEQ edits for char_sel.seq
+   * @param charSelEdits  The SEQ edits for char_sel.seq
    * @param charSel4Edits The SEQ edits for charsel4.seq
    * @return If the character select SEQ edits have costume extensions.
    * @throws IOException If there are inconsistencies between the two list of SEQ edits.
    */
-  public static boolean hasExistingEdits(List<SeqEdit> charSelEdits, List<SeqEdit> charSel4Edits) throws IOException {
+  public static boolean hasExistingEdits(List<SeqEdit> charSelEdits, List<SeqEdit> charSel4Edits)
+      throws IOException {
     boolean c3Edit = charSelEdits.stream().anyMatch(edit -> edit.getName().equals(C3P1_1V1_NAME));
     boolean c4Edit = charSelEdits.stream().anyMatch(edit -> edit.getName().equals(C4P1_1V1_NAME));
 
     // Verify edits are consistent
     if (c3Edit) {
       // Costume 3 has extensions
-      if (!charSelEdits.stream().anyMatch(edit -> edit.getName().equals(C3P2_1V1_NAME))) {
+      if (charSelEdits.stream().noneMatch(edit -> edit.getName().equals(C3P2_1V1_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C3P2_1V1_NAME);
-      } else if (!charSel4Edits.stream().anyMatch(edit -> edit.getName().equals(C3P1_4P_NAME))) {
+      } else if (charSel4Edits.stream().noneMatch(edit -> edit.getName().equals(C3P1_4P_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C3P1_4P_NAME);
-      } else if (!charSel4Edits.stream().anyMatch(edit -> edit.getName().equals(C3P2_4P_NAME))) {
+      } else if (charSel4Edits.stream().noneMatch(edit -> edit.getName().equals(C3P2_4P_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C3P2_4P_NAME);
-      } else if (!charSel4Edits.stream().anyMatch(edit -> edit.getName().equals(C3P3_4P_NAME))) {
+      } else if (charSel4Edits.stream().noneMatch(edit -> edit.getName().equals(C3P3_4P_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C3P3_4P_NAME);
-      } else if (!charSel4Edits.stream().anyMatch(edit -> edit.getName().equals(C3P4_4P_NAME))) {
+      } else if (charSel4Edits.stream().noneMatch(edit -> edit.getName().equals(C3P4_4P_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C3P4_4P_NAME);
       }
     } else {
@@ -272,15 +283,15 @@ public class CostumeExtender {
     }
     if (c4Edit) {
       // Costume 4 has extensions
-      if (!charSelEdits.stream().anyMatch(edit -> edit.getName().equals(C4P2_1V1_NAME))) {
+      if (charSelEdits.stream().noneMatch(edit -> edit.getName().equals(C4P2_1V1_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C4P2_1V1_NAME);
-      } else if (!charSel4Edits.stream().anyMatch(edit -> edit.getName().equals(C4P1_4P_NAME))) {
+      } else if (charSel4Edits.stream().noneMatch(edit -> edit.getName().equals(C4P1_4P_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C4P1_4P_NAME);
-      } else if (!charSel4Edits.stream().anyMatch(edit -> edit.getName().equals(C4P2_4P_NAME))) {
+      } else if (charSel4Edits.stream().noneMatch(edit -> edit.getName().equals(C4P2_4P_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C4P2_4P_NAME);
-      } else if (!charSel4Edits.stream().anyMatch(edit -> edit.getName().equals(C4P3_4P_NAME))) {
+      } else if (charSel4Edits.stream().noneMatch(edit -> edit.getName().equals(C4P3_4P_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C4P3_4P_NAME);
-      } else if (!charSel4Edits.stream().anyMatch(edit -> edit.getName().equals(C4P4_4P_NAME))) {
+      } else if (charSel4Edits.stream().noneMatch(edit -> edit.getName().equals(C4P4_4P_NAME))) {
         throw new IOException("Please log an issue; missing code: " + C4P4_4P_NAME);
       }
     } else {
@@ -299,5 +310,51 @@ public class CostumeExtender {
     }
 
     return c3Edit || c4Edit;
+  }
+
+  public static List<String> getCostumeThreeCharacters(List<SeqEdit> charSelEdits) throws IOException {
+    List<String> characters = new ArrayList<>();
+    Optional<SeqEdit> edit = charSelEdits.stream()
+        .filter(x -> x.getName().equals(C3P1_1V1_NAME))
+        .findFirst();
+    if (edit.isEmpty()) {
+      throw new IOException("Unable to find SEQ edit " + C3P1_1V1_NAME);
+    }
+    Map<Integer, String> idToChr = GNT4Characters.INTERNAL_CHAR_ORDER.inverse();
+    byte[] bytes = edit.get().getNewBytes();
+    int charCount = (bytes.length - 16) / 16;
+    for (int i = 0; i < charCount; i++) {
+      int offset = 0x1B + (i * 0x10);
+      int chrId = bytes[offset];
+      String chr = idToChr.get(chrId);
+      if (chr == null) {
+        throw new IOException("Unable to find character with id " + chrId);
+      }
+      characters.add(chr);
+    }
+    return characters;
+  }
+
+  public static List<String> getCostumeFourCharacters(List<SeqEdit> charSelEdits) throws IOException {
+    List<String> characters = new ArrayList<>();
+    Optional<SeqEdit> edit = charSelEdits.stream()
+        .filter(x -> x.getName().equals(C4P1_1V1_NAME))
+        .findFirst();
+    if (edit.isEmpty()) {
+      throw new IOException("Unable to find SEQ edit " + C4P1_1V1_NAME);
+    }
+    Map<Integer, String> idToChr = GNT4Characters.INTERNAL_CHAR_ORDER.inverse();
+    byte[] bytes = edit.get().getNewBytes();
+    int charCount = (bytes.length - 16) / 16;
+    for (int i = 0; i < charCount; i++) {
+      int offset = 0x1B + (i * 0x10);
+      int chrId = bytes[offset];
+      String chr = idToChr.get(chrId);
+      if (chr == null) {
+        throw new IOException("Unable to find character with id " + chrId);
+      }
+      characters.add(chr);
+    }
+    return characters;
   }
 }
