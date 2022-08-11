@@ -33,6 +33,7 @@ import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.gnt4.ui.ChrOrder;
 import com.github.nicholasmoser.gnt4.ui.ChrOrderSave;
 import com.github.nicholasmoser.gnt4.ui.CostumeController;
+import com.github.nicholasmoser.gnt4.ui.EyeController;
 import com.github.nicholasmoser.gnt4.ui.OrderController;
 import com.github.nicholasmoser.gnt4.ui.StageOrder;
 import com.github.nicholasmoser.gnt4.ui.StageOrderSave;
@@ -424,18 +425,33 @@ public class MenuController {
       GUIUtils.setIcons(stage);
       costumeController.init(uncompressedDirectory);
       stage.setScene(scene);
-      stage.setTitle("Add New Costumes");
+      stage.setTitle("Modify Costumes");
       stage.centerOnScreen();
       stage.show();
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Add Costumes", e);
-      Message.error("Failed to Add Costumes", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Failed to Modify Costumes", e);
+      Message.error("Failed to Modify Costumes", e.getMessage());
     }
   }
 
   @FXML
   public void modifyEyes() {
-    System.out.println("Modify eyes");
+    try {
+      FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("eyes.fxml"));
+      Scene scene = new Scene(loader.load());
+      GUIUtils.initDarkMode(scene);
+      EyeController eyeController = loader.getController();
+      Stage stage = new Stage();
+      GUIUtils.setIcons(stage);
+      eyeController.init(uncompressedDirectory);
+      stage.setScene(scene);
+      stage.setTitle("Modify Eyes");
+      stage.centerOnScreen();
+      stage.show();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Modify Eyes", e);
+      Message.error("Failed to Modify Eyes", e.getMessage());
+    }
   }
 
   @FXML
