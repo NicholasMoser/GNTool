@@ -38,7 +38,7 @@ public class CostumeController {
       LOGGER.info("Found existing costume extensions");
       hasCodes = true;
       costume3.getItems().addAll(CostumeExtender.getCostumeThreeCharacters(charSelEdits));
-      costume3.getItems().addAll(CostumeExtender.getCostumeFourCharacters(charSelEdits));
+      costume4.getItems().addAll(CostumeExtender.getCostumeFourCharacters(charSelEdits));
     } else {
       // Default init: add Haku, Sakura, Ino
       LOGGER.info("No costume extensions found");
@@ -72,7 +72,13 @@ public class CostumeController {
     }
     try {
       if (hasCodes) {
+        // Codes already exist, delete them before adding new codes
+        LOGGER.info("Overriding characters for costume 3");
         CostumeExtender.removeCodes(charSel, charSel4);
+      } else {
+        // No codes, initialize the alternate costumes model code
+        LOGGER.info("Saving characters for costume 3");
+        CostumeExtender.allowAlternateCostumeModels(charSel, charSel4);
       }
       hasCodes = true;
       CostumeExtender.writeCostumeThreeCodes(charSel, charSel4, characters);
@@ -103,7 +109,13 @@ public class CostumeController {
     }
     try {
       if (hasCodes) {
+        // Codes already exist, delete them before adding new codes
+        LOGGER.info("Overriding characters for costume 4");
         CostumeExtender.removeCodes(charSel, charSel4);
+      } else {
+        // No codes, initialize the alternate costumes model code
+        LOGGER.info("Saving characters for costume 4");
+        CostumeExtender.allowAlternateCostumeModels(charSel, charSel4);
       }
       hasCodes = true;
       CostumeExtender.writeCostumeFourCodes(charSel, charSel4, characters);

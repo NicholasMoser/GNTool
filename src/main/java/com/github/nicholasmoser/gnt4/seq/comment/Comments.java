@@ -134,9 +134,11 @@ public class Comments {
     allComments.put(Seqs.SAR_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x65E8, "0xD is converted to the String \"13\" to load either 1300.txg or 1301.txg");
+    comments.put(0x65E8,
+        "0xD is converted to the String \"13\" to load either 1300.txg or 1301.txg");
     comments.put(0x6600, "Load eye texture in gpr12");
-    comments.put(0x83F8, "0xD is converted to the String \"13\" to load either 1300.txg or 1301.txg");
+    comments.put(0x83F8,
+        "0xD is converted to the String \"13\" to load either 1300.txg or 1301.txg");
     comments.put(0x8410, "Load alternate eye texture in gpr12");
     allComments.put(Seqs.SAS_0000, comments);
 
@@ -172,6 +174,7 @@ public class Comments {
     charSelComments.put(0x2370, "// Stage IDs");
     charSelComments.put(0x23F0, "// Stage Display IDs");
     charSelComments.put(0x3A14, "// Costume ID is read here, 7FFFFF3D is the costume_id");
+    charSelComments.put(0x572C, "// Models specific for costumes 3 and 4 here (Sakura, Ino only)");
     charSelComments.put(0x690C, "// Set the costume_id to 7FFFFF3D");
 
     charSelComments.put(0xEC68, "// Select Costume 1, Player 1");
@@ -190,6 +193,7 @@ public class Comments {
     allComments.put(Seqs.CHARSEL, charSelComments);
 
     Multimap<Integer, String> charSel4Comments = ArrayListMultimap.create();
+    charSel4Comments.put(0x4AF0, "// Models specific for costumes 3 and 4 here (Sakura, Ino only)");
     charSel4Comments.put(0x79A0, "// Select Costume 1, Player 1");
     charSel4Comments.put(0x79C8, "// Select Costume 2, Player 1");
     charSel4Comments.put(0x79F0, "// Check Costume 3, Player 1 (Haku/Sakura/Ino only)");

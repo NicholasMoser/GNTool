@@ -1,5 +1,7 @@
 package com.github.nicholasmoser.gnt4.ui;
 
+import static com.github.nicholasmoser.gnt4.GNT4Characters.INTERNAL_CHAR_ORDER;
+
 import com.github.nicholasmoser.gnt4.GNT4Characters;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEditBuilder;
@@ -11,8 +13,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The SEQ bytes for checking costumes 3 and 4 is 0x40 bytes each.
@@ -24,7 +28,8 @@ public class CostumeExtender {
   static final byte[] P2_VAR = ByteUtils.hexStringToBytes("7FFFFF21");
   static final byte[] P3_VAR = ByteUtils.hexStringToBytes("7FFFFF22");
   static final byte[] P4_VAR = ByteUtils.hexStringToBytes("7FFFFF23");
-  static final byte[] UNKNOWN_VAR = ByteUtils.hexStringToBytes("7FFFFF24");
+  static final byte[] VAR24 = ByteUtils.hexStringToBytes("7FFFFF24");
+  static final byte[] VAR27 = ByteUtils.hexStringToBytes("7FFFFF27");
   static final byte[] OPCODE1 = ByteUtils.hexStringToBytes("3C160000");
   static final byte[] OPCODE2 = ByteUtils.hexStringToBytes("3B010000");
   static final byte[] CHARSEL_UNKNOWN_OFFSET = ByteUtils.hexStringToBytes("0000F490");
@@ -41,6 +46,8 @@ public class CostumeExtender {
   static final byte[] CHARSEL4_C4P3_OFFSET = ByteUtils.hexStringToBytes("00007D08");
   static final byte[] CHARSEL4_C3P4_OFFSET = ByteUtils.hexStringToBytes("00007DC8");
   static final byte[] CHARSEL4_C4P4_OFFSET = ByteUtils.hexStringToBytes("00007E38");
+  static final byte[] CHARSEL_ALT_MODEL_OFFSET = ByteUtils.hexStringToBytes("00005750");
+  static final byte[] CHARSEL4_ALT_MODEL_OFFSET = ByteUtils.hexStringToBytes("00004B14");
 
   // Existing SEQ offsets and code for costume extension
   static final String C3P1_1V1_NAME = "Extend Costume 3, Player 1 (1v1)";
@@ -151,6 +158,20 @@ public class CostumeExtender {
       3B010000 00007E38 00000009 7FFFFF24
       """);
 
+  static final String ALT_MODEL_1V1_NAME = "Use Alternate Models (1v1)";
+  static final int ALT_MODEL_1V1_OFFSET = 0x572C;
+  static final byte[] ALT_MODEL_1V1_BYTES = ByteUtils.hexTextToBytes("""
+      3B010000 00005750 00000007 7FFFFF27
+      3B010000 00005750 00000009 7FFFFF27
+      """);
+
+  static final String ALT_MODEL_4P_NAME = "Use Alternate Models (4p)";
+  static final int ALT_MODEL_4P_OFFSET = 0x4AF0;
+  static final byte[] ALT_MODEL_4P_BYTES = ByteUtils.hexTextToBytes("""
+      3B010000 00004B14 00000007 7FFFFF27
+      3B010000 00004B14 00000009 7FFFFF27
+      """);
+
   private static final Set<String> CODE_NAMES = Set.of(C3P1_1V1_NAME, C4P1_1V1_NAME, C3P2_1V1_NAME,
       C4P2_1V1_NAME, C3P1_4P_NAME, C4P1_4P_NAME, C3P2_4P_NAME, C4P2_4P_NAME, C3P3_4P_NAME,
       C4P3_4P_NAME, C3P4_4P_NAME, C4P4_4P_NAME);
@@ -228,7 +249,7 @@ public class CostumeExtender {
     bytes.write(OPCODE1);
     bytes.write(fourPlayerMode ? CHARSEL4_UNKNOWN_OFFSET : CHARSEL_UNKNOWN_OFFSET);
     bytes.write(playerVar);
-    bytes.write(UNKNOWN_VAR);
+    bytes.write(VAR24);
     for (String character : characters) {
       Integer id = GNT4Characters.INTERNAL_CHAR_ORDER.get(character);
       if (id == null) {
@@ -237,7 +258,7 @@ public class CostumeExtender {
       bytes.write(OPCODE2);
       bytes.write(costumeVar);
       bytes.write(ByteUtils.fromInt32(id));
-      bytes.write(UNKNOWN_VAR);
+      bytes.write(VAR24);
     }
     return bytes.toByteArray();
   }
@@ -539,6 +560,71 @@ public class CostumeExtender {
         .seqPath(charSel4)
         .startOffset(C4P4_4P_OFFSET)
         .endOffset(C4P4_4P_OFFSET + C4P4_4P_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel4);
+  }
+
+  /**
+   * Adds an SEQ edit to the char_sel.seq and charsel4.seq files that allows alternate models to be
+   * used for all characters except Haku. Haku is an exception since his alternate costumes only
+   * remove the mask model.
+   *
+   * @param charSel The path to the char_sel.seq file
+   * @param charSel4 The path to the charsel4.seq file.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static void allowAlternateCostumeModels(Path charSel, Path charSel4) throws IOException {
+    // Get all characters but Haku since Haku's alternate costumes only remove the mask
+    List<String> characters = INTERNAL_CHAR_ORDER.entrySet()
+        .stream()
+        .sorted(Entry.comparingByValue())
+        .map(Entry::getKey)
+        .filter(name -> !name.equals(GNT4Characters.HAKU))
+        .collect(Collectors.toList());
+
+    // Get the 1V1 SEQ edit
+    ByteArrayOutputStream baos = new ByteArrayOutputStream(characters.size() * 0x10);
+    for (String character : characters) {
+      Integer chrId = GNT4Characters.INTERNAL_CHAR_ORDER.get(character);
+      if (chrId == null) {
+        throw new IOException("Unable to find id for character " + character);
+      }
+      baos.write(OPCODE2);
+      baos.write(CHARSEL_ALT_MODEL_OFFSET);
+      baos.write(ByteUtils.fromInt32(chrId));
+      baos.write(VAR27);
+    }
+
+    // Write the 1V1 SEQ edit
+    SeqEdit edit = SeqEditBuilder.getBuilder()
+        .name(ALT_MODEL_1V1_NAME)
+        .newBytes(baos.toByteArray())
+        .seqPath(charSel)
+        .startOffset(ALT_MODEL_1V1_OFFSET)
+        .endOffset(ALT_MODEL_1V1_OFFSET + ALT_MODEL_1V1_BYTES.length)
+        .create();
+    SeqExt.addEdit(edit, charSel);
+
+    // Get the 4P SEQ edit
+    baos = new ByteArrayOutputStream(characters.size() * 0x10);
+    for (String character : characters) {
+      Integer chrId = GNT4Characters.INTERNAL_CHAR_ORDER.get(character);
+      if (chrId == null) {
+        throw new IOException("Unable to find id for character " + character);
+      }
+      baos.write(OPCODE2);
+      baos.write(CHARSEL4_ALT_MODEL_OFFSET);
+      baos.write(ByteUtils.fromInt32(chrId));
+      baos.write(VAR27);
+    }
+
+    // Write the 4P SEQ edit
+    edit = SeqEditBuilder.getBuilder()
+        .name(ALT_MODEL_4P_NAME)
+        .newBytes(baos.toByteArray())
+        .seqPath(charSel4)
+        .startOffset(ALT_MODEL_4P_OFFSET)
+        .endOffset(ALT_MODEL_4P_OFFSET + ALT_MODEL_4P_BYTES.length)
         .create();
     SeqExt.addEdit(edit, charSel4);
   }
