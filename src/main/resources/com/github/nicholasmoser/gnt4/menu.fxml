@@ -808,13 +808,29 @@
                                  <Font size="16.0" />
                               </font>
                            </Button>
-                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyCostumes" text="Modify Costumes" GridPane.rowIndex="11">
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyCostumes" text="Modify Costumes" GridPane.columnIndex="1" GridPane.rowIndex="11">
                               <font>
                                  <Font size="16.0" />
                               </font>
                               <GridPane.margin>
                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                               </GridPane.margin>
+                           </Button>
+                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Additional Character Costumes" GridPane.rowIndex="11">
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                           </Text>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyEyes" text="Modify Eyes" GridPane.columnIndex="2" GridPane.rowIndex="11">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
                            </Button>
                         </children>
                      </GridPane>

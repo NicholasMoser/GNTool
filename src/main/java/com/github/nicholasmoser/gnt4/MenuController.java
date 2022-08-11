@@ -434,6 +434,11 @@ public class MenuController {
   }
 
   @FXML
+  public void modifyEyes() {
+    System.out.println("Modify eyes");
+  }
+
+  @FXML
   protected void defaultTimeOut() {
     demoTimeOut.getValueFactory().setValue(DEFAULT_DEMO_TIME_OUT_SECONDS);
     setDemoTimeOut();
