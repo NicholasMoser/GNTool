@@ -35,7 +35,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -44,61 +44,17 @@
    <children>
       <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
          <children>
-            <Label text="Characters">
-               <font>
-                  <Font size="22.0" />
-               </font>
-            </Label>
-            <ListView fx:id="characters" prefHeight="600.0" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets left="2.0" right="2.0" />
-               </VBox.margin></ListView>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#save" prefWidth="200.0" text="Save">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </HBox.margin>
-                  </Button>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-      <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
-         <children>
             <Label text="Costume 2">
                <font>
                   <Font size="22.0" />
                </font>
             </Label>
-            <ListView fx:id="costume2" prefHeight="600.0" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets right="2.0" />
-               </VBox.margin>
-            </ListView>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#addCostume2" prefWidth="100.0" text="Add">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button mnemonicParsing="false" onAction="#removeCostume2" prefWidth="100.0" text="Remove">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </HBox.margin>
-                  </Button>
-               </children>
-            </HBox>
+            <ScrollPane VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="costume2" spacing="2.0" />
+               </content>
+            </ScrollPane>
+            <HBox alignment="CENTER" minHeight="40.0" />
          </children>
       </VBox>
       <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
@@ -108,23 +64,15 @@
                   <Font size="22.0" />
                </font>
             </Label>
-            <ListView fx:id="costume3" prefHeight="600.0" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets right="2.0" />
-               </VBox.margin></ListView>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <ScrollPane VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="costume3" spacing="2.0" />
+               </content></ScrollPane>
+            <HBox alignment="CENTER" minHeight="40.0">
                <children>
-                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#addCostume3" text="Add">
+                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#save" text="Save">
                      <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#removeCostume3" text="Remove">
-                     <font>
-                        <Font size="18.0" />
+                        <Font size="14.0" />
                      </font>
                      <HBox.margin>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -141,30 +89,11 @@
                   <Font size="22.0" />
                </font>
             </Label>
-            <ListView fx:id="costume4" prefHeight="600.0" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets right="2.0" />
-               </VBox.margin></ListView>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#addCostume4" text="Add">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#removeCostume4" text="Remove">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </HBox.margin>
-                  </Button>
-               </children>
-            </HBox>
+            <ScrollPane VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="costume4" spacing="2.0" />
+               </content></ScrollPane>
+            <HBox alignment="CENTER" minHeight="40.0" />
          </children>
       </VBox>
    </children>

@@ -374,7 +374,6 @@ public class MenuController {
         defragCodeGroups(codeGroups);
       }
     }
-    //
     try {
       FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
       Scene scene = new Scene(loader.load());

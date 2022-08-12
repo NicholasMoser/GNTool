@@ -2,64 +2,117 @@ package com.github.nicholasmoser.gnt4.ui;
 
 import com.github.nicholasmoser.gnt4.GNT4Characters;
 import java.nio.file.Path;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import java.util.HashMap;
+import java.util.List;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class EyeController {
 
-  public ListView<String> characters;
-  public ListView<String> costume2;
-  public ListView<String> costume3;
-  public ListView<String> costume4;
+  public VBox costume2;
+  public VBox costume3;
+  public VBox costume4;
   private Path dol;
+  private static final String FIRST = "1300.txg";
+  private static final String SECOND = "1301.txg";
+  private static final String THIRD = "1302.txg";
+  private static final String FOURTH = "1303.txg";
+  private static final List<String> ALL_EYE_TEXTURES = List.of(FIRST, SECOND, THIRD, FOURTH);
 
   public void init(Path uncompressedDirectory) {
-    characters.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    costume2.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    costume3.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    costume4.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    characters.getItems().addAll(GNT4Characters.CHARACTERS);
-
-    // Check for existing eye extensions
     this.dol = uncompressedDirectory.resolve("sys/main.dol");
+    EyeSettings eyes = getSelections();
+    for (String character : GNT4Characters.CHARACTERS) {
+      costume2.getChildren().add(getRow(character, eyes.costumeTwoSelections().get(character)));
+      costume3.getChildren().add(getRow(character, eyes.costumeThreeSelections().get(character)));
+      costume4.getChildren().add(getRow(character, eyes.costumeFourSelections().get(character)));
+    }
+  }
+
+  private EyeSettings getSelections() {
+    HashMap<String, String> costumeTwoSelections = new HashMap<>();
+    HashMap<String, String> costumeThreeSelections = new HashMap<>();
+    HashMap<String, String> costumeFourSelections = new HashMap<>();
+
+    // TODO - Read eye texture selections from the dol
+
+    // Default selections
+    costumeTwoSelections.put(GNT4Characters.SASUKE, SECOND);
+    costumeThreeSelections.put(GNT4Characters.SASUKE, SECOND);
+    costumeFourSelections.put(GNT4Characters.SASUKE, SECOND);
+    costumeTwoSelections.put(GNT4Characters.KANKURO, SECOND);
+    costumeThreeSelections.put(GNT4Characters.KANKURO, SECOND);
+    costumeFourSelections.put(GNT4Characters.KANKURO, SECOND);
+    return new EyeSettings(costumeTwoSelections, costumeThreeSelections, costumeFourSelections);
+  }
+
+  private void writeSelections(EyeSettings eyes) {
+    // TODO - Write new eye texture selections to the dol
+  }
+
+  private HBox getRow(String character, String selection) {
+    selection = selection == null ? FIRST : selection;
+    HBox row = new HBox();
+    row.setPadding(new Insets(4, 0, 0, 4));
+    row.setSpacing(8);
+    ComboBox<String> eyeTextures = new ComboBox<>();
+    eyeTextures.getItems().addAll(ALL_EYE_TEXTURES);
+    eyeTextures.getSelectionModel().select(selection);
+    row.getChildren().add(eyeTextures);
+    Text text = new Text(character);
+    text.getStyleClass().add("text-id");
+    text.setFont(new Font(16));
+    row.getChildren().add(text);
+    return row;
   }
 
   public void save() {
-  }
-
-  public void addCostume2() {
-    for (String item : characters.getSelectionModel().getSelectedItems()) {
-      if (!costume2.getItems().contains(item)) {
-        costume2.getItems().add(item);
+    HashMap<String, String> costumeTwoSelections = new HashMap<>();
+    HashMap<String, String> costumeThreeSelections = new HashMap<>();
+    HashMap<String, String> costumeFourSelections = new HashMap<>();
+    for (Node node : costume2.getChildren()) {
+      if (node instanceof HBox row) {
+        if (row.getChildren().get(0) instanceof ComboBox comboBox) {
+          if (row.getChildren().get(1) instanceof Text chr &&
+              comboBox.getValue() instanceof String selection) {
+            if (!selection.equals(FIRST)) {
+              costumeTwoSelections.put(chr.getText(), selection);
+            }
+          }
+        }
       }
     }
-  }
-
-  public void removeCostume2() {
-    costume2.getItems().removeAll(costume2.getSelectionModel().getSelectedItems());
-  }
-
-  public void addCostume3() {
-    for (String item : characters.getSelectionModel().getSelectedItems()) {
-      if (!costume3.getItems().contains(item)) {
-        costume3.getItems().add(item);
+    for (Node node : costume3.getChildren()) {
+      if (node instanceof HBox row) {
+        if (row.getChildren().get(0) instanceof ComboBox comboBox) {
+          if (row.getChildren().get(1) instanceof Text chr &&
+              comboBox.getValue() instanceof String selection) {
+            if (!selection.equals(FIRST)) {
+              costumeThreeSelections.put(chr.getText(), selection);
+            }
+          }
+        }
       }
     }
-  }
-
-  public void removeCostume3() {
-    costume3.getItems().removeAll(costume3.getSelectionModel().getSelectedItems());
-  }
-
-  public void addCostume4() {
-    for (String item : characters.getSelectionModel().getSelectedItems()) {
-      if (!costume4.getItems().contains(item)) {
-        costume4.getItems().add(item);
+    for (Node node : costume4.getChildren()) {
+      if (node instanceof HBox row) {
+        if (row.getChildren().get(0) instanceof ComboBox comboBox) {
+          if (row.getChildren().get(1) instanceof Text chr &&
+              comboBox.getValue() instanceof String selection) {
+            if (!selection.equals(FIRST)) {
+              costumeFourSelections.put(chr.getText(), selection);
+            }
+          }
+        }
       }
     }
-  }
-
-  public void removeCostume4() {
-    costume4.getItems().removeAll(costume4.getSelectionModel().getSelectedItems());
+    EyeSettings eyes = new EyeSettings(costumeTwoSelections, costumeThreeSelections,
+        costumeFourSelections);
+    writeSelections(eyes);
   }
 }
