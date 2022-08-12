@@ -94,7 +94,7 @@ public class GNT4Workspace implements Workspace {
     Set<String> missingFiles = new HashSet<>();
 
     for (WorkspaceFile filePath : allFiles) {
-      if (!Files.exists(uncompressed.resolve(filePath.filePath()))) { // TODO: This is slow on HDD
+      if (!Files.exists(uncompressed.resolve(filePath.filePath()))) {
         missingFiles.add(filePath.filePath());
       }
     }

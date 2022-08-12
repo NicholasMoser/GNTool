@@ -1522,6 +1522,8 @@ public class MenuController {
   private void syncRefresh() throws IOException {
     LOGGER.log(Level.INFO, "Refreshing workspace.");
     List<WorkspaceFile> allFiles = workspace.getAllFiles();
+    // The below two calls can be slow the first time they are called since it needs to check
+    // if each file in the workspace exists. I'm not sure if this can be avoided.
     refreshMissingFiles(allFiles);
     refreshChangedFiles(allFiles);
     refreshActiveCodes();
