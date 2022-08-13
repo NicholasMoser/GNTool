@@ -1447,7 +1447,7 @@ public class MenuController {
       GeckoWriter writer = new GeckoWriter(dolPath);
       GeckoCodeGroup group = writer.writeCodes(codes, name, hijackStartAddress);
       codeGroups.add(group);
-      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      Path codeFile = getCodesFile();
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
       asyncRefresh();
     } catch (Exception e) {
@@ -1622,7 +1622,7 @@ public class MenuController {
       try {
         addedCodes.getItems().clear();
 
-        Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+        Path codeFile = getCodesFile();
 
         if (DolHijack.isUsingCodeCave(dolPath, CodeCave.RECORDING)) {
           if (DolHijack.isUsingCodeCave(dolPath, CodeCave.EXI2)) {
@@ -1927,7 +1927,7 @@ public class MenuController {
     try {
       DolDefragger defragger = new DolDefragger(dolPath, codeGroups, CodeCave.EXI2);
       defragger.run();
-      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      Path codeFile = getCodesFile();
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Defrag Codes", e);
@@ -1953,7 +1953,7 @@ public class MenuController {
             msg);
       }
       codeGroups.remove(group);
-      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      Path codeFile = getCodesFile();
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Remove Code", e);
@@ -2008,5 +2008,16 @@ public class MenuController {
       recordingFlag.setDisable(true);
       recordingCounterFlag.setDisable(true);
     }
+  }
+
+  /**
+   * @return The codes.json path, preferring uncompressed/files/codes.json
+   */
+  private Path getCodesFile() {
+    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.CODE_FILE);
+    if (Files.exists(codePath)) {
+      return codePath;
+    }
+    return workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
   }
 }
