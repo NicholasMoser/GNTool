@@ -21,6 +21,7 @@ import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
 import com.github.nicholasmoser.gnt4.cpu.CPUFlags;
 import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
+import com.github.nicholasmoser.gnt4.dol.CodeWriter;
 import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
@@ -65,7 +66,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -442,7 +442,7 @@ public class MenuController {
       EyeController eyeController = loader.getController();
       Stage stage = new Stage();
       GUIUtils.setIcons(stage);
-      eyeController.init(uncompressedDirectory);
+      eyeController.init(dolPath, codeGroups);
       stage.setScene(scene);
       stage.setTitle("Modify Eyes");
       stage.centerOnScreen();
@@ -1417,7 +1417,7 @@ public class MenuController {
       if (DolHijack.checkHijackOverflow(codeGroups, codes, CodeCave.EXI2)) {
         return;
       }
-      if (targetAddressOverlap(codes)) {
+      if (CodeWriter.targetAddressOverlap(codes, codeGroups)) {
         return;
       }
       Message.info("Valid Codes Found", codes.toString());
@@ -1429,26 +1429,13 @@ public class MenuController {
 
   @FXML
   protected void addCodes() {
-    String text = geckoCodes.getText();
-    GeckoReader reader = new GeckoReader();
     try {
-      List<GeckoCode> codes = reader.parseCodes(text);
-      if (DolHijack.checkHijackOverflow(codeGroups, codes, CodeCave.EXI2)) {
-        return;
-      }
-      if (targetAddressOverlap(codes)) {
-        return;
-      }
+      GeckoReader reader = new GeckoReader();
       String name = codeName.getText();
-      if (!checkNameValid((name))) {
-        return;
-      }
-      long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups, CodeCave.EXI2);
-      GeckoWriter writer = new GeckoWriter(dolPath);
-      GeckoCodeGroup group = writer.writeCodes(codes, name, hijackStartAddress);
-      codeGroups.add(group);
-      Path codeFile = getCodesFile();
-      GeckoCodeJSON.writeFile(codeGroups, codeFile);
+      String text = geckoCodes.getText();
+      List<GeckoCode> codes = reader.parseCodes(text);
+      CodeWriter writer = new CodeWriter(dolPath, getCodesFile(), codeGroups);
+      writer.addCodes(name, codes);
       asyncRefresh();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Parsing Codes", e);
@@ -1851,54 +1838,6 @@ public class MenuController {
    */
   private int secondsToFrames(int seconds) {
     return seconds * 60;
-  }
-
-  /**
-   * Returns whether or not the given Code Name is valid. Logs and displays a message if not.
-   *
-   * @param name The Code Name.
-   * @return If the Code Name is valid.
-   */
-  private boolean checkNameValid(String name) {
-    if (name == null || name.isBlank()) {
-      String message = "Code Name required for new codes.";
-      LOGGER.log(Level.SEVERE, message);
-      Message.error("Code Error", message);
-      return false;
-    }
-    for (GeckoCodeGroup codeGroup : codeGroups) {
-      if (name.equals(codeGroup.getName())) {
-        String message = "This Code Name already exists.";
-        LOGGER.log(Level.SEVERE, message);
-        Message.error("Code Error", message);
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Checks if the target addresses of the given codes overlap with any existing codes. Logs and
-   * displays a message if so.
-   *
-   * @param codes The codes to check.
-   * @return If any of the target addresses of the codes overlap any of the existing codes.
-   */
-  private boolean targetAddressOverlap(List<GeckoCode> codes) {
-    for (GeckoCode code : codes) {
-      long targetAddress = code.getTargetAddress();
-      for (GeckoCodeGroup codeGroup : codeGroups) {
-        for (GeckoCode existingCode : codeGroup.getCodes()) {
-          if (targetAddress == existingCode.getTargetAddress()) {
-            String message = "This code overlaps with: " + codeGroup.getName();
-            LOGGER.log(Level.SEVERE, message);
-            Message.error("Code Error", message);
-            return true;
-          }
-        }
-      }
-    }
-    return false;
   }
 
   /**
