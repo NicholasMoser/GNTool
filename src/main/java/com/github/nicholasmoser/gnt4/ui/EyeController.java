@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.ui;
 
+import static com.github.nicholasmoser.gnt4.ui.EyeExtender.*;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gnt4.GNT4Characters;
 import java.nio.file.Path;
@@ -20,10 +21,6 @@ public class EyeController {
   public VBox costume4;
   private Path dol;
   private List<GeckoCodeGroup> codeGroups;
-  private static final String FIRST = "1300.txg";
-  private static final String SECOND = "1301.txg";
-  private static final String THIRD = "1302.txg";
-  private static final String FOURTH = "1303.txg";
   private static final List<String> ALL_EYE_TEXTURES = List.of(FIRST, SECOND, THIRD, FOURTH);
 
   public void init(Path dol, List<GeckoCodeGroup> codeGroups) {
