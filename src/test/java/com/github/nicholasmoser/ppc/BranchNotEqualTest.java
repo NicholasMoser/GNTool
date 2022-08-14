@@ -38,7 +38,6 @@ public class BranchNotEqualTest {
    */
   @Test
   public void testBranchNegativeDistance() {
-    assertThat(BranchNotEqual.getBytes(-0x10)).asHexString().isEqualTo("40A2FFF0");
     assertThat(hexStringToBytes("40A2FFF0")).isEqualTo(BranchNotEqual.getBytes(-0x10));
     assertThat(hexStringToBytes("40A2FF00")).isEqualTo(BranchNotEqual.getBytes(-0x100));
     assertThat(hexStringToBytes("40A2FEFC")).isEqualTo(BranchNotEqual.getBytes(-0x104));
