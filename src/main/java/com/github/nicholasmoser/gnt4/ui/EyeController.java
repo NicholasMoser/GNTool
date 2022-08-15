@@ -3,9 +3,12 @@ package com.github.nicholasmoser.gnt4.ui;
 import static com.github.nicholasmoser.gnt4.ui.EyeExtender.*;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gnt4.GNT4Characters;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
@@ -23,7 +26,7 @@ public class EyeController {
   private List<GeckoCodeGroup> codeGroups;
   private static final List<String> ALL_EYE_TEXTURES = List.of(FIRST, SECOND, THIRD, FOURTH);
 
-  public void init(Path dol, List<GeckoCodeGroup> codeGroups) {
+  public void init(Path dol, List<GeckoCodeGroup> codeGroups) throws IOException {
     this.dol = dol;
     this.codeGroups = codeGroups;
     EyeSettings eyes = getSelections();
@@ -34,20 +37,26 @@ public class EyeController {
     }
   }
 
-  private EyeSettings getSelections() {
-    HashMap<String, String> costumeTwoSelections = new HashMap<>();
-    HashMap<String, String> costumeThreeSelections = new HashMap<>();
-    HashMap<String, String> costumeFourSelections = new HashMap<>();
+  private EyeSettings getSelections() throws IOException {
+    Map<String, String> costumeTwoSelections = new HashMap<>();
+    Map<String, String> costumeThreeSelections = new HashMap<>();
+    Map<String, String> costumeFourSelections = new HashMap<>();
 
-    // TODO - Read eye texture selections from the dol
-
-    // Default selections
-    costumeTwoSelections.put(GNT4Characters.SASUKE, SECOND);
-    costumeThreeSelections.put(GNT4Characters.SASUKE, SECOND);
-    costumeFourSelections.put(GNT4Characters.SASUKE, SECOND);
-    costumeTwoSelections.put(GNT4Characters.KANKURO, SECOND);
-    costumeThreeSelections.put(GNT4Characters.KANKURO, SECOND);
-    costumeFourSelections.put(GNT4Characters.KANKURO, SECOND);
+    // Read eye settings from the dol Gecko codes if they exist
+    Optional<EyeSettings> eyes = EyeExtender.getEyeSettings(codeGroups);
+    if (eyes.isPresent()) {
+      costumeTwoSelections = eyes.get().costumeTwoSelections();
+      costumeThreeSelections = eyes.get().costumeThreeSelections();
+      costumeFourSelections = eyes.get().costumeFourSelections();
+    } else {
+      // Default selections
+      costumeTwoSelections.put(GNT4Characters.SASUKE, SECOND);
+      costumeThreeSelections.put(GNT4Characters.SASUKE, SECOND);
+      costumeFourSelections.put(GNT4Characters.SASUKE, SECOND);
+      costumeTwoSelections.put(GNT4Characters.KANKURO, SECOND);
+      costumeThreeSelections.put(GNT4Characters.KANKURO, SECOND);
+      costumeFourSelections.put(GNT4Characters.KANKURO, SECOND);
+    }
     return new EyeSettings(costumeTwoSelections, costumeThreeSelections, costumeFourSelections);
   }
 
