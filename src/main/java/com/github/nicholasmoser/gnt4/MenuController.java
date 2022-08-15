@@ -442,7 +442,7 @@ public class MenuController {
       EyeController eyeController = loader.getController();
       Stage stage = new Stage();
       GUIUtils.setIcons(stage);
-      eyeController.init(dolPath, codeGroups);
+      eyeController.init(dolPath, codeGroups, getCodesFile());
       stage.setScene(scene);
       stage.setTitle("Modify Eyes");
       stage.centerOnScreen();

@@ -1,14 +1,21 @@
 package com.github.nicholasmoser.gnt4.ui;
 
 import static com.github.nicholasmoser.gnt4.ui.EyeExtender.*;
+
+import com.github.nicholasmoser.Message;
+import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gnt4.GNT4Characters;
+import com.github.nicholasmoser.gnt4.dol.CodeWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
@@ -19,16 +26,19 @@ import javafx.scene.text.Text;
 
 public class EyeController {
 
+  private static final Logger LOGGER = Logger.getLogger(EyeController.class.getName());
+  private static final List<String> ALL_EYE_TEXTURES = List.of(FIRST, SECOND, THIRD, FOURTH);
+  private Path dol;
+  private List<GeckoCodeGroup> codeGroups;
+  private Path codesFiles;
   public VBox costume2;
   public VBox costume3;
   public VBox costume4;
-  private Path dol;
-  private List<GeckoCodeGroup> codeGroups;
-  private static final List<String> ALL_EYE_TEXTURES = List.of(FIRST, SECOND, THIRD, FOURTH);
 
-  public void init(Path dol, List<GeckoCodeGroup> codeGroups) throws IOException {
+  public void init(Path dol, List<GeckoCodeGroup> codeGroups, Path codesFiles) throws IOException {
     this.dol = dol;
     this.codeGroups = codeGroups;
+    this.codesFiles = codesFiles;
     EyeSettings eyes = getSelections();
     for (String character : GNT4Characters.CHARACTERS) {
       costume2.getChildren().add(getRow(character, eyes.costumeTwoSelections().get(character)));
@@ -60,8 +70,10 @@ public class EyeController {
     return new EyeSettings(costumeTwoSelections, costumeThreeSelections, costumeFourSelections);
   }
 
-  private void writeSelections(EyeSettings eyes) {
-    // TODO - Write new eye texture selections to the dol
+  private void writeSelections(EyeSettings eyes) throws IOException {
+    List<GeckoCode> codes = EyeExtender.getGeckoCodes(eyes);
+    CodeWriter writer = new CodeWriter(dol, codesFiles, codeGroups);
+    writer.addCodes(CODE_NAME, codes);
   }
 
   private HBox getRow(String character, String selection) {
@@ -80,7 +92,18 @@ public class EyeController {
     return row;
   }
 
+  @FXML
   public void save() {
+    try {
+      doSave();
+      LOGGER.info("Saved new eye textures");
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Saving Codes", e);
+      Message.error("Error Saving Codes", e.getMessage());
+    }
+  }
+
+  private void doSave() throws IOException {
     HashMap<String, String> costumeTwoSelections = new HashMap<>();
     HashMap<String, String> costumeThreeSelections = new HashMap<>();
     HashMap<String, String> costumeFourSelections = new HashMap<>();
