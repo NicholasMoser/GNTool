@@ -70,9 +70,9 @@ public class EyeExtender {
   public static final String THIRD = "1302.txg";
   public static final String FOURTH = "1303.txg";
   public static final String CODE_NAME = "Allow Additional Eye Textures";
-  public static final long MAIN_TARGET_ADDR = 0x800ab634;
-  public static final long NOP1_TARGET_ADDR = 0x800ab628;
-  public static final long NOP2_TARGET_ADDR = 0x800ab630;
+  public static final long MAIN_TARGET_ADDR = 0x800ab634L;
+  public static final long NOP1_TARGET_ADDR = 0x800ab628L;
+  public static final long NOP2_TARGET_ADDR = 0x800ab630L;
   private static final byte[] NOP = ByteUtils.hexStringToBytes("60000000");
   private static final byte[] END = ByteUtils.hexStringToBytes("00000000");
   private static final byte[] CMPWI_COSTUME_2 = ByteUtils.hexStringToBytes("2C070001");
