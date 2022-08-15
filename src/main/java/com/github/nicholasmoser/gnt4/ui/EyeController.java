@@ -5,6 +5,7 @@ import static com.github.nicholasmoser.gnt4.ui.EyeExtender.*;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
+import com.github.nicholasmoser.gecko.GeckoWriter;
 import com.github.nicholasmoser.gnt4.GNT4Characters;
 import com.github.nicholasmoser.gnt4.dol.CodeWriter;
 import java.io.IOException;
@@ -76,6 +77,15 @@ public class EyeController {
     writer.addCodes(CODE_NAME, codes);
   }
 
+  private void removeExistingCode() throws IOException {
+    for (GeckoCodeGroup codeGroup : codeGroups) {
+      if (codeGroup.getName().equals(CODE_NAME)) {
+        GeckoWriter writer = new GeckoWriter(dol);
+        writer.removeCodes(codeGroup);
+      }
+    }
+  }
+
   private HBox getRow(String character, String selection) {
     selection = selection == null ? FIRST : selection;
     HBox row = new HBox();
@@ -145,6 +155,7 @@ public class EyeController {
     }
     EyeSettings eyes = new EyeSettings(costumeTwoSelections, costumeThreeSelections,
         costumeFourSelections);
+    removeExistingCode();
     writeSelections(eyes);
   }
 }

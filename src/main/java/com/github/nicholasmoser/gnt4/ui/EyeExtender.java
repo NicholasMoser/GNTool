@@ -24,43 +24,67 @@ import java.util.Optional;
 /**
  * A class to write Gecko codes for allowing additional eye textures for costumes. The main logic
  * checks if the current selected costume is costume 1, 2, 3, or 4. If it is costume 1 it will
- * always load 0 which is 1300.txg. Otherwise, it will then check if the selected character is a
- * specific character and then potentially load 1, 2, or 3 which correlates to 1301.txg, 1302.txg,
+ * always load 0 which is 1300.txg. Otherwise, it will then check if the selected character is
+ * a specific character and then potentially load 1, 2, or 3 which correlates to 1301.txg, 1302.txg,
  * or 1303.txg respectively. Last it will execute the original instruction that this new code has
  * hijacked over. Portions of the original logic will also be nop'd over. An example of the new
  * Gecko code assembly can be found below:
  *
  * <code>
- * costume_2: cmpwi r7, 0x1          ; Check if this is costume 2 bne- costume_3         ; If it is
- * not costume 2, check for costume 3 cmpwi r5, 0x7          ; Costume 2 logic. Check if Sakura is
- * selected beq- load_2            ; If Sakura, load 1302.txg cmpwi r5, 0x8          ; Check if
- * Naruto is selected beq- load_1            ; If Naruto, load 1301.txg cmpwi r5, 0x1          ;
- * Check if Sasuke is selected beq- load_1            ; If Sasuke, load 1301.txg cmpwi r5, 0x3 ;
- * Check if Kakashi is selected beq- load_3            ; If Kakashi, load 1303.txg
- * <p>
- * costume_3: cmpwi r7, 0x2          ; Check if this is costume 3 bne- costume_4         ; If it is
- * not costume 3, check for costume 4 cmpwi r5, 0xE          ; Check if Kankuro is selected beq-
- * load_1            ; If Kankuro, load 1301.txg cmpwi r5, 0x1A         ; Check if Temari is
- * selected beq- load_1            ; If Temari, load 1301.txg cmpwi r5, 0xF          ; Check if
- * Karasu is selected beq- load_3            ; If Karasu, load 1303.txg cmpwi r5, 0x12         ;
- * Check if Gaara is selected beq- load_2            ; If Gaara, load 1302.txg
- * <p>
- * costume_4: cmpwi r7, 0x3          ; Check if this is costume 4 bne- load_0            ; If it is
- * not costume 4, load 1300.txg cmpwi r5, 0x21         ; Check if Kidomaru is selected beq- load_3 ;
- * If Kidomaru, load 1303.txg cmpwi r5, 0x20         ; Check if Jirobo is selected beq- load_1
- *      ; If Jirobo, load 1301.txg cmpwi r5, 0x23         ; Check if Tayuya is selected beq- load_2
- *           ; If Tayuya, load 1302.txg cmpwi r5, 0x22         ; Check if Sakon is selected beq-
- * load_1            ; If Sakon, load 1301.txg
- * <p>
- * load_0: li r7, 0x0             ; Load 1300.txg b original_instruction
- * <p>
- * load_1: li r7, 0x1             ; Load 1301.txg b original_instruction
- * <p>
- * load_2: li r7, 0x2             ; Load 1302.txg b original_instruction
- * <p>
- * load_3: li r7, 0x3             ; Load 1303.txg b original_instruction
- * <p>
- * original_instruction: lwz r3, 12(r1)
+ * costume_2:
+ *   cmpwi r7, 0x1          ; Check if this is costume 2
+ *   bne- costume_3         ; If it is not costume 2, check for costume 3
+ *   cmpwi r5, 0x7          ; Costume 2 logic. Check if Sakura is selected
+ *   beq- load_2            ; If Sakura, load 1302.txg
+ *   cmpwi r5, 0x8          ; Check if Naruto is selected
+ *   beq- load_1            ; If Naruto, load 1301.txg
+ *   cmpwi r5, 0x1          ; Check if Sasuke is selected
+ *   beq- load_1            ; If Sasuke, load 1301.txg
+ *   cmpwi r5, 0x3          ; Check if Kakashi is selected
+ *   beq- load_3            ; If Kakashi, load 1303.txg
+ *
+ * costume_3:
+ *   cmpwi r7, 0x2          ; Check if this is costume 3
+ *   bne- costume_4         ; If it is not costume 3, check for costume 4
+ *   cmpwi r5, 0xE          ; Check if Kankuro is selected
+ *   beq- load_1            ; If Kankuro, load 1301.txg
+ *   cmpwi r5, 0x1A         ; Check if Temari is selected
+ *   beq- load_1            ; If Temari, load 1301.txg
+ *   cmpwi r5, 0xF          ; Check if Karasu is selected
+ *   beq- load_3            ; If Karasu, load 1303.txg
+ *   cmpwi r5, 0x12         ; Check if Gaara is selected
+ *   beq- load_2            ; If Gaara, load 1302.txg
+ *
+ * costume_4:
+ *   cmpwi r7, 0x3          ; Check if this is costume 4
+ *   bne- load_0            ; If it is not costume 4, load 1300.txg
+ *   cmpwi r5, 0x21         ; Check if Kidomaru is selected
+ *   beq- load_3            ; If Kidomaru, load 1303.txg
+ *   cmpwi r5, 0x20         ; Check if Jirobo is selected
+ *   beq- load_1            ; If Jirobo, load 1301.txg
+ *   cmpwi r5, 0x23         ; Check if Tayuya is selected
+ *   beq- load_2            ; If Tayuya, load 1302.txg
+ *   cmpwi r5, 0x22         ; Check if Sakon is selected
+ *   beq- load_1            ; If Sakon, load 1301.txg
+ *
+ * load_0:
+ *   li r7, 0x0             ; Load 1300.txg
+ *   b original_instruction
+ *
+ * load_1:
+ *   li r7, 0x1             ; Load 1301.txg
+ *   b original_instruction
+ *
+ * load_2:
+ *   li r7, 0x2             ; Load 1302.txg
+ *   b original_instruction
+ *
+ * load_3:
+ *   li r7, 0x3             ; Load 1303.txg
+ *   b original_instruction
+ *
+ * original_instruction:
+ *   lwz r3, 12(r1)
  * </code>
  */
 public class EyeExtender {
