@@ -5,10 +5,12 @@ import static com.github.nicholasmoser.utils.ByteUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.nicholasmoser.gecko.GeckoCode;
+import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gnt4.GNT4Characters;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class EyeExtenderTest {
@@ -39,6 +41,13 @@ public class EyeExtenderTest {
     code = codes.get(2);
     assertThat(code.getCodeBytes()).isEqualTo(hexTextToBytes(expectedNop2GeckoCode));
     assertThat(code.getTargetAddress()).isEqualTo(NOP2_TARGET_ADDR);
+
+    // Convert codes back to eye settings and assert equal
+    GeckoCodeGroup codeGroup = new GeckoCodeGroup(CODE_NAME, codes);
+    Optional<EyeSettings> actual = EyeExtender.getEyeSettings(List.of(codeGroup));
+    assertThat(actual.isPresent()).isTrue();
+    EyeSettings actualEyes = actual.get();
+    assertThat(actualEyes).isEqualTo(eyes);
   }
 
   @Test
@@ -77,6 +86,13 @@ public class EyeExtenderTest {
     code = codes.get(2);
     assertThat(code.getCodeBytes()).isEqualTo(hexTextToBytes(expectedNop2GeckoCode));
     assertThat(code.getTargetAddress()).isEqualTo(NOP2_TARGET_ADDR);
+
+    // Convert codes back to eye settings and assert equal
+    GeckoCodeGroup codeGroup = new GeckoCodeGroup(CODE_NAME, codes);
+    Optional<EyeSettings> actual = EyeExtender.getEyeSettings(List.of(codeGroup));
+    assertThat(actual.isPresent()).isTrue();
+    EyeSettings actualEyes = actual.get();
+    assertThat(actualEyes).isEqualTo(eyes);
   }
 
   @Test
@@ -115,6 +131,13 @@ public class EyeExtenderTest {
     code = codes.get(2);
     assertThat(code.getCodeBytes()).isEqualTo(hexTextToBytes(expectedNop2GeckoCode));
     assertThat(code.getTargetAddress()).isEqualTo(NOP2_TARGET_ADDR);
+
+    // Convert codes back to eye settings and assert equal
+    GeckoCodeGroup codeGroup = new GeckoCodeGroup(CODE_NAME, codes);
+    Optional<EyeSettings> actual = EyeExtender.getEyeSettings(List.of(codeGroup));
+    assertThat(actual.isPresent()).isTrue();
+    EyeSettings actualEyes = actual.get();
+    assertThat(actualEyes).isEqualTo(eyes);
   }
 
   @Test
@@ -153,6 +176,13 @@ public class EyeExtenderTest {
     code = codes.get(2);
     assertThat(code.getCodeBytes()).isEqualTo(hexTextToBytes(expectedNop2GeckoCode));
     assertThat(code.getTargetAddress()).isEqualTo(NOP2_TARGET_ADDR);
+
+    // Convert codes back to eye settings and assert equal
+    GeckoCodeGroup codeGroup = new GeckoCodeGroup(CODE_NAME, codes);
+    Optional<EyeSettings> actual = EyeExtender.getEyeSettings(List.of(codeGroup));
+    assertThat(actual.isPresent()).isTrue();
+    EyeSettings actualEyes = actual.get();
+    assertThat(actualEyes).isEqualTo(eyes);
   }
 
   @Test
@@ -208,6 +238,13 @@ public class EyeExtenderTest {
     code = codes.get(2);
     assertThat(code.getCodeBytes()).isEqualTo(hexTextToBytes(expectedNop2GeckoCode));
     assertThat(code.getTargetAddress()).isEqualTo(NOP2_TARGET_ADDR);
+
+    // Convert codes back to eye settings and assert equal
+    GeckoCodeGroup codeGroup = new GeckoCodeGroup(CODE_NAME, codes);
+    Optional<EyeSettings> actual = EyeExtender.getEyeSettings(List.of(codeGroup));
+    assertThat(actual.isPresent()).isTrue();
+    EyeSettings actualEyes = actual.get();
+    assertThat(actualEyes).isEqualTo(eyes);
   }
 
   @Test
@@ -368,5 +405,12 @@ public class EyeExtenderTest {
     code = codes.get(2);
     assertThat(code.getCodeBytes()).isEqualTo(hexTextToBytes(expectedNop2GeckoCode));
     assertThat(code.getTargetAddress()).isEqualTo(NOP2_TARGET_ADDR);
+
+    // Convert codes back to eye settings and assert equal
+    GeckoCodeGroup codeGroup = new GeckoCodeGroup(CODE_NAME, codes);
+    Optional<EyeSettings> actual = EyeExtender.getEyeSettings(List.of(codeGroup));
+    assertThat(actual.isPresent()).isTrue();
+    EyeSettings actualEyes = actual.get();
+    assertThat(actualEyes).isEqualTo(eyes);
   }
 }

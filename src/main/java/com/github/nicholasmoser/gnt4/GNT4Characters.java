@@ -147,6 +147,8 @@ public class GNT4Characters {
       .put(TAYUYA_DOKI, 0x29)
       .build();
 
+  public static final BiMap<Integer, String> ID_TO_CHR = INTERNAL_CHAR_ORDER.inverse();
+
   /**
    * A mapping of each character to their chr folder name.
    */
@@ -346,5 +348,13 @@ public class GNT4Characters {
       throw new IOException("Unable to find chr id for character: " + chr);
     }
     return chrId;
+  }
+
+  public static String getChr(int chrId) throws IOException {
+    String chr = GNT4Characters.ID_TO_CHR.get(chrId);
+    if (chr == null) {
+      throw new IOException("Unable to find character for chr id: " + chrId);
+    }
+    return chr;
   }
 }
