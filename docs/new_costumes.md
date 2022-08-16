@@ -46,6 +46,8 @@ textures on the model. If you will be using this model on actual hardware (GameC
 likely will want to make sure your new texture resolution matches the original texture
 resolution.
 
+![DAT Texture Wizard](/docs/dat_texture_wizard.png?raw=true "DAT Texture Wizard")
+
 ### Eye Texture
 
 Now we must create new eye textures for costumes that require it. Create `1301.txg`, `1302.txg`,
@@ -55,7 +57,11 @@ specific eye texture, so you can have costumes 1 and 3 use `1300.txg` and costum
 
 Use [TXG2TPL](https://github.com/Struggleton/TXG2TPL) to extract `1300.txg`. Using
 [BrawlCrate](https://github.com/soopercool101/BrawlCrate), modify each `.tpl` file to use the
-respective eye textures from your new costume. When you right click on a texture you can select
+respective eye textures from your new costume.
+
+![BrawlCrate](/docs/brawlcrate.PNG?raw=true "BrawlCrate")
+
+When you right click on a texture you can select
 **Replace** to replace the texture. IF you will be using this model on actual hardware
 (GameCube/Wii), you will likely want to change the dimensions in **BrawlCrate** to the original
 texture dimensions and hit **Apply** to save changes.
