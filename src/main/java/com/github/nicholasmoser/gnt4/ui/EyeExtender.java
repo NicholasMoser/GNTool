@@ -108,15 +108,26 @@ public class EyeExtender {
   private static final int COSTUME_4_OFFSET = 0x1C;
 
   /**
-   * load_0: li r7, 0x0             ; Load 1300.txg b original_instruction
-   * <p>
-   * load_1: li r7, 0x1             ; Load 1301.txg b original_instruction
-   * <p>
-   * load_2: li r7, 0x2             ; Load 1302.txg b original_instruction
-   * <p>
-   * load_3: li r7, 0x3             ; Load 1303.txg b original_instruction
-   * <p>
-   * original_instruction: lwz r3, 12(r1)
+   * <code>
+   * load_0:
+   *   li r7, 0x0             ; Load 1300.txg
+   *   b original_instruction
+   *
+   * load_1:
+   *   li r7, 0x1             ; Load 1301.txg
+   *   b original_instruction
+   *
+   * load_2:
+   *   li r7, 0x2             ; Load 1302.txg
+   *   b original_instruction
+   *
+   * load_3:
+   *   li r7, 0x3             ; Load 1303.txg
+   *   b original_instruction
+   *
+   * original_instruction:
+   *   lwz r3, 12(r1)
+   * </code>
    */
   public static final String FOOTER_BYTES = """
       38E00000 4800001C

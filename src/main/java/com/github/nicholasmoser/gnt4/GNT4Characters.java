@@ -350,6 +350,13 @@ public class GNT4Characters {
     return chrId;
   }
 
+  /**
+   * The character for an internal character id.
+   *
+   * @param chrId The id for a character.
+   * @return The character.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static String getChr(int chrId) throws IOException {
     String chr = GNT4Characters.ID_TO_CHR.get(chrId);
     if (chr == null) {

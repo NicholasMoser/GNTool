@@ -26,6 +26,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * UI class for modifying character costume eyes.
+ */
 public class EyeController {
 
   private static final Logger LOGGER = Logger.getLogger(EyeController.class.getName());
