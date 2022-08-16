@@ -11,6 +11,7 @@ import com.github.nicholasmoser.gnt4.dol.CodeWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,10 +79,14 @@ public class EyeController {
   }
 
   private void removeExistingCode() throws IOException {
-    for (GeckoCodeGroup codeGroup : codeGroups) {
+    Iterator<GeckoCodeGroup> iterator = codeGroups.iterator();
+    while (iterator.hasNext()) {
+      GeckoCodeGroup codeGroup = iterator.next();
       if (codeGroup.getName().equals(CODE_NAME)) {
         GeckoWriter writer = new GeckoWriter(dol);
         writer.removeCodes(codeGroup);
+        iterator.remove();
+        break;
       }
     }
   }
