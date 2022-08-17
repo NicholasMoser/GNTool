@@ -66,25 +66,20 @@ public class CostumeController {
     costume3.getItems().removeAll(costume3.getSelectionModel().getSelectedItems());
   }
 
-  public void saveCostume3() {
-    List<String> characters = costume3.getItems();
-    if (characters.isEmpty()) {
-      LOGGER.log(Level.INFO, "Must have at least one custom costume to save.");
-      Message.info("Must Have One Costume", "Must have at least one custom costume to save.");
-      return;
-    }
+  public void save() {
+    List<String> costumes3 = costume3.getItems();
+    List<String> costumes4 = costume4.getItems();
     try {
       if (hasCodes) {
         // Codes already exist, delete them before adding new codes
-        LOGGER.info("Overriding characters for costume 3");
         CostumeExtender.removeCodes(charSel, charSel4);
       } else {
         // No codes, initialize the alternate costumes model code
-        LOGGER.info("Saving characters for costume 3");
         CostumeExtender.allowAlternateCostumeModels(charSel, charSel4);
       }
       hasCodes = true;
-      CostumeExtender.writeCostumeThreeCodes(charSel, charSel4, characters);
+      CostumeExtender.writeCostumeThreeCodes(charSel, charSel4, costumes3);
+      CostumeExtender.writeCostumeFourCodes(charSel, charSel4, costumes4);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to write costume bytes", e);
       Message.info("Failed to write costume bytes", e.getMessage());
@@ -101,30 +96,5 @@ public class CostumeController {
 
   public void removeCostume4() {
     costume4.getItems().removeAll(costume4.getSelectionModel().getSelectedItems());
-  }
-
-  public void saveCostume4() {
-    List<String> characters = costume4.getItems();
-    if (characters.isEmpty()) {
-      LOGGER.log(Level.INFO, "Must have at least one custom costume to save.");
-      Message.info("Must Have One Costume", "Must have at least one custom costume to save.");
-      return;
-    }
-    try {
-      if (hasCodes) {
-        // Codes already exist, delete them before adding new codes
-        LOGGER.info("Overriding characters for costume 4");
-        CostumeExtender.removeCodes(charSel, charSel4);
-      } else {
-        // No codes, initialize the alternate costumes model code
-        LOGGER.info("Saving characters for costume 4");
-        CostumeExtender.allowAlternateCostumeModels(charSel, charSel4);
-      }
-      hasCodes = true;
-      CostumeExtender.writeCostumeFourCodes(charSel, charSel4, characters);
-    } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Failed to write costume bytes", e);
-      Message.info("Failed to write costume bytes", e.getMessage());
-    }
   }
 }

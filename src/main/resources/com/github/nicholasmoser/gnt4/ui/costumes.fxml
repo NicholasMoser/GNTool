@@ -50,9 +50,10 @@
                </font>
             </Label>
             <ListView fx:id="costume3" prefHeight="600.0" VBox.vgrow="ALWAYS" />
+            <HBox minHeight="40.0" />
          </children>
       </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+      <VBox alignment="CENTER" minHeight="40.0">
          <children>
             <Button mnemonicParsing="false" onAction="#addCostume3" text="Add">
                <font>
@@ -70,11 +71,7 @@
                   <Insets bottom="4.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" onAction="#saveCostume3" text="Save">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
+            <HBox prefHeight="100.0" prefWidth="200.0" />
          </children>
       </VBox>
       <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
@@ -85,9 +82,18 @@
                </font>
             </Label>
             <ListView fx:id="characters" prefHeight="600.0" VBox.vgrow="ALWAYS" />
+            <HBox alignment="CENTER" minHeight="40.0">
+               <children>
+                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#save" text="Save">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
          </children>
       </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+      <VBox alignment="CENTER" minHeight="40.0">
          <children>
             <Button mnemonicParsing="false" onAction="#addCostume4" text="Add">
                <font>
@@ -105,11 +111,7 @@
                   <Insets bottom="4.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" onAction="#saveCostume4" text="Save">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
+            <HBox prefHeight="100.0" prefWidth="200.0" />
          </children>
       </VBox>
       <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
@@ -120,6 +122,7 @@
                </font>
             </Label>
             <ListView fx:id="costume4" prefHeight="600.0" VBox.vgrow="ALWAYS" />
+            <HBox minHeight="40.0" />
          </children>
       </VBox>
    </children>
