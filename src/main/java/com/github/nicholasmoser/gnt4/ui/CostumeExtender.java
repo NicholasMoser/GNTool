@@ -407,13 +407,13 @@ public class CostumeExtender {
    */
   public static void removeCodes(Path charSel, Path charSel4) throws IOException {
     for (SeqEdit code : SeqExt.getEdits(charSel)) {
-      if (CODE_NAMES.contains(code)) {
+      if (CODE_NAMES.contains(code.getName())) {
         SeqExt.removeEdit(code, charSel);
         System.out.println("Removed code " + code + " from " + charSel);
       }
     }
     for (SeqEdit code : SeqExt.getEdits(charSel4)) {
-      if (CODE_NAMES.contains(code)) {
+      if (CODE_NAMES.contains(code.getName())) {
         SeqExt.removeEdit(code, charSel4);
         System.out.println("Removed code " + code + " from " + charSel4);
       }
