@@ -94,3 +94,14 @@ In the above image you can see that each character costume can select between `1
 When you are done hit **Save**.
 
 Your costumes should now be selectable with Y and/or Z in-game.
+
+## Troubleshooting
+
+If the colors of the texture seem to be off, check the texture image type:
+
+![CI8](/docs/CI8.png?raw=true "CI8")
+
+In this example, the textures are in the CI8 format, where ach value is an 8 bit palette index.
+This is different than the CMPR format that most GNT4 model textures seem to use.
+
+You can use applications like Photoshop to change the textures from RGB Color to Indexed Color.
