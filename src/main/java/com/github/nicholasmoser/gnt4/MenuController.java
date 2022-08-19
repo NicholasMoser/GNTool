@@ -21,6 +21,7 @@ import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.chr.ZabuzaPhantomSwordFix;
 import com.github.nicholasmoser.gnt4.cpu.CPUFlags;
 import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
+import com.github.nicholasmoser.gnt4.dol.CodeWriter;
 import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
@@ -32,6 +33,8 @@ import com.github.nicholasmoser.gnt4.trans.TranslationState;
 import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.gnt4.ui.ChrOrder;
 import com.github.nicholasmoser.gnt4.ui.ChrOrderSave;
+import com.github.nicholasmoser.gnt4.ui.CostumeController;
+import com.github.nicholasmoser.gnt4.ui.EyeController;
 import com.github.nicholasmoser.gnt4.ui.OrderController;
 import com.github.nicholasmoser.gnt4.ui.StageOrder;
 import com.github.nicholasmoser.gnt4.ui.StageOrderSave;
@@ -63,7 +66,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -352,6 +354,7 @@ public class MenuController {
     }
   }
 
+  @FXML
   public void reorderCharacters() {
     for (GeckoCodeGroup group : codeGroups) {
       if ("Add Random Select and Reorder CSS [Nick]".equals(group.getName()) ||
@@ -371,7 +374,6 @@ public class MenuController {
         defragCodeGroups(codeGroups);
       }
     }
-    //
     try {
       FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
       Scene scene = new Scene(loader.load());
@@ -390,6 +392,7 @@ public class MenuController {
     }
   }
 
+  @FXML
   public void reorderStages() {
     try {
       FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("order.fxml"));
@@ -407,6 +410,46 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Reorder Stages", e);
       Message.error("Failed to Reorder Stages", e.getMessage());
+    }
+  }
+
+  @FXML
+  public void modifyCostumes() {
+    try {
+      FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("costumes.fxml"));
+      Scene scene = new Scene(loader.load());
+      GUIUtils.initDarkMode(scene);
+      CostumeController costumeController = loader.getController();
+      Stage stage = new Stage();
+      GUIUtils.setIcons(stage);
+      costumeController.init(uncompressedDirectory);
+      stage.setScene(scene);
+      stage.setTitle("Modify Costumes");
+      stage.centerOnScreen();
+      stage.show();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Modify Costumes", e);
+      Message.error("Failed to Modify Costumes", e.getMessage());
+    }
+  }
+
+  @FXML
+  public void modifyEyes() {
+    try {
+      FXMLLoader loader = new FXMLLoader(OrderController.class.getResource("eyes.fxml"));
+      Scene scene = new Scene(loader.load());
+      GUIUtils.initDarkMode(scene);
+      EyeController eyeController = loader.getController();
+      Stage stage = new Stage();
+      GUIUtils.setIcons(stage);
+      eyeController.init(dolPath, codeGroups, getCodesFile());
+      stage.setScene(scene);
+      stage.setTitle("Modify Eyes");
+      stage.centerOnScreen();
+      stage.show();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Modify Eyes", e);
+      Message.error("Failed to Modify Eyes", e.getMessage());
     }
   }
 
@@ -1374,7 +1417,7 @@ public class MenuController {
       if (DolHijack.checkHijackOverflow(codeGroups, codes, CodeCave.EXI2)) {
         return;
       }
-      if (targetAddressOverlap(codes)) {
+      if (CodeWriter.targetAddressOverlap(codes, codeGroups)) {
         return;
       }
       Message.info("Valid Codes Found", codes.toString());
@@ -1386,26 +1429,13 @@ public class MenuController {
 
   @FXML
   protected void addCodes() {
-    String text = geckoCodes.getText();
-    GeckoReader reader = new GeckoReader();
     try {
-      List<GeckoCode> codes = reader.parseCodes(text);
-      if (DolHijack.checkHijackOverflow(codeGroups, codes, CodeCave.EXI2)) {
-        return;
-      }
-      if (targetAddressOverlap(codes)) {
-        return;
-      }
+      GeckoReader reader = new GeckoReader();
       String name = codeName.getText();
-      if (!checkNameValid((name))) {
-        return;
-      }
-      long hijackStartAddress = DolHijack.getEndOfHijacking(codeGroups, CodeCave.EXI2);
-      GeckoWriter writer = new GeckoWriter(dolPath);
-      GeckoCodeGroup group = writer.writeCodes(codes, name, hijackStartAddress);
-      codeGroups.add(group);
-      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
-      GeckoCodeJSON.writeFile(codeGroups, codeFile);
+      String text = geckoCodes.getText();
+      List<GeckoCode> codes = reader.parseCodes(text);
+      CodeWriter writer = new CodeWriter(dolPath, getCodesFile(), codeGroups);
+      writer.addCodes(name, codes);
       asyncRefresh();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Parsing Codes", e);
@@ -1479,6 +1509,8 @@ public class MenuController {
   private void syncRefresh() throws IOException {
     LOGGER.log(Level.INFO, "Refreshing workspace.");
     List<WorkspaceFile> allFiles = workspace.getAllFiles();
+    // The below two calls can be slow the first time they are called since it needs to check
+    // if each file in the workspace exists. I'm not sure if this can be avoided.
     refreshMissingFiles(allFiles);
     refreshChangedFiles(allFiles);
     refreshActiveCodes();
@@ -1577,7 +1609,7 @@ public class MenuController {
       try {
         addedCodes.getItems().clear();
 
-        Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+        Path codeFile = getCodesFile();
 
         if (DolHijack.isUsingCodeCave(dolPath, CodeCave.RECORDING)) {
           if (DolHijack.isUsingCodeCave(dolPath, CodeCave.EXI2)) {
@@ -1809,54 +1841,6 @@ public class MenuController {
   }
 
   /**
-   * Returns whether or not the given Code Name is valid. Logs and displays a message if not.
-   *
-   * @param name The Code Name.
-   * @return If the Code Name is valid.
-   */
-  private boolean checkNameValid(String name) {
-    if (name == null || name.isBlank()) {
-      String message = "Code Name required for new codes.";
-      LOGGER.log(Level.SEVERE, message);
-      Message.error("Code Error", message);
-      return false;
-    }
-    for (GeckoCodeGroup codeGroup : codeGroups) {
-      if (name.equals(codeGroup.getName())) {
-        String message = "This Code Name already exists.";
-        LOGGER.log(Level.SEVERE, message);
-        Message.error("Code Error", message);
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Checks if the target addresses of the given codes overlap with any existing codes. Logs and
-   * displays a message if so.
-   *
-   * @param codes The codes to check.
-   * @return If any of the target addresses of the codes overlap any of the existing codes.
-   */
-  private boolean targetAddressOverlap(List<GeckoCode> codes) {
-    for (GeckoCode code : codes) {
-      long targetAddress = code.getTargetAddress();
-      for (GeckoCodeGroup codeGroup : codeGroups) {
-        for (GeckoCode existingCode : codeGroup.getCodes()) {
-          if (targetAddress == existingCode.getTargetAddress()) {
-            String message = "This code overlaps with: " + codeGroup.getName();
-            LOGGER.log(Level.SEVERE, message);
-            Message.error("Code Error", message);
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
    * Checks if the dol has been modded via code injection. Logs and displays a message if so.
    *
    * @return If the dol is modded via code injection.
@@ -1882,7 +1866,7 @@ public class MenuController {
     try {
       DolDefragger defragger = new DolDefragger(dolPath, codeGroups, CodeCave.EXI2);
       defragger.run();
-      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      Path codeFile = getCodesFile();
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Defrag Codes", e);
@@ -1908,7 +1892,7 @@ public class MenuController {
             msg);
       }
       codeGroups.remove(group);
-      Path codeFile = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+      Path codeFile = getCodesFile();
       GeckoCodeJSON.writeFile(codeGroups, codeFile);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to Remove Code", e);
@@ -1963,5 +1947,16 @@ public class MenuController {
       recordingFlag.setDisable(true);
       recordingCounterFlag.setDisable(true);
     }
+  }
+
+  /**
+   * @return The codes.json path, preferring uncompressed/files/codes.json
+   */
+  private Path getCodesFile() {
+    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.CODE_FILE);
+    if (Files.exists(codePath)) {
+      return codePath;
+    }
+    return workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
   }
 }

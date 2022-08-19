@@ -8,6 +8,8 @@
 - [Frames Until Model is Loaded in Character Select Screen](#frames-until-model-is-loaded-in-character-select-screen)
 - [Reorder Characters](#reorder-characters)
 - [Reorder Stages](#reorder-stages)
+- [Modify Costumes](#modify-costumes)
+- [Modify Eyes](#modify-eyes)
 
 ![User Interface](/docs/ui.png?raw=true "User Interface")
 
@@ -58,3 +60,16 @@ so before you are able to change the order it first asks to remove these random 
 ## Reorder Stages
 
 Allows you to reorder the stages in the character select screen.
+
+## Modify Costumes
+
+Allows you to add third and fourth costumes to specific characters.
+
+For more info see [New Costumes](/docs/new_costumes.md).
+
+## Modify Eyes
+
+Allows you to use alternate eye textures for the second, third, and fourth costumes of specific
+characters.
+
+For more info see [New Costumes](/docs/new_costumes.md).
