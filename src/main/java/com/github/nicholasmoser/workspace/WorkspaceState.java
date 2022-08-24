@@ -32,6 +32,15 @@ public interface WorkspaceState {
   void addFile(WorkspaceFile file) throws IOException;
 
   /**
+   * Removes a file from the workspace state.
+   *
+   * @param filePath The path to the file.
+   * @return If any files were deleted.
+   * @throws IOException If any I/O exception occurs.
+   */
+  boolean removeFile(String filePath) throws IOException;
+
+  /**
    * Deletes the entire workspace state.
    */
   void delete() throws IOException;

@@ -19,7 +19,7 @@ import org.json.JSONTokener;
 public class GeckoCodeJSON {
 
   // The path to codes.json file when it is bundled with the ISO
-  public static final String PACKED_CODE_FILE_PATH = "cmn/codes.json";
+  public static final String PACKED_CODE_FILE_PATH = "sys/codes.json";
   public static final String CODE_FILE = "codes.json";
 
   /**
