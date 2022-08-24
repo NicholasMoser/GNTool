@@ -2,24 +2,15 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.seq.comment.Function;
 import com.github.nicholasmoser.gnt4.seq.comment.Functions;
-import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingLinkingOpcode;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
-import com.github.nicholasmoser.gnt4.seq.opcodes.InvalidBytes;
-import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.*;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.ToIntFunction;
 
 public class SeqKing {
 
@@ -163,6 +154,7 @@ public class SeqKing {
       try {
         newOpcode = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode);
       } catch (Exception e) {
+        System.err.println(e);
         if (permissive) {
           // Invalid opcode, mark it as invalid bytes and continue
           bs.seek(tempOffset);
@@ -172,6 +164,11 @@ public class SeqKing {
         }
       }
       opcodes.add(newOpcode);
+      if (newOpcode instanceof PointerTableLookup) {
+        if (!opcodes.contains(((PointerTableLookup) newOpcode).getLut())) {
+          opcodes.add(((PointerTableLookup) newOpcode).getLut());
+        }
+      }
       if (verbose) {
         System.out.println(newOpcode);
       }
@@ -194,6 +191,12 @@ public class SeqKing {
         break; // EOF
       }
     }
+    Collections.sort(opcodes, Comparator.comparingInt(new ToIntFunction<Opcode>() {
+      @Override
+      public int applyAsInt(Opcode value) {
+        return value.getOffset();
+      }
+    }));
     return opcodes;
   }
 

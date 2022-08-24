@@ -5,7 +5,7 @@ import static j2html.TagCreator.span;
 import j2html.tags.ContainerTag;
 import j2html.tags.specialized.SpanTag;
 
-public interface Opcode {
+public interface Opcode{
 
   int getOffset();
 

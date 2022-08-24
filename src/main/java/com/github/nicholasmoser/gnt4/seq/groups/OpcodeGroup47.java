@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SpawnProjectile;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -55,7 +56,7 @@ public class OpcodeGroup47 {
     String info = String.format("%s; binary data at offset 0x%X", ea.getDescription(), structOffset);
     baos.write(ByteUtils.fromInt32(structOffset));
     baos.write(bs.readBytes(0x8));
-    return new UnknownOpcode(offset, baos.toByteArray(), info);
+    return new SpawnProjectile(offset, baos.toByteArray());
   }
 
   public static Opcode op_4706(ByteStream bs) throws IOException {

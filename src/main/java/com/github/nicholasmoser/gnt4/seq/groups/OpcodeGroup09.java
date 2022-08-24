@@ -119,11 +119,12 @@ public class OpcodeGroup09 {
   }
 
   private static Opcode ptr_table_lookup(ByteStream bs) throws IOException {
-    int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    byte[] bytes = bs.readBytes(4);
-    int tableOffset = ByteUtils.toInt32(bytes);
-    return new PointerTableLookup(offset, Bytes.concat(ea.getBytes(), bytes), tableOffset, ea.getDescription());
+    //int offset = bs.offset();
+    //SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    //byte[] bytes = bs.readBytes(4);
+    //int tableOffset = ByteUtils.toInt32(bytes);
+    //return new PointerTableLookup(offset, Bytes.concat(ea.getBytes(), bytes), tableOffset, ea.getDescription());
+    return new PointerTableLookup(bs);
   }
 
   private static Opcode ptr_b(ByteStream bs) throws IOException {
