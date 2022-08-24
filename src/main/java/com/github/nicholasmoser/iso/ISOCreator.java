@@ -39,7 +39,7 @@ public class ISOCreator {
   public void create(boolean pushFilesToEnd) throws IOException {
     DirectoryParser parser = new DirectoryParser(inputPath, pushFilesToEnd);
     ISOHeader isoHeader = parser.getISOHeader();
-    create(isoHeader);
+    create(pushFilesToEnd, isoHeader);
   }
 
   /**
@@ -48,8 +48,13 @@ public class ISOCreator {
    * @param isoHeader The ISOHeader for the ISO.
    * @throws IOException If an I/O error occurs.
    */
-  public void create(ISOHeader isoHeader)
+  public void create(boolean pushFilesToEnd, ISOHeader isoHeader)
       throws IOException {
+    // Rewrite the fst.bin and get a new ISOHeader afterwards
+    FileSystemTable.rewrite(inputPath, isoHeader);
+    DirectoryParser parser = new DirectoryParser(inputPath, pushFilesToEnd);
+    isoHeader = parser.getISOHeader();
+
     // Get values for files in the sys folder
     Path apploaderImgPath = resolve("sys/apploader.img");
     Path bi2BinPath = resolve("sys/bi2.bin");
@@ -64,8 +69,7 @@ public class ISOCreator {
     int fstOffset = fstBin.getPos();
     int fstSize = fstBin.getLen();
 
-    // Rewrite the fst.bin and offsets/sizes in the boot.bin
-    FileSystemTable.rewrite(inputPath, isoHeader);
+    // Write offsets/sizes to the boot.bin
     bootBinRewrite(bootBinPath, dolOffset, fstOffset, fstSize);
 
     // Write out the ISO
