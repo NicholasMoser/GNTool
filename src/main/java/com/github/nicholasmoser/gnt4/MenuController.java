@@ -66,6 +66,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -727,6 +728,32 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Adding File", e);
       Message.error("Error Adding File", e.getMessage());
+    }
+  }
+
+  @FXML
+  public void removeFile() {
+    // Get input file
+    if (lastUncompressedSubdirectory == null) {
+      lastUncompressedSubdirectory = uncompressedDirectory;
+    }
+    Optional<Path> input = Choosers.getInputUncompressedFile(uncompressedDirectory,
+        lastUncompressedSubdirectory);
+    if (input.isEmpty()) {
+      return;
+    }
+    lastUncompressedSubdirectory = input.get().getParent();
+
+    String filePath = uncompressedDirectory.relativize(input.get()).toString().replace("\\", "/");
+    try {
+      if (!workspace.removeFile(filePath)) {
+        throw new IOException("Unable to find " + filePath);
+      }
+      Path compressedFile = compressedDirectory.resolve(filePath);
+      Files.deleteIfExists(compressedFile);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Removing File", e);
+      Message.error("Error Removing File", e.getMessage());
     }
   }
 
@@ -1953,7 +1980,7 @@ public class MenuController {
    * @return The codes.json path, preferring uncompressed/files/codes.json
    */
   private Path getCodesFile() {
-    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.PACKED_CODE_FILE_PATH);
+    Path codePath = uncompressedDirectory.resolve(GeckoCodeJSON.PACKED_CODE_FILE_PATH);
     if (Files.exists(codePath)) {
       return codePath;
     }

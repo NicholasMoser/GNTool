@@ -30,9 +30,13 @@
     <Menu mnemonicParsing="false" text="File">
       <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace" />
       <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+         <SeparatorMenuItem mnemonicParsing="false" text="Files" />
       <MenuItem accelerator="F7" mnemonicParsing="false" onAction="#addFile" text="Add File" />
          <MenuItem accelerator="F8" mnemonicParsing="false" onAction="#addFileToFPK" text="Add File to FPK" />
+         <MenuItem mnemonicParsing="false" onAction="#removeFile" text="Remove File" />
+         <SeparatorMenuItem mnemonicParsing="false" text="Accessibility" />
       <MenuItem accelerator="F6" mnemonicParsing="false" onAction="#toggleDarkMode" text="Toggle Dark Mode" />
+         <SeparatorMenuItem mnemonicParsing="false" text="Build" />
       <CheckMenuItem fx:id="parallelBuild" mnemonicParsing="false" selected="true" text="Parallel Build" />
       <CheckMenuItem fx:id="pushToBackOfISO" mnemonicParsing="false" selected="true" text="Push Files to Back of ISO" />
       <MenuItem mnemonicParsing="false" onAction="#build" text="Build ISO" />
