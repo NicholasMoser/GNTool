@@ -135,8 +135,9 @@ public class SQLiteWorkspaceState implements WorkspaceState {
           }
         } else {
           // Add each non-FPK file to the database
-          FileTime time = Files.getLastModifiedTime(filePath);
-          int hash = CRC32.getHash(filePath);
+          Path path = uncompressedDir.resolve(relativePath);
+          FileTime time = Files.getLastModifiedTime(path);
+          int hash = CRC32.getHash(path);
           stmt.setString(1, relativePath);
           stmt.setInt(2, hash);
           stmt.setLong(3, time.toMillis());
