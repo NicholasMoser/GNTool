@@ -99,7 +99,7 @@ public class DuplicateISOTest {
     DirectoryParser dirParser = new DirectoryParser(testDirectory, true);
     ISOHeader isoHeader = dirParser.getISOHeader();
     ISOCreator creator = new ISOCreator(testDirectory, testIso);
-    creator.create(isoHeader);
+    creator.create(true, isoHeader);
     validateISO(testIso);
   }
 

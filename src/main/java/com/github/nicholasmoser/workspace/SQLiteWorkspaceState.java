@@ -49,6 +49,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
       );
       """;
   public static final String INSERT_FILE = "INSERT INTO file(file_path,hash,modified_dt_tm,fpk_file_path,compressed) VALUES(?,?,?,?,?)";
+  public static final String DELETE_FILE = "DELETE FROM file where file_path = ?";
   public static final String DELETE_ALL_FILES = "DELETE FROM file";
   public static final String SELECT_DISTINCT_FPK_FILE_PATHS = "SELECT DISTINCT fpk_file_path FROM file";
   public static final String SELECT_FILE = "SELECT file_path,hash,modified_dt_tm,fpk_file_path,compressed FROM FILE WHERE file_path = ?";
@@ -161,8 +162,7 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   }
 
   @Override
-  public void addFile(WorkspaceFile file)
-      throws IOException {
+  public void addFile(WorkspaceFile file) throws IOException {
     LOGGER.info("Inserting file " + file.filePath() + " into workspace state");
     try (PreparedStatement stmt = conn.prepareStatement(INSERT_FILE)) {
       stmt.setString(1, file.filePath());
@@ -171,6 +171,19 @@ public class SQLiteWorkspaceState implements WorkspaceState {
       stmt.setString(4, file.fpkFilePath());
       stmt.setBoolean(5, file.compressed());
       stmt.execute();
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+  }
+
+  @Override
+  public boolean removeFile(String filePath) throws IOException {
+    LOGGER.info("Removing file " + filePath + " from workspace state");
+    try (PreparedStatement stmt = conn.prepareStatement(DELETE_FILE)) {
+      stmt.setString(1, filePath);
+      int rows = stmt.executeUpdate();
+      LOGGER.info("Removed " + rows + " files");
+      return rows > 0;
     } catch (SQLException e) {
       throw new IOException(e);
     }
