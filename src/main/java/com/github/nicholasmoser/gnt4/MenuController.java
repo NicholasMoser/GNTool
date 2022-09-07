@@ -1980,7 +1980,7 @@ public class MenuController {
    * @return The codes.json path, preferring uncompressed/files/codes.json
    */
   private Path getCodesFile() {
-    Path codePath = uncompressedDirectory.resolve(GeckoCodeJSON.PACKED_CODE_FILE_PATH);
+    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.PACKED_CODE_FILE_PATH);
     if (Files.exists(codePath)) {
       return codePath;
     }
