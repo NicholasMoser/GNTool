@@ -42,6 +42,7 @@ public class Comments {
     allComments.put(Seqs.ANK_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x46E4, "// Errors here when a model is not available for the given costume");
     allComments.put(Seqs.BOU_0000, comments);
 
     comments = getChrBaseComments();
@@ -91,6 +92,7 @@ public class Comments {
     allComments.put(Seqs.KAN_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x4554, "// Errors here when a model is not available for the given costume");
     allComments.put(Seqs.KAR_0000, comments);
 
     comments = getChrBaseComments();
