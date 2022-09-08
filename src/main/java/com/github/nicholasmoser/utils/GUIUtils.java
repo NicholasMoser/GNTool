@@ -58,6 +58,12 @@ public class GUIUtils {
     return createLoadingWindow(title, task, 450, 200);
   }
 
+  /**
+   * Browse the given UI in a separate task. This is done to provide compatibility with both
+   * Windows and Linux, due to weirdness with mixing java.awt.Desktop with JavaFX.
+   *
+   * @param uri The URI to browse to.
+   */
   public static void browse(String uri) {
     Task<Void> task = new Task<>() {
       @Override
@@ -75,6 +81,12 @@ public class GUIUtils {
     new Thread(task).start();
   }
 
+  /**
+   * Open the given file path in a separate task. This is done to provide compatibility with both
+   * Windows and Linux, due to weirdness with mixing java.awt.Desktop with JavaFX.
+   *
+   * @param filePath The file path to open.
+   */
   public static void open(Path filePath) {
     Task<Void> task = new Task<>() {
       @Override

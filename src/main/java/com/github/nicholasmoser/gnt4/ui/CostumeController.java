@@ -90,6 +90,13 @@ public class CostumeController {
     }
   }
 
+  /**
+   * Verify the integrity of the costumes and offer fixes where appropriate.
+   *
+   * @param costumes3 The list of characters with third costumes.
+   * @param costumes4 The list of characters with fourth costumes.
+   * @throws IOException If an I/O error occurs
+   */
   private void verifyIntegrity(List<String> costumes3, List<String> costumes4) throws IOException {
     if (costumes3.contains(GNT4Characters.KANKURO)) {
       Path kar0200dat = uncompressedDirectory.resolve("files/chr/kar/0200.dat");
