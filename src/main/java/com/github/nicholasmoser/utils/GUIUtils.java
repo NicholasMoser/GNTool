@@ -1,6 +1,9 @@
 package com.github.nicholasmoser.utils;
 
+import com.github.nicholasmoser.Message;
+import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -53,6 +56,40 @@ public class GUIUtils {
    */
   public static Stage createLoadingWindow(String title, Task<?> task) {
     return createLoadingWindow(title, task, 450, 200);
+  }
+
+  public static void browse(String uri) {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        Desktop.getDesktop().browse(new URI(uri));
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable,oldValue, e) -> {
+      if (e!=null){
+        LOGGER.log(Level.SEVERE, "Error Opening URI", e);
+        Message.error("Error Opening URI", e.getMessage());
+      }
+    });
+    new Thread(task).start();
+  }
+
+  public static void open(Path filePath) {
+    Task<Void> task = new Task<>() {
+      @Override
+      public Void call() throws Exception {
+        Desktop.getDesktop().open(filePath.toFile());
+        return null;
+      }
+    };
+    task.exceptionProperty().addListener((observable, oldValue, e) -> {
+      if (e != null) {
+        LOGGER.log(Level.SEVERE, "Error Opening File", e);
+        Message.error("Error Opening File", e.getMessage());
+      }
+    });
+    new Thread(task).start();
   }
 
   /**
