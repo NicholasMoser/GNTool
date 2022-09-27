@@ -96,7 +96,7 @@
   {
     "codes": [
       {
-        "bytes": "3FA00000",
+        "bytes": "3F800000",
         "targetAddress": "80278890",
         "replacedBytes": "3FC00000",
         "type": "04"
@@ -212,7 +212,6 @@
     ],
     "name": "Add Random Select to Character Select Screen [Nick]"
   },
-  ,
   {
     "codes": [
       {
@@ -228,7 +227,7 @@
         "type": "C2"
       },
       {
-        "bytes": "00000026",
+        "bytes": "0000000E",
         "targetAddress": "80213FB4",
         "replacedBytes": "00000011",
         "type": "04"
@@ -240,7 +239,7 @@
         "type": "04"
       }
     ],
-    "name": "Add Random Select to Character Select Screen v2 [Nick]"
+    "name": "Add Random Select to Character Select Screen v3 [Nick]"
   },
   {
     "codes": [

@@ -85,6 +85,11 @@ public class GNT4Workspace implements Workspace {
   }
 
   @Override
+  public boolean removeFile(String filePath) throws IOException {
+    return state.removeFile(filePath);
+  }
+
+  @Override
   public List<WorkspaceFile> getAllFiles() throws IOException {
     return state.getAllFiles();
   }
@@ -92,6 +97,7 @@ public class GNT4Workspace implements Workspace {
   @Override
   public Set<String> getMissingFiles(List<WorkspaceFile> allFiles) {
     Set<String> missingFiles = new HashSet<>();
+
     for (WorkspaceFile filePath : allFiles) {
       if (!Files.exists(uncompressed.resolve(filePath.filePath()))) {
         missingFiles.add(filePath.filePath());
@@ -129,7 +135,7 @@ public class GNT4Workspace implements Workspace {
       String fpkFilePath = file.fpkFilePath();
       if (fpkFilePath != null) {
         // FPK child file
-        Path saved = compressed.resolve(filePath);
+        Path saved = compressed.resolve(fpkFilePath);
         Path current = uncompressed.resolve(filePath);
         String compressedPath = options.fileNames().getCompressedName(filePath);
         byte[] bytes = FPKUtils.getChildBytes(saved, compressedPath, options.longPaths(),

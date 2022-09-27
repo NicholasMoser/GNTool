@@ -30,9 +30,13 @@
     <Menu mnemonicParsing="false" text="File">
       <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace" />
       <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+         <SeparatorMenuItem mnemonicParsing="false" text="Files" />
       <MenuItem accelerator="F7" mnemonicParsing="false" onAction="#addFile" text="Add File" />
          <MenuItem accelerator="F8" mnemonicParsing="false" onAction="#addFileToFPK" text="Add File to FPK" />
+         <MenuItem mnemonicParsing="false" onAction="#removeFile" text="Remove File" />
+         <SeparatorMenuItem mnemonicParsing="false" text="Accessibility" />
       <MenuItem accelerator="F6" mnemonicParsing="false" onAction="#toggleDarkMode" text="Toggle Dark Mode" />
+         <SeparatorMenuItem mnemonicParsing="false" text="Build" />
       <CheckMenuItem fx:id="parallelBuild" mnemonicParsing="false" selected="true" text="Parallel Build" />
       <CheckMenuItem fx:id="pushToBackOfISO" mnemonicParsing="false" selected="true" text="Push Files to Back of ISO" />
       <MenuItem mnemonicParsing="false" onAction="#build" text="Build ISO" />
@@ -600,6 +604,7 @@
                            <RowConstraints />
                            <RowConstraints />
                            <RowConstraints />
+                           <RowConstraints />
                        </rowConstraints>
                         <children>
                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#defaultCSSModelLoad" text="Default" GridPane.columnIndex="2" GridPane.rowIndex="8">
@@ -800,6 +805,30 @@
                               </font>
                            </Button>
                            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#reorderStages" text="Reorder Stages" GridPane.rowIndex="10">
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                           </Button>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyCostumes" text="Modify Costumes" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              </GridPane.margin>
+                           </Button>
+                           <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-id" text="Additional Character Costumes" GridPane.rowIndex="11">
+                              <font>
+                                 <Font size="16.0" />
+                              </font>
+                              <GridPane.margin>
+                                 <Insets left="8.0" />
+                              </GridPane.margin>
+                           </Text>
+                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyEyes" text="Modify Eyes" GridPane.columnIndex="2" GridPane.rowIndex="11">
                               <GridPane.margin>
                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                               </GridPane.margin>

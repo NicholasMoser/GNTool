@@ -134,6 +134,12 @@ public class Comments {
     allComments.put(Seqs.SAR_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x65E8,
+        "0xD is converted to the String \"13\" to load either 1300.txg or 1301.txg");
+    comments.put(0x6600, "Load eye texture in gpr12");
+    comments.put(0x83F8,
+        "0xD is converted to the String \"13\" to load either 1300.txg or 1301.txg");
+    comments.put(0x8410, "Load alternate eye texture in gpr12");
     allComments.put(Seqs.SAS_0000, comments);
 
     comments = getChrBaseComments();
@@ -167,7 +173,58 @@ public class Comments {
     charSelComments.put(0xCE4, "// Random stage value is set here");
     charSelComments.put(0x2370, "// Stage IDs");
     charSelComments.put(0x23F0, "// Stage Display IDs");
+    charSelComments.put(0x3A14, "// Costume ID is read here, 7FFFFF3D is the costume_id");
+    charSelComments.put(0x572C, "// Models specific for costumes 3 and 4 here (Sakura, Ino only)");
+    charSelComments.put(0x690C, "// Set the costume_id to 7FFFFF3D");
+
+    charSelComments.put(0xEC68, "// Select Costume 1, Player 1");
+    charSelComments.put(0xEC98, "// Select Costume 2, Player 1");
+    charSelComments.put(0xECC8, "// Check Costume 3, Player 1 (Haku/Sakura/Ino only)");
+    charSelComments.put(0xED0C, "// Check Costume 4, Player 1 (Haku/Sakura/Ino only)");
+    charSelComments.put(0xED50, "// Select Costume 3, Player 1");
+    charSelComments.put(0xED80, "// Select Costume 4, Player 1");
+
+    charSelComments.put(0xEDB0, "// Select Costume 1, Player 2");
+    charSelComments.put(0xEDE0, "// Select Costume 2, Player 2");
+    charSelComments.put(0xEE10, "// Check Costume 3, Player 2 (Haku/Sakura/Ino only)");
+    charSelComments.put(0xEE54, "// Check Costume 4, Player 2 (Haku/Sakura/Ino only)");
+    charSelComments.put(0xEE98, "// Select Costume 3, Player 2");
+    charSelComments.put(0xEEC8, "// Select Costume 4, Player 2");
     allComments.put(Seqs.CHARSEL, charSelComments);
+
+    Multimap<Integer, String> charSel4Comments = ArrayListMultimap.create();
+    charSel4Comments.put(0x4AF0, "// Models specific for costumes 3 and 4 here (Sakura, Ino only)");
+    charSel4Comments.put(0x79A0, "// Select Costume 1, Player 1");
+    charSel4Comments.put(0x79C8, "// Select Costume 2, Player 1");
+    charSel4Comments.put(0x79F0, "// Check Costume 3, Player 1 (Haku/Sakura/Ino only)");
+    charSel4Comments.put(0x7A38, "// Select Costume 3, Player 1");
+    charSel4Comments.put(0x7A60, "// Check Costume 4, Player 1 (Haku/Sakura/Ino only)");
+    charSel4Comments.put(0x7AA8, "// Select Costume 4, Player 1");
+
+    charSel4Comments.put(0x7AD0, "// Select Costume 1, Player 2");
+    charSel4Comments.put(0x7AF8, "// Select Costume 2, Player 2");
+    charSel4Comments.put(0x7B20, "// Check Costume 3, Player 2 (Haku/Sakura/Ino only)");
+    charSel4Comments.put(0x7B68, "// Select Costume 3, Player 2");
+    charSel4Comments.put(0x7B90, "// Check Costume 4, Player 2 (Haku/Sakura/Ino only)");
+    charSel4Comments.put(0x7BD8, "// Select Costume 4, Player 2");
+
+    charSel4Comments.put(0x7C00, "// Select Costume 1, Player 3");
+    charSel4Comments.put(0x7C28, "// Select Costume 2, Player 3");
+    charSel4Comments.put(0x7C50, "// Check Costume 3, Player 3 (Haku/Sakura/Ino only)");
+    charSel4Comments.put(0x7C98, "// Select Costume 3, Player 3");
+    charSel4Comments.put(0x7CC0, "// Check Costume 4, Player 3 (Haku/Sakura/Ino only)");
+    charSel4Comments.put(0x7D08, "// Select Costume 4, Player 3");
+
+    charSel4Comments.put(0x7D30, "// Select Costume 1, Player 4");
+    charSel4Comments.put(0x7D58, "// Select Costume 2, Player 4");
+    charSel4Comments.put(0x7D80, "// Check Costume 3, Player 4 (Haku/Sakura/Ino only)");
+    charSel4Comments.put(0x7E38, "// Select Costume 4, Player 4");
+    charSel4Comments.put(0x7DF0, "// Check Costume 4, Player 4 (Haku/Sakura/Ino only)");
+    charSel4Comments.put(0x7DC8, "// Select Costume 3, Player 4");
+    allComments.put(Seqs.CHARSEL_4, charSel4Comments);
+
+    // m_vs.seq 0x3838 Reads the character costume ID
+    // m_vs.seq 0x3840 Does something with the character costume ID
 
     return allComments;
   }

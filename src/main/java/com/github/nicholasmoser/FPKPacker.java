@@ -91,6 +91,7 @@ public class FPKPacker {
     for (String changedNonFPK : changedNonFPKFiles) {
       Path newFile = uncompressedDirectory.resolve(changedNonFPK);
       Path oldFile = compressedDirectory.resolve(changedNonFPK);
+      Files.createDirectories(oldFile.getParent());
       Files.copy(newFile, oldFile, REPLACE_EXISTING);
     }
     if (changedNonFPKFiles.isEmpty()) {

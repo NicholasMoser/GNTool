@@ -4,6 +4,7 @@ import static java.util.Map.entry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -145,6 +146,8 @@ public class GNT4Characters {
       .put(HINATA_AWAKENED, 0x28)
       .put(TAYUYA_DOKI, 0x29)
       .build();
+
+  public static final BiMap<Integer, String> ID_TO_CHR = INTERNAL_CHAR_ORDER.inverse();
 
   /**
    * A mapping of each character to their chr folder name.
@@ -331,4 +334,34 @@ public class GNT4Characters {
       entry(HINATA_AWAKENED, (byte) 0xE5),
       entry(TAYUYA_DOKI, (byte) 0x88)
   );
+
+  /**
+   * The internal character id for a character.
+   *
+   * @param chr The character.
+   * @return The id for the provided character.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static int getChrId(String chr) throws IOException {
+    Integer chrId = GNT4Characters.INTERNAL_CHAR_ORDER.get(chr);
+    if (chrId == null) {
+      throw new IOException("Unable to find chr id for character: " + chr);
+    }
+    return chrId;
+  }
+
+  /**
+   * The character for an internal character id.
+   *
+   * @param chrId The id for a character.
+   * @return The character.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static String getChr(int chrId) throws IOException {
+    String chr = GNT4Characters.ID_TO_CHR.get(chrId);
+    if (chr == null) {
+      throw new IOException("Unable to find character for chr id: " + chrId);
+    }
+    return chr;
+  }
 }

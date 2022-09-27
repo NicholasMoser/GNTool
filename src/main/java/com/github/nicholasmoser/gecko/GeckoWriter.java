@@ -153,6 +153,18 @@ public class GeckoWriter {
       for (GeckoCode code : codes) {
         if (code instanceof ActiveWrite32BitsCode writeCode) {
           long dolOffset = DolUtil.ram2dol(writeCode.getTargetAddress());
+          int size = writeCode.getReplacedBytes().length;
+          byte[] buffer = new byte[size];
+          raf.seek(dolOffset);
+          if (raf.read(buffer) != size) {
+            throw new IOException("Failed to read " + size + " bytes");
+          }
+          if (!Arrays.equals(writeCode.getBytes(), buffer)) {
+            String msg = "Code original bytes have since been overwritten for address";
+            msg += String.format(" %X ", writeCode.getTargetAddress());
+            msg += "for code" + group.getName();
+            LOGGER.log(Level.WARNING, msg);
+          }
           raf.seek(dolOffset);
           raf.write(writeCode.getReplacedBytes());
         } else if (code instanceof ActiveInsertAsmCode insertCode) {
