@@ -6,6 +6,7 @@ import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,6 +23,7 @@ public class CostumeController {
   public ListView<String> costume3;
   public ListView<String> characters;
   public ListView<String> costume4;
+  private Path uncompressedDirectory;
   private Path charSel;
   private Path charSel4;
   private boolean hasCodes = false;
@@ -33,6 +35,7 @@ public class CostumeController {
     characters.getItems().addAll(GNT4Characters.CHARACTERS);
 
     // Check for existing costume extensions
+    this.uncompressedDirectory = uncompressedDirectory;
     this.charSel = uncompressedDirectory.resolve(Seqs.CHARSEL);
     this.charSel4 = uncompressedDirectory.resolve(Seqs.CHARSEL_4);
     List<SeqEdit> charSelEdits = SeqExt.getEdits(charSel);
@@ -70,6 +73,7 @@ public class CostumeController {
     List<String> costumes3 = costume3.getItems();
     List<String> costumes4 = costume4.getItems();
     try {
+      verifyIntegrity(costumes3, costumes4);
       if (hasCodes) {
         // Codes already exist, delete them before adding new codes
         CostumeExtender.removeCodes(charSel, charSel4);
@@ -83,6 +87,46 @@ public class CostumeController {
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to write costume bytes", e);
       Message.info("Failed to write costume bytes", e.getMessage());
+    }
+  }
+
+  /**
+   * Verify the integrity of the costumes and offer fixes where appropriate.
+   *
+   * @param costumes3 The list of characters with third costumes.
+   * @param costumes4 The list of characters with fourth costumes.
+   * @throws IOException If an I/O error occurs
+   */
+  private void verifyIntegrity(List<String> costumes3, List<String> costumes4) throws IOException {
+    if (costumes3.contains(GNT4Characters.KANKURO)) {
+      Path kar0200dat = uncompressedDirectory.resolve("files/chr/kar/0200.dat");
+      if (!Files.exists(kar0200dat)) {
+        String msg = "Kankuro's third costume requires Karasu's third costume. ";
+        msg += "If you do not do this, the game will error in the VS screen. ";
+        msg += "Would you like to copy Karasu's first costume into the third costume slot?";
+        if (Message.warnConfirmation("Missing Karasu Third Costume", msg)) {
+          Path kar0000dat = uncompressedDirectory.resolve("files/chr/kar/0000.dat");
+          Path kar0000jcv = uncompressedDirectory.resolve("files/chr/kar/0000.jcv");
+          Path kar0200jcv = uncompressedDirectory.resolve("files/chr/kar/0200.jcv");
+          Files.copy(kar0000dat, kar0200dat);
+          Files.copy(kar0000jcv, kar0200jcv);
+        }
+      }
+    }
+    if (costumes4.contains(GNT4Characters.KANKURO)) {
+      Path kar0300dat = uncompressedDirectory.resolve("files/chr/kar/0300.dat");
+      if (!Files.exists(kar0300dat)) {
+        String msg = "Kankuro's fourth costume requires Karasu's fourth costume. ";
+        msg += "If you do not do this, the game will error in the VS screen. ";
+        msg += "Would you like to copy Karasu's first costume into the fourth costume slot?";
+        if (Message.warnConfirmation("Missing Karasu Fourth Costume", msg)) {
+          Path kar0000dat = uncompressedDirectory.resolve("files/chr/kar/0000.dat");
+          Path kar0000jcv = uncompressedDirectory.resolve("files/chr/kar/0000.jcv");
+          Path kar0300jcv = uncompressedDirectory.resolve("files/chr/kar/0300.jcv");
+          Files.copy(kar0000dat, kar0300dat);
+          Files.copy(kar0000jcv, kar0300jcv);
+        }
+      }
     }
   }
 

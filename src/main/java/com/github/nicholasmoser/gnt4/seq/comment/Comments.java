@@ -42,6 +42,7 @@ public class Comments {
     allComments.put(Seqs.ANK_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x46E4, "// Errors here when a model is not available for the given costume");
     allComments.put(Seqs.BOU_0000, comments);
 
     comments = getChrBaseComments();
@@ -57,6 +58,8 @@ public class Comments {
     allComments.put(Seqs.GAR_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x1334, "// Comparison if mask or maybe needles is hidden or not");
+    comments.put(0x4494, "// Bitmask for hiding needles in hand, but showing the mask");
     allComments.put(Seqs.HAK_0000, comments);
 
     comments = getChrBaseComments();
@@ -89,6 +92,7 @@ public class Comments {
     allComments.put(Seqs.KAN_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x4554, "// Errors here when a model is not available for the given costume");
     allComments.put(Seqs.KAR_0000, comments);
 
     comments = getChrBaseComments();

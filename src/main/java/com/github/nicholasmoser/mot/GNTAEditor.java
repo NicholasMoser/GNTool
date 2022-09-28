@@ -3,17 +3,14 @@ package com.github.nicholasmoser.mot;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEditor;
 import com.github.nicholasmoser.tools.MOTRepackerTool;
-import java.awt.Desktop;
+import com.github.nicholasmoser.utils.GUIUtils;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
@@ -162,9 +159,7 @@ public class GNTAEditor {
 
   public void repackMOT() {
     Optional<Path> output = MOTRepackerTool.run(gntaPath.getParent().toFile());
-    if (output.isPresent()) {
-      currentMot = output.get();
-    }
+    output.ifPresent(path -> currentMot = path);
   }
 
   public void repackLastMOT() {
@@ -175,7 +170,7 @@ public class GNTAEditor {
     }
   }
 
-  public void rewriteForGNT4(ActionEvent actionEvent) {
+  public void rewriteForGNT4() {
     gnta.rewriteForGNT4();
     updateAllControls(0, 0);
   }
@@ -185,20 +180,7 @@ public class GNTAEditor {
   }
 
   public void aboutMOTEditor() {
-    Task<Void> task = new Task<>() {
-      @Override
-      public Void call() throws Exception {
-        Desktop.getDesktop().browse(new URI(MOT_EDITOR_INFO_URL));
-        return null;
-      }
-    };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
-        LOGGER.log(Level.SEVERE, "Error Opening Help Page", e);
-        Message.error("Error Opening Help Page", e.getMessage());
-      }
-    });
-    new Thread(task).start();
+    GUIUtils.browse(MOT_EDITOR_INFO_URL);
   }
 
   private void updateAllControls(int boneAnimIndex, int keyFrameIndex) {

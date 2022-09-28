@@ -51,7 +51,6 @@ import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,7 +65,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -872,20 +870,7 @@ public class MenuController {
    */
   @FXML
   protected void about() {
-    Task<Void> task = new Task<>() {
-      @Override
-      public Void call() throws Exception {
-        Desktop.getDesktop().browse(new URI(ABOUT_URL));
-        return null;
-      }
-    };
-    task.exceptionProperty().addListener((observable, oldValue, e) -> {
-      if (e != null) {
-        LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
-        Message.error("Error Opening About Page", e.getMessage());
-      }
-    });
-    new Thread(task).start();
+    GUIUtils.browse(ABOUT_URL);
   }
 
   /**
@@ -893,20 +878,7 @@ public class MenuController {
    */
   @FXML
   protected void openDirectory() {
-    Task<Void> task = new Task<>() {
-      @Override
-      public Void call() throws Exception {
-        Desktop.getDesktop().open(uncompressedDirectory.toFile());
-        return null;
-      }
-    };
-    task.exceptionProperty().addListener((observable, oldValue, e) -> {
-      if (e != null) {
-        LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
-        Message.error("Error Opening Workspace Directory", e.getMessage());
-      }
-    });
-    new Thread(task).start();
+    GUIUtils.open(uncompressedDirectory);
   }
 
   @FXML
@@ -952,7 +924,7 @@ public class MenuController {
         }
         Files.createDirectories(outputPath);
         MusyXExtract.extract_samples(sdiFilePath, samFilePath, outputPath);
-        Desktop.getDesktop().open(outputPath.toFile());
+        GUIUtils.open(outputPath);
         return null;
       }
     };
@@ -1195,7 +1167,7 @@ public class MenuController {
         Files.createDirectories(outputPath);
         String output = TXG2TPL.unpack(txgFilePath, outputPath);
         LOGGER.log(Level.INFO, output);
-        Desktop.getDesktop().open(outputPath.toFile());
+        GUIUtils.open(outputPath);
         return null;
       }
     };
