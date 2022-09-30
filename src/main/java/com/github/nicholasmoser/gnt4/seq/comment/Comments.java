@@ -42,6 +42,18 @@ public class Comments {
     allComments.put(Seqs.ANK_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x4450, "// gpr2 is a pointer to the file names, e.g. chr/bou/0300");
+    comments.put(0x4450, "// Loads the chr obj and stores it in gpr19 and cr");
+    comments.put(0x46E4, "// Errors here when a model is not available for the given costume");
+    comments.put(0x7AB0, "// List of filenames to load, is modified (e.g. chr/bou/0300)");
+    comments.put(0x7E64, "// Push the chr_id, costume_id for updates below");
+    comments.put(0x7E74, "// Update filename paths to load");
+    comments.put(0x7E74, "// Update \"chr/loc/0000\"");
+    comments.put(0x7E94, "// Update \"chr/loc/0010\"");
+    comments.put(0x7EB4, "// Update \"chr/loc/0020\"");
+    comments.put(0x7ED4, "// Update \"mot/loc/0000\"");
+    comments.put(0x7EF8, "// Update \"mot/loc/0000\"");
+    comments.put(0x7F1C, "// Update \"mot/cmn/0000\"");
     allComments.put(Seqs.BOU_0000, comments);
 
     comments = getChrBaseComments();
@@ -57,6 +69,8 @@ public class Comments {
     allComments.put(Seqs.GAR_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x1334, "// Comparison if mask or maybe needles is hidden or not");
+    comments.put(0x4494, "// Bitmask for hiding needles in hand, but showing the mask");
     allComments.put(Seqs.HAK_0000, comments);
 
     comments = getChrBaseComments();
@@ -89,6 +103,7 @@ public class Comments {
     allComments.put(Seqs.KAN_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x4554, "// Errors here when a model is not available for the given costume");
     allComments.put(Seqs.KAR_0000, comments);
 
     comments = getChrBaseComments();

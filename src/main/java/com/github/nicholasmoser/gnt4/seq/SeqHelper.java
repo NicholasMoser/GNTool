@@ -468,9 +468,7 @@ public class SeqHelper {
     }
     ByteStream localBs = new ByteStream(bytes);
     StringBuilder sb = new StringBuilder();
-    //localBs.skip(4);
-    //for (byte b : bytes) {
-    int off = 4;
+    int off = 0;
     while (localBs.bytesAreLeft()) {
       byte b = localBs.peekBytes(1)[0];
       if (b == 0) {
@@ -490,7 +488,6 @@ public class SeqHelper {
       sb.append((char) b);
       localBs.skip(1);
     }
-    //return new BinaryData(offset, bytes);
     return filenames;
   }
 
