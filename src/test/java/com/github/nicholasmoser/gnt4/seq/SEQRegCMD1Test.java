@@ -534,7 +534,7 @@ public class SEQRegCMD1Test {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     assertEquals(bytes.length, bs.offset());
     assertArrayEquals(bytes, ea.getBytes());
-    assertEquals("*chr_p->field_0x20", ea.getDescription());
+    assertEquals("*chr_p->costume_id", ea.getDescription());
     Operand operand = ea.getOperand();
     assertTrue(operand instanceof ChrOperand);
     ChrOperand chrOperand = (ChrOperand) operand;

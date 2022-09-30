@@ -9,11 +9,9 @@ import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.utils.MarkableString;
 import com.github.nicholasmoser.utils.Sockets;
 import com.google.common.collect.Queues;
-import java.awt.Desktop;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.animation.AnimationTimer;
-import javafx.concurrent.Task;
 import javafx.event.EventTarget;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -78,37 +75,11 @@ public class DolphinSeqListener {
   }
 
   public void downloadLuaDolphin() {
-    Task<Void> task = new Task<>() {
-      @Override
-      public Void call() throws Exception {
-        Desktop.getDesktop().browse(new URI(DOLPHIN_LUA_DOWNLOAD));
-        return null;
-      }
-    };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
-        LOGGER.log(Level.SEVERE, "Error Opening Dolphin Lua Download", e);
-        Message.error("Error Opening Dolphin Lua Download", e.getMessage());
-      }
-    });
-    new Thread(task).start();
+    GUIUtils.browse(DOLPHIN_LUA_DOWNLOAD);
   }
 
   public void aboutDolphinSEQListener() {
-    Task<Void> task = new Task<>() {
-      @Override
-      public Void call() throws Exception {
-        Desktop.getDesktop().browse(new URI(ABOUT_URL));
-        return null;
-      }
-    };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
-        LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
-        Message.error("Error Opening About Page", e.getMessage());
-      }
-    });
-    new Thread(task).start();
+    GUIUtils.browse(ABOUT_URL);
   }
 
   public void disassembleLine() {
@@ -304,84 +275,63 @@ public class DolphinSeqListener {
    * @param message The message to parse and go to.
    */
   private void disassembleLine(String message) {
-    Task<Void> task = new Task<>() {
-      @Override
-      public Void call() throws Exception {
-        // Get path to seq files
-        if (gnt4Files == null) {
-          Message.info("Select Workspace", "Please select a GNTool workspace directory.");
-          Optional<Path> path = Choosers.getInputWorkspaceDirectory(GNTool.USER_HOME);
-          if (path.isEmpty()) {
-            return null;
-          }
-          gnt4Files = path.get().resolve("uncompressed/files");
+    try {
+      // Get path to seq files
+      if (gnt4Files == null) {
+        Message.info("Select Workspace", "Please select a GNTool workspace directory.");
+        Optional<Path> path = Choosers.getInputWorkspaceDirectory(GNTool.USER_HOME);
+        if (path.isEmpty()) {
+          return;
         }
-        // Get path to input SEQ file
-        GNT4FileNames fileNames = new GNT4FileNames();
-        String brokenName = message.substring(27);
-        if (brokenName.isBlank()) {
-          throw new IOException("Unknown file name!");
+        gnt4Files = path.get().resolve("uncompressed/files");
+      }
+      // Get path to input SEQ file
+      GNT4FileNames fileNames = new GNT4FileNames();
+      String brokenName = message.substring(27);
+      if (brokenName.isBlank()) {
+        throw new IOException("Unknown file name!");
+      }
+      String seqName = fileNames.fix(brokenName);
+      Path seqPath = gnt4Files.resolve(seqName);
+      if (!Files.exists(seqPath)) {
+        throw new IOException(seqPath + " does not exist.");
+      }
+      // See if the output HTML is already cached
+      Path outputHTML = seqToSeqReport.get(seqName);
+      if (outputHTML == null) {
+        // Get path to output HTML file and generate it
+        Optional<Path> output = Choosers.getOutputHTML(gnt4Files.toFile());
+        if (output.isEmpty()) {
+          return;
         }
-        String seqName = fileNames.fix(brokenName);
-        Path seqPath = gnt4Files.resolve(seqName);
-        if (!Files.exists(seqPath)) {
-          throw new IOException(seqPath + " does not exist.");
-        }
-        // See if the output HTML is already cached
-        Path outputHTML = seqToSeqReport.get(seqName);
-        if (outputHTML == null) {
-          // Get path to output HTML file and generate it
-          Optional<Path> output = Choosers.getOutputHTML(gnt4Files.toFile());
-          if (output.isEmpty()) {
-            return null;
-          }
-          outputHTML = output.get();
-          seqToSeqReport.put(seqName, outputHTML);
-          Optional<String> fileName = Seqs.getFileName(seqPath);
+        outputHTML = output.get();
+        seqToSeqReport.put(seqName, outputHTML);
+        Optional<String> fileName = Seqs.getFileName(seqPath);
+        if (fileName.isEmpty()) {
+          fileName = Seqs.requestFileName();
           if (fileName.isEmpty()) {
-            fileName = Seqs.requestFileName();
-            if (fileName.isEmpty()) {
-              return null;
-            }
+            return;
           }
-          SeqKing.generateHTML(seqPath, fileName.get(), outputHTML, false, true);
         }
-        int offset = Integer.decode("0x" + message.substring(0, 8));
-        String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
-        if (System.getProperty("os.name").startsWith("Windows")){
-          Browser.open(fileUri);
-        } else {
-          Task<Void> task = new Task<>() {
-            @Override
-            public Void call() throws Exception {
-              Desktop.getDesktop().browse(new URI(fileUri));
-              return null;
-            }
-          };
-          task.exceptionProperty().addListener((observable,oldValue, e) -> {
-            if (e!=null){
-              LOGGER.log(Level.SEVERE, "Error Opening File", e);
-              Message.error("Error Opening File", e.getMessage());
-            }
-          });
-          new Thread(task).start();
-        }
-        return null;
+        SeqKing.generateHTML(seqPath, fileName.get(), outputHTML, false, true);
       }
-    };
-    task.exceptionProperty().addListener((observable,oldValue, e) -> {
-      if (e!=null){
-        LOGGER.log(Level.SEVERE, "Error Opening Line", e);
-        Message.error("Error Opening Line", e.getMessage());
+      int offset = Integer.decode("0x" + message.substring(0, 8));
+      String fileUri = "file:///" + outputHTML + String.format("#%X", offset);
+      if (System.getProperty("os.name").startsWith("Windows")) {
+        Browser.open(fileUri);
+      } else {
+        GUIUtils.browse(fileUri);
       }
-    });
-    new Thread(task).start();
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Disassemble Line", e);
+      Message.error("Failed to Disassemble Line", e.getMessage());
+    }
   }
 
   private void copy(String text) {
     Clipboard clipboard = Clipboard.getSystemClipboard();
     Map<DataFormat, Object> output = new HashMap<>();
-    output.put(DataFormat.PLAIN_TEXT,text);
+    output.put(DataFormat.PLAIN_TEXT, text);
     clipboard.setContent(output);
   }
 

@@ -85,6 +85,11 @@ public class GNT4Workspace implements Workspace {
   }
 
   @Override
+  public boolean removeFile(String filePath) throws IOException {
+    return state.removeFile(filePath);
+  }
+
+  @Override
   public List<WorkspaceFile> getAllFiles() throws IOException {
     return state.getAllFiles();
   }

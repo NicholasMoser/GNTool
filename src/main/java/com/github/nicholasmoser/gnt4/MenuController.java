@@ -51,7 +51,6 @@ import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.workspace.WorkspaceFile;
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -730,6 +729,32 @@ public class MenuController {
     }
   }
 
+  @FXML
+  public void removeFile() {
+    // Get input file
+    if (lastUncompressedSubdirectory == null) {
+      lastUncompressedSubdirectory = uncompressedDirectory;
+    }
+    Optional<Path> input = Choosers.getInputUncompressedFile(uncompressedDirectory,
+        lastUncompressedSubdirectory);
+    if (input.isEmpty()) {
+      return;
+    }
+    lastUncompressedSubdirectory = input.get().getParent();
+
+    String filePath = uncompressedDirectory.relativize(input.get()).toString().replace("\\", "/");
+    try {
+      if (!workspace.removeFile(filePath)) {
+        throw new IOException("Unable to find " + filePath);
+      }
+      Path compressedFile = compressedDirectory.resolve(filePath);
+      Files.deleteIfExists(compressedFile);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Removing File", e);
+      Message.error("Error Removing File", e.getMessage());
+    }
+  }
+
   /**
    * Toggles dark mode on and off.
    */
@@ -845,20 +870,7 @@ public class MenuController {
    */
   @FXML
   protected void about() {
-    Task<Void> task = new Task<>() {
-      @Override
-      public Void call() throws Exception {
-        Desktop.getDesktop().browse(new URI(ABOUT_URL));
-        return null;
-      }
-    };
-    task.exceptionProperty().addListener((observable, oldValue, e) -> {
-      if (e != null) {
-        LOGGER.log(Level.SEVERE, "Error Opening About Page", e);
-        Message.error("Error Opening About Page", e.getMessage());
-      }
-    });
-    new Thread(task).start();
+    GUIUtils.browse(ABOUT_URL);
   }
 
   /**
@@ -866,20 +878,7 @@ public class MenuController {
    */
   @FXML
   protected void openDirectory() {
-    Task<Void> task = new Task<>() {
-      @Override
-      public Void call() throws Exception {
-        Desktop.getDesktop().open(uncompressedDirectory.toFile());
-        return null;
-      }
-    };
-    task.exceptionProperty().addListener((observable, oldValue, e) -> {
-      if (e != null) {
-        LOGGER.log(Level.SEVERE, "Error Opening Workspace Directory", e);
-        Message.error("Error Opening Workspace Directory", e.getMessage());
-      }
-    });
-    new Thread(task).start();
+    GUIUtils.open(uncompressedDirectory);
   }
 
   @FXML
@@ -925,7 +924,7 @@ public class MenuController {
         }
         Files.createDirectories(outputPath);
         MusyXExtract.extract_samples(sdiFilePath, samFilePath, outputPath);
-        Desktop.getDesktop().open(outputPath.toFile());
+        GUIUtils.open(outputPath);
         return null;
       }
     };
@@ -1168,7 +1167,7 @@ public class MenuController {
         Files.createDirectories(outputPath);
         String output = TXG2TPL.unpack(txgFilePath, outputPath);
         LOGGER.log(Level.INFO, output);
-        Desktop.getDesktop().open(outputPath.toFile());
+        GUIUtils.open(outputPath);
         return null;
       }
     };
@@ -1953,7 +1952,7 @@ public class MenuController {
    * @return The codes.json path, preferring uncompressed/files/codes.json
    */
   private Path getCodesFile() {
-    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.CODE_FILE);
+    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.PACKED_CODE_FILE_PATH);
     if (Files.exists(codePath)) {
       return codePath;
     }
