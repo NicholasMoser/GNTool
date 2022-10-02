@@ -128,6 +128,36 @@ public class CostumeController {
         }
       }
     }
+    if (costumes3.contains(GNT4Characters.TAYUYA)) {
+      Path ta20200dat = uncompressedDirectory.resolve("files/chr/ta2/0200.dat");
+      if (!Files.exists(ta20200dat)) {
+        String msg = "Tayuya's third costume requires Doki Demon's third costume. ";
+        msg += "If you do not do this, the game will error in the VS screen. ";
+        msg += "Would you like to copy Doki Demon's first costume into the third costume slot?";
+        if (Message.warnConfirmation("Missing Doki Demon Third Costume", msg)) {
+          Path ta20000dat = uncompressedDirectory.resolve("files/chr/ta2/0000.dat");
+          Path ta20000jcv = uncompressedDirectory.resolve("files/chr/ta2/0000.jcv");
+          Path ta20200jcv = uncompressedDirectory.resolve("files/chr/ta2/0200.jcv");
+          Files.copy(ta20000dat, ta20200dat);
+          Files.copy(ta20000jcv, ta20200jcv);
+        }
+      }
+    }
+    if (costumes4.contains(GNT4Characters.TAYUYA)) {
+      Path ta20300dat = uncompressedDirectory.resolve("files/chr/ta2/0300.dat");
+      if (!Files.exists(ta20300dat)) {
+        String msg = "Tayuya's fourth costume requires Doki Demon's fourth costume. ";
+        msg += "If you do not do this, the game will error in the VS screen. ";
+        msg += "Would you like to copy Doki Demon's first costume into the fourth costume slot?";
+        if (Message.warnConfirmation("Missing Karasu Fourth Costume", msg)) {
+          Path ta20000dat = uncompressedDirectory.resolve("files/chr/ta2/0000.dat");
+          Path ta20000jcv = uncompressedDirectory.resolve("files/chr/ta2/0000.jcv");
+          Path ta20300jcv = uncompressedDirectory.resolve("files/chr/ta2/0300.jcv");
+          Files.copy(ta20000dat, ta20300dat);
+          Files.copy(ta20000jcv, ta20300jcv);
+        }
+      }
+    }
   }
 
   public void addCostume4() {
