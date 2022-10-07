@@ -160,6 +160,11 @@ public class Functions {
     functions = getChrBaseFunctions(Seqs.ZAB_0000);
     allFunctions.put(Seqs.ZAB_0000, functions);
 
+    functions = new HashMap<>();
+    functions.put(0x5670, new Function("change_duplicate_costume",
+        List.of("// Change costume if duplicate costume is selected", "7FFFFF25: Opponent costume offset", "7FFFFF24: This costume offset")));
+    allFunctions.put(Seqs.CHARSEL, functions);
+
     return allFunctions;
   }
 
