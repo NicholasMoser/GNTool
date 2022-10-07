@@ -132,6 +132,7 @@ public class MenuController {
   public Button removeCode;
   public ComboBox<String> recordingFlag;
   public ComboBox<String> recordingCounterFlag;
+  public CheckBox fixCostumeDuplicateCheck;
 
   /**
    * Toggles the code for fixing the audio.
@@ -284,6 +285,11 @@ public class MenuController {
       LOGGER.log(Level.SEVERE, "Failed to Allow Duplicate Characters in 4-Player Mode", e);
       Message.error("Failed to apply patch.", e.getMessage());
     }
+  }
+
+  @FXML
+  public void fixCostumeDuplicateCheck() {
+    System.out.println(fixCostumeDuplicateCheck.isSelected());
   }
 
   @FXML
