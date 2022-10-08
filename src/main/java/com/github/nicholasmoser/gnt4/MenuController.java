@@ -34,6 +34,7 @@ import com.github.nicholasmoser.gnt4.trans.Translator;
 import com.github.nicholasmoser.gnt4.ui.ChrOrder;
 import com.github.nicholasmoser.gnt4.ui.ChrOrderSave;
 import com.github.nicholasmoser.gnt4.ui.CostumeController;
+import com.github.nicholasmoser.gnt4.ui.DupeCostumeFix;
 import com.github.nicholasmoser.gnt4.ui.EyeController;
 import com.github.nicholasmoser.gnt4.ui.OrderController;
 import com.github.nicholasmoser.gnt4.ui.StageOrder;
@@ -289,7 +290,17 @@ public class MenuController {
 
   @FXML
   public void fixCostumeDuplicateCheck() {
-    System.out.println(fixCostumeDuplicateCheck.isSelected());
+    try {
+      Path charSel = uncompressedFiles.resolve("maki/char_sel.seq");
+      if (fixCostumeDuplicateCheck.isSelected()) {
+        DupeCostumeFix.enable(charSel);
+      } else {
+        DupeCostumeFix.disable(charSel);
+      }
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Failed to Toggle Duplicate Costume Check", e);
+      Message.error("Failed to Toggle Duplicate Costume Check", e.getMessage());
+    }
   }
 
   @FXML
@@ -1751,6 +1762,44 @@ public class MenuController {
       cssModelLoad.getValueFactory().setValue(value);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error getting Frames Until CSS Model Load.", e);
+    }
+    refreshDuplicateCostumeCheck();
+  }
+
+  private void refreshDuplicateCostumeCheck() {
+    try {
+      Path charSel = uncompressedFiles.resolve("maki/char_sel.seq");
+      List<SeqEdit> edits = SeqExt.getEdits(charSel);
+      Set<String> invalid = DupeCostumeFix.verifyIntegrity(edits);
+      if (!invalid.isEmpty()) {
+        //
+        Platform.runLater(() -> {
+          String msg = """
+              The code "Fix Costume Duplicate Check" has been applied, but parts of it are missing.
+              It is likely that this code is not correctly working currently.
+              Do you want GNTool to fix the code and re-apply it?
+              """;
+          boolean result = Message.warnConfirmation("Invalid Code", msg);
+          if (result) {
+            try {
+              DupeCostumeFix.disable(charSel);
+              DupeCostumeFix.enable(charSel);
+              fixCostumeDuplicateCheck.setSelected(true);
+            } catch (IOException e) {
+              LOGGER.log(Level.SEVERE, "Error Fixing \"Fix Costume Duplicate Check\"", e);
+              Message.error("Error Fixing \"Fix Costume Duplicate Check\"", e.getMessage());
+            }
+          } else {
+            fixCostumeDuplicateCheck.setDisable(true);
+          }
+        });
+      } else {
+        boolean value = DupeCostumeFix.isEnabled(edits);
+        fixCostumeDuplicateCheck.setSelected(value);
+      }
+    } catch (Exception e) {
+      fixCostumeDuplicateCheck.setDisable(true);
+      LOGGER.log(Level.SEVERE, "Error getting Fix Costume Duplicate Check.", e);
     }
   }
 
