@@ -189,6 +189,7 @@ public class Comments {
     charSelComments.put(0x2370, "// Stage IDs");
     charSelComments.put(0x23F0, "// Stage Display IDs");
     charSelComments.put(0x3A14, "// Costume ID is read here, 7FFFFF3D is the costume_id");
+    charSelComments.put(0x5680, "// If opponent costume is 1 or 3, goto offset 0x56B4");
     charSelComments.put(0x572C, "// Models specific for costumes 3 and 4 here (Sakura, Ino only)");
     charSelComments.put(0x690C, "// Set the costume_id to 7FFFFF3D");
 

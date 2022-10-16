@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 
@@ -74,6 +76,7 @@ public class CostumeController {
     List<String> costumes4 = costume4.getItems();
     try {
       verifyIntegrity(costumes3, costumes4);
+      checkDupeCostumeFix(charSel);
       if (hasCodes) {
         // Codes already exist, delete them before adding new codes
         CostumeExtender.removeCodes(charSel, charSel4);
@@ -87,6 +90,22 @@ public class CostumeController {
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to write costume bytes", e);
       Message.info("Failed to write costume bytes", e.getMessage());
+    }
+  }
+
+  private void checkDupeCostumeFix(Path charSel) throws IOException {
+    List<SeqEdit> edits = SeqExt.getEdits(charSel);
+    if (!DupeCostumeFix.isEnabled(edits)) {
+      String msg = """
+            The code "Fix Costume Duplicate Check" is not currently applied.
+            Without it, costumes 1 and 3, and 2 and 4 cannot fight each other when players select
+            the same character. Also, crashes can occur when the default game logic attempts to
+            fallback to costume 4 if it does not exist.
+            Would you like to enable the duplicate costume fix in order to fix this behavior?
+            """;
+      if (Message.warnConfirmation("Missing Dupe Costume Fix", msg)) {
+        DupeCostumeFix.enable(charSel);
+      }
     }
   }
 

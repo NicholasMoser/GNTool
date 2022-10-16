@@ -11,6 +11,7 @@ public class OpcodeGroup3C {
       case 0x00 -> UnknownOpcode.of(0xc, bs);
       case 0x01 -> UnknownOpcode.of(0xc, bs);
       case 0x02 -> UnknownOpcode.of(0xc, bs);
+      case 0x03 -> UnknownOpcode.of(0xc, bs); // Not in GNT4
       case 0x04 -> UnknownOpcode.of(0xc, bs);
       case 0x05 -> UnknownOpcode.of(0xc, bs);
       case 0x06 -> UnknownOpcode.of(0xc, bs);
