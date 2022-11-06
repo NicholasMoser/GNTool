@@ -11,16 +11,19 @@ import java.io.IOException;
 public class OpcodeGroup09 {
 
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
+    return parse(bs, opcodeByte, null);
+  }
+  public static Opcode parse(ByteStream bs, byte opcodeByte, Object[] registers) throws IOException {
     return switch (opcodeByte) {
       case 0x00 -> ptr_debug(bs);
-      case 0x01 -> ptr_mov(bs);
+      case 0x01 -> ptr_mov(bs, registers);
       case 0x02 -> ptr_inc(bs); // Unused in GNT4
       case 0x03 -> ptr_dec(bs);  // Unused in GNT4
       case 0x04 -> ptr_add(bs);
       case 0x05 -> ptr_sub(bs); // Unused in GNT4
       case 0x06 -> ptr_subc(bs); // Unused in GNT4
       case 0x07 -> ptr_move(bs);
-      case 0x08 -> ptr_from_offset(bs);
+      case 0x08 -> ptr_from_offset(bs, registers);
       case 0x09 -> ptr_to_offset(bs);
       case 0x0A -> ptr_push(bs);
       case 0x0B -> ptr_pop(bs); // Unused in GNT4
@@ -50,9 +53,9 @@ public class OpcodeGroup09 {
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
-  private static Opcode ptr_mov(ByteStream bs) throws IOException {
+  private static Opcode ptr_mov(ByteStream bs, Object[] registers) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, registers);
     return new PointerMov(offset, ea.getBytes(), ea.getDescription());
   }
 
@@ -92,9 +95,9 @@ public class OpcodeGroup09 {
     return new PointerMove(offset, ea.getBytes(), ea.getDescription());
   }
 
-  private static Opcode ptr_from_offset(ByteStream bs) throws IOException {
+  private static Opcode ptr_from_offset(ByteStream bs, Object[] registers) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, registers);
     return new PointerFromOffset(offset, ea.getBytes(), ea.getDescription());
   }
 

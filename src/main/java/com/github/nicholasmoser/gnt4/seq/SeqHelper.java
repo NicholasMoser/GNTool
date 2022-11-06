@@ -90,6 +90,7 @@ import j2html.tags.ContainerTag;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,16 +114,21 @@ public class SeqHelper {
   private static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
 
   public static Opcode getSeqOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
+    return getSeqOpcode(bs, opcodeGroup, opcode, null);
+  }
+
+  public static Opcode getSeqOpcode(ByteStream bs, byte opcodeGroup, byte opcode,
+                                    Object[] registers) throws IOException {
     return switch (opcodeGroup) {
       case 0x00 -> OpcodeGroup00.parse(bs, opcode);
       case 0x01 -> OpcodeGroup01.parse(bs, opcode);
       case 0x02 -> OpcodeGroup02.parse(bs, opcode);
       case 0x03 -> OpcodeGroup03.parse(bs, opcode);
-      case 0x04 -> OpcodeGroup04.parse(bs, opcode);
+      case 0x04 -> OpcodeGroup04.parse(bs, opcode, registers);
       case 0x05 -> OpcodeGroup05.parse(bs, opcode);
       case 0x06 -> OpcodeGroup06.parse(bs, opcode);
       case 0x08 -> OpcodeGroup08.parse(bs, opcode);
-      case 0x09 -> OpcodeGroup09.parse(bs, opcode);
+      case 0x09 -> OpcodeGroup09.parse(bs, opcode, registers);
       case 0x0B -> OpcodeGroup0B.parse(bs, opcode);
       case 0x0C -> OpcodeGroup0C.parse(bs, opcode);
       case 0x0E -> OpcodeGroup0E.parse(bs, opcode);

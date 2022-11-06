@@ -105,6 +105,11 @@ public BranchingOpcode(String mnemonic, byte[] bytes, int offset, int destinatio
     return String.format("%s %s", mnemonic, destFuncName);
   }
 
+  public String toAssembly(int position, String destFuncName) {
+    this.destFuncName = destFuncName;
+    return toAssembly(position);
+  }
+
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);

@@ -24,12 +24,18 @@ import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Optional;
 
 public class OpcodeGroup04 {
+
   public static Opcode parse(ByteStream bs, byte opcodeByte) throws IOException {
+    return parse(bs, opcodeByte, null);
+  }
+
+  public static Opcode parse(ByteStream bs, byte opcodeByte, Object[] registers) throws IOException {
     return switch (opcodeByte) {
-      case 0x02 -> i32_mov(bs);
+      case 0x02 -> i32_mov(bs, registers);
       case 0x03 -> i32_andc(bs);
       case 0x04 -> i32_nimply(bs);
       case 0x05 -> i32_inc(bs);
@@ -48,9 +54,9 @@ public class OpcodeGroup04 {
     };
   }
 
-  private static Opcode i32_mov(ByteStream bs) throws IOException {
+  private static Opcode i32_mov(ByteStream bs, Object[] registers) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, registers);
     Optional<String> result = SeqHelper.getChrFieldDescription(ea, 4);
     if (result.isPresent()) {
       return new IntMov(offset, ea.getBytes(), result.get());

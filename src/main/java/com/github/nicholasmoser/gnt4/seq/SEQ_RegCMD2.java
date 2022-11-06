@@ -10,6 +10,7 @@ import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,24 +52,38 @@ public class SEQ_RegCMD2 {
     return operands;
   }
 
+  public static SEQ_RegCMD2 get(ByteStream bs, Object[] registers) throws IOException {
+    SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs);
+    operands.parse(registers);
+    return operands;
+  }
+
   private void parse() throws IOException {
+    parse(null);
+  }
+
+  private void parse(Object[] registers) throws IOException {
     this.opcode = bs.peekWord();
     // Get third 8 bits (1111_1111)
     byte first_address_byte = (byte) ((opcode >> 0x8) & 0xff);
     byte second_address_byte;
+    Operand firstOperand;
+    Operand secondOperand;
     // If second bit set (0100_0000) of third byte
     if ((first_address_byte & 0x40) == 0) {
       // If first bit set (1000_0000) of third byte
       if ((first_address_byte & 0x80) == 0) {
         // Load affective address
         if (first_address_byte < 0x18) {
-          operands.add(new GPROperand(first_address_byte, true));
+          firstOperand = new GPROperand(first_address_byte, true,
+                  registers == null ? null : registers[first_address_byte]);
           second_address_byte = (byte) (opcode & 0xff);
         } else if (first_address_byte < 0x30) {
-          operands.add(getSeqOperand(first_address_byte - 0x18, true));
+          firstOperand = getSeqOperand(first_address_byte - 0x18, true,
+                  registers == null ? null : registers[first_address_byte]);
           second_address_byte = (byte) (opcode & 0xff);
         } else {
-          operands.add(SEQ_RegGP(first_address_byte, true));
+          firstOperand = SEQ_RegGP(first_address_byte, true);
           pushWord(bs.readWord());
           second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
         }
@@ -78,22 +93,23 @@ public class SEQ_RegCMD2 {
       }
     } else {
       // Load effective address with offset
-      Operand firstOperand;
       byte lastSixBits = (byte) (first_address_byte & 0x3f);
       if (lastSixBits < 0x18) {
-        firstOperand = new GPROperand(lastSixBits, false);
+        firstOperand = new GPROperand(lastSixBits, false,
+                registers == null ? null : registers[first_address_byte & 0x3f]);
       } else if (lastSixBits < 0x30) {
-        firstOperand = getSeqOperand(lastSixBits - 0x18, false);
+        firstOperand = getSeqOperand(lastSixBits - 0x18, false,
+                registers == null ? null : registers[first_address_byte & 0x3f]);
       } else {
         firstOperand = SEQ_RegGP(lastSixBits, false);
       }
       pushWord(bs.readWord());
       int word = bs.readWord();
       firstOperand.withField(word);
-      operands.add(firstOperand);
       pushWord(word);
       second_address_byte = (byte) ((bs.peekWord() >> 0x18) & 0xff);
     }
+    operands.add(firstOperand);
 
     // Part 2
     // If second bit set (0100_0000) of last byte
@@ -103,22 +119,25 @@ public class SEQ_RegCMD2 {
         // Load effective address
         if (second_address_byte < 0x18) {
           pushWord(bs.readWord());
-          operands.add(new GPROperand(second_address_byte, true));
+          secondOperand = new GPROperand(second_address_byte, true,
+                  registers == null ? null : registers[second_address_byte]);
         } else if (second_address_byte < 0x30) {
           pushWord(bs.readWord());
-          operands.add(getSeqOperand(second_address_byte - 0x18, true));
+          secondOperand = getSeqOperand(second_address_byte - 0x18, true,
+                  registers == null ? null : registers[second_address_byte]);
         } else {
-          operands.add(SEQ_RegGP(second_address_byte, true));
+          secondOperand = SEQ_RegGP(second_address_byte, true);
           pushWord(bs.readWord());
         }
       } else {
         // Load effective address sum with offset
-        Operand secondOperand;
         byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
         if (lastSixBits2 < 0x18) {
-          secondOperand = new GPROperand(lastSixBits2, false);
+          secondOperand = new GPROperand(lastSixBits2, false,
+                  registers == null ? null : registers[second_address_byte & 0x3F]);
         } else if (lastSixBits2 < 0x30) {
-          secondOperand = getSeqOperand(lastSixBits2 - 0x18, false);
+          secondOperand = getSeqOperand(lastSixBits2 - 0x18, false,
+                  registers == null ? null : registers[second_address_byte & 0x3F]);
         } else {
           secondOperand = SEQ_RegGP(lastSixBits2, false);
         }
@@ -133,29 +152,78 @@ public class SEQ_RegCMD2 {
           secondOperand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
         }
         secondOperand.addInfo(String.format(" + %04x", topTwoBytes));
-        operands.add(secondOperand);
       }
     } else {
       // Load effective address with offset
-      Operand secondOperand;
       byte lastSixBits2 = (byte) (second_address_byte & 0x3f);
       if (lastSixBits2 < 0x18) {
-        secondOperand = new GPROperand(lastSixBits2, false);
+        secondOperand = new GPROperand(lastSixBits2, false,
+                registers == null ? null : registers[second_address_byte & 0x3f]);
       } else if (lastSixBits2 < 0x30) {
-        secondOperand = getSeqOperand(lastSixBits2 - 0x18, false);
+        secondOperand = getSeqOperand(lastSixBits2 - 0x18, false,
+                registers == null ? null : registers[second_address_byte & 0x3f]);
       } else {
         secondOperand = SEQ_RegGP(lastSixBits2, false);
       }
       pushWord(bs.readWord());
       int word2 = bs.readWord();
       secondOperand.withField(word2);
-      operands.add(secondOperand);
       pushWord(word2);
     }
+    operands.add(secondOperand);
+    /*
+    // Only support 4 byte operations as of now
+    if (registers != null) {
+      if (firstOperand instanceof GPROperand gpr) {
+        if (gpr.isPointer()) {
+          registers[first_address_byte] = getOperandValue(secondOperand, registers);
+        }
+      }
+    }
+     */
     if (operands.size() != 2) {
       throw new IllegalStateException("Failed to parse operands, only found " + operands.size());
     }
   }
+
+  /*
+  private Object getOperandValue (Operand op, Object[] registers) {
+    if (op instanceof GPROperand gpr) {
+      Object obj = registers[gpr.getIndex()];
+      if (gpr.isPointer()) {
+        return obj;
+      }
+      ByteBuffer bb = (ByteBuffer) obj;
+      if (gpr.getFieldOffset() != -1) {
+        bb = bb.position(gpr.getFieldOffset());
+      }
+      return bb;
+    } else if (op instanceof SeqOperand seq) {
+      Object obj = registers[seq.getIndex() + 0x18];
+      if (seq.isPointer()) {
+        return obj;
+      }
+      ByteBuffer bb = (ByteBuffer) obj;
+      if (seq.getFieldOffset() != -1) {
+        bb = bb.position(seq.getFieldOffset());
+      }
+      return bb;
+    } else if (op instanceof ChrOperand chr) {
+      ByteBuffer chr_p;
+      if (chr.isFoe()) {
+        chr_p = (ByteBuffer) registers[0x27];
+      } else {
+        chr_p = (ByteBuffer) registers[0x26];
+      }
+      return chr_p.position(chr.get());
+    } else if (op instanceof GlobalOperand glo) {
+      return glo.getValue();
+    } else if (op instanceof ImmediateOperand imm) {
+      return imm.getImmediateValue();
+    }
+    return null;
+  }
+   */
 
   /**
    * @return The opcode.
@@ -211,12 +279,17 @@ public class SEQ_RegCMD2 {
    * @return The operand.
    */
   public Operand getSeqOperand(int index, boolean isPointer) {
+    return getSeqOperand(index, isPointer, null);
+  }
+  public Operand getSeqOperand(int index, boolean isPointer, Object obj) {
     if (index == 0xE) {
-      return new ChrOperand(false, isPointer);
+      return new ChrOperand(false, isPointer,
+              obj == null ? null : (ByteBuffer) obj);
     } else if (index == 0xF) {
-      return new ChrOperand(true, isPointer);
+      return new ChrOperand(true, isPointer,
+              obj == null ? null : (ByteBuffer) obj);
     }
-    return new SeqOperand(index, isPointer);
+    return new SeqOperand(index, isPointer, obj);
   }
 
   /**

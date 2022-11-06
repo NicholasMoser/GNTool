@@ -1,14 +1,17 @@
 package com.github.nicholasmoser.gnt4.seq.operands;
 
 import com.github.nicholasmoser.gnt4.seq.structs.Chr;
+
+import java.nio.ByteBuffer;
 import java.util.Optional;
 
-public class ChrOperand implements Operand {
+public class ChrOperand extends GeneralOperand implements Operand{
 
   private final boolean isFoe;
   private final boolean pointer;
   private final StringBuilder infoBuilder;
   private int fieldOffset;
+  private ByteBuffer chr_p;
 
   /**
    * Creates a new chr_p operand.
@@ -16,14 +19,27 @@ public class ChrOperand implements Operand {
    * @param isPointer If this operand is a pointer; otherwise it is the value of a pointer.
    */
   public ChrOperand(boolean isFoe, boolean isPointer) {
+    super(isFoe ? 0x27 : 0x26, isPointer);
     this.isFoe = isFoe;
     this.pointer = isPointer;
     this.infoBuilder = new StringBuilder();
     this.fieldOffset = -1;
+    this.chr_p = null;
+  }
+
+  public ChrOperand(boolean isFoe, boolean isPointer, ByteBuffer chr_p) {
+    super(isFoe ? 0x27 : 0x26, isPointer, chr_p);
+    this.isFoe = isFoe;
+    this.pointer = isPointer;
+    this.infoBuilder = new StringBuilder();
+    this.fieldOffset = -1;
+    this.chr_p = chr_p;
   }
 
   @Override
   public int get() { return fieldOffset; }
+
+  public boolean isFoe() { return isFoe; }
 
   @Override
   public void addInfo(String info) {
@@ -33,6 +49,8 @@ public class ChrOperand implements Operand {
   @Override
   public void withField(int fieldOffset) {
     this.fieldOffset = fieldOffset;
+    if (chr_p != null)
+      chr_p = chr_p.position(fieldOffset);
   }
 
   public boolean isPointer() {
