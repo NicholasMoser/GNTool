@@ -175,6 +175,12 @@ public class Functions {
     Function callAnimation = new Function("CallAnimation", List.of("// gpr2 = The animation ID"));
     baseFunctions.put(getCallAnimationOffset(chrSeq), callAnimation);
 
+    Function callAnimationLeftHand = new Function("CallAnimationLeftHand", List.of("// gpr2 = The animation ID"));
+    Function callAnimationRightHand = new Function("CallAnimationRightHand", List.of("// gpr2 = The animation ID"));
+    int handAnimationOffset = getCallAnimationHandOffset(chrSeq);
+    baseFunctions.put(handAnimationOffset, callAnimationLeftHand);
+    baseFunctions.put(handAnimationOffset + 0x4C, callAnimationRightHand);
+
     baseFunctions.putAll(getChakraSubtractFunctions(chrSeq));
 
     Function increaseChrModelSize = new Function("IncreaseChrModelSize",
@@ -182,6 +188,29 @@ public class Functions {
     baseFunctions.put(getIncreaseChrModelSizeOffset(chrSeq), increaseChrModelSize);
 
     return baseFunctions;
+  }
+
+  private static int getCallAnimationHandOffset(String chrSeq) {
+    switch (chrSeq) {
+      case Seqs.DOG_0000, Seqs.KAR_0000 -> {
+        return 0xE1C;
+      }
+      case Seqs.KID_0000, Seqs.KIM_0000, Seqs.SA2_0000 -> {
+        return 0xE48;
+      }
+      case Seqs.SKO_0000 -> {
+        return 0xEAC;
+      }
+      case Seqs.BOU_0000, Seqs.HI2_0000, Seqs.HIN_0000, Seqs.NAR_0000 -> {
+        return 0xF34;
+      }
+      case Seqs.CHO_0000 -> {
+        return 0xFC4;
+      }
+      default -> {
+        return 0xE3C;
+      }
+    }
   }
 
   private static int getCallAnimationOffset(String chrSeq) {
