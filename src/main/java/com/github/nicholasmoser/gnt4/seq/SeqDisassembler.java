@@ -7,16 +7,35 @@ import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteStream;
 import javafx.util.Pair;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
 public class SeqDisassembler {
 
+    public static void disassemble(Path outputPath, Path seqPath, String fileName) throws IOException {
+        disassemble(outputPath, seqPath, fileName, false);
+    }
+    public static void disassemble(Path outputPath, Path seqPath, String fileName, boolean verbose) throws IOException {
+        LinkedHashMap<Integer, Pair<String,List<Opcode>>> functions = getAllOpcodes(seqPath, fileName, verbose);
+        for (Map.Entry<Integer, Pair<String,List<Opcode>>> fun : functions.entrySet()) {
+            try(OutputStream os = Files.newOutputStream(outputPath.resolve(fun.getValue().getKey()))) {
+                for (Opcode op : fun.getValue().getValue()) {
+                    os.write(op.toAssembly(fun.getKey()).getBytes(StandardCharsets.UTF_8));
+                    os.write('\n');
+                }
+            }
+        }
+    }
+
     public static LinkedHashMap<Integer, Pair<String,List<Opcode>>> getAllOpcodes(Path seqPath, String fileName, boolean verbose) throws IOException {
         SeqType seqType = SeqHelper.getSeqType(fileName);
+        System.err.println(fileName);
 
         byte[] bytes = Files.readAllBytes(seqPath);
         ByteStream bs = new ByteStream(bytes);
@@ -29,6 +48,7 @@ public class SeqDisassembler {
 
         LinkedHashMap<Integer, Pair<String,List<Opcode>>> blobs = new LinkedHashMap<>();
         Map<Integer, Function> functionMap = Functions.getFunctions(fileName);
+        System.err.println(functionMap);
         ByteBuffer chr_p = ByteBuffer.allocate(0xA08);
         Object[] registers = new Object[0x40];
         if (seqType != SeqType.CHR_0000) {
@@ -43,63 +63,81 @@ public class SeqDisassembler {
         bs.seek(((Branch) firstBranch).getDestination());
         disassemble(bs, "init", blobs, registers, chr_p, handled);
         chr_p.position(Chr.getOffset("chr_tbl").get());
-        bs.seek(chr_p.getInt());
+        //bs.seek(chr_p.getInt());
+        bs.seek(0x30); // Standard position
         getActions(bs, blobs, handled, functionMap);
         return blobs;
     }
 
     private static void getActions(ByteStream bs, LinkedHashMap<Integer, Pair<String, List<Opcode>>> rs, boolean[] handled,
                                    Map<Integer, Function> functionMap) throws IOException {
-        for (int i = 0; i < 0x260; i++) {
-            int actOffset = bs.readWord();
-            int nextPosition = bs.offset();
-            bs.seek(actOffset);
-            LinkedList<Opcode> opcodes = new LinkedList<>();
-            getAction(bs, opcodes, handled, functionMap);
-            bs.seek(nextPosition);
-            rs.put(actOffset, new Pair(String.format("ACT_%X", i),opcodes));
+        try {
+            for (int i = 0; i < 0x260; i++) {
+                int actOffset = bs.readWord();
+                int nextPosition = bs.offset();
+                bs.seek(actOffset);
+                System.err.println(String.format("Action offset: 0x%02X", actOffset));
+                LinkedList<Opcode> opcodes = new LinkedList<>();
+                getAction(bs, opcodes, handled, functionMap);
+                bs.seek(nextPosition);
+                rs.put(actOffset, new Pair(String.format("ACT_%X", i), opcodes));
+            }
+        } catch (IOException e) {
+            for (Map.Entry<Integer, Pair<String, List<Opcode>>> entry : rs.entrySet()) {
+                System.err.println(String.format("Offset: 0x%X;\t%s", entry.getKey(), entry.getValue().getKey()));
+            }
+            System.err.println(String.format("Pointer offset in SEQ file:\t0x%05X", bs.offset()));
+            throw e;
         }
     }
 
     private static void getAction(ByteStream bs, LinkedList<Opcode> opcodes, boolean[] handled,
                                   Map<Integer, Function> functionMap) throws IOException {
         Queue<BranchingOpcode> branches = new LinkedList<>();
-        while (true) {
-            byte opcodeGroup = bs.peekBytes(2)[0];
-            byte opcode = bs.peekBytes(2)[1];
-            Opcode newOpcode = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode);
-            opcodes.add(newOpcode);
-            if (newOpcode instanceof BranchLink bl) {
-                if (functionMap.get(bl.getDestination()).name().equals("CallAction")) {
+        try {
+            while (true) {
+                byte opcodeGroup = bs.peekBytes(2)[0];
+                byte opcode = bs.peekBytes(2)[1];
+                Opcode newOpcode = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode);
+                opcodes.add(newOpcode);
+                if (newOpcode instanceof BranchLink bl) {
+                    if (functionMap.get(bl.getDestination()) != null && functionMap.get(bl.getDestination()).name().equals("CallAction")) {
+                        break;
+                    }
+                    branches.add(bl);
+                } else if (newOpcode instanceof End) {
                     break;
                 }
-                branches.add(bl);
             }
-        }
-        while (branches.peek() != null) {
-            BranchingOpcode branch = branches.poll();
-            if (handled[branch.getDestination()]) {
-                continue;
+            while (branches.peek() != null) {
+                BranchingOpcode branch = branches.poll();
+                if (handled[branch.getDestination()]) {
+                    continue;
+                }
+                if (functionMap.get(branch.getDestination()) == null) {
+                    if (branch.getDestination() == bs.offset()) {
+                        getAction(bs, opcodes, handled, functionMap);
+                    } else {
+                        if (branch instanceof BranchingLinkingOpcode bl) {
+                            functionMap.put(branch.getDestination(), new Function(String.format("fun_%X",
+                                    branch.getDestination()), new LinkedList<>()));
+                        } else {
+                            functionMap.put(branch.getDestination(), new Function(String.format("branch_%X",
+                                    branch.getDestination()), new LinkedList<>()));
+                        }
+                    }
+                }
             }
-            if (functionMap.get(branch.getDestination()) == null) {
-              if (branch.getDestination() == bs.offset()) {
-                getAction(bs, opcodes, handled, functionMap);
-              } else {
-                  if (branch instanceof BranchingLinkingOpcode bl) {
-                      functionMap.put(branch.getDestination(), new Function(String.format("fun_%X",
-                              branch.getDestination()), new LinkedList<>()));
-                  } else {
-                      functionMap.put(branch.getDestination(), new Function(String.format("branch_%X",
-                              branch.getDestination()), new LinkedList<>()));
-                  }
-              }
-            }
+        } catch (IllegalStateException e) {
+            // Ignore illegal state for now
         }
     }
 
     private static void getOpcodes (ByteStream bs, Object[] registers, ByteBuffer chr_p, boolean[] handled,
                                     LinkedList<Opcode> opcodes, Queue<BranchingOpcode> branches) throws IOException {
-        while (!(opcodes.getLast() instanceof BranchLinkReturn || opcodes.getLast() instanceof End)) {
+        boolean first = true;
+        while (first || !(opcodes.getLast() instanceof BranchLinkReturn || opcodes.getLast() instanceof End)) {
+            first = false;
             byte opcodeGroup = bs.peekBytes(2)[0];
             byte opcode = bs.peekBytes(2)[1];
             Opcode newOpcode = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode);

@@ -321,8 +321,7 @@ public class SeqAssembler {
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "TskSendMsg":
-                    //TODO
-                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
+                    currentOpcode = new TskSendMsg(Long.decode(op[0]));
                     break;
                 case "TskExecFunc":
                     //TODO

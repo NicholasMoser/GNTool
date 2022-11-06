@@ -24,6 +24,7 @@ import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
 import com.github.nicholasmoser.gnt4.dol.DolDefragger;
 import com.github.nicholasmoser.gnt4.dol.DolHijack;
 import com.github.nicholasmoser.gnt4.seq.Dupe4pCharsPatch;
+import com.github.nicholasmoser.gnt4.seq.SeqDisassembler;
 import com.github.nicholasmoser.gnt4.seq.SeqKage;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.gnt4.seq.ext.SeqEdit;
@@ -1299,6 +1300,24 @@ public class MenuController {
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Running SEQ Report", e);
       Message.error("Error Running SEQ Report", e.getMessage());
+    }
+  }
+
+  @FXML
+  protected void disassembleSeqToAssembly() {
+    try {
+      String seq = selectedSeq.getSelectionModel().getSelectedItem();
+      Path seqPath = uncompressedDirectory.resolve(seq);
+      if (!Files.exists(seqPath)) {
+        seqPath = Paths.get(seq);
+        if (!Files.exists(seqPath)) {
+          throw new IOException("Unable to find SEQ file: " + seqPath);
+        }
+      }
+      SeqDisassemblerTool.disassembleToAssembly(uncompressedFiles.toFile(), seqPath);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Error Running SEQ Disassembler", e);
+      Message.error("Error Running SEQ Disassembler", e.getMessage());
     }
   }
 

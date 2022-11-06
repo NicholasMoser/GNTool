@@ -3,7 +3,12 @@ package com.github.nicholasmoser.gnt4.seq.opcodes;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
+import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 import j2html.tags.ContainerTag;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class TskSendMsg implements Opcode {
 
@@ -12,10 +17,19 @@ public class TskSendMsg implements Opcode {
   private final byte[] bytes;
   private final String info;
 
-  public TskSendMsg(int offset, byte[] bytes, String info) {
+  public TskSendMsg(int offset, byte[] bytes, String info) throws IOException {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;
+  }
+
+  public TskSendMsg(long task) throws IOException {
+    this.offset = 0;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(new byte[]{(byte) 0x02, (byte) 0x06, (byte) 0x0, (byte) 0x3F});
+    baos.write(ByteUtils.fromUint32(task));
+    this.bytes = baos.toByteArray();
+    this.info = String.format("0x%X", task);
   }
 
   @Override

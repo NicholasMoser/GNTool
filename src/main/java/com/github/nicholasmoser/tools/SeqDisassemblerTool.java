@@ -3,6 +3,7 @@ package com.github.nicholasmoser.tools;
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
+import com.github.nicholasmoser.gnt4.seq.SeqDisassembler;
 import com.github.nicholasmoser.gnt4.seq.SeqKing;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.utils.GUIUtils;
@@ -134,6 +135,62 @@ public class SeqDisassemblerTool {
   }
 
   /**
+   * Disassembles a seq file to assembly files.
+   */
+  public static void disassembleToAssembly() {
+    disassembleToAssembly(currentDirectory);
+  }
+
+  /**
+   * Disassembles a seq file to assembly files.
+   *
+   * @param initialDirectory The initial directory to start at when selecting a seq file.
+   */
+  public static void disassembleToAssembly(File initialDirectory) {
+    Optional<Path> optionalSeq = Choosers.getInputSeq(initialDirectory);
+    if (optionalSeq.isEmpty()) {
+      return;
+    }
+    Path seqPath = optionalSeq.get();
+    currentDirectory = seqPath.getParent().toFile();
+    Optional<Path> outputPath;
+    outputPath = Choosers.getOutputTXT(currentDirectory);
+    if (outputPath.isEmpty()) {
+      return;
+    }
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), false);
+  }
+
+  /**
+   * Disassembles the given seq file to assembly files.
+   *
+   * @param initialDirectory The initial directory to start at when selecting the output TXT file.
+   * @param seqPath The path to the seq file to disassemble.
+   */
+  public static void disassembleToAssembly(File initialDirectory, Path seqPath) {
+    Optional<Path> outputPath = Choosers.getOutputDirectory(initialDirectory);
+    if (outputPath.isEmpty()) {
+      return;
+    }
+    currentDirectory = seqPath.getParent().toFile();
+    Optional<String> fileName = Seqs.getFileName(seqPath);
+    if (fileName.isEmpty()) {
+      fileName = Seqs.requestFileName();
+      if (fileName.isEmpty()) {
+        return;
+      }
+    }
+    runAsync(seqPath, fileName.get(), outputPath.get(), false, true);
+  }
+
+  /**
    * Asynchronously runs the seq disassembler. This will include a loading window that shows the
    * status of the operation.
    *
@@ -143,15 +200,33 @@ public class SeqDisassemblerTool {
    * @param html If the output is an html file, txt otherwise.
    */
   private static void runAsync(Path seqPath, String fileName, Path outputFile, boolean html) {
+    runAsync(seqPath, fileName, outputFile, html, false);
+  }
+
+  /**
+   * Asynchronously runs the seq disassembler. This will include a loading window that shows the
+   * status of the operation.
+   *
+   * @param seqPath The seq to disassemble.
+   * @param fileName   The name of the seq file from {@link Seqs}
+   * @param outputFile The output file to write to.
+   * @param html If the output is an html file, txt otherwise.
+   * @param assembly If the output should be assembly files, look at the html flag otherwise
+   */
+  private static void runAsync(Path seqPath, String fileName, Path outputFile, boolean html, boolean assembly) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() {
         try {
           updateMessage(String.format("Disassembling %s", seqPath.getFileName()));
-          if (html) {
-            SeqKing.generateHTML(seqPath, fileName, outputFile, false, true);
+          if (assembly) {
+            SeqDisassembler.disassemble(outputFile, seqPath, fileName, false);
           } else {
-            SeqKing.generateTXT(seqPath, fileName, outputFile, false, true);
+            if (html) {
+              SeqKing.generateHTML(seqPath, fileName, outputFile, false, true);
+            } else {
+              SeqKing.generateTXT(seqPath, fileName, outputFile, false, true);
+            }
           }
           updateMessage("Complete");
           updateProgress(1, 1);

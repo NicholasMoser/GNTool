@@ -128,7 +128,8 @@ public class FPKUnpacker {
         if (bytesRead < offset) {
           int bytesToMove = offset - bytesRead;
           if (is.skip(bytesToMove) != bytesToMove) {
-            String errorMessage = String.format("Failed to skip to binary data of %s", fileName);
+            String errorMessage = String.format("Failed to skip %d bytes to binary data at position 0x%X of file %s " +
+                    "read at 0x%X", bytesToMove, offset, fileName, bytesRead);
             throw new IOException(errorMessage);
           }
           bytesRead += bytesToMove;
