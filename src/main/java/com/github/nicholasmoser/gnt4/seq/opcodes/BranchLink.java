@@ -10,4 +10,8 @@ public class BranchLink extends BranchingOpcode implements BranchingLinkingOpcod
     super("bl", new byte[] {0x01, 0x3C, 0x00, 0x00}, offset, destFuncName);
   }
 
+  public BranchLink(int offset, int destination, String destFuncName) {
+    super("bl", new byte[] {0x01, 0x3C, 0x00, 0x00}, offset, destination, destFuncName);
+  }
+
 }
