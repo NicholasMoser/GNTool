@@ -506,7 +506,7 @@ public class Choosers {
     ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Seq Edit File (*.seqedit)",
         "*.seqedit");
     fileChooser.getExtensionFilters().add(fileExtensions);
-    File selection = fileChooser.showSaveDialog(null);
+    File selection = fileChooser.showOpenDialog(null);
 
     return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
   }
