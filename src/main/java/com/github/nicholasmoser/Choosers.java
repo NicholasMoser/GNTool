@@ -3,6 +3,7 @@ package com.github.nicholasmoser;
 import com.github.nicholasmoser.gamecube.GameCubeISO;
 import com.github.nicholasmoser.gnt4.GNT4Files;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 import javafx.stage.DirectoryChooser;
@@ -472,5 +473,41 @@ public class Choosers {
       }
     }
     return Optional.of(filePath);
+  }
+
+  /**
+   * Asks the user to select an output Seq Edit file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional output Seq Edit. Empty if none is chosen.
+   */
+  public static Optional<Path> getOutputSeqEdit(Path initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Create Output Seq Edit");
+    fileChooser.setInitialDirectory(initialDirectory.toFile());
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Seq Edit File (*.seqedit)",
+        "*.seqedit");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showSaveDialog(null);
+
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
+   * Asks the user to select an input Seq Edit file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input Seq Edit. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputSeqEdit(Path initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Create Input Seq Edit");
+    fileChooser.setInitialDirectory(initialDirectory.toFile());
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("Seq Edit File (*.seqedit)",
+        "*.seqedit");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showSaveDialog(null);
+
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
   }
 }
