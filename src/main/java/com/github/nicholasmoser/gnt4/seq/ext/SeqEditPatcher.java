@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Choosers;
+import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -9,11 +10,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 public class SeqEditPatcher {
-
-  private static final Logger LOGGER = Logger.getLogger(SeqEditPatcher.class.getName());
 
   public static void askExportToFile(SeqEdit edit, String seqFile, Path initialDir) throws IOException {
     Optional<Path> output = Choosers.getOutputSeqEdit(initialDir);
@@ -37,8 +35,10 @@ public class SeqEditPatcher {
       importFromFile(input.get(), seqPath, false);
     } catch (IllegalArgumentException e) {
       // Use IllegalArgumentException as a recoverable exception if user wishes to
-      // show e.message TODO!!!!!!!!!
-      importFromFile(input.get(), seqPath, true);
+      String msg = e.getMessage() + "Continue anyways?";
+      if (Message.warnConfirmation("Error Importing Edit", msg)) {
+        importFromFile(input.get(), seqPath, true);
+      }
     }
   }
 
@@ -67,7 +67,7 @@ public class SeqEditPatcher {
     String actualPath = seqPath.toString().replace("\\", "/");
     String expectedPath = lines.get(0);
     if (!actualPath.endsWith(expectedPath) && !force) {
-      throw new IllegalArgumentException(actualPath + " path should end with " + expectedPath);
+      throw new IllegalArgumentException(actualPath + " path should end with " + expectedPath + " ");
     }
 
     // Read edit values
@@ -83,7 +83,7 @@ public class SeqEditPatcher {
       raf.seek(offset);
       raf.read(actualOldBytes);
       if (!Arrays.equals(actualOldBytes, oldBytes)) {
-        throw new IllegalArgumentException("Original replaced bytes have changed, possible merge conflict");
+        throw new IllegalArgumentException("Original replaced bytes have changed, possible merge conflict. ");
       }
     }
 
