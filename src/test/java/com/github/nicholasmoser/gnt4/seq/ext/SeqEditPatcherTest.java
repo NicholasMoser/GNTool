@@ -31,7 +31,7 @@ public class SeqEditPatcherTest {
       // Add the phantom sword fix to the first and export it to a file
       SeqEdit psFix = KisamePhantomSwordFix.getSeqEdit(expected);
       SeqExt.addEdit(psFix, expected);
-      SeqEditPatcher.exportToFile(psFix, Seqs.KIS_0000, editFile);
+      SeqEditPatcher.exportToFile(psFix, expected, editFile);
 
       // Import the file into the other seq file and compare
       SeqEditPatcher.importFromFile(editFile, actual, true);
@@ -62,7 +62,7 @@ public class SeqEditPatcherTest {
       // Add the phantom sword fix to the first and export it to a file
       SeqEdit psFix = KisamePhantomSwordFix.getSeqEdit(expected);
       SeqExt.addEdit(psFix, expected);
-      SeqEditPatcher.exportToFile(psFix, Seqs.KIS_0000, editFile);
+      SeqEditPatcher.exportToFile(psFix, expected, editFile);
 
       // Add a new random edit to the old Kisame 0000.seq file
       SeqEdit randomEdit = SeqEditBuilder.getBuilder()
@@ -116,7 +116,7 @@ public class SeqEditPatcherTest {
           .endOffset(0x15F8)
           .create();
       SeqExt.addEdit(randomEdit, expected);
-      SeqEditPatcher.exportToFile(randomEdit, Seqs.KIS_0000, editFile);
+      SeqEditPatcher.exportToFile(randomEdit, expected, editFile);
 
       // Import the file into the other seq file and compare
       SeqEditPatcher.importFromFile(editFile, actual, true);
@@ -150,7 +150,7 @@ public class SeqEditPatcherTest {
       // Add the phantom sword fix to the first and export to file
       SeqEdit psFix = KisamePhantomSwordFix.getSeqEdit(expected);
       SeqExt.addEdit(psFix, expected);
-      SeqEditPatcher.exportToFile(psFix, Seqs.KIS_0000, editFile);
+      SeqEditPatcher.exportToFile(psFix, expected, editFile);
 
       // Add a new random edit to the other Kisame 0000.seq file in same location as original edit
       SeqEdit randomEdit = SeqEditBuilder.getBuilder()
@@ -164,34 +164,6 @@ public class SeqEditPatcherTest {
 
       // Import the file into the other seq file and validate IllegalArgumentException is thrown
       assertThrows(IllegalArgumentException.class, () -> SeqEditPatcher.importFromFile(editFile, actual, true));
-    } finally {
-      Files.deleteIfExists(expected);
-      Files.deleteIfExists(actual);
-      Files.deleteIfExists(editFile);
-    }
-  }
-
-  @Test
-  public void notForcingMustMatchFilePath() throws Exception {
-    // Get two unmodified Kisame 0000.seq files
-    Path uncompressedDir = Prereqs.getUncompressedGNT4();
-    Path original = uncompressedDir.resolve(Seqs.KIS_0000);
-    Path expected = Files.createTempFile("SeqEditPatcherTest_expected", ".seq");
-    Path actual = Files.createTempFile("SeqEditPatcherTest_actual", ".seq");
-    Path editFile = Files.createTempFile("SeqEditPatcherTest_editFile", ".seq");
-
-    try {
-      // Copy contents to temp files
-      Files.copy(original, expected, REPLACE_EXISTING);
-      Files.copy(original, actual, REPLACE_EXISTING);
-
-      // Add the phantom sword fix to the first and export it to a file
-      SeqEdit psFix = KisamePhantomSwordFix.getSeqEdit(expected);
-      SeqExt.addEdit(psFix, expected);
-      SeqEditPatcher.exportToFile(psFix, Seqs.KIS_0000, editFile);
-
-      // Import the file into the other seq file and validate IllegalArgumentException is thrown
-      assertThrows(IllegalArgumentException.class, () -> SeqEditPatcher.importFromFile(editFile, actual, false));
     } finally {
       Files.deleteIfExists(expected);
       Files.deleteIfExists(actual);

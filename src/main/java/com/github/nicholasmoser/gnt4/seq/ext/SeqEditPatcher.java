@@ -10,10 +10,13 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class SeqEditPatcher {
 
-  public static void askExportToFile(SeqEdit edit, String seqFile, Path initialDir) throws IOException {
+  private static final Logger LOGGER = Logger.getLogger(SeqEditPatcher.class.getName());
+
+  public static void askExportToFile(SeqEdit edit, Path seqFile, Path initialDir) throws IOException {
     Optional<Path> output = Choosers.getOutputSeqEdit(initialDir);
     if (output.isEmpty()) {
       return;
@@ -21,8 +24,9 @@ public class SeqEditPatcher {
     exportToFile(edit, seqFile, output.get());
   }
 
-  public static void exportToFile(SeqEdit edit, String seqFile, Path output) throws IOException {
-    String editText = seqFile + "\n\n" + edit.toString();
+  public static void exportToFile(SeqEdit edit, Path seqFile, Path output) throws IOException {
+    String path = seqFile.getParent().getFileName() + "/" + seqFile.getFileName();
+    String editText = path + "\n\n" + edit.toString();
     Files.writeString(output, editText);
   }
 
@@ -66,8 +70,8 @@ public class SeqEditPatcher {
     // Validate that this edit is being used on the correct file
     String actualPath = seqPath.toString().replace("\\", "/");
     String expectedPath = lines.get(0);
-    if (!actualPath.endsWith(expectedPath) && !force) {
-      throw new IllegalArgumentException(actualPath + " path should end with " + expectedPath + " ");
+    if (!actualPath.endsWith(expectedPath)) {
+      LOGGER.info("File " + actualPath + " has different name than " + expectedPath);
     }
 
     // Read edit values
