@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 import com.github.nicholasmoser.Choosers;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.utils.ByteUtils;
+import com.github.nicholasmoser.utils.Ranges;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
@@ -80,6 +81,17 @@ public class SeqEditPatcher {
     int position = Integer.decode(lines.get(8).substring(2));
     byte[] oldBytes = ByteUtils.hexStringToBytes(lines.get(10).substring(4));
     byte[] newBytes = ByteUtils.hexStringToBytes(lines.get(12).substring(4));
+
+    // Validate that the edit does not conflict with any existing edits
+    for (SeqEdit edit : SeqExt.getEdits(seqPath)) {
+      int existingStart = edit.getOffset();
+      int existingEnd = existingStart + edit.getOldBytes().length;
+      int newStart = offset;
+      int newEnd = offset + oldBytes.length;
+      if (Ranges.haveOverlap(existingStart, existingEnd, newStart, newEnd)) {
+        throw new IOException("New edit location conflicts with existing edit: " + edit.getName());
+      }
+    }
 
     // Validate that old bytes match the old bytes from the provided seq
     byte[] actualOldBytes = new byte[oldBytes.length];
