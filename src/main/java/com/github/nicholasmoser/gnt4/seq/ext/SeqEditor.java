@@ -242,6 +242,35 @@ public class SeqEditor {
     }
   }
 
+  public void exportEdit() {
+    Optional<String> selectedEdit = getSelectedEdit();
+    if (selectedEdit.isPresent()) {
+      SeqEdit seqEdit = editsByName.get(selectedEdit.get());
+      if (seqEdit == null) {
+        Message.error("Cannot Find Edit",
+            "Cannot find edit with name: " + selectedEdit.get());
+      } else {
+        try {
+          SeqEditPatcher.askExportToFile(seqEdit, seqPath, seqPath.getParent());
+        } catch (Exception e) {
+          LOGGER.log(Level.SEVERE, "Failed to Export Edit", e);
+          Message.error("Failed to Export Edit", e.getMessage());
+        }
+      }
+    } else {
+      Message.error("No Edit Selected", "Cannot export the edit because no edit is selected.");
+    }
+  }
+
+  public void importEdit() {
+    try {
+      SeqEditPatcher.askImportFromFile(seqPath.getParent(), seqPath);
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Import Edit", e);
+      Message.error("Failed to Import Edit", e.getMessage());
+    }
+  }
+
   /**
    * Assemble the opcodes to bytes
    */

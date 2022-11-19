@@ -74,6 +74,16 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#exportEdit" text="Export">
+                    <accelerator>
+                      <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                    </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#importEdit" text="Import">
+                    <accelerator>
+                      <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                    </accelerator>
+                  </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#reset" text="Reset Changes">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
