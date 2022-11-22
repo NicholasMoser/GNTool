@@ -407,8 +407,9 @@ public class SeqEdit {
       return false;
     }
     SeqEdit seqEdit = (SeqEdit) o;
+    // Old bytes can change based on SEQ modifications, so just compare length of old bytes
     return offset == seqEdit.offset && Objects.equals(name, seqEdit.name)
-        && Arrays.equals(oldBytes, seqEdit.oldBytes) && Arrays.equals(newBytes,
+        && oldBytes.length == seqEdit.oldBytes.length && Arrays.equals(newBytes,
         seqEdit.newBytes) && Arrays.equals(newBytesWithBranchBack,
         seqEdit.newBytesWithBranchBack);
   }
