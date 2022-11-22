@@ -330,6 +330,9 @@ public class SeqEditor {
           MenuItem deleteEdit = new MenuItem("Delete Edit");
           deleteEdit.setOnAction(event -> deleteEdit());
           contextMenu.getItems().add(deleteEdit);
+          MenuItem exportEdit = new MenuItem("Export Edit");
+          exportEdit.setOnAction(event -> exportEdit());
+          contextMenu.getItems().add(exportEdit);
           contextMenu.show(stage, mouseEvent.getScreenX(), mouseEvent.getScreenY());
         }
         // Handle double left click
