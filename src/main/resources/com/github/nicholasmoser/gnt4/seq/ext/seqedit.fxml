@@ -70,6 +70,7 @@
                         <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
             <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
             <MenuItem mnemonicParsing="false" onAction="#apply" text="Apply">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />

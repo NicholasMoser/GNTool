@@ -90,6 +90,16 @@ public class SeqEditor {
         .addListener((observable, oldValue, newValue) -> tryToUpdateHijackedBytes());
   }
 
+  public void refresh() {
+    try {
+      updateSeqEditsFromPath();
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Failed to Refresh", e);
+      Message.error("Failed to Refresh", e.getMessage());
+      quit();
+    }
+  }
+
   /**
    * Clear the editable seq edit fields.
    */
@@ -205,8 +215,7 @@ public class SeqEditor {
   private void deleteEdit(SeqEdit seqEdit) {
     try {
       SeqExt.removeEdit(seqEdit, seqPath);
-      editsByName.remove(seqEdit.getName());
-      editList.getItems().remove(seqEdit.getName());
+      refresh();
       if (mode == Mode.EDIT && seqEdit.equals(selectedEdit)) {
         // Edit currently being edited was deleted, clear the fields
         clear();
@@ -269,6 +278,7 @@ public class SeqEditor {
       LOGGER.log(Level.SEVERE, "Failed to Import Edit", e);
       Message.error("Failed to Import Edit", e.getMessage());
     }
+    refresh();
   }
 
   /**
@@ -309,6 +319,7 @@ public class SeqEditor {
     } else {
       Message.error("No Edit Opened", "Cannot undo, no edit is opened.");
     }
+    refresh();
   }
 
   /**
@@ -368,8 +379,7 @@ public class SeqEditor {
           .create();
       // Add the new edit
       SeqExt.addEdit(seqEdit, seqPath);
-      editsByName.put(name, seqEdit);
-      editList.getItems().add(name);
+      refresh();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Create New Edit", e);
       Message.error("Failed to Create New Edit", e.getMessage());
@@ -403,8 +413,7 @@ public class SeqEditor {
           .create();
       // Add the new edit
       SeqExt.addEdit(seqEdit, seqPath);
-      editsByName.put(name, seqEdit);
-      editList.getItems().add(name);
+      refresh();
       selectedEdit = seqEdit;
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Modify Edit", e);
@@ -418,6 +427,8 @@ public class SeqEditor {
    * @throws IOException If an I/O error occurs
    */
   private void updateSeqEditsFromPath() throws IOException {
+    editsByName.clear();
+    editList.getItems().clear();
     List<SeqEdit> seqEdits = SeqExt.getEdits(seqPath);
     for (SeqEdit seqEdit : seqEdits) {
       String editName = seqEdit.getName();
