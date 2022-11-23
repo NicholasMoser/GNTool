@@ -48,7 +48,7 @@ public class ToolController {
   private static final String MOT_REPACKER = "MOT Repacker";
   private static final String GNTA_EDITOR = "GNTA Editor";
   private static final String DOLPHIN_SEQ_LISTENER = "Dolphin SEQ Listener";
-  private static final String WORKSPACE_DIFF = "Workspace Diff";
+  private static final String WORKSPACE_DIFF = "Diff Workspace";
 
   @FXML
   private ListView<String> tools;
