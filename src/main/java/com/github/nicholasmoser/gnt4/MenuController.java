@@ -47,6 +47,7 @@ import com.github.nicholasmoser.tools.MOTRepackerTool;
 import com.github.nicholasmoser.tools.MOTUnpackerTool;
 import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
+import com.github.nicholasmoser.tools.WorkspaceDiffTool;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.workspace.WorkspaceFile;
@@ -66,6 +67,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -680,6 +682,11 @@ public class MenuController {
   @FXML
   protected void refresh() {
     asyncRefresh();
+  }
+
+  @FXML
+  public void diffWorkspace() {
+    WorkspaceDiffTool.diff(workspaceDirectory);
   }
 
   /**
