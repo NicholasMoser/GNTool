@@ -40,12 +40,19 @@ import java.util.logging.Logger;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
 
+/**
+ * Tool to create HTML difference reports between two workspaces.
+ */
 public class WorkspaceDiffTool {
 
   private static final Logger LOGGER = Logger.getLogger(WorkspaceDiffTool.class.getName());
 
   private static File currentDirectory = GNTool.USER_HOME;
 
+  /**
+   * Request two workspaces and an output HTML file from the user. Diff the two workspaces to the
+   * output HTML file.
+   */
   public static void diff() {
     Optional<Path> first = Choosers.getInputWorkspaceDirectory(currentDirectory);
     if (first.isEmpty()) {
@@ -56,6 +63,10 @@ public class WorkspaceDiffTool {
     if (second.isEmpty()) {
       return;
     }
+    if (first.get().equals(second.get())) {
+      Message.error("Duplicate Workspace Provided", first.get().toString());
+      return;
+    }
     Optional<Path> output = Choosers.getOutputHTML(second.get().getParent().toFile());
     if (output.isEmpty()) {
       return;
@@ -63,10 +74,20 @@ public class WorkspaceDiffTool {
     diff(first.get(), second.get(), output.get());
   }
 
+  /**
+   * Request one workspace and an output HTML file from the user. Diff the parameter provided and
+   * the user provided workspaces to the output HTML file.
+   *
+   * @param first The first workspace to compare.
+   */
   public static void diff(Path first) {
     currentDirectory = first.getParent().toFile();
     Optional<Path> second = Choosers.getInputWorkspaceDirectory(currentDirectory);
     if (second.isEmpty()) {
+      return;
+    }
+    if (first.equals(second.get())) {
+      Message.error("Duplicate Workspace Provided", first.toString());
       return;
     }
     Optional<Path> output = Choosers.getOutputHTML(second.get().getParent().toFile());
@@ -77,7 +98,6 @@ public class WorkspaceDiffTool {
   }
 
   private static void diff(Path first, Path second, Path output) {
-
     Task<Void> task = new Task<>() {
       @Override
       public Void call() throws IOException {
@@ -193,16 +213,23 @@ public class WorkspaceDiffTool {
     new Thread(task).start();
   }
 
-  private static int getFirstDifference(byte[] theseBytes, byte[] otherBytes) {
-    if (theseBytes.length < otherBytes.length) {
-      for (int i = 0; i < theseBytes.length; i++) {
-        if (theseBytes[i] != otherBytes[i]) {
+  /**
+   * Find the offset of the first difference between two byte arrays.
+   *
+   * @param first The first byte array.
+   * @param second The second byte array.
+   * @return The first difference between the two byte arrays.
+   */
+  private static int getFirstDifference(byte[] first, byte[] second) {
+    if (first.length < second.length) {
+      for (int i = 0; i < first.length; i++) {
+        if (first[i] != second[i]) {
           return i;
         }
       }
     } else {
-      for (int i = 0; i < otherBytes.length; i++) {
-        if (theseBytes[i] != otherBytes[i]) {
+      for (int i = 0; i < second.length; i++) {
+        if (first[i] != second[i]) {
           return i;
         }
       }
