@@ -168,12 +168,42 @@ public class CostumeController {
         String msg = "Tayuya's fourth costume requires Doki Demon's fourth costume. ";
         msg += "If you do not do this, the game will error in the VS screen. ";
         msg += "Would you like to copy Doki Demon's first costume into the fourth costume slot?";
-        if (Message.warnConfirmation("Missing Karasu Fourth Costume", msg)) {
+        if (Message.warnConfirmation("Missing Doki Demon Fourth Costume", msg)) {
           Path ta20000dat = uncompressedDirectory.resolve("files/chr/ta2/0000.dat");
           Path ta20000jcv = uncompressedDirectory.resolve("files/chr/ta2/0000.jcv");
           Path ta20300jcv = uncompressedDirectory.resolve("files/chr/ta2/0300.jcv");
           Files.copy(ta20000dat, ta20300dat);
           Files.copy(ta20000jcv, ta20300jcv);
+        }
+      }
+    }
+    if (costumes3.contains(GNT4Characters.CHOJI)) {
+      Path cho0210dat = uncompressedDirectory.resolve("files/chr/cho/0210.dat");
+      if (!Files.exists(cho0210dat)) {
+        String msg = "Choji's third costume requires a separate model for large Choji. ";
+        msg += "If you do not do this, the game will error in the VS screen. ";
+        msg += "Would you like to copy the first large Choji costume into the third costume slot?";
+        if (Message.warnConfirmation("Missing large Choji Third Costume", msg)) {
+          Path cho0010dat = uncompressedDirectory.resolve("files/chr/cho/0010.dat");
+          Path cho0010jcv = uncompressedDirectory.resolve("files/chr/cho/0010.jcv");
+          Path cho0210jcv = uncompressedDirectory.resolve("files/chr/cho/0210.jcv");
+          Files.copy(cho0010dat, cho0210dat);
+          Files.copy(cho0010jcv, cho0210jcv);
+        }
+      }
+    }
+    if (costumes4.contains(GNT4Characters.CHOJI)) {
+      Path cho0310dat = uncompressedDirectory.resolve("files/chr/cho/0310.dat");
+      if (!Files.exists(cho0310dat)) {
+        String msg = "Choji's fourth costume requires a separate model for large Choji. ";
+        msg += "If you do not do this, the game will error in the VS screen. ";
+        msg += "Would you like to the first large Choji costume into the fourth costume slot?";
+        if (Message.warnConfirmation("Missing large Choji Fourth Costume", msg)) {
+          Path cho0010dat = uncompressedDirectory.resolve("files/chr/cho/0010.dat");
+          Path cho0010jcv = uncompressedDirectory.resolve("files/chr/cho/0010.jcv");
+          Path cho0310jcv = uncompressedDirectory.resolve("files/chr/cho/0310.jcv");
+          Files.copy(cho0010dat, cho0310dat);
+          Files.copy(cho0010jcv, cho0310jcv);
         }
       }
     }
