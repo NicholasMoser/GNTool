@@ -379,20 +379,23 @@ public class SeqEdit {
     return Bytes.indexOf(bytes, STOP) != -1;
   }
 
+
+
   @Override
   public String toString() {
-    return "SeqEdit\nName: "
-        + name
-        + "\nOffset: "
-        + String.format("0x%X", offset)
-        + "\nOld Bytes: 0x"
-        + ByteUtils.bytesToHexString(oldBytes)
-        + "\nNew Bytes: 0x"
-        + ByteUtils.bytesToHexString(newBytes)
-        + "\nNew Bytes with Branch Back: 0x"
-        + ByteUtils.bytesToHexString(newBytesWithBranchBack)
-        + "\nFull Bytes: 0x"
-        + ByteUtils.bytesToHexString(getFullBytes());
+    return "SeqEdit\n"
+        + "Name:\n"
+        + "  " + name + '\n'
+        + "Offset:\n"
+        + "  " + String.format("0x%X", offset) + '\n'
+        + "Position:\n"
+        + "  " + String.format("0x%X", position) + '\n'
+        + "Old Bytes:\n"
+        + "  0x" + ByteUtils.bytesToHexString(oldBytes) + '\n'
+        + "New Bytes:\n"
+        + "  0x" + ByteUtils.bytesToHexString(newBytes) + '\n'
+        + "New Bytes with branch back:\n"
+        + "  0x" + ByteUtils.bytesToHexString(newBytesWithBranchBack) + '\n';
   }
 
   @Override
@@ -404,8 +407,9 @@ public class SeqEdit {
       return false;
     }
     SeqEdit seqEdit = (SeqEdit) o;
+    // Old bytes can change based on SEQ modifications, so just compare length of old bytes
     return offset == seqEdit.offset && Objects.equals(name, seqEdit.name)
-        && Arrays.equals(oldBytes, seqEdit.oldBytes) && Arrays.equals(newBytes,
+        && oldBytes.length == seqEdit.oldBytes.length && Arrays.equals(newBytes,
         seqEdit.newBytes) && Arrays.equals(newBytesWithBranchBack,
         seqEdit.newBytesWithBranchBack);
   }

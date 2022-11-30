@@ -56,6 +56,30 @@ The **Hijacked Bytes** show what bytes will be overriden based on your **Hijacke
 
 When you are done writing the code, hit the **Apply** button or press `Ctrl + X` to apply the code. Once it is applied, you can open the code by double clicking it on the left pane or selecting it and pressing `Ctrl + O`. **Reset Changes** will clear all of the fields. To delete a code, right click on it in the left pane and select **Delete Code** or select it and press `Ctrl + D`.
 
+#### Export/Import
+
+You can also export and import SEQ edits as individual files. This allows you to share an edit
+easier and even track changes of it using version control. Tracking changes is made easier by the
+fact that the output format is plain text like so:
+
+```seqedit
+kis/0000.seq
+
+SeqEdit
+Name:
+  Kisame Phantom Sword Fix
+Offset:
+  0x1C308
+Position:
+  0x26074
+Old Bytes:
+  0x241A0900410000002406040005550000241A090002000000
+New Bytes:
+  0x241A0900430000002406040005550000241A1200101042A0
+New Bytes with branch back:
+  0x241A0900430000002406040005550000241A1200101042A0013200000001C320
+```
+
 ### References
 
 [1] The binary format of a SEQ Extension section is as follows: begin with `"seq_ext\n"` (0x7365715F 6578740A). Then include one or more SEQ edits. Each edit begins with a name encoded in UTF-8 bytes and is terminated at a 4-byte alignment with at least one null byte. The name of the edit is followed by the 4-byte integer offset of where the edit occurs in the SEQ file. The offset is followed by the original opcode bytes of the SEQ file that were overridden with the branch to the new opcode bytes. These bytes are terminated by `"stop"`, (0x73746F70). After that is the new opcode bytes that will be branched to in the seq file. This will also be terminated by `"stop"`, (0x73746F70). The second stop terminator is the end of the SEQ edit. Once all edits are complete, the SEQ extension section is terminated with `"seq_end\n"` (0x7365715F 656E640A).
