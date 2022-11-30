@@ -15,6 +15,7 @@
 - [MOT Unpacker](#mot-unpacker)
 - [MOT Repacker](#mot-repacker)
 - [GNTA Editor](#gnta-editor)
+- [Diff Workspace](#diff-workspace)
 
 ![Tools](/docs/tools.png?raw=true "Tools")
 
@@ -89,3 +90,12 @@ Repacks a MOT file from its respective GNTA file(s). For more information on wor
 ## GNTA Editor
 
 Opens an interactive editor for GNTA files. These files represent a single animation in the game, and the editor lets you modify the properties of the animation to change it. For more information on working with animations, see [Animation Options](/docs/animation.md).
+
+## Diff Workspace
+
+A tool to find the differences between two GNTool workspaces. Also available from the workspace
+file menu.
+
+It will create an HTML report of file differences like so:
+
+![Diff Report](/docs/diff.PNG?raw=true "Diff Report")

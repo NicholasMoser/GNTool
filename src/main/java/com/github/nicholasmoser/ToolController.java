@@ -12,6 +12,7 @@ import com.github.nicholasmoser.tools.MOTUnpackerTool;
 import com.github.nicholasmoser.tools.SeqDisassemblerTool;
 import com.github.nicholasmoser.tools.SeqEditorTool;
 import com.github.nicholasmoser.tools.TXG2TPLTool;
+import com.github.nicholasmoser.tools.WorkspaceDiffTool;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,6 +48,7 @@ public class ToolController {
   private static final String MOT_REPACKER = "MOT Repacker";
   private static final String GNTA_EDITOR = "GNTA Editor";
   private static final String DOLPHIN_SEQ_LISTENER = "Dolphin SEQ Listener";
+  private static final String WORKSPACE_DIFF = "Diff Workspace";
 
   @FXML
   private ListView<String> tools;
@@ -73,6 +75,7 @@ public class ToolController {
     items.add(MOT_REPACKER);
     items.add(GNTA_EDITOR);
     items.add(DOLPHIN_SEQ_LISTENER);
+    items.add(WORKSPACE_DIFF);
   }
 
   @FXML
@@ -115,6 +118,7 @@ public class ToolController {
         case MOT_REPACKER -> MOTRepackerTool.run();
         case GNTA_EDITOR -> GNTAEditorTool.open();
         case DOLPHIN_SEQ_LISTENER -> DolphinSeqListenerTool.run();
+        case WORKSPACE_DIFF -> WorkspaceDiffTool.diff();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);
