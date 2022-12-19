@@ -9,8 +9,9 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -25,6 +26,8 @@ import javafx.scene.control.ButtonType;
  * to apply where.
  */
 public class CostumeBranchTableFix {
+
+  private static final Logger LOGGER = Logger.getLogger(CostumeBranchTableFix.class.getName());
 
   // Character with 2 costumes in vanilla
   private static final int ANK_TABLE_OFFSET = 0x2500C;
@@ -229,7 +232,8 @@ public class CostumeBranchTableFix {
   }
 
   private static void enableHaku(Path uncompressedDir) throws IOException {
-    throw new IOException("Unsupported character for CostumeBranchTableFix: Haku");
+    // TODO: Implement Haku costume extension
+    LOGGER.info("Unsupported character for CostumeBranchTableFix: Haku");
   }
 
   /**
@@ -238,7 +242,7 @@ public class CostumeBranchTableFix {
    * @param uncompressedDir The path to the uncompressed directory.
    * @throws IOException If an I/O error occurs.
    */
-  public static void enable(Path uncompressedDir, List<String> chrs) throws IOException {
+  public static void enable(Path uncompressedDir, Collection<String> chrs) throws IOException {
     for (String chr : chrs) {
       switch (chr) {
         // First try and handle the easy characters, then handle the more complex characters

@@ -8,6 +8,7 @@ import com.github.nicholasmoser.gnt4.seq.ext.SeqExt;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -74,6 +75,8 @@ public class CostumeController {
   public void save() {
     List<String> costumes3 = costume3.getItems();
     List<String> costumes4 = costume4.getItems();
+    Set<String> allCostumes = new HashSet<>(costumes3);
+    allCostumes.addAll(costumes4);
     try {
       verifyIntegrity(costumes3, costumes4);
       checkDupeCostumeFix(charSel);
@@ -85,6 +88,7 @@ public class CostumeController {
         CostumeExtender.allowAlternateCostumeModels(charSel, charSel4);
       }
       hasCodes = true;
+      CostumeBranchTableFix.enable(uncompressedDirectory, allCostumes);
       CostumeExtender.writeCostumeThreeCodes(charSel, charSel4, costumes3);
       CostumeExtender.writeCostumeFourCodes(charSel, charSel4, costumes4);
     } catch (IOException e) {

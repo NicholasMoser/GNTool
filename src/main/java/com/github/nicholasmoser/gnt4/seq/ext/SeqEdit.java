@@ -259,7 +259,6 @@ public class SeqEdit {
               newOffsets.add(targetOffset);
             }
           }
-          System.out.println(newOffsets);
           branchTable.setOffsets(newOffsets);
         } else if (op instanceof BranchTableLink branchTableLink) {
           List<Integer> newOffsets = new LinkedList<>();
@@ -270,7 +269,6 @@ public class SeqEdit {
               newOffsets.add(targetOffset);
             }
           }
-          System.out.println(newOffsets);
           branchTableLink.setOffsets(newOffsets);
         }
         baos.write(op.getBytes(position, size));
@@ -311,7 +309,6 @@ public class SeqEdit {
               newOffsets.add(targetOffset);
             }
           }
-          System.out.println(newOffsets);
           branchTable.setOffsets(newOffsets);
         } else if (op instanceof BranchTableLink branchTableLink) {
           List<Integer> newOffsets = new LinkedList<>();
@@ -324,7 +321,6 @@ public class SeqEdit {
               newOffsets.add(targetOffset);
             }
           }
-          System.out.println(newOffsets);
           branchTableLink.setOffsets(newOffsets);
         }
         baos.write(op.getBytes(position, size));
