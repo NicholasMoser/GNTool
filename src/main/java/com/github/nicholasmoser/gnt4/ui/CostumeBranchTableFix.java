@@ -68,7 +68,7 @@ public class CostumeBranchTableFix {
   private static final int ZAB_TABLE_OFFSET = 0x22F04;
 
   // Characters with 4 costumes in vanilla
-  private static final int HAK_TABLE_OFFSET = -1; // TODO: Implement Haku, currently complicated because of the mask
+  private static final int HAK_TABLE_OFFSET = 0x24568; // TODO: Implement Haku, currently complicated because of the mask
   private static final int HAK_BRANCH1_OFFSET = -1; // TODO: Implement Haku, currently complicated because of the mask
   private static final int HAK_BRANCH2_OFFSET = -1; // TODO: Implement Haku, currently complicated because of the mask
   private static final int INO_TABLE_OFFSET = 0x265BC;
@@ -82,7 +82,7 @@ public class CostumeBranchTableFix {
   private static final int TEM_SHORT_SASH_OFFSET = 0x29B84;
 
   // Sakura's branch table has 5 indices and all with the same offset, no need to implement
-  private static final int SAK_TABLE_OFFSET = -1;
+  private static final int SAK_TABLE_OFFSET = 0x29094;
 
   private static final String CODE_NAME = "Costume Branch Table Fix";
   private static final byte[] BRANCH_TABLE_4_BRANCHES = ByteUtils.hexTextToBytes(
