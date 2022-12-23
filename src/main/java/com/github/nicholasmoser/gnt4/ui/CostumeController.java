@@ -77,6 +77,13 @@ public class CostumeController {
     List<String> costumes4 = costume4.getItems();
     Set<String> allCostumes = new HashSet<>(costumes3);
     allCostumes.addAll(costumes4);
+    if (allCostumes.contains(GNT4Characters.KANKURO)) {
+      allCostumes.add(GNT4Characters.KARASU);
+    } else if (allCostumes.contains(GNT4Characters.TAYUYA)) {
+      allCostumes.add(GNT4Characters.TAYUYA_DOKI);
+    } else if (allCostumes.contains(GNT4Characters.KIBA)) {
+      allCostumes.add(GNT4Characters.AKAMARU);
+    }
     try {
       verifyIntegrity(costumes3, costumes4);
       checkDupeCostumeFix(charSel);
