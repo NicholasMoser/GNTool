@@ -37,127 +37,171 @@ public class Functions {
   private static Map<String, Map<Integer, Function>> getAllFunctions() {
     Map<String, Map<Integer, Function>> allFunctions = new HashMap<>();
 
+    Function costumeModelPhysics = new Function("costume_model_physics",
+        List.of("// Branch table on costume id for model physics, e.g. Ino hair, Temari sash"));
+
     Map<Integer, Function> functions = getChrBaseFunctions(Seqs.ANK_0000);
+    functions.put(0x25004, costumeModelPhysics);
     allFunctions.put(Seqs.ANK_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.BOU_0000);
+    functions.put(0x27ABC, costumeModelPhysics);
     allFunctions.put(Seqs.BOU_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.CHO_0000);
+    functions.put(0x26788, costumeModelPhysics);
     allFunctions.put(Seqs.CHO_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.DOG_0000);
+    functions.put(0x1C018, costumeModelPhysics);
     allFunctions.put(Seqs.DOG_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.GAI_0000);
+    functions.put(0x24204, costumeModelPhysics);
     allFunctions.put(Seqs.GAI_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.GAR_0000);
+    functions.put(0x27FBC, costumeModelPhysics);
     allFunctions.put(Seqs.GAR_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.HAK_0000);
+    functions.put(0x24560, costumeModelPhysics);
     allFunctions.put(Seqs.HAK_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.HI2_0000);
+    functions.put(0x23EC8, costumeModelPhysics);
     allFunctions.put(Seqs.HI2_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.HIN_0000);
+    functions.put(0x255B0, costumeModelPhysics);
     allFunctions.put(Seqs.HIN_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.INO_0000);
+    functions.put(0x265B4, costumeModelPhysics);
     allFunctions.put(Seqs.INO_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.IRU_0000);
+    functions.put(0x22C7C, costumeModelPhysics);
     allFunctions.put(Seqs.IRU_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.ITA_0000);
+    functions.put(0x28D94, costumeModelPhysics);
     allFunctions.put(Seqs.ITA_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.JIR_0000);
+    functions.put(0x26158, costumeModelPhysics);
     allFunctions.put(Seqs.JIR_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.KAB_0000);
+    functions.put(0x24C4C, costumeModelPhysics);
     allFunctions.put(Seqs.KAB_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.KAK_0000);
+    functions.put(0x31F1C, costumeModelPhysics);
     allFunctions.put(Seqs.KAK_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.KAN_0000);
+    functions.put(0x24D84, costumeModelPhysics);
     allFunctions.put(Seqs.KAN_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.KAR_0000);
+    functions.put(0x1F948, costumeModelPhysics);
     allFunctions.put(Seqs.KAR_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.KIB_0000);
+    functions.put(0x288B4, costumeModelPhysics);
     allFunctions.put(Seqs.KIB_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.KID_0000);
+    functions.put(0x263BC, costumeModelPhysics);
     allFunctions.put(Seqs.KID_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.KIM_0000);
+    functions.put(0x26B94, costumeModelPhysics);
     allFunctions.put(Seqs.KIM_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.KIS_0000);
+    functions.put(0x24C34, costumeModelPhysics);
     allFunctions.put(Seqs.KIS_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.LOC_0000);
+    functions.put(0x277A8, costumeModelPhysics);
     allFunctions.put(Seqs.LOC_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.MIZ_0000);
+    functions.put(0x22E1C, costumeModelPhysics);
     allFunctions.put(Seqs.MIZ_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.NA9_0000);
+    functions.put(0x24360, costumeModelPhysics);
     allFunctions.put(Seqs.NA9_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.NAR_0000);
+    functions.put(0x2F340, costumeModelPhysics);
     allFunctions.put(Seqs.NAR_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.NEJ_0000);
+    functions.put(0x2563C, costumeModelPhysics);
     allFunctions.put(Seqs.NEJ_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.OBO_0000);
+    functions.put(0x1A088, costumeModelPhysics);
     allFunctions.put(Seqs.OBO_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.ORO_0000);
+    functions.put(0x26920, costumeModelPhysics);
     allFunctions.put(Seqs.ORO_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.SA2_0000);
+    functions.put(0x25DF8, costumeModelPhysics);
     allFunctions.put(Seqs.SA2_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.SAK_0000);
+    functions.put(0x26940, costumeModelPhysics);
     allFunctions.put(Seqs.SAK_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.SAR_0000);
+    functions.put(0x24CE8, costumeModelPhysics);
     allFunctions.put(Seqs.SAR_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.SAS_0000);
+    functions.put(0x2908C, costumeModelPhysics);
     allFunctions.put(Seqs.SAS_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.SIK_0000);
+    functions.put(0x264DC, costumeModelPhysics);
     allFunctions.put(Seqs.SIK_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.SIN_0000);
+    functions.put(0x252E4, costumeModelPhysics);
     allFunctions.put(Seqs.SIN_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.SKO_0000);
+    functions.put(0x259C0, costumeModelPhysics);
     allFunctions.put(Seqs.SKO_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.TA2_0000);
+    functions.put(0x191B8, costumeModelPhysics);
     allFunctions.put(Seqs.TA2_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.TAY_0000);
+    functions.put(0x27D90, costumeModelPhysics);
     allFunctions.put(Seqs.TAY_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.TEM_0000);
+    functions.put(0x29B14, costumeModelPhysics);
     allFunctions.put(Seqs.TEM_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.TEN_0000);
+    functions.put(0x2B108, costumeModelPhysics);
     allFunctions.put(Seqs.TEN_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.TSU_0000);
+    functions.put(0x255A4, costumeModelPhysics);
     allFunctions.put(Seqs.TSU_0000, functions);
 
     functions = getChrBaseFunctions(Seqs.ZAB_0000);
+    functions.put(0x22EFC, costumeModelPhysics);
     allFunctions.put(Seqs.ZAB_0000, functions);
 
     functions = new HashMap<>();
