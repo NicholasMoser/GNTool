@@ -177,8 +177,8 @@ public class SeqEditor {
     }
     List<Opcode> newCodes = seqEdit.getNewCodes();
     nameTextArea.setText(editName);
-    offsetTextField.setText(Integer.toString(seqEdit.getOffset()));
-    hijackedBytesLengthTextField.setText(Integer.toString(oldBytes.length));
+    offsetTextField.setText(String.format("0x%X", seqEdit.getOffset()));
+    hijackedBytesLengthTextField.setText(String.format("0x%X", oldBytes.length));
     hijackedBytesTextArea.setText(sb.toString());
     Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes, seqEdit.getSize());
     newBytesTextArea.setText(opcodesStrings.getKey());

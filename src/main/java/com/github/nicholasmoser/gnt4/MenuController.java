@@ -1532,6 +1532,16 @@ public class MenuController {
   private void syncRefresh() throws IOException {
     LOGGER.log(Level.INFO, "Refreshing workspace.");
     List<WorkspaceFile> allFiles = workspace.getAllFiles();
+    if (allFiles.isEmpty()) {
+      String msg = """
+          The workspace database is missing every file entry. This likely means that the entries
+          were removed from the database but were not added back after building an ISO. The safest
+          option at this point is to rebuild the database, which means any changes since the last
+          ISO build will not be detected by GNTool. Rebuilding the database...
+          """;
+      LOGGER.log(Level.SEVERE, msg);
+      rebuildWorkspace();
+    }
     // The below two calls can be slow the first time they are called since it needs to check
     // if each file in the workspace exists. I'm not sure if this can be avoided.
     refreshMissingFiles(allFiles);
