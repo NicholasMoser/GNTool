@@ -180,7 +180,7 @@ public class SeqEditor {
     offsetTextField.setText(String.format("0x%X", seqEdit.getOffset()));
     hijackedBytesLengthTextField.setText(String.format("0x%X", oldBytes.length));
     hijackedBytesTextArea.setText(sb.toString());
-    Pair<String,String> opcodesStrings = getOpcodesStrings(newCodes, seqEdit.getSize());
+    Pair<String,String> opcodesStrings = SeqUtil.getOpcodesStrings(newCodes, seqEdit.getSize());
     newBytesTextArea.setText(opcodesStrings.getKey());
     opcodesTextArea.setText(opcodesStrings.getValue());
   }
@@ -487,66 +487,6 @@ public class SeqEditor {
       LOGGER.log(Level.INFO, "Failed to process new bytes as opcodes", e);
       return "Unable to process opcodes";
     }
-  }
-
-  /**
-   * Get the opcodes, and bytes in human-readable text form from a given opcode list.
-   *
-   * @param newCodes The opcode byte array.
-   * @return Pair of the human-readable text of the bytes and opcodes.
-   */
-  public static Pair<String, String> getOpcodesStrings(List<Opcode> newCodes, int size) {
-    Map<Integer, String> labelMap = new HashMap<>();
-    StringBuilder newBytesText = new StringBuilder();
-    StringBuilder opcodesText = new StringBuilder();
-    for (Opcode opcode : newCodes) {
-      if (opcode instanceof BranchingOpcode branchingOpcode) {
-        int destination = branchingOpcode.getDestination();
-        String label = labelMap.get(destination);
-        if (destination <= size && destination >= 0 && label == null) {
-          label = String.format("label%d", labelMap.size());
-          labelMap.put(destination, String.format("%s", label));
-        }
-        if (label != null) {
-          branchingOpcode.setDestinationFunctionName(label);
-        }
-      } else if (opcode instanceof BranchTable branchTable) {
-        List<String> labels = new LinkedList<>();
-        for (Integer destination : branchTable.getOffsets()) {
-          String label = labelMap.get(destination);
-          if (destination <= size && destination >= 0 && label == null) {
-            label = String.format("label%d", labelMap.size());
-            labelMap.put(destination, label);
-          }
-          if (label != null) {
-            labels.add(label);
-          }
-        }
-        branchTable.setBranches(labels);
-      } else if (opcode instanceof BranchTableLink branchTableLink) {
-        List<String> labels = new LinkedList<>();
-        for (Integer destination : branchTableLink.getOffsets()) {
-          String label = labelMap.get(destination);
-          if (destination <= size && destination >= 0 && label == null) {
-            label = String.format("label%d", labelMap.size());
-            labelMap.put(destination, label);
-          }
-          if (label != null) {
-            labels.add(label);
-          }
-        }
-        branchTableLink.setBranches(labels);
-      }
-    }
-    for (Opcode opcode : newCodes) {
-      String label = labelMap.get(opcode.getOffset());
-      if (label != null) {
-        opcodesText.append(String.format("%s:\n",label));
-      }
-      newBytesText.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(opcode.getBytes())));//opcode.getBytes(position, size))));
-      opcodesText.append(String.format("%s\n", opcode.toAssembly()));//toAssembly(position)));
-    }
-    return new Pair<>(newBytesText.toString(), opcodesText.toString());
   }
 
   /**

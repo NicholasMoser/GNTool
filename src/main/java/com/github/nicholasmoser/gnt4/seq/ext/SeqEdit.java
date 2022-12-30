@@ -391,7 +391,9 @@ public class SeqEdit {
         + "New Bytes:\n"
         + "  0x" + ByteUtils.bytesToHexString(newBytes) + '\n'
         + "New Bytes with branch back:\n"
-        + "  0x" + ByteUtils.bytesToHexString(newBytesWithBranchBack) + '\n';
+        + "  0x" + ByteUtils.bytesToHexString(newBytesWithBranchBack) + '\n'
+        + "Assembly:\n"
+        + SeqUtil.getOpcodesStrings(newCodes, newBytes.length).getValue();
   }
 
   @Override
