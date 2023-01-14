@@ -49,7 +49,7 @@ public class SeqAssemblerTest {
         while (bs.bytesAreLeft()) {
             assembledOpcodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
         }
-        Pair<String, String> reassembled = SeqEditor.getOpcodesStrings(assembledOpcodes, bytes.length);
+        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes, bytes.length);
         assertEquals(assembly, reassembled.getValue());
     }
 
@@ -76,7 +76,7 @@ public class SeqAssemblerTest {
         while (bs.bytesAreLeft()) {
             assembledOpcodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
         }
-        Pair<String, String> reassembled = SeqEditor.getOpcodesStrings(assembledOpcodes, assembled.length);
+        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes, assembled.length);
         assertEquals(reference, reassembled.getValue());
     }
 
@@ -103,7 +103,7 @@ public class SeqAssemblerTest {
         while (bs.bytesAreLeft()) {
             assembledOpcodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
         }
-        Pair<String, String> reassembled = SeqEditor.getOpcodesStrings(assembledOpcodes, assembled.length);
+        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes, assembled.length);
         assertEquals(reference, reassembled.getValue());
     }
 }

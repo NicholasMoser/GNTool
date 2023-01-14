@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
 import com.github.nicholasmoser.gnt4.seq.Seqs;
 import com.github.nicholasmoser.testing.Prereqs;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -134,18 +135,20 @@ public class SeqEditPatcherTest {
   }
 
   @Test
-  public void mergeConflictThrowsIllegalArgumentException() throws Exception {
+  public void exceptionsAreThrownWhenAppropriate() throws Exception {
     // Get two unmodified Kisame 0000.seq files
     Path uncompressedDir = Prereqs.getUncompressedGNT4();
     Path original = uncompressedDir.resolve(Seqs.KIS_0000);
     Path expected = Files.createTempFile("SeqEditPatcherTest_expected", ".seq");
     Path actual = Files.createTempFile("SeqEditPatcherTest_actual", ".seq");
     Path editFile = Files.createTempFile("SeqEditPatcherTest_editFile", ".seq");
+    Path randomSeqFile = Files.createTempFile("SeqEditPatcherTest_random", ".seq");
 
     try {
       // Copy contents to temp files
       Files.copy(original, expected, REPLACE_EXISTING);
       Files.copy(original, actual, REPLACE_EXISTING);
+      Files.copy(uncompressedDir.resolve(Seqs.KAR_0000), randomSeqFile, REPLACE_EXISTING);
 
       // Add the phantom sword fix to the first and export to file
       SeqEdit psFix = KisamePhantomSwordFix.getSeqEdit(expected);
@@ -162,12 +165,22 @@ public class SeqEditPatcherTest {
           .create();
       SeqExt.addEdit(randomEdit, actual);
 
-      // Import the file into the other seq file and validate IllegalArgumentException is thrown
-      assertThrows(IllegalArgumentException.class, () -> SeqEditPatcher.importFromFile(editFile, actual, true));
+      // Import the file into the other seq file and validate IOException is thrown.
+      // This is because the seq edit already exists in the seq file.
+      // IOException should be thrown whether "force" is enabled or not
+      assertThrows(IOException.class, () -> SeqEditPatcher.importFromFile(editFile, actual, false));
+      assertThrows(IOException.class, () -> SeqEditPatcher.importFromFile(editFile, actual, true));
+
+      // Import a seq edit file with unexpected edited bytes and validate that it throws
+      // IllegalArgumentException only when "force" is not enabled. This exception is the only
+      // one that can be suppressed by the "force" setting.
+      assertThrows(IllegalArgumentException.class, () -> SeqEditPatcher.importFromFile(editFile, randomSeqFile, false));
+      SeqEditPatcher.importFromFile(editFile, randomSeqFile, true);
     } finally {
       Files.deleteIfExists(expected);
       Files.deleteIfExists(actual);
       Files.deleteIfExists(editFile);
+      Files.deleteIfExists(randomSeqFile);
     }
   }
 }

@@ -39,7 +39,7 @@ public class SeqEditPatcher {
     try {
       importFromFile(input.get(), seqPath, false);
     } catch (IllegalArgumentException e) {
-      // Use IllegalArgumentException as a recoverable exception if user wishes to
+      // Treat IllegalArgumentException as a recoverable exception
       String msg = e.getMessage() + "Continue anyways?";
       if (Message.warnConfirmation("Error Importing Edit", msg)) {
         importFromFile(input.get(), seqPath, true);
@@ -50,9 +50,7 @@ public class SeqEditPatcher {
   public static void importFromFile(Path input, Path seqPath, boolean force) throws IOException {
     // Validate edit file headers exist
     List<String> lines = Files.readAllLines(input);
-    if (lines.size() != 15) {
-      throw new IOException("Expected 15 lines but there were " + lines.size());
-    } else if (!lines.get(2).equals("SeqEdit")) {
+    if (!lines.get(2).equals("SeqEdit")) { // Change this in the future for new versions of the file spec
       throw new IOException("Missing SeqEdit header");
     } else if (!lines.get(3).equals("Name:")) {
       throw new IOException("Missing Name header");
@@ -86,9 +84,7 @@ public class SeqEditPatcher {
     for (SeqEdit edit : SeqExt.getEdits(seqPath)) {
       int existingStart = edit.getOffset();
       int existingEnd = existingStart + edit.getOldBytes().length;
-      int newStart = offset;
-      int newEnd = offset + oldBytes.length;
-      if (Ranges.haveOverlap(existingStart, existingEnd, newStart, newEnd)) {
+      if (Ranges.haveOverlap(existingStart, existingEnd, offset, offset + oldBytes.length)) {
         throw new IOException("New edit location conflicts with existing edit: " + edit.getName());
       }
     }
@@ -98,7 +94,7 @@ public class SeqEditPatcher {
     try(RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
       raf.seek(offset);
       raf.read(actualOldBytes);
-      if (!Arrays.equals(actualOldBytes, oldBytes)) {
+      if (!Arrays.equals(actualOldBytes, oldBytes) && !force) {
         throw new IllegalArgumentException("Original replaced bytes have changed, possible merge conflict. ");
       }
     }
