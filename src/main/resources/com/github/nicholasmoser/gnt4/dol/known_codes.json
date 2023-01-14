@@ -529,5 +529,14 @@
       "type": "C2"
     }],
     "name": "Remove Port Priority on Throw Breaks [Nick]"
+  },
+  {
+    "codes": [{
+      "bytes": "A00503C0700022002C0022004082000C3800000048000008A00503C0",
+      "targetAddress": "800632EC",
+      "replacedBytes": "A00503C0",
+      "type": "C2"
+    }],
+    "name": "X+Y Does Not Throw Break [Nick]"
   }
 ]
