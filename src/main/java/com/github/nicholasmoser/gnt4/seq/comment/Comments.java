@@ -186,9 +186,13 @@ public class Comments {
 
     Multimap<Integer, String> charSelComments = ArrayListMultimap.create();
     charSelComments.put(0xCE4, "// Random stage value is set here");
+    charSelComments.put(0x1968, "// Set stage ID");
     charSelComments.put(0x2370, "// Stage IDs");
     charSelComments.put(0x23F0, "// Stage Display IDs");
+    charSelComments.put(0x29AC, "// Set max number of stages (not including random)");
+    charSelComments.put(0x29BC, "// Add one more to max number of stages for random select");
     charSelComments.put(0x3A14, "// Costume ID is read here, 7FFFFF3D is the costume_id");
+    charSelComments.put(0x4820, "// Set stage index to GAME_INFO->stage_index");
     charSelComments.put(0x5680, "// If opponent costume is 1 or 3, goto offset 0x56B4");
     charSelComments.put(0x572C, "// Models specific for costumes 3 and 4 here (Sakura, Ino only)");
     charSelComments.put(0x690C, "// Set the costume_id to 7FFFFF3D");
@@ -209,6 +213,9 @@ public class Comments {
     allComments.put(Seqs.CHARSEL, charSelComments);
 
     Multimap<Integer, String> charSel4Comments = ArrayListMultimap.create();
+    charSel4Comments.put(0x2370, "// Stage IDs");
+    charSel4Comments.put(0x23F0, "// Stage Display IDs");
+
     charSel4Comments.put(0x4AF0, "// Models specific for costumes 3 and 4 here (Sakura, Ino only)");
     charSel4Comments.put(0x79A0, "// Select Costume 1, Player 1");
     charSel4Comments.put(0x79C8, "// Select Costume 2, Player 1");
@@ -238,6 +245,15 @@ public class Comments {
     charSel4Comments.put(0x7DF0, "// Check Costume 4, Player 4 (Haku/Sakura/Ino only)");
     charSel4Comments.put(0x7DC8, "// Select Costume 3, Player 4");
     allComments.put(Seqs.CHARSEL_4, charSel4Comments);
+
+    Multimap<Integer, String> game00comments = ArrayListMultimap.create();
+    game00comments.put(0xC714, "// String for loading state files");
+    game00comments.put(0xC9B8, "// Load stage files");
+    allComments.put(Seqs.GAME_00, game00comments);
+
+    Multimap<Integer, String> loadingComments = ArrayListMultimap.create();
+    loadingComments.put(0x160, "// Branch when loading is done");
+    allComments.put(Seqs.LOADING, loadingComments);
 
     // m_vs.seq 0x3838 Reads the character costume ID
     // m_vs.seq 0x3840 Does something with the character costume ID
