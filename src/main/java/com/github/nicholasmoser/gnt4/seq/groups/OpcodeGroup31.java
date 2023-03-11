@@ -24,6 +24,7 @@ public class OpcodeGroup31 {
       case 0x03 -> set_text_size(bs);
       case 0x06 -> set_text_color(bs);
       case 0x0B -> op_310B(bs);
+      case 0x13 -> op_3113(bs); // Does not appear to be in GNT4?
       case 0x1B -> op_311B(bs);
       case 0x1C -> UnknownOpcode.of(0x4, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
@@ -68,6 +69,12 @@ public class OpcodeGroup31 {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     return new SetTextPosition(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode op_3113(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_311B(ByteStream bs) throws IOException {
