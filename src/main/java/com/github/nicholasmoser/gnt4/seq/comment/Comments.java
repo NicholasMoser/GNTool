@@ -74,6 +74,10 @@ public class Comments {
     allComments.put(Seqs.HAK_0000, comments);
 
     comments = getChrBaseComments();
+    comments.put(0x14A80, "// Code for normal kunais (Woke Hinata throws multiple kunai)");
+    comments.put(0x14AF0, "// Code for the fast uncharged kunai (Woke Hinata throws multiple kunai)");
+    comments.put(0x14B60, "// Code for the fast charged kunai (Woke Hinata throws multiple kunai)");
+    comments.put(0x14BD0, "// Code for the fastest charged kunai (Woke Hinata throws multiple kunai)");
     allComments.put(Seqs.HI2_0000, comments);
 
     comments = getChrBaseComments();
@@ -238,6 +242,17 @@ public class Comments {
     charSel4Comments.put(0x7DF0, "// Check Costume 4, Player 4 (Haku/Sakura/Ino only)");
     charSel4Comments.put(0x7DC8, "// Select Costume 3, Player 4");
     allComments.put(Seqs.CHARSEL_4, charSel4Comments);
+
+    Multimap<Integer, String> game00Comments = ArrayListMultimap.create();
+    game00Comments.put(0x4850, "// Init battle UI graphics, e.g. health and chakra bars");
+    game00Comments.put(0x4980, "// Hide health bars for animation");
+    game00Comments.put(0x49B0, "// Flip graphics for P2 side");
+    game00Comments.put(0x49EC, "// Align graphics around health bars");
+    game00Comments.put(0x4A58, "// Move graphics to correct positions");
+    game00Comments.put(0x4BAC, "// Move health bars for first part of animation (0x19 frames)");
+    game00Comments.put(0x4C14, "// Move health bars for second part of animation (0xA frames)");
+    game00Comments.put(0x4CB4, "// Fully show health bars at end of animation");
+    allComments.put(Seqs.GAME_00, game00Comments);
 
     // m_vs.seq 0x3838 Reads the character costume ID
     // m_vs.seq 0x3840 Does something with the character costume ID

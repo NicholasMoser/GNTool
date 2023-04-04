@@ -2,10 +2,13 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.testing.Prereqs;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
@@ -553,6 +556,35 @@ public class SeqKingTest {
       outputPath = Paths.get(output);
       Optional<String> fileName = Seqs.getFileName(seq);
       SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE, PERMISSIVE);
+    } finally {
+      if (DELETE_FILE && outputPath != null) {
+        Files.deleteIfExists(outputPath);
+      }
+    }
+  }
+
+  /**
+   * Find branches in seq files that do not branch to valid opcodes.
+   *
+   * @param seq The seq to search.
+   * @throws Exception If any Exception occurs.
+   */
+  private void findBranchMatch(Path seq) throws Exception {
+    Path outputPath = null;
+    try {
+      String output = seq.toString().replace(".seq", ".html");
+      outputPath = Paths.get(output);
+      Optional<String> fileName = Seqs.getFileName(seq);
+      List<Opcode> opcodes = SeqKing.getOpcodes(seq, fileName.get(), VERBOSE, PERMISSIVE);
+      for (Opcode opcode : opcodes) {
+        if (opcode instanceof BranchingOpcode bo) {
+          int dest = bo.getDestination();
+          boolean match = opcodes.stream().anyMatch(o -> o.getOffset() == dest);
+          if (!match) {
+            System.out.printf("###### NO MATCH FOR BRANCH AT OFFSET 0x%X OF %s\n", opcode.getOffset(), fileName.get());
+          }
+        }
+      }
     } finally {
       if (DELETE_FILE && outputPath != null) {
         Files.deleteIfExists(outputPath);
