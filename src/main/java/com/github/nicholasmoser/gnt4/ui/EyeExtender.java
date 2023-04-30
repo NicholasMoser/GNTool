@@ -97,15 +97,15 @@ public class EyeExtender {
   public static final long MAIN_TARGET_ADDR = 0x800ab634L;
   public static final long NOP1_TARGET_ADDR = 0x800ab628L;
   public static final long NOP2_TARGET_ADDR = 0x800ab630L;
-  private static final byte[] NOP = ByteUtils.hexStringToBytes("60000000");
-  private static final byte[] END = ByteUtils.hexStringToBytes("00000000");
-  private static final byte[] CMPWI_COSTUME_2 = ByteUtils.hexStringToBytes("2C070001");
-  private static final byte[] CMPWI_COSTUME_3 = ByteUtils.hexStringToBytes("2C070002");
-  private static final byte[] CMPWI_COSTUME_4 = ByteUtils.hexStringToBytes("2C070003");
-  private static final byte[] LI_R7_0 = ByteUtils.hexStringToBytes("38E00000");
-  private static final int COSTUME_2_OFFSET = 0xC;
-  private static final int COSTUME_3_OFFSET = 0x14;
-  private static final int COSTUME_4_OFFSET = 0x1C;
+  public static final byte[] NOP = ByteUtils.hexStringToBytes("60000000");
+  public static final byte[] END = ByteUtils.hexStringToBytes("00000000");
+  public static final byte[] CMPWI_COSTUME_2 = ByteUtils.hexStringToBytes("2C070001");
+  public static final byte[] CMPWI_COSTUME_3 = ByteUtils.hexStringToBytes("2C070002");
+  public static final byte[] CMPWI_COSTUME_4 = ByteUtils.hexStringToBytes("2C070003");
+  public static final byte[] LI_R7_0 = ByteUtils.hexStringToBytes("38E00000");
+  public static final int COSTUME_2_OFFSET = 0xC;
+  public static final int COSTUME_3_OFFSET = 0x14;
+  public static final int COSTUME_4_OFFSET = 0x1C;
 
   /**
    * <code>

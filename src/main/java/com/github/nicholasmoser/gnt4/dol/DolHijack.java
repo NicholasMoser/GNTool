@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.dol;
 
 import com.github.nicholasmoser.Message;
+import com.github.nicholasmoser.dol.DolUtil;
 import com.github.nicholasmoser.gecko.GeckoCode;
 import com.github.nicholasmoser.gecko.GeckoCodeGroup;
 import com.github.nicholasmoser.gecko.GeckoCodeJSON;
@@ -9,6 +10,7 @@ import com.github.nicholasmoser.gecko.InsertAsmCode;
 import com.github.nicholasmoser.gecko.Write32BitsCode;
 import com.github.nicholasmoser.gecko.active.ActiveInsertAsmCode;
 import com.github.nicholasmoser.gnt4.dol.CodeCaves.CodeCave;
+import com.github.nicholasmoser.gnt4.ui.EyeExtender;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.HttpUtils;
 import java.io.IOException;
@@ -144,6 +146,9 @@ public class DolHijack {
         }
         // There's a lot of different reasons this could occur, but they all will require manual
         // inspection of the user's dol. Ask them to just log an issue.
+        long dolOffset = DolUtil.ram2dol(codeCaveStartAddress);
+        LOGGER.log(Level.INFO, String.format("Using code cave %s at offset 0x%X", codeCave, dolOffset));
+        LOGGER.log(Level.INFO, String.format("Currently at offset 0x%X (0x%X)", i, dolOffset + i));
         throw new IOException(
             "A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
       }
@@ -189,22 +194,22 @@ public class DolHijack {
    *
    * @param currentBytes         The current bytes to search for a matching code.
    * @param originalBytes        The original bytes at the same location of the current bytes.
-   * @param i                    The index in the current and original bytes.
+   * @param start                The index in the current and original bytes.
    * @param codeCaveStartAddress The starting address of the code cave.
    * @return The result of trying to find a code match.
    */
-  private static CodeMatchResult findCodeMatch(byte[] currentBytes, byte[] originalBytes, int i,
+  private static CodeMatchResult findCodeMatch(byte[] currentBytes, byte[] originalBytes,
+      final int start,
       long codeCaveStartAddress) throws IOException {
     if (CODES == null) {
       CODES = loadCodes();
     }
-    int bytesLeft = currentBytes.length - i;
-    int saved_i = i;
+    int bytesLeft = currentBytes.length - start;
     for (int j = 0; j < CODES.length(); j++) {
       JSONObject codeGroup = CODES.getJSONObject(j);
       JSONArray codes = codeGroup.getJSONArray("codes");
       int numOfC2Codes = getNumberOfC2Codes(codes);
-      i = saved_i;
+      int i = start;
       for (int k = 0; k < codes.length(); k++) {
         JSONObject code = codes.getJSONObject(k);
         if ("C2".equals(code.getString("type"))) {
@@ -231,7 +236,78 @@ public class DolHijack {
         }
       }
     }
-    return new CodeMatchResult(false, i);
+    // Hack to check for the code "Allow Additional Eye Textures"
+    byte[] firstWord = Arrays.copyOfRange(currentBytes, start, start + 4);
+    if (Arrays.equals(firstWord, EyeExtender.CMPWI_COSTUME_2)) {
+      // Look for the code footer
+      byte[] footer = ByteUtils.hexTextToBytes(EyeExtender.FOOTER_BYTES);
+      for (int i = start; i < currentBytes.length - footer.length; i += 4) {
+        byte[] potentialFooter = Arrays.copyOfRange(currentBytes, i, i + footer.length);
+        if (Arrays.equals(potentialFooter, footer)) {
+          // Found the footer, skip nops to find end of code
+          int endOfFooter = i + footer.length;
+          for (int j = endOfFooter; j < currentBytes.length - 4; j += 4) {
+            byte[] potentialEnd = Arrays.copyOfRange(currentBytes, j, j + 4);
+            if (!Arrays.equals(EyeExtender.NOP, potentialEnd)) {
+              int end = j + 4;
+              byte[] codeBytes = Arrays.copyOfRange(currentBytes, start, end);
+              byte[] hijackedBytes = Arrays.copyOfRange(originalBytes, start, end);
+              long hijackedAddress = codeCaveStartAddress + start;
+              JSONObject codeGroup = getEyeTextureCodes(codeBytes, hijackedBytes, hijackedAddress);
+              return new CodeMatchResult(true, end, codeGroup);
+            }
+          }
+        }
+      }
+    }
+    return new CodeMatchResult(false, start);
+  }
+
+  /**
+   * Return a JSON object of the code "Allow Additional Eye Textures"
+   *
+   * @param codeBytes       The code bytes for "Allow Additional Eye Textures"
+   * @param hijackedBytes   The hijacked bytes for "Allow Additional Eye Textures"
+   * @param hijackedAddress The hijacked address for "Allow Additional Eye Textures"
+   * @return a JSON object of the code "Allow Additional Eye Textures"
+   */
+  private static JSONObject getEyeTextureCodes(byte[] codeBytes, byte[] hijackedBytes,
+      long hijackedAddress) {
+    // Zero out last four bytes of code
+    codeBytes[codeBytes.length - 1] = 0;
+    codeBytes[codeBytes.length - 2] = 0;
+    codeBytes[codeBytes.length - 3] = 0;
+    codeBytes[codeBytes.length - 4] = 0;
+    // Create the codes
+    JSONObject codeGroup = new JSONObject();
+    JSONArray codes = new JSONArray();
+    // Add first code
+    JSONObject first = new JSONObject();
+    first.put("hijackedAddress", ByteUtils.fromLong(hijackedAddress));
+    first.put("bytes", ByteUtils.bytesToHexString(codeBytes));
+    first.put("targetAddress", "800AB634");
+    first.put("hijackedBytes", ByteUtils.bytesToHexString(hijackedBytes));
+    first.put("replacedBytes", "8061000C");
+    first.put("type", "C2");
+    // Add second code
+    JSONObject second = new JSONObject();
+    second.put("bytes", "60000000");
+    second.put("targetAddress", "800AB628");
+    second.put("replacedBytes", "38E00001");
+    second.put("type", "04");
+    // Add third code
+    JSONObject third = new JSONObject();
+    third.put("bytes", "60000000");
+    third.put("targetAddress", "800AB630");
+    third.put("replacedBytes", "38E00000");
+    third.put("type", "04");
+    // Finish code group
+    codes.put(first);
+    codes.put(second);
+    codes.put(third);
+    codeGroup.put("codes", codes);
+    codeGroup.put("name", "Allow Additional Eye Textures");
+    return codeGroup;
   }
 
   private static int getNumberOfC2Codes(JSONArray codes) {
