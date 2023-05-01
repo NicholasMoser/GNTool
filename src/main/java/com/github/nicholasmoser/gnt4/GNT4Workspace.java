@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -108,7 +109,8 @@ public class GNT4Workspace implements Workspace {
   }
 
   @Override
-  public Set<String> getChangedFiles(List<WorkspaceFile> allFiles) throws IOException {
+  public Set<String> getChangedFiles(List<WorkspaceFile> allFiles, boolean quick)
+      throws IOException {
     Set<String> filesChanged = new HashSet<>();
     for (WorkspaceFile file : allFiles) {
       String filePath = file.filePath();
@@ -116,14 +118,23 @@ public class GNT4Workspace implements Workspace {
       if (!Files.exists(fullPath)) {
         // The file has been changed if it has been removed
         filesChanged.add(filePath);
-      } else {
-        if (Files.getLastModifiedTime(fullPath).toMillis() > file.modifiedDtTm()) {
-          // File has been modified, check hash to confirm there was an actual change
-          if (CRC32.getHash(fullPath) != file.hash()) {
-            // File has been changed
-            filesChanged.add(filePath);
-          }
+      } else if (quick) {
+        // Quickly rule out files that haven't been modified since the last build
+        boolean isModified = Files.getLastModifiedTime(fullPath).toMillis() > file.modifiedDtTm();
+        if (isModified && CRC32.getHash(fullPath) != file.hash()) {
+          // File has been changed
+          filesChanged.add(filePath);
         }
+      } else if (CRC32.getHash(fullPath) != file.hash()) {
+        // File has been changed
+        boolean isModified = Files.getLastModifiedTime(fullPath).toMillis() > file.modifiedDtTm();
+        if (!isModified) {
+          // The last modified date/time doesn't seem to reflect the fact that this file was changed
+          // Let's update the last modified date/time so that successive quick refreshes will
+          // now detect this file
+          Files.setLastModifiedTime(fullPath, FileTime.fromMillis(System.currentTimeMillis()));
+        }
+        filesChanged.add(filePath);
       }
     }
     return filesChanged;

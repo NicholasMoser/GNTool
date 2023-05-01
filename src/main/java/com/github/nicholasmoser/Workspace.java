@@ -78,10 +78,11 @@ public interface Workspace {
    * Returns the files that have been changed.
    *
    * @param allFiles All files currently in the workspace state.
+   * @param quick    If this call should be done in a less accurate but more quick way
    * @return The collection of changed files.
    * @throws IOException If any I/O exception occurs.
    */
-  Set<String> getChangedFiles(List<WorkspaceFile> allFiles) throws IOException;
+  Set<String> getChangedFiles(List<WorkspaceFile> allFiles, boolean quick) throws IOException;
 
   /**
    * Reverts changed files.

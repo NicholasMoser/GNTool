@@ -676,11 +676,19 @@ public class MenuController {
   }
 
   /**
-   * Refreshes the current workspace for any changes having occurred outside of GNTool.
+   * Quick refreshes the current workspace for any changes having occurred outside GNTool.
    */
   @FXML
-  protected void refresh() {
-    asyncRefresh();
+  protected void quickRefresh() {
+    asyncRefresh(true);
+  }
+
+  /**
+   * Fully refreshes the current workspace for any changes having occurred outside GNTool.
+   */
+  @FXML
+  protected void fullRefresh() {
+    asyncRefresh(false);
   }
 
   @FXML
@@ -795,7 +803,7 @@ public class MenuController {
     Set<String> currentMissingFiles;
     try {
       List<WorkspaceFile> files = workspace.getAllFiles();
-      currentChangedFiles = workspace.getChangedFiles(files);
+      currentChangedFiles = workspace.getChangedFiles(files, true);
       currentMissingFiles = workspace.getMissingFiles(files);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Error Refreshing Workspace", e);
@@ -1476,7 +1484,7 @@ public class MenuController {
       List<GeckoCode> codes = reader.parseCodes(text);
       CodeWriter writer = new CodeWriter(dolPath, getCodesFile(), codeGroups);
       writer.addCodes(name, codes);
-      asyncRefresh();
+      asyncRefresh(true);
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Error Parsing Codes", e);
       Message.error("Error Adding Codes", e.getMessage());
@@ -1493,7 +1501,7 @@ public class MenuController {
       if (optionalGroup.isPresent()) {
         removeCodeGroup(optionalGroup.get());
         defragCodeGroups(codeGroups);
-        asyncRefresh();
+        asyncRefresh(true);
       } else {
         String message = String.format("Unable to remove code %s, try refreshing?", selected);
         LOGGER.log(Level.SEVERE, message);
@@ -1527,7 +1535,7 @@ public class MenuController {
     mainMenuCharacter.getItems().setAll(GNT4Characters.MAIN_MENU_CHARS);
     mainMenuCharacter.getSelectionModel().select(GNT4Characters.SAKURA);
     initRecordingComboboxes();
-    asyncRefresh();
+    asyncRefresh(true);
   }
 
   /**
@@ -1545,9 +1553,10 @@ public class MenuController {
   /**
    * Refresh the workspace synchronously. Will not create any windows.
    *
+   * @param quick If the refresh should be done quickly.
    * @throws IOException If an I/O error occurs.
    */
-  private void syncRefresh() throws IOException {
+  private void syncRefresh(boolean quick) throws IOException {
     LOGGER.log(Level.INFO, "Refreshing workspace.");
     List<WorkspaceFile> allFiles = workspace.getAllFiles();
     if (allFiles.isEmpty()) {
@@ -1563,7 +1572,7 @@ public class MenuController {
     // The below two calls can be slow the first time they are called since it needs to check
     // if each file in the workspace exists. I'm not sure if this can be avoided.
     refreshMissingFiles(allFiles);
-    refreshChangedFiles(allFiles);
+    refreshChangedFiles(allFiles, quick);
     refreshActiveCodes();
     refreshOptions();
     refreshMainMenuCharacter();
@@ -1571,14 +1580,16 @@ public class MenuController {
 
   /**
    * Refresh the workspace asynchronously. Will create a loading window for progress.
+   *
+   * @param quick If the refresh should be done quickly.
    */
-  private void asyncRefresh() {
+  private void asyncRefresh(boolean quick) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() throws Exception {
         try {
           updateMessage("Refreshing workspace...");
-          syncRefresh();
+          syncRefresh(quick);
           updateProgress(1, 1);
         } catch (Exception e) {
           LOGGER.log(Level.SEVERE, "Failed to refresh workspace.", e);
@@ -1607,7 +1618,7 @@ public class MenuController {
         try {
           updateMessage("Rebuilding workspace...");
           rebuildWorkspace();
-          syncRefresh();
+          syncRefresh(true);
           updateProgress(1, 1);
         } catch (Exception e) {
           LOGGER.log(Level.SEVERE, "Failed to rebuild workspace.", e);
@@ -1644,8 +1655,8 @@ public class MenuController {
    *
    * @param allFiles All the workspace files.
    */
-  private void refreshChangedFiles(List<WorkspaceFile> allFiles) throws IOException {
-    Set<String> changedFilenames = workspace.getChangedFiles(allFiles);
+  private void refreshChangedFiles(List<WorkspaceFile> allFiles, boolean quick) throws IOException {
+    Set<String> changedFilenames = workspace.getChangedFiles(allFiles, quick);
     Platform.runLater(() -> {
       changedFiles.getItems().setAll(changedFilenames);
       Collections.sort(changedFiles.getItems());

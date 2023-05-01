@@ -29,7 +29,8 @@
   <MenuBar VBox.vgrow="NEVER">
     <Menu mnemonicParsing="false" text="File">
       <MenuItem mnemonicParsing="false" onAction="#openDirectory" text="Open Workspace" />
-      <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+      <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#quickRefresh" text="Quick Refresh" />
+      <MenuItem mnemonicParsing="false" onAction="#fullRefresh" text="Full Refresh" />
          <MenuItem mnemonicParsing="false" onAction="#diffWorkspace" text="Diff Workspace" />
          <SeparatorMenuItem mnemonicParsing="false" text="Files" />
       <MenuItem accelerator="F7" mnemonicParsing="false" onAction="#addFile" text="Add File" />
