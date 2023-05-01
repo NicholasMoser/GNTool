@@ -67,7 +67,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -792,10 +791,12 @@ public class MenuController {
    */
   @FXML
   protected void build() {
-    // Force refresh
-    // TODO: Changed files list is updated on FX Application Thread which is slower than this code runs, resulting in not all changed files being included
+    Set<String> currentChangedFiles;
+    Set<String> currentMissingFiles;
     try {
-      syncRefresh();
+      List<WorkspaceFile> files = workspace.getAllFiles();
+      currentChangedFiles = workspace.getChangedFiles(files);
+      currentMissingFiles = workspace.getMissingFiles(files);
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Error Refreshing Workspace", e);
       Message.error("Error Refreshing Workspace", e.getMessage());
@@ -803,7 +804,7 @@ public class MenuController {
     }
 
     // Prevent build if files are missing
-    if (!missingFiles.getItems().isEmpty()) {
+    if (!currentMissingFiles.isEmpty()) {
       String message = "You cannot build the ISO while files are missing.\n";
       message += "Allow GNTool to replace these missing files with 1 KB filler files?";
       boolean yes = Message.warnConfirmation("Missing Files", message);
@@ -824,9 +825,25 @@ public class MenuController {
       }
     }
 
+    // Warn user if codes.json is not being saved
+    try {
+      if (Files.exists(getCodesFile()) && !workspace.isSavingCodeState()) {
+        String msg = "Do you wish to save the state of your codes? If you choose no, new workspaces may fail to generate from your ISO.";
+        if (Message.warnConfirmation("Save Codes State", msg)) {
+          String filePath = GeckoCodeJSON.CODE_FILE_PATH;
+          workspace.addFile(new WorkspaceFile(filePath, 0, 0, null, false));
+          currentChangedFiles.add(filePath);
+        }
+      }
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Error Checking if Saving Code State", e);
+      Message.error("Error Checking if Saving Code State", e.getMessage());
+      return;
+    }
+
     // Warn user if no files have changed
     final boolean repack;
-    if (changedFiles.getItems().isEmpty()) {
+    if (currentChangedFiles.isEmpty()) {
       String message =
           "There are no changed files in your workspace. Do you still wish to build an ISO?";
       boolean choice = Message.warnConfirmation("No Changed Files", message);
@@ -853,7 +870,7 @@ public class MenuController {
           if (repack) {
             updateMessage("Repacking FPKs...");
             FPKPacker fpkPacker = new FPKPacker(workspace);
-            fpkPacker.pack(changedFiles.getItems(), parallelBuild.isSelected());
+            fpkPacker.pack(currentChangedFiles, parallelBuild.isSelected());
           }
           updateMessage("Building ISO...");
           GameCubeISO.importFiles(compressedDirectory, isoResponse.get(),
@@ -1500,6 +1517,7 @@ public class MenuController {
     this.uncompressedFiles = uncompressedDirectory.resolve("files");
     this.dolPath = uncompressedDirectory.resolve(DOL);
     this.codes = new GNT4Codes(uncompressedDirectory);
+    Files.createDirectories(uncompressedFiles.resolve("extra"));
     musyxSamFile.getItems().setAll(GNT4Audio.SOUND_EFFECTS);
     musyxSamFile.getSelectionModel().selectFirst();
     txg2tplTexture.getItems().setAll(GNT4Graphics.TEXTURES);
@@ -1654,7 +1672,7 @@ public class MenuController {
           if (Message.warnConfirmation("Need to Move Codes", msg)) {
             if (!Files.isRegularFile(codeFile)) {
               // We need the code file to do the conversion, create a code file with the old code cave
-              if (!DolHijack.handleActiveCodesButNoCodeFile(dolPath, CodeCave.RECORDING)) {
+              if (!DolHijack.handleActiveCodesButNoCodeFile(dolPath, CodeCave.RECORDING, codeFile)) {
                 throw new IOException("Recording code is modified, but unable to get code file.");
               }
             }
@@ -1671,7 +1689,7 @@ public class MenuController {
           for (GeckoCodeGroup codeGroup : codeGroups) {
             addedCodes.getItems().add(codeGroup.getName());
           }
-        } else if (DolHijack.handleActiveCodesButNoCodeFile(dolPath, CodeCave.EXI2)) {
+        } else if (DolHijack.handleActiveCodesButNoCodeFile(dolPath, CodeCave.EXI2, codeFile)) {
           // This ISO has injected codes but no associated JSON code file. The previous method
           // call successfully created one, so now let's parse it.
           codeGroups = GeckoCodeJSON.parseFile(codeFile);
@@ -2023,11 +2041,14 @@ public class MenuController {
   /**
    * @return The codes.json path, preferring uncompressed/files/codes.json
    */
-  private Path getCodesFile() {
-    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.PACKED_CODE_FILE_PATH);
-    if (Files.exists(codePath)) {
-      return codePath;
+  private Path getCodesFile() throws IOException {
+    // For passivity, handle a codes.json in the main workspace directory
+    Path oldCodePath = workspaceDirectory.resolve(GeckoCodeJSON.LEGACY_CODE_FILE);
+    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.CODE_FILE);
+    if (Files.exists(oldCodePath)) {
+      Files.createDirectories(codePath.getParent());
+      Files.move(oldCodePath, codePath);
     }
-    return workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
+    return codePath;
   }
 }

@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4;
 import com.github.nicholasmoser.GNTFileProtos.GNTFiles;
 import com.github.nicholasmoser.Workspace;
 import com.github.nicholasmoser.fpk.FPKOptions;
+import com.github.nicholasmoser.gecko.GeckoCodeJSON;
 import com.github.nicholasmoser.utils.CRC32;
 import com.github.nicholasmoser.utils.FPKUtils;
 import com.github.nicholasmoser.workspace.SQLiteWorkspaceState;
@@ -153,6 +154,11 @@ public class GNT4Workspace implements Workspace {
   @Override
   public FPKOptions getFPKOptions() {
     return options;
+  }
+
+  @Override
+  public boolean isSavingCodeState() throws IOException {
+    return state.fileExists(GeckoCodeJSON.CODE_FILE_PATH);
   }
 
   /**

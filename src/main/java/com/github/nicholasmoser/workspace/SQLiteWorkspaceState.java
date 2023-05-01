@@ -190,6 +190,19 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   }
 
   @Override
+  public boolean fileExists(String filePath) throws IOException {
+    LOGGER.info("Getting file " + filePath + " from workspace state");
+    try (PreparedStatement stmt = conn.prepareStatement(SELECT_FILE)) {
+      stmt.setString(1, filePath);
+      try (ResultSet rs = stmt.executeQuery()) {
+        return rs.next();
+      }
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+  }
+
+  @Override
   public void delete() throws IOException {
     LOGGER.info("Deleting all files from workspace state");
     try (PreparedStatement stmt = conn.prepareStatement(DELETE_ALL_FILES)) {

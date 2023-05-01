@@ -19,8 +19,9 @@ import org.json.JSONTokener;
 public class GeckoCodeJSON {
 
   // The path to codes.json file when it is bundled with the ISO
-  public static final String PACKED_CODE_FILE_PATH = "extra/codes.json";
-  public static final String CODE_FILE = "codes.json";
+  public static final String CODE_FILE_PATH = "files/extra/codes.json";
+  public static final String CODE_FILE = "extra/codes.json";
+  public static final String LEGACY_CODE_FILE = "codes.json";
 
   /**
    * Writes a list of GeckoCodeGroup objects to a file path.

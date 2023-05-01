@@ -41,6 +41,12 @@ public interface WorkspaceState {
   boolean removeFile(String filePath) throws IOException;
 
   /**
+   * @return If the given file exists.
+   * @throws IOException If any I/O exception occurs.
+   */
+  boolean fileExists(String filePath) throws IOException;
+
+  /**
    * Deletes the entire workspace state.
    */
   void delete() throws IOException;
