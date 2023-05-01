@@ -792,19 +792,19 @@ public class MenuController {
   @FXML
   protected void build() {
     Set<String> currentChangedFiles;
-    Set<String> missingFiles;
+    Set<String> currentMissingFiles;
     try {
       List<WorkspaceFile> files = workspace.getAllFiles();
       currentChangedFiles = workspace.getChangedFiles(files);
-      missingFiles = workspace.getMissingFiles(files);
+      currentMissingFiles = workspace.getMissingFiles(files);
     } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Error Refreshing", e);
-      Message.error("Error Refreshing", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Error Refreshing Workspace", e);
+      Message.error("Error Refreshing Workspace", e.getMessage());
       return;
     }
 
     // Prevent build if files are missing
-    if (!missingFiles.isEmpty()) {
+    if (!currentMissingFiles.isEmpty()) {
       String message = "You cannot build the ISO while files are missing.\n";
       message += "Allow GNTool to replace these missing files with 1 KB filler files?";
       boolean yes = Message.warnConfirmation("Missing Files", message);
@@ -830,7 +830,7 @@ public class MenuController {
       if (Files.exists(getCodesFile()) && !workspace.isSavingCodeState()) {
         String msg = "Do you wish to save the state of your codes? If you choose no, new workspaces may fail to generate from your ISO.";
         if (Message.warnConfirmation("Save Codes State", msg)) {
-          String filePath = "files/extra/codes.json";
+          String filePath = GeckoCodeJSON.CODE_FILE_PATH;
           workspace.addFile(new WorkspaceFile(filePath, 0, 0, null, false));
           currentChangedFiles.add(filePath);
         }
@@ -2043,8 +2043,8 @@ public class MenuController {
    */
   private Path getCodesFile() throws IOException {
     // For passivity, handle a codes.json in the main workspace directory
-    Path oldCodePath = workspaceDirectory.resolve(GeckoCodeJSON.CODE_FILE);
-    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.PACKED_CODE_FILE_PATH);
+    Path oldCodePath = workspaceDirectory.resolve(GeckoCodeJSON.LEGACY_CODE_FILE);
+    Path codePath = uncompressedFiles.resolve(GeckoCodeJSON.CODE_FILE);
     if (Files.exists(oldCodePath)) {
       Files.createDirectories(codePath.getParent());
       Files.move(oldCodePath, codePath);

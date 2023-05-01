@@ -41,6 +41,12 @@ public interface WorkspaceState {
   boolean removeFile(String filePath) throws IOException;
 
   /**
+   * @return If the given file exists.
+   * @throws IOException If any I/O exception occurs.
+   */
+  boolean fileExists(String filePath) throws IOException;
+
+  /**
    * Deletes the entire workspace state.
    */
   void delete() throws IOException;
@@ -77,12 +83,6 @@ public interface WorkspaceState {
    * @throws IOException If any I/O exception occurs.
    */
   Map<String, Long> getFilePathToModifiedDtTm() throws IOException;
-
-  /**
-   * @return If the workspace is currently saving the state of dol codes.
-   * @throws IOException If any I/O exception occurs.
-   */
-  boolean isSavingCodeState() throws IOException;
 
   /**
    * Closes the workspace state.
