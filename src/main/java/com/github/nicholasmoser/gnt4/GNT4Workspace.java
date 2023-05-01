@@ -155,6 +155,11 @@ public class GNT4Workspace implements Workspace {
     return options;
   }
 
+  @Override
+  public boolean isSavingCodeState() throws IOException {
+    return state.isSavingCodeState();
+  }
+
   /**
    * Inserts GNTFiles into the workspace state.
    *

@@ -105,10 +105,11 @@ public class DolHijack {
    *
    * @param dolPath  The path to the dol.
    * @param codeCave The code cave to write codes to.
+   * @param codePath The file to write the codes to.
    * @return If codes were found to be injected and a new codes JSON file was created.
    * @throws IOException if an I/O error occurs
    */
-  public static boolean handleActiveCodesButNoCodeFile(Path dolPath, CodeCave codeCave)
+  public static boolean handleActiveCodesButNoCodeFile(Path dolPath, CodeCave codeCave, Path codePath)
       throws IOException {
     byte[] currentBytes = getCurrentBytes(dolPath, codeCave);
     byte[] originalBytes = CodeCaves.getBytes(codeCave);
@@ -153,8 +154,7 @@ public class DolHijack {
             "A code could not be matched when creating the code JSON, please report this on the GNTool Github.");
       }
       // Write the codes list to the codes.json file
-      Path codesJson = dolPath.getParent().resolve("../../codes.json");
-      Files.writeString(codesJson, codesList.toString(2));
+      Files.writeString(codePath, codesList.toString(2));
       break;
     }
     return true;

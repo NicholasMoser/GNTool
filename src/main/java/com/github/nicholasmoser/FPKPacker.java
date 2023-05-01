@@ -68,7 +68,7 @@ public class FPKPacker {
    * @param parallel     If the repacking should attempt to be done in parallel.
    * @throws IOException If there is an I/O issue repacking or moving the files.
    */
-  public void pack(List<String> changedFiles, boolean parallel) throws IOException {
+  public void pack(Collection<String> changedFiles, boolean parallel) throws IOException {
     // Get data needed to repack
     Set<String> changedFPKFiles = new HashSet<>();
     Set<String> changedNonFPKFiles = new HashSet<>();

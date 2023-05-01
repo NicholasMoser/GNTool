@@ -79,6 +79,12 @@ public interface WorkspaceState {
   Map<String, Long> getFilePathToModifiedDtTm() throws IOException;
 
   /**
+   * @return If the workspace is currently saving the state of dol codes.
+   * @throws IOException If any I/O exception occurs.
+   */
+  boolean isSavingCodeState() throws IOException;
+
+  /**
    * Closes the workspace state.
    */
   void close();

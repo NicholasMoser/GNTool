@@ -277,6 +277,20 @@ public class SQLiteWorkspaceState implements WorkspaceState {
   }
 
   @Override
+  public boolean isSavingCodeState() throws IOException {
+    String filePath = "files/extra/codes.json";
+    LOGGER.info("Getting file " + filePath + " from workspace state");
+    try (PreparedStatement stmt = conn.prepareStatement(SELECT_FILE)) {
+      stmt.setString(1, filePath);
+      try (ResultSet rs = stmt.executeQuery()) {
+        return rs.next();
+      }
+    } catch (SQLException e) {
+      throw new IOException(e);
+    }
+  }
+
+  @Override
   public void close() {
     LOGGER.info("Closing workspace state");
     try {

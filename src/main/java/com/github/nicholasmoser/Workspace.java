@@ -95,4 +95,10 @@ public interface Workspace {
    * @return The FPK options for this workspace.
    */
   FPKOptions getFPKOptions();
+
+  /**
+   * @return If the workspace is currently saving the state of dol codes.
+   * @throws IOException If any I/O exception occurs.
+   */
+  boolean isSavingCodeState() throws IOException;
 }
