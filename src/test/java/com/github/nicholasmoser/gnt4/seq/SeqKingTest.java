@@ -550,12 +550,30 @@ public class SeqKingTest {
   }
 
   private void generate(Path seq) throws Exception {
+    findSpawnProjectileInfo(seq);
+  }
+
+  /**
+   * Find branches in seq files that do not branch to valid opcodes.
+   *
+   * @param seq The seq to search.
+   * @throws Exception If any Exception occurs.
+   */
+  private void findSpawnProjectileInfo(Path seq) throws Exception {
     Path outputPath = null;
     try {
       String output = seq.toString().replace(".seq", ".html");
       outputPath = Paths.get(output);
       Optional<String> fileName = Seqs.getFileName(seq);
-      SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE, PERMISSIVE);
+      List<Opcode> opcodes = SeqKing.getOpcodes(seq, fileName.get(), VERBOSE, PERMISSIVE);
+      for (Opcode opcode : opcodes) {
+        byte[] bytes = opcode.getBytes();
+        if (bytes[0] == 0x47 && bytes[1] == 0x00) {
+          if (bytes[19] != 0) {
+            System.out.println(seq + " " + opcode);
+          }
+        }
+      }
     } finally {
       if (DELETE_FILE && outputPath != null) {
         Files.deleteIfExists(outputPath);

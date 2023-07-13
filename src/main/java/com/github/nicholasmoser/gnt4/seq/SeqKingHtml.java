@@ -1,7 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import static j2html.TagCreator.a;
-import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.body;
 import static j2html.TagCreator.button;
 import static j2html.TagCreator.div;
@@ -34,7 +33,6 @@ import j2html.tags.specialized.UlTag;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

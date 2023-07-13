@@ -967,7 +967,7 @@ public class Seq {
     actionDescriptions.put(0x192, "Air Throw");
     actionDescriptions.put(0x193, "Activated X");
     actionDescriptions.put(0x194, "Unknown");
-    actionDescriptions.put(0x195, "Activated X (Transformation)");
+    actionDescriptions.put(0x195, "4X");
     actionDescriptions.put(0x196, "Activated 2X");
     actionDescriptions.put(0x197, "Unknown");
 

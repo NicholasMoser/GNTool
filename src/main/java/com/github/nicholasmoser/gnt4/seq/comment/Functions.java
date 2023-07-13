@@ -224,6 +224,12 @@ public class Functions {
     Function callAnimation = new Function("CallAnimation", List.of("// gpr2 = The animation ID"));
     baseFunctions.put(getCallAnimationOffset(chrSeq), callAnimation);
 
+    Function darkenScreen = new Function("DarkenScreen", Collections.emptyList());
+    baseFunctions.put(getDarkenScreenOffset(chrSeq), darkenScreen);
+
+    Function lightenScreen = new Function("LightenScreen", Collections.emptyList());
+    baseFunctions.put(getLightenScreenOffset(chrSeq), lightenScreen);
+
     baseFunctions.putAll(getChakraSubtractFunctions(chrSeq));
 
     Function increaseChrModelSize = new Function("IncreaseChrModelSize",
@@ -231,6 +237,52 @@ public class Functions {
     baseFunctions.put(getIncreaseChrModelSizeOffset(chrSeq), increaseChrModelSize);
 
     return baseFunctions;
+  }
+
+  private static int getDarkenScreenOffset(String chrSeq) {
+    switch (chrSeq) {
+      case Seqs.BOU_0000, Seqs.HI2_0000, Seqs.HIN_0000, Seqs.NAR_0000 -> {
+        return 0x1348;
+      }
+      case Seqs.CHO_0000 -> {
+        return 0x13D8;
+      }
+      case Seqs.DOG_0000, Seqs.KAR_0000 -> {
+        return 0x1230;
+      }
+      case Seqs.KID_0000, Seqs.KIM_0000, Seqs.SA2_0000 -> {
+        return 0x125C;
+      }
+      case Seqs.SKO_0000 -> {
+        return 0x12C0;
+      }
+      default -> {
+        return 0x1250;
+      }
+    }
+  }
+
+  private static int getLightenScreenOffset(String chrSeq) {
+    switch (chrSeq) {
+      case Seqs.BOU_0000, Seqs.HI2_0000, Seqs.HIN_0000, Seqs.NAR_0000 -> {
+        return 0x13D4;
+      }
+      case Seqs.CHO_0000 -> {
+        return 0x1464;
+      }
+      case Seqs.DOG_0000, Seqs.KAR_0000 -> {
+        return 0x12BC;
+      }
+      case Seqs.KID_0000, Seqs.KIM_0000, Seqs.SA2_0000 -> {
+        return 0x12E8;
+      }
+      case Seqs.SKO_0000 -> {
+        return 0x134C;
+      }
+      default -> {
+        return 0x12DC;
+      }
+    }
   }
 
   private static int getCallAnimationOffset(String chrSeq) {
