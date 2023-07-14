@@ -29,7 +29,7 @@ public class Functions {
     }
     Map<Integer, Function> functions = FUNCTIONS.get(fileName);
     if (functions == null) {
-      return Collections.emptyMap();
+      return new HashMap<>();
     }
     return functions;
   }

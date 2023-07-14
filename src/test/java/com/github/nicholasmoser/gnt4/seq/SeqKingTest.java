@@ -564,7 +564,7 @@ public class SeqKingTest {
   }
 
   /**
-   * Find branches in seq files that do not branch to valid opcodes.
+   * Helper function used to find commonality between character SEQ files using opcode 4700
    *
    * @param seq The seq to search.
    * @throws Exception If any Exception occurs.
