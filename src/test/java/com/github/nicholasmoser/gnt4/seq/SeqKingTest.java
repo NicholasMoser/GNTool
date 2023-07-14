@@ -550,7 +550,17 @@ public class SeqKingTest {
   }
 
   private void generate(Path seq) throws Exception {
-    findSpawnProjectileInfo(seq);
+    Path outputPath = null;
+    try {
+      String output = seq.toString().replace(".seq", ".html");
+      outputPath = Paths.get(output);
+      Optional<String> fileName = Seqs.getFileName(seq);
+      SeqKing.generateHTML(seq, fileName.get(), outputPath, VERBOSE, PERMISSIVE);
+    } finally {
+      if (DELETE_FILE && outputPath != null) {
+        Files.deleteIfExists(outputPath);
+      }
+    }
   }
 
   /**
