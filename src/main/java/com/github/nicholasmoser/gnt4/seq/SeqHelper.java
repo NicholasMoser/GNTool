@@ -66,11 +66,17 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup55;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup56;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup5B;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveAttack;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveAttacks;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveString;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveStrings;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
+import com.github.nicholasmoser.gnt4.seq.opcodes.CharacterStats;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Combo;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ExtraData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FileName;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
@@ -243,7 +249,8 @@ public class SeqHelper {
             throw new IllegalStateException("There should only be one unknown binary 1.");
           }
           uniqueBinaries.add("foundUnknownBinary1");
-          return Collections.singletonList(SeqHelper.readUnknownBinary1(bs));
+          //return Collections.singletonList(SeqHelper.readUnknownBinary1(bs));
+          return SeqHelper.readUnknownBinary1(bs);
         } else if (SeqHelper.isUnknownBinary4(bs)) {
           if (uniqueBinaries.contains("foundUnknownBinary4")) {
             throw new IllegalStateException("There should only be one unknown binary 4.");
@@ -338,13 +345,54 @@ public class SeqHelper {
    * @return The binary data for unknown binary 1.
    * @throws IOException If an I/O error occurs.
    */
-  public static Opcode readUnknownBinary1(ByteStream bs) throws IOException {
-    int offset = bs.offset();
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    while (bs.peekWord() != 0x04026B00) {
-      baos.write(bs.readBytes(4));
+  public static List<Opcode> readUnknownBinary1(ByteStream bs) throws IOException {
+    List<Opcode> data = new LinkedList<>();
+    while (!Arrays.equals(bs.peekBytes(4), new byte[]{0x00, 0x00, 0x00, 0x00})) {
+      data.add(new ActiveAttack(bs.offset(), bs.readBytes(20)));
     }
-    return new BinaryData(offset, baos.toByteArray());
+    data.add(new ActiveAttack(bs.offset(), bs.readBytes(20)));
+    List<Integer> edl = new LinkedList<>();
+    for (Opcode op : data) {
+      ActiveAttack aa = (ActiveAttack) op;
+      if (!edl.contains(aa.getExtra_data_offset())) {
+        edl.add(aa.getExtra_data_offset());
+      }
+    }
+    Collections.sort(edl);
+    for (int i : edl) {
+      bs.seek(i);
+      data.add(new ExtraData(bs));
+    }
+    while (Arrays.equals(bs.peekBytes(4), new byte[]{0x00, 0x01, 0x00, 0x0A})) {
+      ExtraData ed = new ExtraData(bs);
+      data.add(ed);
+    }
+    if (bs.offset()%4 != 0) {
+      bs.skip(4 - (bs.offset() % 4));
+    }
+    ActiveStrings as = new ActiveStrings(bs);
+    data.add(as);
+    List<Integer> stringOffsets = new LinkedList<>();
+    for (int i : as.getStringOffsets()) {
+      stringOffsets.add(i);
+    }
+    Collections.sort(stringOffsets);
+    for (Integer i : stringOffsets) {
+      if (i == 0) {
+        continue;
+      }
+      bs.seek(i);
+      ActiveString activeString = new ActiveString(bs);
+      data.add(activeString);
+    }
+    while (Arrays.equals(bs.peekBytes(2), new byte[]{0x00, 0x01})) {
+      data.add(new ActiveString(bs));
+    }
+    if (bs.offset()%4 != 0) {
+      bs.skip(4 - (bs.offset() % 4));
+    }
+    data.add(new CharacterStats(bs));
+    return data;
   }
 
   /**

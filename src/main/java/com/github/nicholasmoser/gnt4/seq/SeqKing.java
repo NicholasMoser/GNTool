@@ -2,7 +2,9 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.seq.comment.Function;
 import com.github.nicholasmoser.gnt4.seq.comment.Functions;
+import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingLinkingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.InvalidBytes;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
@@ -127,6 +129,14 @@ public class SeqKing {
       if (SeqSection.isSeqSectionTitle(bs)) {
         List<Opcode> section = SeqSection.handleSeqSection(bs);
         for (Opcode sectionPart : section) {
+          if (sectionPart instanceof ActionID actionID) {
+            Function act = Functions.getFunctions(fileName).get(actionID.getActionOffset());
+            if (act == null) {
+              Functions.getFunctions(fileName).put(actionID.getActionOffset(), new Function(String.format("ACT %X", actionID.getActionId()), List.of(actionID.getInfo())));
+            } else {
+              Functions.getFunctions(fileName).put(actionID.getActionOffset(), new Function(String.format("%s, ACT %X", act.name(), actionID.getActionId()), List.of(actionID.getInfo())));
+            }
+          }
           if (verbose) {
             System.out.println(sectionPart);
           }
@@ -171,9 +181,16 @@ public class SeqKing {
         Function function = functions.get(branchingOpcode.getDestination());
         if (function != null) {
           branchingOpcode.setDestinationFunctionName(function.name());
+        } else if (branchingOpcode instanceof BranchingLinkingOpcode) {
+          String destinationFunctionName = String.format("fun_%X",branchingOpcode.getDestination());
+          branchingOpcode.setDestinationFunctionName(destinationFunctionName);
+          functions.put(branchingOpcode.getDestination(), new Function(destinationFunctionName,List.of("")));
         }
       }
       if (bs.offset() == bytes.length) {
+        if (verbose) {
+          System.out.println(String.format("%s", Functions.getFunctions(fileName)));
+        }
         break; // EOF
       }
     }
