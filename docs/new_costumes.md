@@ -97,6 +97,9 @@ Your costumes should now be selectable with Y and/or Z in-game.
 
 ## Troubleshooting
 
+If you want to use high resolution images for the costume textures, replace the textures on the
+costume with [HSDRAW](https://github.com/Ploaj/HSDLib).
+
 If the colors of the texture seem to be off, check the texture image type:
 
 ![CI8](/docs/CI8.png?raw=true "CI8")

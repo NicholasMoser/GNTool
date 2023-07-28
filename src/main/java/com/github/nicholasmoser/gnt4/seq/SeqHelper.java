@@ -333,8 +333,15 @@ public class SeqHelper {
     if (bs.length() - bs.offset() < 0x8) {
       return false;
     }
-    byte[] expected = new byte[]{0x00, 0x20, 0x56, (byte) 0x80, 0x00, (byte) 0xF0, 0x00, 0x04};
+    // Check SCON4 expected first
+    byte[] expected = new byte[]{0x00, 0x20, 0x46, (byte) 0x80, 0x00, (byte) 0xF0, 0x00, 0x04};
     byte[] bytes = bs.peekBytes(0x8);
+    if (Arrays.equals(expected, bytes)) {
+      return true;
+    }
+    // Then check GNT4 expected
+    expected = new byte[]{0x00, 0x20, 0x56, (byte) 0x80, 0x00, (byte) 0xF0, 0x00, 0x04};
+    bytes = bs.peekBytes(0x8);
     return Arrays.equals(expected, bytes);
   }
 
@@ -355,7 +362,12 @@ public class SeqHelper {
     for (Opcode op : data) {
       ActiveAttack aa = (ActiveAttack) op;
       if (!edl.contains(aa.getExtra_data_offset())) {
-        edl.add(aa.getExtra_data_offset());
+        int offset = aa.getExtra_data_offset();
+        if (offset < bs.length() && offset > 0) {
+          // Ignore weird offsets, such as for the Attack condition terminator at the end of Attack
+          // conditions.
+          edl.add(aa.getExtra_data_offset());
+        }
       }
     }
     Collections.sort(edl);
