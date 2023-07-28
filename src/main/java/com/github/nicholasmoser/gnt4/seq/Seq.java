@@ -757,17 +757,17 @@ public class Seq {
     actionDescriptions.put(0x045, "Hit from behind (e.g. by Naruto 5B)");
     actionDescriptions.put(0x046, "Landing on ground; hard knockdown (e.g. by Sasuke DB)");
     actionDescriptions.put(0x047, "Hard knockdown animation");
-    actionDescriptions.put(0x048, "Sleep (e.g. Kabuto 2X)");
+    actionDescriptions.put(0x048, "Sleep; hit with NEMU (e.g. Kabuto 2X)");
     actionDescriptions.put(0x049, "Hard knockdown animation");
     actionDescriptions.put(0x04A, "Land on ground; on chest (e.g. by Hinata 2B)");
     actionDescriptions.put(0x04B, "Hit with special (lose all chakra)");
-    actionDescriptions.put(0x04C, "Hit with hiki2 (e.g. by Shika 2X)");
-    actionDescriptions.put(0x04D, "Hit with hiki (e.g. by Jiraya 2A)");
-    actionDescriptions.put(0x04E, "Hit with mato2 (e.g. by Shino 2A)");
+    actionDescriptions.put(0x04C, "Drop into ground; hit with HIKI2 (e.g. by Shikamaru 2X)");
+    actionDescriptions.put(0x04D, "Suck into ground; hit with HIKI (e.g. by Jiraya 2A)");
+    actionDescriptions.put(0x04E, "Body trap (e.g. by Kidomaru 5A1C)");
     actionDescriptions.put(0x04F, "Hit with stagger (e.g. by Naruto first charge of 5A");
     actionDescriptions.put(0x050, "Hit hard (e.g. by Sasuke DB");
     actionDescriptions.put(0x051, "Hit hard from behind (e.g. by Sasuke DB");
-    actionDescriptions.put(0x052, "Hit with yoro2 (e.g. by Kidomaru 5A1C)");
+    actionDescriptions.put(0x052, "Feet trap (e.g. by Kidomaru 2A)");
     actionDescriptions.put(0x053, "Hit with stagger from behind (e.g. by OTK 5AA)");
     actionDescriptions.put(0x054, "Hit towards ground (e.g. by Tayuya 8A");
     actionDescriptions.put(0x055, "Hit into the air (e.g. by Sakura 2B sometimes)");
@@ -962,9 +962,9 @@ public class Seq {
     actionDescriptions.put(0x18D, "(UNUSED - points to chr_act)");
     actionDescriptions.put(0x18E, "(UNUSED - points to chr_act)");
     actionDescriptions.put(0x18F, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x190, "Ground Throw");
-    actionDescriptions.put(0x191, "Back Ground Throw");
-    actionDescriptions.put(0x192, "Air Throw");
+    actionDescriptions.put(0x190, "Y");
+    actionDescriptions.put(0x191, "2Y");
+    actionDescriptions.put(0x192, "JY");
     actionDescriptions.put(0x193, "Activated X");
     actionDescriptions.put(0x194, "Unknown");
     actionDescriptions.put(0x195, "4X");
@@ -979,9 +979,9 @@ public class Seq {
     actionDescriptions.put(0x1D5, "Activated 3-Man X #5");
 
     actionDescriptions.put(0x1DF, "Activated 3-Man X #6");
-    actionDescriptions.put(0x1E0, "Getting thrown (front)");
-    actionDescriptions.put(0x1E1, "Getting thrown (back)");
-    actionDescriptions.put(0x1E2, "Getting thrown (air)");
+    actionDescriptions.put(0x1E0, "Y Capture State");
+    actionDescriptions.put(0x1E1, "2Y Capture State");
+    actionDescriptions.put(0x1E2, "JY Capture State");
     actionDescriptions.put(0x1E3, "Hit by super (e.g. by Naruto 5X)");
     actionDescriptions.put(0x1E4, "Hit by big throw (e.g. by Choji 5A)");
     actionDescriptions.put(0x1E5, "Hit by underground throw (e.g. by Kakashi/Kabuto 2A)");
