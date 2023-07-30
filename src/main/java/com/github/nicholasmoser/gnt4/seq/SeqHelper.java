@@ -390,7 +390,7 @@ public class SeqHelper {
     }
     Collections.sort(stringOffsets);
     for (Integer i : stringOffsets) {
-      if (i == 0) {
+      if (i <= 0 || i > bs.length()) {
         continue;
       }
       bs.seek(i);

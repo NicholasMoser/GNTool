@@ -39,7 +39,7 @@ public class Comments {
     Map<String, Multimap<Integer, String>> allComments = new HashMap<>();
 
     Multimap<Integer, String> comments = getChrBaseComments();
-    comments.put(0x251A0, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x251A0, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.ANK_0000, comments);
 
     comments = getChrBaseComments();
@@ -55,29 +55,29 @@ public class Comments {
     comments.put(0x7ED4, "// Update \"mot/loc/0000\"");
     comments.put(0x7EF8, "// Update \"mot/loc/0000\"");
     comments.put(0x7F1C, "// Update \"mot/cmn/0000\"");
-    comments.put(0x27BA4, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x27BA4, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.BOU_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x268D0, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x268D0, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.CHO_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x1C114, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x1C114, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.DOG_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x24270, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x24270, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.GAI_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x280CC, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x280CC, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.GAR_0000, comments);
 
     comments = getChrBaseComments();
     comments.put(0x1334, "// Comparison if mask or maybe needles is hidden or not");
     comments.put(0x4494, "// Bitmask for hiding needles in hand, but showing the mask");
-    comments.put(0x24768, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x24768, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.HAK_0000, comments);
 
     comments = getChrBaseComments();
@@ -85,50 +85,52 @@ public class Comments {
     comments.put(0x14AF0, "// Code for the fast uncharged kunai (Woke Hinata throws multiple kunai)");
     comments.put(0x14B60, "// Code for the fast charged kunai (Woke Hinata throws multiple kunai)");
     comments.put(0x14BD0, "// Code for the fastest charged kunai (Woke Hinata throws multiple kunai)");
-    comments.put(0x23F8C, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x23F8C, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.HI2_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x25674, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x25674, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.HIN_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x26AA4, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x26AA4, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.INO_0000, comments);
 
     comments = getChrBaseComments();
     comments.put(0x9B88, "// Set chr_tbl address to *seq_p_sp->field_0x38 + offset 0x230");
     comments.put(0x9E7C, "// Set chr_tbl address to *seq_p_sp->field_0x38 + offset 0x230");
-    comments.put(0x22D0C, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x22D0C, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.IRU_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x28F78, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x28F78, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x9C6C, "// Set starting string offset");
+    comments.put(0x9F60, "// Set starting string offset");
     allComments.put(Seqs.ITA_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x26270, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x26270, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.JIR_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x24CDC, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x24CDC, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.KAB_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x31FC4, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x31FC4, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.KAK_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x24DF0, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x24DF0, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.KAN_0000, comments);
 
     comments = getChrBaseComments();
     comments.put(0x4554, "// Errors here when a model is not available for the given costume");
-    comments.put(0x1FB50, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x1FB50, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.KAR_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x28920, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x28920, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.KIB_0000, comments);
 
     comments = getChrBaseComments();
@@ -140,55 +142,55 @@ public class Comments {
     comments.put(0x15450, "// 8A projectile");
     comments.put(0x15510, "// Unused projectile similar to 6A/8A that aims diagonally down-forward");
     comments.put(0x15758, "// Happy path for both capture state and non-capture state hit");
-    comments.put(0x26570, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x26570, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.KID_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x26CC0, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x26CC0, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.KIM_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x24E08, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x24E08, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.KIS_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x27814, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x27814, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.LOC_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x22EAC, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x22EAC, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.MIZ_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x24420, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x24420, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.NA9_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x2F3C4, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x2F3C4, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.NAR_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x25788, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x25788, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.NEJ_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x1A0D8, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x1A0D8, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.OBO_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x26B84, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x26B84, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.ORO_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x25F74, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x25F74, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.SA2_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x26CA8, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x26CA8, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.SAK_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x24E84, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x24E84, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.SAR_0000, comments);
 
     comments = getChrBaseComments();
@@ -198,44 +200,44 @@ public class Comments {
     comments.put(0x83F8,
         "0xD is converted to the String \"13\" to load either 1300.txg or 1301.txg");
     comments.put(0x8410, "Load alternate eye texture in gpr12");
-    comments.put(0x291A4, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x291A4, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.SAS_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x26554, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x26554, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.SIK_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x25350, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x25350, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.SIN_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x25ADC, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x25ADC, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.SKO_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x19214, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x19214, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.TA2_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x27EDC, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x27EDC, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.TAY_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x29C04, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x29C04, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.TEM_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x2B1CC, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x2B1CC, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.TEN_0000, comments);
 
     comments = getChrBaseComments();
-    comments.put(0x25674, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x25674, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.TSU_0000, comments);
 
     comments = getChrBaseComments();
     comments.put(0x141C, "// Remove screen darken if interrupted mid-super");
-    comments.put(0x23048, "// Throw data, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x23048, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
     allComments.put(Seqs.ZAB_0000, comments);
 
     Multimap<Integer, String> charSelComments = ArrayListMultimap.create();
