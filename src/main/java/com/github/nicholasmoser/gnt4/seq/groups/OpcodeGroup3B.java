@@ -17,6 +17,7 @@ public class OpcodeGroup3B {
       case 0x06 -> UnknownOpcode.of(0x10, bs);
       case 0x07 -> UnknownOpcode.of(0x10, bs);
       case 0x08 -> UnknownOpcode.of(0x10, bs);
+      case 0x09 -> UnknownOpcode.of(0x10, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

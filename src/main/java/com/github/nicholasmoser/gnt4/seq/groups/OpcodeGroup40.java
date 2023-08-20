@@ -21,6 +21,7 @@ public class OpcodeGroup40 {
       case 0x06 -> UnknownOpcode.of(0x8, bs);
       case 0x07 -> UnknownOpcode.of(0x8, bs);
       case 0x0E -> UnknownOpcode.of(0x4, bs);
+      case 0x0F -> UnknownOpcode.of(0x4, bs);
       case 0x12 -> UnknownOpcode.of(0x10, bs);
       case 0x1E -> op_401E(bs);
       case 0x1F -> op_401F(bs);

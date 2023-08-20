@@ -221,6 +221,14 @@ public class SeqKing {
         //binaryOffsetToSize.put(0xF420, 0x43C);
         //binaryOffsetToSize.put(0xFAE0, 0x14B4);
       }
+      case Seqs.CHARSEL_4 -> {
+        binaryOffsetToSize.put(0x950, 0x14);
+        binaryOffsetToSize.put(0x9A0, 0xc);
+        binaryOffsetToSize.put(0x2370, 0x80);
+        binaryOffsetToSize.put(0x23F0, 0x80);
+        binaryOffsetToSize.put(0x13FF0, 0x4EC);
+        binaryOffsetToSize.put(0x149E0, 0xE88);
+      }
       case Seqs.NAR_0000 -> {
         binaryOffsetToSize.put(0x30C4C, 0x14);
         binaryOffsetToSize.put(0x319B0, 0x10);
