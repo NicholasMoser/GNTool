@@ -306,6 +306,10 @@ public class Comments {
     game00Comments.put(0x4CB4, "// Fully show health bars at end of animation");
     allComments.put(Seqs.GAME_00, game00Comments);
 
+    Multimap<Integer, String> titleComments = ArrayListMultimap.create();
+    game00Comments.put(0x717C, "// Branch based on month background theme");
+    allComments.put(Seqs.M_TITLE, titleComments);
+
     // m_vs.seq 0x3838 Reads the character costume ID
     // m_vs.seq 0x3840 Does something with the character costume ID
 
