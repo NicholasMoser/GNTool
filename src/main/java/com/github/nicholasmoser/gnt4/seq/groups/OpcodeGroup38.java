@@ -11,6 +11,7 @@ public class OpcodeGroup38 {
       case 0x00 -> UnknownOpcode.of(0x14, bs);
       case 0x01 -> UnknownOpcode.of(0x14, bs);
       case 0x02 -> UnknownOpcode.of(0x14, bs);
+      case 0x05 -> UnknownOpcode.of(0x1C, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }

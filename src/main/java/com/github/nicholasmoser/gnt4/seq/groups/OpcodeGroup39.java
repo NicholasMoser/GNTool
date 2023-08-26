@@ -19,6 +19,7 @@ public class OpcodeGroup39 {
       case 0x09 -> UnknownOpcode.of(0x24, bs);
       case 0x0B -> UnknownOpcode.of(0x10, bs);
       case 0x0C -> UnknownOpcode.of(0x14, bs);
+      case 0x0E -> UnknownOpcode.of(0x10, bs);
       case 0x0F -> UnknownOpcode.of(0x10, bs);
       case 0x11 -> UnknownOpcode.of(0x10, bs);
       case 0x12 -> UnknownOpcode.of(0xc, bs);

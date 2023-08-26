@@ -47,6 +47,9 @@ public class OpcodeGroup61 {
       case 0x6B -> UnknownOpcode.of(0x1C, bs);
       case 0x6C -> UnknownOpcode.of(0x10, bs);
       case 0x6E -> UnknownOpcode.of(0x14, bs);
+      case 0x70 -> UnknownOpcode.of(0xC, bs);
+      case (byte) 0x85 -> UnknownOpcode.of(0x8, bs);
+      case (byte) 0x86 -> UnknownOpcode.of(0x4, bs);
       case (byte) 0x8C -> UnknownOpcode.of(0x8, bs);
       case (byte) 0x8D -> UnknownOpcode.of(0x4, bs);
       case (byte) 0x8F -> UnknownOpcode.of(0x8, bs);
@@ -57,6 +60,8 @@ public class OpcodeGroup61 {
       case (byte) 0xAC -> UnknownOpcode.of(0x14, bs);
       case (byte) 0xAD -> UnknownOpcode.of(0x14, bs);
       case (byte) 0xAE -> UnknownOpcode.of(0xC, bs);
+      case (byte) 0xC8 -> UnknownOpcode.of(0x8, bs);
+      case (byte) 0xC9 -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xF0 -> UnknownOpcode.of(0xC, bs);
       case (byte) 0xF3 -> UnknownOpcode.of(0x4, bs);
       case (byte) 0xF4 -> UnknownOpcode.of(0x4, bs);

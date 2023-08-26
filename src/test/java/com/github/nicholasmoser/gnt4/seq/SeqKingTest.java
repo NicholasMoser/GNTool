@@ -550,6 +550,66 @@ public class SeqKingTest {
     }
   }
 
+  @Test
+  public void parseStg001_0100() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.STG_001_0100);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMGal() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_GAL);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMNFile() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_NFILE);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMNSiki() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_NSIKI);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMSndplr() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_SNDPLR);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMViewer() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_VIEWER);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
   private void compare(Path seq) throws Exception {
     Path outputPath = null;
     try {

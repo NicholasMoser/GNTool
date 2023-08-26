@@ -283,6 +283,11 @@ public class SeqKing {
         binaryOffsetToSize.put(0x92B0, 0x10);
         binaryOffsetToSize.put(0x9300, 0x10);
       }
+      case Seqs.STG_001_0100 -> binaryOffsetToSize.put(0x20, 0x10);
+      case Seqs.M_GAL -> binaryOffsetToSize.put(0x28C0, 0x10);
+      case Seqs.M_NFILE -> binaryOffsetToSize.put(0x3AD0, 0xA44);
+      case Seqs.M_SNDPLR -> binaryOffsetToSize.put(0x50B0, 0x1CC0);
+      case Seqs.M_VIEWER -> binaryOffsetToSize.put(0x7610, 0x64A0);
     }
     return binaryOffsetToSize;
   }
