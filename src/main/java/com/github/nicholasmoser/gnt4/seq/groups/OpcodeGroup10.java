@@ -15,7 +15,9 @@ public class OpcodeGroup10 {
       case 0x00 -> op_1000(bs);
       case 0x04 -> op_1004(bs);
       case 0x05 -> op_1005(bs);
+      case 0x06 -> op_1006(bs);
       case 0x07 -> op_1007(bs);
+      case 0x08 -> op_1008(bs);
       case 0x09 -> op_1009(bs);
       case 0x0D -> op_100D(bs);
       case 0x1A -> op_101A(bs);
@@ -43,7 +45,19 @@ public class OpcodeGroup10 {
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
+  private static Opcode op_1006(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+  }
+
   private static Opcode op_1007(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode op_1008(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());

@@ -14,6 +14,8 @@ public class OpcodeGroup14 {
     return switch (opcodeByte) {
       case 0x00 -> op_1400(bs);
       case 0x04 -> op_1404(bs);
+      case 0x06 -> op_1406(bs);
+      case 0x08 -> op_1408(bs);
       case 0x09 -> op_1409(bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
@@ -30,6 +32,19 @@ public class OpcodeGroup14 {
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     byte[] bytes = bs.readBytes(0x14);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
+  }
+
+  private static Opcode op_1406(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    byte[] bytes = bs.readBytes(0x20);
+    return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
+  }
+
+  private static Opcode op_1408(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_1409(ByteStream bs) throws IOException {

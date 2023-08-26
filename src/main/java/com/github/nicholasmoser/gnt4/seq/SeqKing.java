@@ -221,6 +221,14 @@ public class SeqKing {
         //binaryOffsetToSize.put(0xF420, 0x43C);
         //binaryOffsetToSize.put(0xFAE0, 0x14B4);
       }
+      case Seqs.CHARSEL_4 -> {
+        binaryOffsetToSize.put(0x950, 0x14);
+        binaryOffsetToSize.put(0x9A0, 0xc);
+        binaryOffsetToSize.put(0x2370, 0x80);
+        binaryOffsetToSize.put(0x23F0, 0x80);
+        binaryOffsetToSize.put(0x13FF0, 0x4EC);
+        binaryOffsetToSize.put(0x149E0, 0xE88);
+      }
       case Seqs.NAR_0000 -> {
         binaryOffsetToSize.put(0x30C4C, 0x14);
         binaryOffsetToSize.put(0x319B0, 0x10);
@@ -268,6 +276,18 @@ public class SeqKing {
         binaryOffsetToSize.put(0x1C130, 0x162E0);
         binaryOffsetToSize.put(0x32410, 0x8C0); // array of offsets?
       }
+      case Seqs.STG_001_0000 -> {
+        binaryOffsetToSize.put(0x4C0, 0x220);
+        binaryOffsetToSize.put(0x8CBC, 0xB0);
+        binaryOffsetToSize.put(0x9260, 0x10);
+        binaryOffsetToSize.put(0x92B0, 0x10);
+        binaryOffsetToSize.put(0x9300, 0x10);
+      }
+      case Seqs.STG_001_0100 -> binaryOffsetToSize.put(0x20, 0x10);
+      case Seqs.M_GAL -> binaryOffsetToSize.put(0x28C0, 0x10);
+      case Seqs.M_NFILE -> binaryOffsetToSize.put(0x3AD0, 0xA44);
+      case Seqs.M_SNDPLR -> binaryOffsetToSize.put(0x50B0, 0x1CC0);
+      case Seqs.M_VIEWER -> binaryOffsetToSize.put(0x7610, 0x64A0);
     }
     return binaryOffsetToSize;
   }

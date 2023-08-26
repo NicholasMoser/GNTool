@@ -37,6 +37,8 @@ public class OpcodeGroup21 {
       case 0x15 -> op_2115(bs);
       case 0x16 -> op_2116(bs);
       case 0x17 -> op_2117(bs);
+      case 0x18 -> op_2118(bs);
+      case 0x19 -> op_2119(bs);
       case 0x1A -> op_211A(bs);
       case 0x1D -> op_211D(bs);
       case 0x1E -> op_211E(bs);
@@ -179,6 +181,18 @@ public class OpcodeGroup21 {
     SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
     byte[] bytes = bs.readBytes(8);
     return new UnknownOpcode(offset, Bytes.concat(ea.getBytes(), bytes), ea.getDescription());
+  }
+
+  private static Opcode op_2118(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode op_2119(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode op_211A(ByteStream bs) throws IOException {

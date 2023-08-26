@@ -26,6 +26,18 @@ public class ExtraData implements Opcode{
 
     public ExtraData(ByteStream bs) throws IOException {
         this.offset = bs.offset();
+        if (endsReallyEarly(bs)) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(bs.peekBytes(4));
+            first = bs.readShort();
+            second = bs.readShort();
+            type = 0;
+            fourth = 0;
+            fifth = 0;
+            sixth = 0;
+            bytes = baos.toByteArray();
+            return;
+        }
         boolean endsEarly = endsEarly(bs);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(bs.peekBytes(endsEarly ? 10 : 12));
@@ -96,7 +108,23 @@ public class ExtraData implements Opcode{
     private boolean endsEarly(ByteStream bs) throws IOException {
         int offset = bs.offset();
         bs.skip(10);
-        boolean endsEarly = bs.readWord() == 0x1000A;
+        boolean endsEarly = bs.readWord() == 0x0001000A;
+        bs.seek(offset);
+        return endsEarly;
+    }
+
+    /**
+     * In SCON4, some ExtraData end early at 10 bytes instead of 12 bytes. This method checks for
+     * that by looking at where the next ExtraData starts and ends.
+     *
+     * @param bs The ByteStream.
+     * @return If the ExtraData ends early.
+     * @throws IOException If any I/O exception occurs.
+     */
+    private boolean endsReallyEarly(ByteStream bs) throws IOException {
+        int offset = bs.offset();
+        bs.skip(4);
+        boolean endsEarly = bs.readWord() == 0x0001000A;
         bs.seek(offset);
         return endsEarly;
     }

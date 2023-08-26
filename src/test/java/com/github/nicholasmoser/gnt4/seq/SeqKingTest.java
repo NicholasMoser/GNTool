@@ -22,7 +22,7 @@ public class SeqKingTest {
 
   @Test
   public void parseTitle() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/maki/m_title.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_TITLE);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -32,7 +32,7 @@ public class SeqKingTest {
 
   @Test
   public void parseGame00() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/game00.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.GAME_00);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -42,7 +42,7 @@ public class SeqKingTest {
 
   @Test
   public void parseChrCmn() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/cmn/1000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.CMN_1000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -52,7 +52,7 @@ public class SeqKingTest {
 
   @Test
   public void parseLoading() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/kuro/loading.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.LOADING);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -62,7 +62,7 @@ public class SeqKingTest {
 
   @Test
   public void parseFCamera() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/furu/f_camera.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.F_CAMERA);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -72,7 +72,7 @@ public class SeqKingTest {
 
   @Test
   public void parseCamera00() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/camera00.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.CAMERA_00);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -82,7 +82,7 @@ public class SeqKingTest {
 
   @Test
   public void parseCamera01() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/camera01.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.CAMERA_01);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -92,7 +92,7 @@ public class SeqKingTest {
 
   @Test
   public void parsePlayer00() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/game/player00.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.PLAYER_00);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -102,7 +102,7 @@ public class SeqKingTest {
 
   @Test
   public void parseCharSel() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/maki/char_sel.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.CHARSEL);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -112,7 +112,7 @@ public class SeqKingTest {
 
   @Test
   public void parseAnko() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/ank/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.ANK_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -122,7 +122,7 @@ public class SeqKingTest {
 
   @Test
   public void parseJirobo() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/bou/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.BOU_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -132,7 +132,7 @@ public class SeqKingTest {
 
   @Test
   public void parseChoji() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/cho/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.CHO_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -142,7 +142,7 @@ public class SeqKingTest {
 
   @Test
   public void parseAkamaru() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/dog/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.DOG_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -152,7 +152,7 @@ public class SeqKingTest {
 
   @Test
   public void parseGai() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/gai/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.GAI_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -162,7 +162,7 @@ public class SeqKingTest {
 
   @Test
   public void parseGaara() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/gar/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.GAR_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -172,7 +172,7 @@ public class SeqKingTest {
 
   @Test
   public void parseHaku() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/hak/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.HAK_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -182,7 +182,7 @@ public class SeqKingTest {
 
   @Test
   public void parseWokeHinata() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/hi2/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.HI2_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -192,7 +192,7 @@ public class SeqKingTest {
 
   @Test
   public void parseHinata() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/hin/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.HIN_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -202,7 +202,7 @@ public class SeqKingTest {
 
   @Test
   public void parseIno() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/ino/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.INO_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -212,7 +212,7 @@ public class SeqKingTest {
 
   @Test
   public void parseIruka() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/iru/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.IRU_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -222,7 +222,7 @@ public class SeqKingTest {
 
   @Test
   public void parseItachi() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/ita/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.ITA_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -232,7 +232,7 @@ public class SeqKingTest {
 
   @Test
   public void parseJiraiya() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/jir/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.JIR_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -242,7 +242,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKabuto() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/kab/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.KAB_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -252,7 +252,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKakashi() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/kak/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.KAK_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -262,7 +262,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKankuro() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/kan/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.KAN_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -272,7 +272,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKarasu() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/kar/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.KAR_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -282,7 +282,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKiba() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/kib/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.KIB_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -292,7 +292,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKidomaru() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/kid/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.KID_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -302,7 +302,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKimimaro() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/kim/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.KIM_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -312,7 +312,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKisame() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/kis/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.KIS_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -322,7 +322,7 @@ public class SeqKingTest {
 
   @Test
   public void parseLee() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/loc/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.LOC_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -332,7 +332,7 @@ public class SeqKingTest {
 
   @Test
   public void parseMizuki() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/miz/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.MIZ_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -342,7 +342,7 @@ public class SeqKingTest {
 
   @Test
   public void parseKyuubiNaruto() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/na9/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.NA9_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -352,7 +352,7 @@ public class SeqKingTest {
 
   @Test
   public void parseNaruto() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/nar/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.NAR_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -362,7 +362,7 @@ public class SeqKingTest {
 
   @Test
   public void parseNeji() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/nej/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.NEJ_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -372,7 +372,7 @@ public class SeqKingTest {
 
   @Test
   public void parseOboro() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/obo/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.OBO_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -382,7 +382,7 @@ public class SeqKingTest {
 
   @Test
   public void parseOrochimaru() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/oro/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.ORO_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -392,7 +392,7 @@ public class SeqKingTest {
 
   @Test
   public void parseCS2Sasuke() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/sa2/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SA2_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -402,7 +402,7 @@ public class SeqKingTest {
 
   @Test
   public void parseSakura() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/sak/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SAK_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -412,7 +412,7 @@ public class SeqKingTest {
 
   @Test
   public void parseSarutobi() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/sar/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SAR_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -422,7 +422,7 @@ public class SeqKingTest {
 
   @Test
   public void parseSasuke() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/sas/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SAS_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -432,7 +432,7 @@ public class SeqKingTest {
 
   @Test
   public void parseShikamaru() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/sik/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SIK_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -442,7 +442,7 @@ public class SeqKingTest {
 
   @Test
   public void parseShino() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/sin/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SIN_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -452,7 +452,7 @@ public class SeqKingTest {
 
   @Test
   public void parseSakon() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/sko/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SKO_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -462,7 +462,7 @@ public class SeqKingTest {
 
   @Test
   public void parseDokiDemon() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/ta2/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.TA2_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -472,7 +472,7 @@ public class SeqKingTest {
 
   @Test
   public void parseTayuya() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/tay/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.TAY_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -482,7 +482,7 @@ public class SeqKingTest {
 
   @Test
   public void parseTemari() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/tem/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.TEM_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -492,7 +492,7 @@ public class SeqKingTest {
 
   @Test
   public void parseTenten() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/ten/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.TEN_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -502,7 +502,7 @@ public class SeqKingTest {
 
   @Test
   public void parseTsunade() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/tsu/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.TSU_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -512,7 +512,7 @@ public class SeqKingTest {
 
   @Test
   public void parseZabuza() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/zab/0000.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.ZAB_0000);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
@@ -522,7 +522,87 @@ public class SeqKingTest {
 
   @Test
   public void parseIruka0010() throws Exception {
-    Path seq = Prereqs.getUncompressedGNT4().resolve("files/chr/iru/0010.seq");
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.IRU_0010);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseCharSel4() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.CHARSEL_4);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseStg001_0000() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.STG_001_0000);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseStg001_0100() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.STG_001_0100);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMGal() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_GAL);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMNFile() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_NFILE);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMNSiki() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_NSIKI);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMSndplr() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_SNDPLR);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
+  @Test
+  public void parseMViewer() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_VIEWER);
     if (COMPARE_MODE) {
       compare(seq);
     } else {
