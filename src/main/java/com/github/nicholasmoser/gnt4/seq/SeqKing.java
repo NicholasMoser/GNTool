@@ -276,6 +276,13 @@ public class SeqKing {
         binaryOffsetToSize.put(0x1C130, 0x162E0);
         binaryOffsetToSize.put(0x32410, 0x8C0); // array of offsets?
       }
+      case Seqs.STG_001_0000 -> {
+        binaryOffsetToSize.put(0x4C0, 0x220);
+        binaryOffsetToSize.put(0x8CBC, 0xB0);
+        binaryOffsetToSize.put(0x9260, 0x10);
+        binaryOffsetToSize.put(0x92B0, 0x10);
+        binaryOffsetToSize.put(0x9300, 0x10);
+      }
     }
     return binaryOffsetToSize;
   }

@@ -21,11 +21,15 @@ public class OpcodeGroup12 {
       case 0x09 -> op_1209(bs);
       case 0x0A -> op_120A(bs);
       case 0x0B -> op_120B(bs);
+      case 0x15 -> op_1215(bs);
+      case 0x17 -> op_1217(bs);
+      case 0x18 -> op_1218(bs);
       case 0x19 -> op_1219(bs);
       case 0x1A -> op_121A(bs);
       case 0x1B -> op_121B(bs);
       case 0x1D -> op_121D(bs);
       case 0x1E -> op_121E(bs);
+      case 0x1F -> UnknownOpcode.of(0x10, bs);
       case 0x20 -> UnknownOpcode.of(0x4, bs);
       case 0x22 -> op_1222(bs);
       case 0x24 -> op_1224(bs);
@@ -79,6 +83,24 @@ public class OpcodeGroup12 {
   }
 
   private static Opcode op_120B(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode op_1215(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode op_1217(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode op_1218(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());

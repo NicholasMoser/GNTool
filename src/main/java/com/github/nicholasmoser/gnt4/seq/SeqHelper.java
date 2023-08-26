@@ -30,6 +30,7 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup1F;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup20;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup21;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup22;
+import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup23;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup24;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup26;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup27;
@@ -143,6 +144,7 @@ public class SeqHelper {
       case 0x20 -> OpcodeGroup20.parse(bs, opcode);
       case 0x21 -> OpcodeGroup21.parse(bs, opcode);
       case 0x22 -> OpcodeGroup22.parse(bs, opcode);
+      case 0x23 -> OpcodeGroup23.parse(bs, opcode);
       case 0x24 -> OpcodeGroup24.parse(bs, opcode);
       case 0x26 -> OpcodeGroup26.parse(bs, opcode);
       case 0x27 -> OpcodeGroup27.parse(bs, opcode);
