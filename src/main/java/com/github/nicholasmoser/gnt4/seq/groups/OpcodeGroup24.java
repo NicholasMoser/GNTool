@@ -64,47 +64,57 @@ public class OpcodeGroup24 {
     int offset = bs.offset();
     int word = bs.readWord();
     int thirdByte = (word >> 0x8) & 0xFF;
-    int lastByte = word & 0xFF;
+    int fourthByte = word & 0xFF;
     short operandOne = bs.readShort();
     short operandTwo = bs.readShort();
-    boolean thisChr = lastByte == 0; // Otherwise, foe_chr_p
+    boolean thisChr = fourthByte == 0; // Otherwise, foe_chr_p
     if (!thisChr) {
       throw new IOException("Not yet supported");
     }
     ByteBuffer buffer = ByteBuffer.allocate(8);
     buffer.putInt(word).putShort(operandOne).putShort(operandTwo);
+    String id;
     switch(thirdByte) {
       case 0x0:
-        String sound = String.format(" 0x%X", operandOne);
+        id = String.format("0x%04X", operandOne);
         if ((operandOne & 0xf00) == 0xb00) {
-          sound += " plus offset";
+          return new PlaySound(offset, buffer.array(), "general_with_offset with ID " + id);
+        } else {
+          return new PlaySound(offset, buffer.array(), "general with ID " + id);
         }
-        return new PlaySound(offset, buffer.array(), "general" + sound);
       case 0x1:
         return new PlaySound(offset, buffer.array(), "hit");
+      case 0x2:
+        return new PlaySound(offset, buffer.array(), "stored_1");
+      case 0x3:
+        return new PlaySound(offset, buffer.array(), "stored_2");
+      case 0x5:
+        return new PlaySound(offset, buffer.array(), "run");
+      case 0x6:
+        return new PlaySound(offset, buffer.array(), "unused");
+      case 0x8:
+        return new PlaySound(offset, buffer.array(), "land_on_feet");
+      case 0x9:
+        return new PlaySound(offset, buffer.array(), "land_on_body");
+      case 0xB:
+        id = String.format("0x%08X", operandOne);
+        return new PlaySound(offset, buffer.array(), "grunt with ID " + id);
+      case 0xC:
+        return new PlaySound(offset, buffer.array(), "hiki");
+      case 0xD:
+        return new PlaySound(offset, buffer.array(), "walk");
+      case 0xE:
+        id = String.format("0x%04X", operandOne);
+        if ((operandOne & 0xf00) == 0x700) {
+          return new PlaySound(offset, buffer.array(), "3MC_with_offset with ID " + id);
+        } else {
+          return new PlaySound(offset, buffer.array(), "3MC with ID" + id);
+        }
+      case 0x4:
       case 0x7:
       case 0xA:
       default:
         throw new IOException("Unknown, not yet supported: " + thirdByte);
-      case 0x2:
-      case 0x3:
-      case 0x4:
-      case 0xE:
-        return new PlaySound(offset, buffer.array(), "unknown");
-      case 0x5:
-        return new PlaySound(offset, buffer.array(), "running");
-      case 0x6:
-        return new PlaySound(offset, buffer.array(), "unused");
-      case 0x8:
-        return new PlaySound(offset, buffer.array(), "soft_land");
-      case 0x9:
-        return new PlaySound(offset, buffer.array(), "hard_land");
-      case 0xB:
-        return new PlaySound(offset, buffer.array(), "grunt");
-      case 0xC:
-        return new PlaySound(offset, buffer.array(), "hiki/hiki2");
-      case 0xD:
-        return new PlaySound(offset, buffer.array(), "walking");
     }
   }
 

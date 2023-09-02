@@ -21,15 +21,11 @@ public class SeqsTest {
   public void validateGNT4SeqFiles() throws Exception {
     Path uncompressed = Prereqs.getUncompressedGNT4();
     List<Path> seqPaths = Files.walk(uncompressed)
-        .filter(SeqsTest::isSeq)
+        .filter(path -> path.toString().endsWith(".seq"))
         .collect(Collectors.toList());
     assertEquals(seqPaths.size(), Seqs.ALL.size());
     for (String seqPath : Seqs.ALL) {
       assertTrue(Files.isRegularFile(uncompressed.resolve(seqPath)));
     }
-  }
-
-  private static boolean isSeq(Path path) {
-    return path.toString().endsWith(".seq");
   }
 }

@@ -772,8 +772,36 @@ public class SeqAssembler {
                     }
                     currentOpcode = new UnknownOpcode(offset, baos.toByteArray());
                     break;
+                case "play":
+                    if ("sound".equals(opcode[1])) {
+                        int type = switch(op[0]) {
+                            case "general" -> 0x0;
+                            case "hit" -> 0x1;
+                            case "stored_1" -> 0x2;
+                            case "stored_2" -> 0x3;
+                            case "run" -> 0x5;
+                            case "unused" -> 0x6;
+                            case "land_on_feet" -> 0x8;
+                            case "land_on_body" -> 0x9;
+                            case "grunt" -> 0xB;
+                            case "hiki" -> 0xC;
+                            case "walk" -> 0xD;
+                            case "3MC" -> 0xE;
+                            default -> throw new IllegalArgumentException("Unknown type: " + op[0]);
+                        };
+                        baos.write(0x24);
+                        baos.write(0x17);
+                        baos.write(type);
+                        baos.write(0);
+                        baos.write(ByteUtils.fromUint16(Integer.decode(op[1])));
+                        baos.write(ByteUtils.fromUint16(Integer.decode(op[2])));
+                    } else {
+                        throw new IllegalArgumentException("Unknown play opcode: " + opcode[1]);
+                    }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
+                    break;
                 default:
-                    System.err.println(opcode[0]);
+                    System.err.printf("Unknown assembly: %s\n", opcode[0]);
                     break;
             }
             opcodes.add(currentOpcode);

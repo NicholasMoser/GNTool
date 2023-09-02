@@ -2,11 +2,14 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 
+import com.github.nicholasmoser.utils.ByteUtils;
+import java.util.Arrays;
 import javafx.util.Pair;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -20,22 +23,31 @@ import java.util.List;
 
 public class SeqAssemblerTest {
 
+    void assertBytesEquals(byte[] expected, byte[] actual) {
+        int offset = Arrays.mismatch(expected, actual);
+        if (offset == -1) {
+            return;
+        }
+        fail(String.format("Mismatch at offset 0x%X is 0x%X but should be 0x%X\n", offset, actual[offset], expected[offset]));
+    }
+
     @Test
-    @Disabled("Does not work yet")
     void testSeqAssemblyOneWay() throws IOException {
         String assembly = Files.readString(Path.of("src/test/resources/gnt4/seq/ext/branch_action.seqa"));
         byte [] reference = Files.readAllBytes(Path.of("src/test/resources/gnt4/seq/ext/naruto5B.seq"));
         Pair<List <Opcode>, Integer> opcodes = SeqAssembler.assembleLines(assembly.split("\n"), null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (Opcode opcode : opcodes.getKey()) {
-            baos.write(opcode.getBytes(0x1DA84, opcodes.getValue()));
+            byte[] opcodeCodes = opcode.getBytes(0x1DA84, opcodes.getValue());
+            //System.out.println(opcode.toAssembly());
+            //System.out.println(ByteUtils.bytesToHexStringWords(opcodeCodes));
+            baos.write(opcodeCodes);
         }
         byte [] bytes = baos.toByteArray();
-        assertArrayEquals(reference, bytes);
+        assertBytesEquals(reference, bytes);
     }
 
     @Test
-    @Disabled("Does not work yet")
     void testSeqAssemblyTwoWay() throws IOException {
         String assembly = Files.readString(Path.of("src/test/resources/gnt4/seq/ext/branch_action.seqa"));
         Pair<List <Opcode>, Integer> opcodes = SeqAssembler.assembleLines(assembly.split("\n"), null);
