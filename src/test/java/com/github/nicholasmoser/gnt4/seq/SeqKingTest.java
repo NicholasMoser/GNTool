@@ -614,6 +614,16 @@ public class SeqKingTest {
     }
   }
 
+  @Test
+  public void parseSak1000() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SAK_1000);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
   private void compare(Path seq) throws Exception {
     Path outputPath = null;
     try {
