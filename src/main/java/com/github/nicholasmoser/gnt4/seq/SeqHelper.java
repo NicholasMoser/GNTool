@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.GNT4Characters;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup07;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup02;
@@ -68,7 +69,6 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup56;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup5B;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveAttack;
-import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveAttacks;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveString;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveStrings;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
@@ -112,6 +112,15 @@ public class SeqHelper {
   private static final byte[] CHORD = "Chord".getBytes(StandardCharsets.UTF_8);
   // Kosheh Combo translation for Karasu
   private static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
+
+  public static Opcode getEftOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
+    return switch (opcodeGroup) {
+      case 0x07 -> EftOpcodeGroup07.parse(bs, opcode);
+      case (byte) 0xCC -> SeqHelper.getNullBytes(bs); // Modding specific no-op
+      default -> throw new IllegalStateException(
+          String.format("Unknown opcode group: %02X at offset 0x%X", opcodeGroup, bs.offset()));
+    };
+  }
 
   public static Opcode getSeqOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
     return switch (opcodeGroup) {
@@ -455,7 +464,7 @@ public class SeqHelper {
     if (bs.read(bytes) != 0x7B0) {
       throw new IllegalStateException("Failed to read 0x7B0 bytes");
     } else if (bytes[0x7AD] != 0x7E) {
-      throw new IllegalStateException("Third last byte should be 0x7E");
+      throw new IllegalStateException("Third last byte should be 0x7E at offset " + bs.offset());
     }
     return new BinaryData(offset, bytes);
   }

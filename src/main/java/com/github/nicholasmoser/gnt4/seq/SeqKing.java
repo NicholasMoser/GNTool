@@ -243,6 +243,10 @@ public class SeqKing {
         binaryOffsetToSize.put(0x2EE8, 0x18);
         binaryOffsetToSize.put(0x2F08, 0x10);
       }
+      case Seqs.SAK_1000 -> {
+        binaryOffsetToSize.put(0x460, 0x100);
+        binaryOffsetToSize.put(0xFB4, 0x16C);
+      }
       case Seqs.PLAYER_00 -> binaryOffsetToSize.put(0x70, 0x10);
       case Seqs.CAMERA_01 -> binaryOffsetToSize.put(0x3E0, 0x10);
       case Seqs.F_CAMERA -> binaryOffsetToSize.put(0x4C0, 0x10);
