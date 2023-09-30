@@ -1,7 +1,16 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.GNT4Characters;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup00;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup03;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup06;
 import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup07;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup08;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup09;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup0A;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup0B;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup0C;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup10;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup02;
@@ -115,7 +124,16 @@ public class SeqHelper {
 
   public static Opcode getEftOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
     return switch (opcodeGroup) {
+      case 0x00 -> EftOpcodeGroup00.parse(bs, opcode);
+      case 0x03 -> EftOpcodeGroup03.parse(bs, opcode);
+      case 0x06 -> EftOpcodeGroup06.parse(bs, opcode);
       case 0x07 -> EftOpcodeGroup07.parse(bs, opcode);
+      case 0x08 -> EftOpcodeGroup08.parse(bs, opcode);
+      case 0x09 -> EftOpcodeGroup09.parse(bs, opcode);
+      case 0x0A -> EftOpcodeGroup0A.parse(bs, opcode);
+      case 0x0B -> EftOpcodeGroup0B.parse(bs, opcode);
+      case 0x0C -> EftOpcodeGroup0C.parse(bs, opcode);
+      case 0x10 -> EftOpcodeGroup10.parse(bs, opcode);
       case (byte) 0xCC -> SeqHelper.getNullBytes(bs); // Modding specific no-op
       default -> throw new IllegalStateException(
           String.format("Unknown opcode group: %02X at offset 0x%X", opcodeGroup, bs.offset()));

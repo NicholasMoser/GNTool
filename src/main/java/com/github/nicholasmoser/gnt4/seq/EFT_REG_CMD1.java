@@ -114,9 +114,13 @@ public class EFT_REG_CMD1 {
       if (secondCmd < 0x20) {
         operand = new GPROperand(secondCmd, true);
         operand.addInfo(String.format(" + %04x", firstOperand));
+        pushWord(secondCmd);
+        bs.skipWord();
       } else if (secondCmd < 0x29) {
-        operand = EFT_REG_GP(cmd);
+        operand = EFT_REG_GP((byte) secondCmd);
         operand.addInfo(String.format(" + %04x", firstOperand));
+        pushWord(secondCmd);
+        bs.skipWord();
       } else {
         // This part is weird, double check this logic
         EFT_REG_CMD1 eft_cmd = EFT_REG_CMD1.get(bs);
