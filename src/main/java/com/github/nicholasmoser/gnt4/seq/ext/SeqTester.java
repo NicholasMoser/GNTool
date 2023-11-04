@@ -5,8 +5,8 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,14 +17,20 @@ import javafx.util.Pair;
 
 public class SeqTester {
   private static final Logger LOGGER = Logger.getLogger(SeqTester.class.getName());
-  public Label leftStatus;
   private Stage stage;
+  private Path seqFile;
   public TextArea opcodesField;
   public TextArea bytesField;
+  public Label leftStatus;
 
-  public void init(Stage stage) {
+  public void init(Stage stage, Path seqFile) {
     this.stage = stage;
-    leftStatus.setText("");
+    this.seqFile = seqFile;
+    if (seqFile != null) {
+      leftStatus.setText("Loaded " + seqFile);
+    } else {
+      leftStatus.setText("");
+    }
   }
 
   /**
@@ -33,7 +39,7 @@ public class SeqTester {
   public void assemble() {
     try {
       String[] lines = parseOpcodesField();
-      Pair<List<Opcode>, Integer>  opcodes = SeqAssembler.assembleLines(lines, null);
+      Pair<List<Opcode>, Integer>  opcodes = SeqAssembler.assembleLines(lines, seqFile);
       StringBuilder sb = new StringBuilder();
       for (Opcode op : opcodes.getKey()) {
         sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes())));

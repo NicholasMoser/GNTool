@@ -767,7 +767,11 @@ public class SeqAssembler {
                             }
                             break;
                         default:
-                            baos.write(UnknownOpcode.of(opcode[1], operands));
+                            try {
+                                baos.write(UnknownOpcode.of(opcode[1], operands));
+                            } catch (Exception e) {
+                                throw new IOException("Failed to parse line: " + line, e);
+                            }
                             break;
                     }
                     currentOpcode = new UnknownOpcode(offset, baos.toByteArray());
