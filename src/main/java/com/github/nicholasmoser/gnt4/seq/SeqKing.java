@@ -214,7 +214,7 @@ public class SeqKing {
       }
       if (bs.offset() == bytes.length) {
         if (verbose) {
-          System.out.println(String.format("%s", Functions.getFunctions(fileName)));
+          System.out.printf("%s%n", Functions.getFunctions(fileName));
         }
         break; // EOF
       }

@@ -801,8 +801,7 @@ public class SeqAssembler {
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 default:
-                    System.err.printf("Unknown assembly: %s\n", opcode[0]);
-                    break;
+                    throw new IllegalArgumentException("Unknown assembly: " + opcode[0]);
             }
             opcodes.add(currentOpcode);
             offset += currentOpcode.getBytes().length;
