@@ -52,10 +52,12 @@ public class SeqAssembler {
         for (String line : lines) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             String operation = line;
+            // Strip comments
             if (operation.contains("//")) {
                 operation = operation.substring(0, operation.indexOf("//"));
             }
             operation = operation.replaceAll("\\s+$", "");
+            // Add label to label map
             if (operation.endsWith(":")) {
                 labelMap.put(operation.replace(":", "").replace(" ", ""), offset);
                 continue;
@@ -233,9 +235,9 @@ public class SeqAssembler {
                                         branches.add(op[j]);
                                     }
                                 }
-                                if (offsets.size() > 0) {
+                                if (!offsets.isEmpty()) {
                                     currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], offsets);
-                                } else if (branches.size() > 0) {
+                                } else if (!branches.isEmpty()) {
                                     currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], offsets, branches);
                                 } else {
                                     LOGGER.log(Level.SEVERE, String.format("Neither offsets nor label names given for branch table at offset %d%n", offset));
@@ -257,9 +259,9 @@ public class SeqAssembler {
                                         branches.add(op[j]);
                                     }
                                 }
-                                if (offsets.size() > 0) {
+                                if (!offsets.isEmpty()) {
                                     currentOpcode = new BranchTableLink(offset, baos.toByteArray(), op[0], offsets);
-                                } else if (branches.size() > 0) {
+                                } else if (!branches.isEmpty()) {
                                     currentOpcode = new BranchTableLink(offset, baos.toByteArray(), op[0], offsets, branches);
                                 } else {
                                     System.err.printf("Neither offsets nor label names given for branch table link at offset %d%n", offset);
@@ -826,7 +828,7 @@ public class SeqAssembler {
                     branchingOpcode.setDestinationFunctionName(label.name());
                 }
             } else if (opcode instanceof BranchTable branchTable) {
-                if (branchTable.getBranches().size() > 0) {
+                if (!branchTable.getBranches().isEmpty()) {
                     List<Integer> offsets = new LinkedList<>();
                     for (String label : branchTable.getBranches()) {
                         Integer destination = labelMap.get(label);
@@ -842,7 +844,7 @@ public class SeqAssembler {
                     branchTable.setOffsets(offsets);
                 }
             } else if (opcode instanceof BranchTableLink branchTableLink) {
-                if (branchTableLink.getBranches().size() > 0) {
+                if (!branchTableLink.getBranches().isEmpty()) {
                     List<Integer> offsets = new LinkedList<>();
                     for (String label : branchTableLink.getBranches()) {
                         Integer destination = labelMap.get(label);
@@ -1027,20 +1029,16 @@ public class SeqAssembler {
             if (offset.startsWith("field_")) {
                 opDirect = Long.decode(offset.replace("field_", "")).intValue();
             } else {
-                Optional<Integer> asd = switch (registerVal & 0x3f) {
-                    case 0x26, 0x27 -> Chr.getOffset(offset);
-                    default -> null;
+                Optional<Integer> chrField = switch (registerVal & 0x3f) {
+                  case 0x26, 0x27 -> Chr.getOffset(offset);
+                  default -> Optional.empty();
                 };
-                if (asd != null) {
-                    opDirect = asd.get();
-                } else {
-                    opDirect = Integer.decode(offset);
-                }
+              opDirect = chrField.orElseGet(() -> Integer.decode(offset));
             }
         }
 
         buffer.put(registerVal);
-        if (registerVal > 0x3F) {
+        if (Byte.toUnsignedInt(registerVal) > 0x3F) {
             buffer.putInt(opDirect);
         }
         switch (registerVal & 0x3F) {
@@ -1092,23 +1090,11 @@ public class SeqAssembler {
             if (offset1.startsWith("field_")) {
                 op1Direct = Long.decode(offset1.replace("field_", "")).intValue();
             } else {
-                Integer asd = switch (op1v & 0x3f) {
-                    case 0x26, 0x27 -> Chr.getOffset(offset1).get();
-                    default -> null;
+                Optional<Integer> chrField = switch (op1v & 0x3f) {
+                    case 0x26, 0x27 -> Chr.getOffset(offset1);
+                    default -> Optional.empty();
                 };
-                if (asd == null) {
-                    try {
-                        op1Direct = Integer.decode(offset1);
-                    } catch (Exception e) {
-                        System.err.println(op1);
-                        System.err.println(String.format("0x%X",op1v));
-                        System.err.println(String.format("0x%X",offset1));
-                        System.err.println(String.format("0x%X",op2));
-                    }
-
-                } else {
-                    op1Direct = asd;
-                }
+                op1Direct = chrField.orElseGet(() -> Integer.decode(offset1));
             }
         }
 
@@ -1121,7 +1107,7 @@ public class SeqAssembler {
         Integer op2Direct = 0;
         if (op2v == null) {
             op2v = 0x3f;
-            switch (op1v & 0x3f) {
+            switch (op2v & 0x3f) {
                 case 0x26:
                 case 0x27:
                     if (op2.contains("(")) {
@@ -1133,40 +1119,33 @@ public class SeqAssembler {
                     break;
             }
             op2Direct = Long.decode(op2).intValue();
-        } else if(op1Parts.length > 1) {
+        } else if(op2Parts.length > 1) {
             String offset2 = op2Parts[1];
             //String indirectOffset;
             op2v = (byte) (op2v | 0x10 << op2Parts.length);
             if (offset2.startsWith("field_")) {
                 op2Direct = Long.decode(offset2.replace("field_", "")).intValue();
             } else {
-                Optional<Integer> asd = null;
-                switch (op2v & 0x3f) {
-                    case 0x26:
-                    case 0x27:
-                        asd = Chr.getOffset(offset2);
-                        break;
-                }
-                if (asd != null) {
-                    op2Direct = asd.get();
-                } else {
-                    op2Direct = Integer.decode(offset2);
-                }
+                Optional<Integer> chrField = switch (op2v & 0x3f) {
+                    case 0x26, 0x27 -> Chr.getOffset(offset2);
+                    default -> Optional.empty();
+                };
+                op2Direct = chrField.orElseGet(() -> Integer.decode(offset2));
             }
         }
 
         ByteBuffer buffer = ByteBuffer.allocate(0x30);
         buffer.put(op1v);
-        if (op1v > 0x3F) {
+        if (Byte.toUnsignedInt(op1v) > 0x3F) {
             buffer.put((byte) 0);
-            buffer.putInt(op1Direct.intValue());
+            buffer.putInt(op1Direct);
             buffer.put(op2v);
             buffer.put((byte)0);
             buffer.put((byte)0);
             buffer.put((byte)0);
-            if (op2v > 0x3F) {
-                buffer.putInt(op2Direct.intValue());
-            } else if (op2v >= 0x3E) {
+            if (Byte.toUnsignedInt(op2v) > 0x3F) {
+                buffer.putInt(op2Direct);
+            } else if (Byte.toUnsignedInt(op2v) >= 0x3E) {
                 switch (type) {
                     case 0x4 -> buffer.putInt(op2Direct);
                     case 0x5 -> {
@@ -1182,7 +1161,7 @@ public class SeqAssembler {
             }
         } else {
             buffer.put(op2v);
-            if (op2v > 0x3F && op2v < 0x80) {
+            if (Byte.toUnsignedInt(op2v) > 0x3F && Byte.toUnsignedInt(op2v) < 0x80) {
                 buffer.putInt(op2Direct);
             }
             switch (type) {
