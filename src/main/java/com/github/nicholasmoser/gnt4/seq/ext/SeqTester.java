@@ -45,6 +45,7 @@ public class SeqTester {
         sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes())));
       }
       bytesField.setText(sb.toString());
+      leftStatus.setText("");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to assemble lines.", e);
       String message = e.getMessage() != null ? e.getMessage() : e.getClass().toString();
@@ -68,6 +69,7 @@ public class SeqTester {
         opcodeFields.append('\n');
       }
       opcodesField.setText(opcodeFields.toString());
+      leftStatus.setText("");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to disassemble lines.", e);
       String message = e.getMessage() != null ? e.getMessage() : e.getClass().toString();

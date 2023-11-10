@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.comment.Function;
 import com.github.nicholasmoser.gnt4.seq.comment.Functions;
 import com.github.nicholasmoser.gnt4.seq.opcodes.*;
+import com.github.nicholasmoser.gnt4.seq.operands.OperandParser;
 import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -934,78 +935,6 @@ public class SeqAssembler {
         return SeqHelper.getSeqOpcode(bs, bytes[0], bytes[1]);
     }
 
-    private static final Map<String,Byte> registers = Map.ofEntries(new SimpleEntry<>("gpr0", (byte)0x0),
-            new SimpleEntry<>("gpr1", (byte)0x1),
-            new SimpleEntry<>("gpr2", (byte)0x2),
-            new SimpleEntry<>("gpr3", (byte)0x3),
-            new SimpleEntry<>("gpr4", (byte)0x4),
-            new SimpleEntry<>("gpr5", (byte)0x5),
-            new SimpleEntry<>("gpr6", (byte)0x6),
-            new SimpleEntry<>("gpr7", (byte)0x7),
-            new SimpleEntry<>("gpr8", (byte)0x8),
-            new SimpleEntry<>("gpr9", (byte)0x9),
-            new SimpleEntry<>("gpr10", (byte)0xA),
-            new SimpleEntry<>("gpr11", (byte)0xB),
-            new SimpleEntry<>("gpr12", (byte)0xC),
-            new SimpleEntry<>("gpr13", (byte)0xD),
-            new SimpleEntry<>("gpr14", (byte)0xE),
-            new SimpleEntry<>("gpr15", (byte)0xF),
-            new SimpleEntry<>("gpr16", (byte)0x10),
-            new SimpleEntry<>("gpr17", (byte)0x11),
-            new SimpleEntry<>("gpr18", (byte)0x12),
-            new SimpleEntry<>("gpr19", (byte)0x13),
-            new SimpleEntry<>("cr_companion", (byte)0x13),
-            new SimpleEntry<>("gpr20", (byte)0x14),
-            new SimpleEntry<>("ctr", (byte)0x14),
-            new SimpleEntry<>("gpr21", (byte)0x15),
-            new SimpleEntry<>("cr", (byte)0x15),
-            new SimpleEntry<>("gpr22", (byte)0x16),
-            new SimpleEntry<>("stored_pc", (byte)0x16),
-            new SimpleEntry<>("gpr23", (byte)0x17),
-            new SimpleEntry<>("sp", (byte)0x17),
-            new SimpleEntry<>("seq_p_sp0", (byte)0x18),
-            new SimpleEntry<>("seq_p_sp1", (byte)0x19),
-            new SimpleEntry<>("seq_p_sp2", (byte)0x1A),
-            new SimpleEntry<>("seq_p_sp3", (byte)0x1B),
-            new SimpleEntry<>("seq_p_sp4", (byte)0x1C),
-            new SimpleEntry<>("seq_p_sp5", (byte)0x1D),
-            new SimpleEntry<>("final_instruction_seq", (byte)0x1D),
-            new SimpleEntry<>("seq_p_sp6", (byte)0x1E),
-            new SimpleEntry<>("seq_p_sp7", (byte)0x1F),
-            new SimpleEntry<>("seq_p_sp8", (byte)0x20),
-            new SimpleEntry<>("mot", (byte)0x20),
-            new SimpleEntry<>("animation", (byte)0x20),
-            new SimpleEntry<>("seq_p_sp9", (byte)0x21),
-            new SimpleEntry<>("movement", (byte)0x21),
-            new SimpleEntry<>("seq_p_sp10", (byte)0x22),
-            new SimpleEntry<>("chr_p_field_0x4C", (byte)0x22),
-            new SimpleEntry<>("seq_p_sp11", (byte)0x23),
-            new SimpleEntry<>("seq_p_sp12", (byte)0x24),
-            new SimpleEntry<>("seq_p_sp13", (byte)0x25),
-            new SimpleEntry<>("seq_p_sp14", (byte)0x26),
-            new SimpleEntry<>("chr_p", (byte)0x26),
-            new SimpleEntry<>("seq_p_sp15", (byte)0x27),
-            new SimpleEntry<>("foe_chr_p", (byte)0x27),
-            new SimpleEntry<>("seq_p_sp16", (byte)0x28),
-            new SimpleEntry<>("seq_p_sp17", (byte)0x29),
-            new SimpleEntry<>("seq_p_sp18", (byte)0x2A),
-            new SimpleEntry<>("seq_p_sp19", (byte)0x2B),
-            new SimpleEntry<>("seq_p_sp", (byte)0x2B),
-            new SimpleEntry<>("seq_p_sp20", (byte)0x2C),
-            new SimpleEntry<>("seq_p_sp21", (byte)0x2D),
-            new SimpleEntry<>("seq_p_sp22", (byte)0x2E),
-            new SimpleEntry<>("seq_p_sp23", (byte)0x2F),
-            new SimpleEntry<>("seq_file", (byte)0x2F),
-            new SimpleEntry<>("hitbox_identity_matrix", (byte)0x30),
-            new SimpleEntry<>("controllers", (byte)0x32),
-            new SimpleEntry<>("primary_controller", (byte)0x33),
-            new SimpleEntry<>("display", (byte)0x34),
-            new SimpleEntry<>("save_data", (byte)0x39),
-            new SimpleEntry<>("debug_mode", (byte)0x3A),
-            new SimpleEntry<>("pause_game", (byte)0x3B),
-            new SimpleEntry<>("game_info", (byte)0x3C),
-            new SimpleEntry<>("unused", (byte)0x3D));
-
     static private byte[] SEQ_RegCMD1(String op) {
         return SEQ_RegCMD1(op,4);
     }
@@ -1017,7 +946,7 @@ public class SeqAssembler {
         ByteBuffer buffer = ByteBuffer.allocate(0x10);
         String[] opParts = op.split("->");
         String register = opParts[0].toLowerCase();
-        Byte registerVal = registers.get(register);
+        Byte registerVal = OperandParser.getByte(register);
         Integer opDirect = 0;
         buffer.put((byte) 0);
         if (registerVal == null) {
@@ -1078,7 +1007,7 @@ public class SeqAssembler {
         }
         String[] op1Parts = op1.split("->");
         String register1 = op1Parts[0].toLowerCase();
-        Byte op1v = registers.get(register1);
+        Byte op1v = OperandParser.getByte(register1);
         Integer op1Direct = 0;
         if (op1v == null) {
             op1v = 0x3f;
@@ -1103,7 +1032,7 @@ public class SeqAssembler {
         }
         String[] op2Parts = op2.split("->");
         String register2 = op2Parts[0].toLowerCase();
-        Byte op2v = registers.get(register2);
+        Byte op2v = OperandParser.getByte(register2);
         Integer op2Direct = 0;
         if (op2v == null) {
             op2v = 0x3f;

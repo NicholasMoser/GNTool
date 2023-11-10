@@ -5,11 +5,14 @@ import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
+import com.github.nicholasmoser.gnt4.seq.operands.OperandParser;
 import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
+import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Class that mimics the functionality of the function SEQ_RegCMD1. This function retrieves one
@@ -45,6 +48,18 @@ public class SEQ_RegCMD1 {
     SEQ_RegCMD1 operand = new SEQ_RegCMD1(bs);
     operand.parse();
     return operand;
+  }
+
+  public static byte[] fromDescription(String description) throws IOException {
+    if (description.contains(" + ")) {
+      // Load effective address sum with offset
+      return fromEASumPlusOffsetDescription(description);
+    } else if (description.contains("->")) {
+      // Load effective address with offset
+      return fromEAPlusOffsetDescription(description);
+    }
+    // Load affective address
+    return fromEADescription(description);
   }
 
   /**
@@ -247,5 +262,91 @@ public class SEQ_RegCMD1 {
       bs.reset();
     }
     return new ImmediateOperand(offset, word);
+  }
+
+
+
+  /**
+   * Load effective address sum with offset
+   *
+   * @param description
+   * @return
+   * @throws IOException
+   */
+  private static byte[] fromEASumPlusOffsetDescription(String description) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(0);
+    byte flag = (byte) 0x80;
+
+
+
+    return baos.toByteArray();
+  }
+
+  /**
+   * Load effective address with offset
+   *
+   * @param description
+   * @return
+   * @throws IOException
+   */
+  private static byte[] fromEAPlusOffsetDescription(String description) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(0);
+    byte flag = 0x40;
+    if (description.startsWith("*")) {
+      description = description.substring(1);
+    }
+    String[] parts = description.split("->");
+    Byte registerVal = OperandParser.getByte(parts[0]);
+    if (registerVal == null) {
+      int immediate = Long.decode(parts[0]).intValue();
+      baos.write(flag | (byte)0x3f);
+      baos.write(ByteUtils.fromInt32(immediate));
+    } else {
+      baos.write(flag | registerVal);
+    }
+    if (parts[1].startsWith("field_")) {
+      baos.write(ByteUtils.fromUint32(Long.decode(parts[1].replace("field_", "")).intValue()));
+    } else {
+      // Known struct
+      if (registerVal == null) {
+        throw new IOException("Referencing known struct but no register value found for: " + parts[0]);
+      }
+      Optional<Integer> chrField = switch (registerVal & 0x3f) {
+        case 0x26, 0x27 -> Chr.getOffset(parts[1]);
+        default -> throw new IOException("Unknown struct for register val " + registerVal);
+      };
+      if (chrField.isEmpty()) {
+        throw new IOException(String.format("Unknown field %s for struct %s", parts[1], parts[0]));
+      }
+      baos.write(ByteUtils.fromInt32(chrField.get()));
+    }
+    return baos.toByteArray();
+  }
+
+  /**
+   * Load affective address
+   *
+   * @param description
+   * @return
+   * @throws IOException
+   */
+  private static byte[] fromEADescription(String description) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(0);
+    byte flag = 0;
+    if (description.startsWith("*")) {
+      throw new IOException("Unexpected * for load effective address: " + description);
+    }
+    Byte registerVal = OperandParser.getByte(description);
+    if (registerVal == null) {
+      int immediate = Long.decode(description).intValue();
+      baos.write(flag | (byte)0x3f);
+      baos.write(ByteUtils.fromInt32(immediate));
+    } else {
+      baos.write(flag | registerVal);
+    }
+    return baos.toByteArray();
   }
 }
