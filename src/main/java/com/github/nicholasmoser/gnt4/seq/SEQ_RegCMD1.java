@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq;
 
+import com.github.nicholasmoser.gnt4.seq.SEQOperand.OperandBytes;
 import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
@@ -24,7 +25,7 @@ import java.util.Optional;
  *   <li>Immediate values</li>
  * </ul>
  */
-public class SEQ_RegCMD1 implements SEQ_RegCMD {
+public class SEQ_RegCMD1 {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
@@ -58,15 +59,22 @@ public class SEQ_RegCMD1 implements SEQ_RegCMD {
    * @throws IOException If an I/O error occurs.
    */
   public static byte[] parseDescription(String description) throws IOException {
+    OperandBytes operandBytes;
     if (description.contains(" + ")) {
       // Load effective address sum with offset
-      return parseEASumPlusOffsetDescription(description);
+      operandBytes = SEQOperand.parseEASumPlusOffsetDescription(description);
     } else if (description.contains("->")) {
       // Load effective address with offset
-      return parseEAPlusOffsetDescription(description);
+      operandBytes = SEQOperand.parseEAPlusOffsetDescription(description);
+    } else {
+      // Load affective address
+      operandBytes = SEQOperand.parseEADescription(description);
     }
-    // Load affective address
-    return parseEADescription(description);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(0);
+    baos.write(operandBytes.flag());
+    baos.write(operandBytes.bytes());
+    return baos.toByteArray();
   }
 
   /**
@@ -269,126 +277,5 @@ public class SEQ_RegCMD1 implements SEQ_RegCMD {
       bs.reset();
     }
     return new ImmediateOperand(offset, word);
-  }
-
-  /**
-   * Load affective address
-   *
-   * @param description The description to parse.
-   * @return The bytes of the operands.
-   * @throws IOException If any I/O exception occurs.
-   */
-  private static byte[] parseEADescription(String description) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(0);
-    byte flag = 0;
-    if (description.startsWith("*")) {
-      throw new IOException("Unexpected * for load effective address: " + description);
-    }
-    Byte registerVal = OperandParser.getByte(description);
-    if (registerVal == null) {
-      int immediate = Long.decode(description).intValue();
-      baos.write(flag | (byte)0x3f);
-      baos.write(ByteUtils.fromInt32(immediate));
-    } else {
-      baos.write(flag | registerVal);
-    }
-    return baos.toByteArray();
-  }
-
-  /**
-   * Load effective address with offset
-   *
-   * @param description The description to parse.
-   * @return The bytes of the operands.
-   * @throws IOException If any I/O exception occurs.
-   */
-  private static byte[] parseEAPlusOffsetDescription(String description) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(0);
-    byte flag = 0x40;
-    // Remove dereference
-    if (description.startsWith("*")) {
-      description = description.substring(1);
-    }
-    String[] parts = description.split("->");
-    Byte registerVal = OperandParser.getByte(parts[0]);
-    if (registerVal == null) {
-      baos.write(flag | (byte)0x3f); // immediate value
-    } else {
-      baos.write(flag | registerVal);
-    }
-    if (parts[1].startsWith("field_")) {
-      baos.write(ByteUtils.fromUint32(Long.decode(parts[1].replace("field_", "")).intValue()));
-    } else {
-      // Known struct
-      if (registerVal == null) {
-        throw new IOException("Referencing known struct but no register value found for: " + parts[0]);
-      }
-      Optional<Integer> chrField = switch (registerVal & 0x3f) {
-        case 0x26, 0x27 -> Chr.getOffset(parts[1]);
-        default -> throw new IOException("Unknown struct for register val " + registerVal);
-      };
-      if (chrField.isEmpty()) {
-        throw new IOException(String.format("Unknown field for %s", description));
-      }
-      baos.write(ByteUtils.fromInt32(chrField.get()));
-    }
-    if (registerVal == null) {
-      int immediate = Long.decode(parts[0]).intValue(); // write immediate value
-      baos.write(ByteUtils.fromInt32(immediate));
-    }
-    return baos.toByteArray();
-  }
-
-  /**
-   * Load effective address sum with offset
-   *
-   * @param description The description to parse.
-   * @return The bytes of the operands.
-   * @throws IOException If any I/O exception occurs.
-   */
-  private static byte[] parseEASumPlusOffsetDescription(String description) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(0);
-    byte flag = (byte) 0x80;
-    String[] parts = description.split(" \\+ ");
-    if (parts.length != 3) {
-      throw new IOException("Missing three parts for EA sum plus offset: " + description);
-    }
-    String first = parts[0].startsWith("*") ? parts[0].substring(1) : parts[0];
-    String second = parts[1].startsWith("*") ? parts[1].substring(1) : parts[1];
-    String third = parts[2].startsWith("*") ? parts[2].substring(1) : parts[2];
-
-    // Handle first part
-    Byte registerVal = OperandParser.getByte(first);
-    if (registerVal == null) {
-      baos.write(flag | (byte)0x3f); // immediate value
-    } else {
-      baos.write(flag | registerVal);
-    }
-
-    // Handle second part
-    ByteArrayOutputStream secondBytes = new ByteArrayOutputStream();
-    Byte secondRegisterVal = OperandParser.getByte(second);
-    if (secondRegisterVal == null) {
-      throw new IOException("Failed to find register for operand " + second);
-    }
-    secondBytes.write(0);
-    secondBytes.write(secondRegisterVal);
-
-    // Handle third part
-    ByteArrayOutputStream thirdBytes = new ByteArrayOutputStream();
-    int value = Long.decode(third).intValue();
-    thirdBytes.write(ByteUtils.fromUint16(value));
-
-    // Parts are written out in reverse order
-    baos.write(thirdBytes.toByteArray());
-    baos.write(secondBytes.toByteArray());
-    if (registerVal == null) {
-      int immediate = Long.decode(first).intValue(); // write immediate value
-      baos.write(ByteUtils.fromInt32(immediate));
-    }
-    return baos.toByteArray();
   }
 }
