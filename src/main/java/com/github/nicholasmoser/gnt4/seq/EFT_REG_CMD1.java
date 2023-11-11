@@ -105,7 +105,7 @@ public class EFT_REG_CMD1 {
     } else if (cmd == 0x2a) {
       int offset = bs.offset();
       int word = bs.readWord();
-      operand = new ImmediateOperand(offset, word);
+      operand = new ImmediateOperand(offset, word, 4);
       pushWord(word);
     } else if (cmd == 0x2b) {
       int firstOperand = bs.readWord();

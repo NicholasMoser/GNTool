@@ -122,7 +122,7 @@ public class EFT_REG_CMD2 {
     } else if (cmd == 0x2a) {
       int offset = bs.offset();
       int word = bs.readWord();
-      firstOperand = new ImmediateOperand(offset, word);
+      firstOperand = new ImmediateOperand(offset, word, 4);
       pushWord(word);
       cmd = (byte) ((bs.peekWord() >> 0x18) & 0xff);
     } else if (cmd == 0x2b) {
@@ -168,7 +168,7 @@ public class EFT_REG_CMD2 {
     } else if (cmd == 0x2a) {
       int offset = bs.offset();
       int word = bs.readWord();
-      secondOperand = new ImmediateOperand(offset, word);
+      secondOperand = new ImmediateOperand(offset, word, 4);
       pushWord(word);
     } else if (cmd == 0x2b) {
       int addedOffset = bs.readWord();

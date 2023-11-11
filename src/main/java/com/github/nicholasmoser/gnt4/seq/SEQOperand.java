@@ -28,7 +28,7 @@ public class SEQOperand {
     }
     Byte registerVal = OperandParser.getByte(description);
     if (registerVal == null) {
-      int immediate = Long.decode(description).intValue();
+      int immediate = parseImmediateWord(description);
       flag = (byte) (flag | (byte)0x3f);
       baos.write(ByteUtils.fromInt32(immediate));
     } else {
@@ -75,7 +75,7 @@ public class SEQOperand {
       baos.write(ByteUtils.fromInt32(chrField.get()));
     }
     if (registerVal == null) {
-      int immediate = Long.decode(parts[0]).intValue(); // write immediate value
+      int immediate = parseImmediateWord(parts[0]); // write immediate value
       baos.write(ByteUtils.fromInt32(immediate));
     }
     return new OperandBytes(flag, baos.toByteArray());
@@ -125,9 +125,20 @@ public class SEQOperand {
     baos.write(thirdBytes.toByteArray());
     baos.write(secondBytes.toByteArray());
     if (registerVal == null) {
-      int immediate = Long.decode(first).intValue(); // write immediate value
+      int immediate = parseImmediateWord(first); // write immediate value
       baos.write(ByteUtils.fromInt32(immediate));
     }
     return new OperandBytes(flag, baos.toByteArray());
+  }
+
+  private static int parseImmediateWord(String immediate) {
+    if (immediate.startsWith("byte")) {
+      immediate = immediate.replace("byte ", "");
+      return Long.decode(immediate).intValue() << 0x18;
+    } else if (immediate.startsWith("short")) {
+      immediate = immediate.replace("short ", "");
+      return Long.decode(immediate).intValue() << 0x10;
+    }
+    return Long.decode(immediate).intValue();
   }
 }

@@ -638,6 +638,94 @@ public class SEQRegCMD1Test {
   }
 
   /**
+   * Tests peeking an immediate short.
+   *
+   * @throws Exception If any Exception occurs
+   */
+  @Test
+  public void testPeekImmediateShort() throws Exception {
+    byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3f, 0x12, 0x34, 0x00, 0x00};
+    String expected = "short 0x1234";
+    ByteStream bs = new ByteStream(bytes);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs, 2);
+    assertEquals(bytes.length, bs.offset());
+    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals(expected, ea.getDescription());
+    Operand operand = ea.getOperand();
+    assertTrue(operand instanceof ImmediateOperand);
+    ImmediateOperand immediateOperand = (ImmediateOperand) operand;
+    assertEquals(0x4, immediateOperand.getOffset());
+    assertEquals(0x1234, immediateOperand.getImmediateValue());
+    assertConvertingFromString(expected, bytes);
+  }
+
+  /**
+   * Tests peeking a large immediate short.
+   *
+   * @throws Exception If any Exception occurs
+   */
+  @Test
+  public void testPeekImmediateShortLarge() throws Exception {
+    byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3f, (byte) 0xFF, (byte) 0xF2, 0x00, 0x00};
+    String expected = "short 0xFFF2";
+    ByteStream bs = new ByteStream(bytes);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs, 2);
+    assertEquals(bytes.length, bs.offset());
+    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals(expected, ea.getDescription());
+    Operand operand = ea.getOperand();
+    assertTrue(operand instanceof ImmediateOperand);
+    ImmediateOperand immediateOperand = (ImmediateOperand) operand;
+    assertEquals(0x4, immediateOperand.getOffset());
+    assertEquals(0xFFF2, immediateOperand.getImmediateValue());
+    assertConvertingFromString(expected, bytes);
+  }
+
+  /**
+   * Tests peeking an immediate byte.
+   *
+   * @throws Exception If any Exception occurs
+   */
+  @Test
+  public void testPeekImmediateByte() throws Exception {
+    byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3f, 0x12, 0x00, 0x00, 0x00};
+    String expected = "byte 0x12";
+    ByteStream bs = new ByteStream(bytes);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs, 1);
+    assertEquals(bytes.length, bs.offset());
+    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals(expected, ea.getDescription());
+    Operand operand = ea.getOperand();
+    assertTrue(operand instanceof ImmediateOperand);
+    ImmediateOperand immediateOperand = (ImmediateOperand) operand;
+    assertEquals(0x4, immediateOperand.getOffset());
+    assertEquals(0x12, immediateOperand.getImmediateValue());
+    assertConvertingFromString(expected, bytes);
+  }
+
+  /**
+   * Tests peeking a large immediate byte.
+   *
+   * @throws Exception If any Exception occurs
+   */
+  @Test
+  public void testPeekImmediateByteLarge() throws Exception {
+    byte[] bytes = new byte[]{(byte) 0x02, 0x06, 0x00, 0x3f, (byte) 0xF2, (byte) 0x00, 0x00, 0x00};
+    String expected = "byte 0xF2";
+    ByteStream bs = new ByteStream(bytes);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs, 1);
+    assertEquals(bytes.length, bs.offset());
+    assertArrayEquals(bytes, ea.getBytes());
+    assertEquals(expected, ea.getDescription());
+    Operand operand = ea.getOperand();
+    assertTrue(operand instanceof ImmediateOperand);
+    ImmediateOperand immediateOperand = (ImmediateOperand) operand;
+    assertEquals(0x4, immediateOperand.getOffset());
+    assertEquals(0xF2, immediateOperand.getImmediateValue());
+    assertConvertingFromString(expected, bytes);
+  }
+
+  /**
    * Assert that convering the String representation of an operand returns the correct bytes when
    * parsed.
    *

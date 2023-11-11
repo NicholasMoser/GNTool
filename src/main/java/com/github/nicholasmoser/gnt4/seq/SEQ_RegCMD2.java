@@ -32,11 +32,13 @@ public class SEQ_RegCMD2 {
   private final ByteArrayOutputStream bytes;
   private final List<Operand> operands;
   private int opcode;
+  private int immediateWordSize;
 
-  private SEQ_RegCMD2(ByteStream bs) {
+  private SEQ_RegCMD2(ByteStream bs, int immediateWordSize) {
     this.bs = bs;
     this.bytes = new ByteArrayOutputStream();
     this.operands = new ArrayList<>(2);
+    this.immediateWordSize = immediateWordSize;
   }
 
   /**
@@ -48,7 +50,22 @@ public class SEQ_RegCMD2 {
    * @throws IOException If an I/O error occurs.
    */
   public static SEQ_RegCMD2 get(ByteStream bs) throws IOException {
-    SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs);
+    SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs, 4);
+    operands.parse();
+    return operands;
+  }
+
+  /**
+   * Parses the current opcode in a seq byte stream and returns an object containing the two
+   * instruction operands.
+   *
+   * @param bs The seq byte stream to read from.
+   * @param immediateWordSize The number of bytes for immediate words (e.g. 2 for shorts).
+   * @return The SEQ_RegCMD2 result.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static SEQ_RegCMD2 get(ByteStream bs, int immediateWordSize) throws IOException {
+    SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs, immediateWordSize);
     operands.parse();
     return operands;
   }
@@ -340,7 +357,7 @@ public class SEQ_RegCMD2 {
       word = bs.readWord();
       bs.reset();
     }
-    return new ImmediateOperand(offset, word);
+    return new ImmediateOperand(offset, word, immediateWordSize);
   }
 
   private Operand peekImmediate(boolean returnPc) throws IOException {
@@ -358,6 +375,6 @@ public class SEQ_RegCMD2 {
       word = bs.readWord();
       bs.reset();
     }
-    return new ImmediateOperand(offset, word);
+    return new ImmediateOperand(offset, word, immediateWordSize);
   }
 }

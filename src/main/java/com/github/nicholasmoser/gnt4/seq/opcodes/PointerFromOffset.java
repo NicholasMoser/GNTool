@@ -51,7 +51,8 @@ public class PointerFromOffset implements Opcode {
     @Override
     public ContainerTag toHTML() {
         String id = String.format("#%X", offset);
-        Integer target = Integer.decode(info.split(",")[1].replace(" ", ""));
+        String infoNoTypes = info.replace("byte", "").replace("short", "");
+        Integer target = Integer.decode(infoNoTypes.split(",")[1].replace(" ", ""));
         if (target != null) {
             String targetHref = String.format("#%X", target);
             return div(attrs(id))
