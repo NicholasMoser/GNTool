@@ -7,12 +7,14 @@ import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
 import com.github.nicholasmoser.gnt4.seq.operands.OperandParser;
 import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
+import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +52,54 @@ public class SEQ_RegCMD2 {
     SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs);
     operands.parse();
     return operands;
+  }
+
+  /**
+   * Get the operand bytes from an operand text description.
+   *
+   * @param description The description to parse.
+   * @return The operand bytes.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static byte[] fromDescription(String description) throws IOException {
+    String[] operands = description.split(", ");
+    OperandBytes first;
+    OperandBytes second;
+    if (operands[0].contains(" + ")) {
+      // Load effective address sum with offset
+      first =  fromEASumPlusOffsetDescription(operands[0]);
+    } else if (operands[0].contains("->")) {
+      // Load effective address with offset
+      first = fromEAPlusOffsetDescription(operands[0]);
+    } else {
+      // Load affective address
+      first = fromEADescription(operands[0]);
+    }
+    if (operands[1].contains(" + ")) {
+      // Load effective address sum with offset
+      second =  fromEASumPlusOffsetDescription(operands[1]);
+    } else if (operands[1].contains("->")) {
+      // Load effective address with offset
+      second = fromEAPlusOffsetDescription(operands[1]);
+    } else {
+      // Load affective address
+      second = fromEADescription(operands[1]);
+    }
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(first.flag);
+    if (first.bytes.length > 0) {
+      // First operand has extra bytes so flag of second operand is pushed
+      baos.write(0);
+      baos.write(first.bytes);
+      baos.write(second.flag);
+      baos.write(new byte[3]);
+      baos.write(second.bytes);
+    } else {
+      // First operand and second operand flag together at third and fourth byte
+      baos.write(second.flag);
+      baos.write(second.bytes);
+    }
+    return baos.toByteArray();
   }
 
   private void parse() throws IOException {
@@ -310,5 +360,127 @@ public class SEQ_RegCMD2 {
       bs.reset();
     }
     return new ImmediateOperand(offset, word);
+  }
+
+  record OperandBytes(byte flag, byte[] bytes) {
+
+  }
+
+  /**
+   * Load affective address
+   *
+   * @param description The description to parse.
+   * @return The bytes of the operands.
+   * @throws IOException If any I/O exception occurs.
+   */
+  private static OperandBytes fromEADescription(String description) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte flag = 0;
+    if (description.startsWith("*")) {
+      throw new IOException("Unexpected * for load effective address: " + description);
+    }
+    Byte registerVal = OperandParser.getByte(description);
+    if (registerVal == null) {
+      int immediate = Long.decode(description).intValue();
+      flag = (byte) (flag | (byte)0x3f);
+      baos.write(ByteUtils.fromInt32(immediate));
+    } else {
+      flag = (byte) (flag | registerVal);
+    }
+    return new OperandBytes(flag, baos.toByteArray());
+  }
+
+  /**
+   * Load effective address with offset
+   *
+   * @param description The description to parse.
+   * @return The bytes of the operands.
+   * @throws IOException If any I/O exception occurs.
+   */
+  private static OperandBytes fromEAPlusOffsetDescription(String description) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte flag = 0x40;
+    // Remove dereference
+    if (description.startsWith("*")) {
+      description = description.substring(1);
+    }
+    String[] parts = description.split("->");
+    Byte registerVal = OperandParser.getByte(parts[0]);
+    if (registerVal == null) {
+      flag = (byte) (flag | (byte)0x3f); // immediate value
+    } else {
+      flag = (byte) (flag | registerVal);
+    }
+    if (parts[1].startsWith("field_")) {
+      baos.write(ByteUtils.fromUint32(Long.decode(parts[1].replace("field_", "")).intValue()));
+    } else {
+      // Known struct
+      if (registerVal == null) {
+        throw new IOException("Referencing known struct but no register value found for: " + parts[0]);
+      }
+      Optional<Integer> chrField = switch (registerVal & 0x3f) {
+        case 0x26, 0x27 -> Chr.getOffset(parts[1]);
+        default -> throw new IOException("Unknown struct for register val " + registerVal);
+      };
+      if (chrField.isEmpty()) {
+        throw new IOException(String.format("Unknown field for %s", description));
+      }
+      baos.write(ByteUtils.fromInt32(chrField.get()));
+    }
+    if (registerVal == null) {
+      int immediate = Long.decode(parts[0]).intValue(); // write immediate value
+      baos.write(ByteUtils.fromInt32(immediate));
+    }
+    return new OperandBytes(flag, baos.toByteArray());
+  }
+
+  /**
+   * Load effective address sum with offset
+   *
+   * @param description The description to parse.
+   * @return The bytes of the operands.
+   * @throws IOException If any I/O exception occurs.
+   */
+  private static OperandBytes fromEASumPlusOffsetDescription(String description) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte flag = (byte) 0x80;
+    String[] parts = description.split(" \\+ ");
+    if (parts.length != 3) {
+      throw new IOException("Missing three parts for EA sum plus offset: " + description);
+    }
+    String first = parts[0].startsWith("*") ? parts[0].substring(1) : parts[0];
+    String second = parts[1].startsWith("*") ? parts[1].substring(1) : parts[1];
+    String third = parts[2].startsWith("*") ? parts[2].substring(1) : parts[2];
+
+    // Handle first part
+    Byte registerVal = OperandParser.getByte(first);
+    if (registerVal == null) {
+      flag = (byte) (flag | (byte)0x3f); // immediate value
+    } else {
+      flag = (byte) (flag | registerVal);
+    }
+
+    // Handle second part
+    ByteArrayOutputStream secondBytes = new ByteArrayOutputStream();
+    Byte secondRegisterVal = OperandParser.getByte(second);
+    if (secondRegisterVal == null) {
+      throw new IOException("Failed to find register for operand " + second);
+    }
+    secondBytes.write(0);
+    secondBytes.write(secondRegisterVal);
+
+    // Handle third part
+    ByteArrayOutputStream thirdBytes = new ByteArrayOutputStream();
+    int value = Long.decode(third).intValue();
+    thirdBytes.write(ByteUtils.fromUint16(value));
+
+    // Parts are written out in reverse order
+    baos.write(thirdBytes.toByteArray());
+    baos.write(secondBytes.toByteArray());
+    if (registerVal == null) {
+      int immediate = Long.decode(first).intValue(); // write immediate value
+      baos.write(ByteUtils.fromInt32(immediate));
+    }
+    return new OperandBytes(flag, baos.toByteArray());
   }
 }

@@ -12,7 +12,6 @@ import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HexFormat;
 import java.util.Optional;
 
 /**
