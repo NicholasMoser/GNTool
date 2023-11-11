@@ -12,6 +12,7 @@ import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HexFormat;
 import java.util.Optional;
 
 /**
@@ -50,6 +51,13 @@ public class SEQ_RegCMD1 {
     return operand;
   }
 
+  /**
+   * Get the operand bytes from an operand text description.
+   *
+   * @param description The description to parse.
+   * @return The operand bytes.
+   * @throws IOException If an I/O error occurs.
+   */
   public static byte[] fromDescription(String description) throws IOException {
     if (description.contains(" + ")) {
       // Load effective address sum with offset
@@ -129,14 +137,14 @@ public class SEQ_RegCMD1 {
         pushWord(bs.readWord());
         int word = bs.readWord();
         pushWord(word);
-        int bottomTwoBytes = word & 0xffff;
-        int topTwoBytes = word >> 0x10;
-        if (bottomTwoBytes < 0x18) {
-          operand.addInfo(String.format(" + *gpr%d", bottomTwoBytes));
-        } else {
-          operand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+        byte bottomByte = (byte) (word & 0xff);
+        short topTwoBytes = (short) (word >> 0x10);
+        String offset = OperandParser.GetOperand(bottomByte);
+        if (offset == null) {
+          throw new IOException("Unable to find operand for offset " + bottomByte);
         }
-        operand.addInfo(String.format(" + %04x", topTwoBytes));
+        operand.addInfo(String.format(" + *%s", offset));
+        operand.addInfo(String.format(" + 0x%04X", topTwoBytes));
       }
     } else {
       // Load effective address with offset
@@ -264,73 +272,12 @@ public class SEQ_RegCMD1 {
     return new ImmediateOperand(offset, word);
   }
 
-
-
-  /**
-   * Load effective address sum with offset
-   *
-   * @param description
-   * @return
-   * @throws IOException
-   */
-  private static byte[] fromEASumPlusOffsetDescription(String description) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(0);
-    byte flag = (byte) 0x80;
-
-
-
-    return baos.toByteArray();
-  }
-
-  /**
-   * Load effective address with offset
-   *
-   * @param description
-   * @return
-   * @throws IOException
-   */
-  private static byte[] fromEAPlusOffsetDescription(String description) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(0);
-    byte flag = 0x40;
-    if (description.startsWith("*")) {
-      description = description.substring(1);
-    }
-    String[] parts = description.split("->");
-    Byte registerVal = OperandParser.getByte(parts[0]);
-    if (registerVal == null) {
-      int immediate = Long.decode(parts[0]).intValue();
-      baos.write(flag | (byte)0x3f);
-      baos.write(ByteUtils.fromInt32(immediate));
-    } else {
-      baos.write(flag | registerVal);
-    }
-    if (parts[1].startsWith("field_")) {
-      baos.write(ByteUtils.fromUint32(Long.decode(parts[1].replace("field_", "")).intValue()));
-    } else {
-      // Known struct
-      if (registerVal == null) {
-        throw new IOException("Referencing known struct but no register value found for: " + parts[0]);
-      }
-      Optional<Integer> chrField = switch (registerVal & 0x3f) {
-        case 0x26, 0x27 -> Chr.getOffset(parts[1]);
-        default -> throw new IOException("Unknown struct for register val " + registerVal);
-      };
-      if (chrField.isEmpty()) {
-        throw new IOException(String.format("Unknown field %s for struct %s", parts[1], parts[0]));
-      }
-      baos.write(ByteUtils.fromInt32(chrField.get()));
-    }
-    return baos.toByteArray();
-  }
-
   /**
    * Load affective address
    *
-   * @param description
-   * @return
-   * @throws IOException
+   * @param description The description to parse.
+   * @return The bytes of the operands.
+   * @throws IOException If any I/O exception occurs.
    */
   private static byte[] fromEADescription(String description) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -346,6 +293,102 @@ public class SEQ_RegCMD1 {
       baos.write(ByteUtils.fromInt32(immediate));
     } else {
       baos.write(flag | registerVal);
+    }
+    return baos.toByteArray();
+  }
+
+  /**
+   * Load effective address with offset
+   *
+   * @param description The description to parse.
+   * @return The bytes of the operands.
+   * @throws IOException If any I/O exception occurs.
+   */
+  private static byte[] fromEAPlusOffsetDescription(String description) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(0);
+    byte flag = 0x40;
+    // Remove dereference
+    if (description.startsWith("*")) {
+      description = description.substring(1);
+    }
+    String[] parts = description.split("->");
+    Byte registerVal = OperandParser.getByte(parts[0]);
+    if (registerVal == null) {
+      baos.write(flag | (byte)0x3f); // immediate value
+    } else {
+      baos.write(flag | registerVal);
+    }
+    if (parts[1].startsWith("field_")) {
+      baos.write(ByteUtils.fromUint32(Long.decode(parts[1].replace("field_", "")).intValue()));
+    } else {
+      // Known struct
+      if (registerVal == null) {
+        throw new IOException("Referencing known struct but no register value found for: " + parts[0]);
+      }
+      Optional<Integer> chrField = switch (registerVal & 0x3f) {
+        case 0x26, 0x27 -> Chr.getOffset(parts[1]);
+        default -> throw new IOException("Unknown struct for register val " + registerVal);
+      };
+      if (chrField.isEmpty()) {
+        throw new IOException(String.format("Unknown field for %s", description));
+      }
+      baos.write(ByteUtils.fromInt32(chrField.get()));
+    }
+    if (registerVal == null) {
+      int immediate = Long.decode(parts[0]).intValue(); // write immediate value
+      baos.write(ByteUtils.fromInt32(immediate));
+    }
+    return baos.toByteArray();
+  }
+
+  /**
+   * Load effective address sum with offset
+   *
+   * @param description The description to parse.
+   * @return The bytes of the operands.
+   * @throws IOException If any I/O exception occurs.
+   */
+  private static byte[] fromEASumPlusOffsetDescription(String description) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(0);
+    byte flag = (byte) 0x80;
+    String[] parts = description.split(" \\+ ");
+    if (parts.length != 3) {
+      throw new IOException("Missing three parts for EA sum plus offset: " + description);
+    }
+    String first = parts[0].startsWith("*") ? parts[0].substring(1) : parts[0];
+    String second = parts[1].startsWith("*") ? parts[1].substring(1) : parts[1];
+    String third = parts[2].startsWith("*") ? parts[2].substring(1) : parts[2];
+
+    // Handle first part
+    Byte registerVal = OperandParser.getByte(first);
+    if (registerVal == null) {
+      baos.write(flag | (byte)0x3f); // immediate value
+    } else {
+      baos.write(flag | registerVal);
+    }
+
+    // Handle second part
+    ByteArrayOutputStream secondBytes = new ByteArrayOutputStream();
+    Byte secondRegisterVal = OperandParser.getByte(second);
+    if (secondRegisterVal == null) {
+      throw new IOException("Failed to find register for operand " + second);
+    }
+    secondBytes.write(0);
+    secondBytes.write(secondRegisterVal);
+
+    // Handle third part
+    ByteArrayOutputStream thirdBytes = new ByteArrayOutputStream();
+    int value = Long.decode(third).intValue();
+    thirdBytes.write(ByteUtils.fromUint16(value));
+
+    // Parts are written out in reverse order
+    baos.write(thirdBytes.toByteArray());
+    baos.write(secondBytes.toByteArray());
+    if (registerVal == null) {
+      int immediate = Long.decode(first).intValue(); // write immediate value
+      baos.write(ByteUtils.fromInt32(immediate));
     }
     return baos.toByteArray();
   }

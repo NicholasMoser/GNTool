@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
+import com.github.nicholasmoser.gnt4.seq.operands.OperandParser;
 import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -127,11 +128,11 @@ public class SEQ_RegCMD2 {
         pushWord(word);
         int bottomTwoBytes = word & 0xffff;
         int topTwoBytes = word >> 0x10;
-        if (bottomTwoBytes < 0x18) {
-          secondOperand.addInfo(String.format(" + *gpr%d", bottomTwoBytes));
-        } else {
-          secondOperand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+        String offset = OperandParser.GetOperand((byte) bottomTwoBytes);
+        if (offset == null) {
+          throw new IOException("Unable to find operand for offset " + bottomTwoBytes);
         }
+        secondOperand.addInfo(String.format(" + *%s", offset));
         secondOperand.addInfo(String.format(" + %04x", topTwoBytes));
         operands.add(secondOperand);
       }
