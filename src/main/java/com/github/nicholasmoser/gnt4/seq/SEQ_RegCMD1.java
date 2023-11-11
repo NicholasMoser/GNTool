@@ -8,12 +8,10 @@ import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
 import com.github.nicholasmoser.gnt4.seq.operands.OperandParser;
 import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
-import com.github.nicholasmoser.gnt4.seq.structs.Chr;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Class that mimics the functionality of the function SEQ_RegCMD1. This function retrieves one

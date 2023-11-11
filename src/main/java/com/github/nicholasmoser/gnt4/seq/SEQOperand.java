@@ -11,7 +11,7 @@ import java.util.Optional;
  * Generalized logic across both SEQ_RegCMD1 and SEQ_RegCMD2 operand logic.
  */
 public class SEQOperand {
-  record OperandBytes(byte flag, byte[] bytes) { }
+  public record OperandBytes(byte flag, byte[] bytes) { }
 
   /**
    * Load affective address

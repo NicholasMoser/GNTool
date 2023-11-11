@@ -2,10 +2,8 @@ package com.github.nicholasmoser.gnt4.seq.operands;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.Maps;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class OperandParser {
 
