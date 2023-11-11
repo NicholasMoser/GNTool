@@ -646,7 +646,7 @@ public class SEQRegCMD1Test {
    * @throws IOException If any I/O exception occurs.
    */
   private void assertConvertingFromString(String operand, byte[] bytes) throws IOException {
-    byte[] actualBytes = SEQ_RegCMD1.fromDescription(operand);
+    byte[] actualBytes = SEQ_RegCMD1.parseDescription(operand);
     assertArrayEquals(Arrays.copyOfRange(bytes, 2, bytes.length), actualBytes);
   }
 }

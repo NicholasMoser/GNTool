@@ -24,7 +24,7 @@ import java.util.Optional;
  *   <li>Immediate values</li>
  * </ul>
  */
-public class SEQ_RegCMD1 {
+public class SEQ_RegCMD1 implements SEQ_RegCMD {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
@@ -57,16 +57,16 @@ public class SEQ_RegCMD1 {
    * @return The operand bytes.
    * @throws IOException If an I/O error occurs.
    */
-  public static byte[] fromDescription(String description) throws IOException {
+  public static byte[] parseDescription(String description) throws IOException {
     if (description.contains(" + ")) {
       // Load effective address sum with offset
-      return fromEASumPlusOffsetDescription(description);
+      return parseEASumPlusOffsetDescription(description);
     } else if (description.contains("->")) {
       // Load effective address with offset
-      return fromEAPlusOffsetDescription(description);
+      return parseEAPlusOffsetDescription(description);
     }
     // Load affective address
-    return fromEADescription(description);
+    return parseEADescription(description);
   }
 
   /**
@@ -278,7 +278,7 @@ public class SEQ_RegCMD1 {
    * @return The bytes of the operands.
    * @throws IOException If any I/O exception occurs.
    */
-  private static byte[] fromEADescription(String description) throws IOException {
+  private static byte[] parseEADescription(String description) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(0);
     byte flag = 0;
@@ -303,7 +303,7 @@ public class SEQ_RegCMD1 {
    * @return The bytes of the operands.
    * @throws IOException If any I/O exception occurs.
    */
-  private static byte[] fromEAPlusOffsetDescription(String description) throws IOException {
+  private static byte[] parseEAPlusOffsetDescription(String description) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(0);
     byte flag = 0x40;
@@ -348,7 +348,7 @@ public class SEQ_RegCMD1 {
    * @return The bytes of the operands.
    * @throws IOException If any I/O exception occurs.
    */
-  private static byte[] fromEASumPlusOffsetDescription(String description) throws IOException {
+  private static byte[] parseEASumPlusOffsetDescription(String description) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(0);
     byte flag = (byte) 0x80;

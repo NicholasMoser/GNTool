@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  *   <li>Immediate values</li>
  * </ul>
  */
-public class SEQ_RegCMD2 {
+public class SEQ_RegCMD2 implements SEQ_RegCMD {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
@@ -61,29 +61,29 @@ public class SEQ_RegCMD2 {
    * @return The operand bytes.
    * @throws IOException If an I/O error occurs.
    */
-  public static byte[] fromDescription(String description) throws IOException {
+  public static byte[] parseDescription(String description) throws IOException {
     String[] operands = description.split(", ");
     OperandBytes first;
     OperandBytes second;
     if (operands[0].contains(" + ")) {
       // Load effective address sum with offset
-      first =  fromEASumPlusOffsetDescription(operands[0]);
+      first =  parseEASumPlusOffsetDescription(operands[0]);
     } else if (operands[0].contains("->")) {
       // Load effective address with offset
-      first = fromEAPlusOffsetDescription(operands[0]);
+      first = parseEAPlusOffsetDescription(operands[0]);
     } else {
       // Load affective address
-      first = fromEADescription(operands[0]);
+      first = parseEADescription(operands[0]);
     }
     if (operands[1].contains(" + ")) {
       // Load effective address sum with offset
-      second =  fromEASumPlusOffsetDescription(operands[1]);
+      second =  parseEASumPlusOffsetDescription(operands[1]);
     } else if (operands[1].contains("->")) {
       // Load effective address with offset
-      second = fromEAPlusOffsetDescription(operands[1]);
+      second = parseEAPlusOffsetDescription(operands[1]);
     } else {
       // Load affective address
-      second = fromEADescription(operands[1]);
+      second = parseEADescription(operands[1]);
     }
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(first.flag);
@@ -373,7 +373,7 @@ public class SEQ_RegCMD2 {
    * @return The bytes of the operands.
    * @throws IOException If any I/O exception occurs.
    */
-  private static OperandBytes fromEADescription(String description) throws IOException {
+  private static OperandBytes parseEADescription(String description) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte flag = 0;
     if (description.startsWith("*")) {
@@ -397,7 +397,7 @@ public class SEQ_RegCMD2 {
    * @return The bytes of the operands.
    * @throws IOException If any I/O exception occurs.
    */
-  private static OperandBytes fromEAPlusOffsetDescription(String description) throws IOException {
+  private static OperandBytes parseEAPlusOffsetDescription(String description) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte flag = 0x40;
     // Remove dereference
@@ -441,7 +441,7 @@ public class SEQ_RegCMD2 {
    * @return The bytes of the operands.
    * @throws IOException If any I/O exception occurs.
    */
-  private static OperandBytes fromEASumPlusOffsetDescription(String description) throws IOException {
+  private static OperandBytes parseEASumPlusOffsetDescription(String description) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte flag = (byte) 0x80;
     String[] parts = description.split(" \\+ ");
