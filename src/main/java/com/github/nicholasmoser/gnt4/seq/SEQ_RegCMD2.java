@@ -78,10 +78,10 @@ public class SEQ_RegCMD2 {
    * @throws IOException If an I/O error occurs.
    */
   public static byte[] parseDescription(String description) throws IOException {
-    String[] operands = description.split(", ");
+    String[] operands = description.split(",");
     OperandBytes first;
     OperandBytes second;
-    if (operands[0].contains(" + ")) {
+    if (operands[0].contains("+")) {
       // Load effective address sum with offset
       first =  SEQOperand.parseEASumPlusOffsetDescription(operands[0]);
     } else if (operands[0].contains("->")) {
@@ -91,7 +91,7 @@ public class SEQ_RegCMD2 {
       // Load affective address
       first = SEQOperand.parseEADescription(operands[0]);
     }
-    if (operands[1].contains(" + ")) {
+    if (operands[1].contains("+")) {
       // Load effective address sum with offset
       second =  SEQOperand.parseEASumPlusOffsetDescription(operands[1]);
     } else if (operands[1].contains("->")) {

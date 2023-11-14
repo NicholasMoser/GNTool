@@ -98,7 +98,7 @@ public class UnknownOpcode implements Opcode {
 
   private String getOperandsDisplay() {
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("(0x%02X, 0x%02X", bytes[2], bytes[3]));
+    sb.append(String.format("0x%02X, 0x%02X", bytes[2], bytes[3]));
     if (bytes.length > 4) {
       // Add 4 byte words like , 0x00190080
       for (int i = 4; i < bytes.length; i++) {
@@ -108,7 +108,6 @@ public class UnknownOpcode implements Opcode {
         sb.append(String.format("%02X", bytes[i]));
       }
     }
-    sb.append(')');
     return sb.toString();
   }
 }

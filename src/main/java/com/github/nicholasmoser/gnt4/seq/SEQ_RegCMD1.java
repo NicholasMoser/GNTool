@@ -75,7 +75,7 @@ public class SEQ_RegCMD1 {
    */
   public static byte[] parseDescription(String description) throws IOException {
     OperandBytes operandBytes;
-    if (description.contains(" + ")) {
+    if (description.contains("+")) {
       // Load effective address sum with offset
       operandBytes = SEQOperand.parseEASumPlusOffsetDescription(description);
     } else if (description.contains("->")) {

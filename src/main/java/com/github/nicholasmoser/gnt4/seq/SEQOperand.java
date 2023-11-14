@@ -91,7 +91,7 @@ public class SEQOperand {
   public static OperandBytes parseEASumPlusOffsetDescription(String description) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte flag = (byte) 0x80;
-    String[] parts = description.split(" \\+ ");
+    String[] parts = description.split("\\+");
     if (parts.length != 3) {
       throw new IOException("Missing three parts for EA sum plus offset: " + description);
     }
