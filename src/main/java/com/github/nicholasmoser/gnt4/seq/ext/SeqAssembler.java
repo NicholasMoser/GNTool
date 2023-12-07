@@ -32,6 +32,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.End;
 import com.github.nicholasmoser.gnt4.seq.opcodes.HardReset;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.SetTimerDecrement;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -625,6 +626,8 @@ public class SeqAssembler {
                         case "timer":
                             switch (opcode[2]) {
                                 case "decrement" -> {
+                                    // Remove default value info
+                                    operands = operands.replace(SetTimerDecrement.DEFAULT, "");
                                     baos.write(0x21);
                                     baos.write(0x12);
                                     baos.write(SEQ_RegCMD2.parseDescription(operands));
