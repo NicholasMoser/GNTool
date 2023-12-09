@@ -866,10 +866,10 @@ public class SeqHelper {
         return Optional.of(String.format("%s, %s (0x%X)", chr, chrName, value));
       } else if (chr.get() == 0x23C) { // act_id
         String action = Seq.getActionDescription(value);
-        return Optional.of(String.format("%s, %s (0x%X)", chr, action, value));
+        return Optional.of(String.format("%s, %s", chr, action));
       } else if (chr.get() == 0x3BE) { // current_buttons_held
         String buttons = Seq.getButtonDescriptions(value);
-        return Optional.of(String.format("%s, %s (0x%X)", chr, buttons, value));
+        return Optional.of(String.format("%s, %s", chr, buttons));
       }
     }
     return Optional.empty();
