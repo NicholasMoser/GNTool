@@ -51,7 +51,7 @@ public class OpcodeGroup04 {
   private static Opcode i32_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 4);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea);
     if (result.isPresent()) {
       return new IntMov(offset, ea.getBytes(), result.get());
     }
@@ -61,7 +61,7 @@ public class OpcodeGroup04 {
   private static Opcode i32_andc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 4);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea);
     if (result.isPresent()) {
       return new IntAndCompare(offset, ea.getBytes(), result.get());
     }
@@ -131,7 +131,7 @@ public class OpcodeGroup04 {
   private static Opcode i32_subc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 4);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea);
     if (result.isPresent()) {
       return new IntSubtractCompare(offset, ea.getBytes(), result.get());
     }

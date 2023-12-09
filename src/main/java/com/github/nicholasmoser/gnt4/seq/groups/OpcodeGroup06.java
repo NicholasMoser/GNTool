@@ -46,7 +46,7 @@ public class OpcodeGroup06 {
   private static Opcode i16_andc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
-    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 2);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea);
     if (result.isPresent()) {
       return new ShortAndCompare(offset, ea.getBytes(), result.get());
     }
@@ -92,7 +92,7 @@ public class OpcodeGroup06 {
   private static Opcode i16_subc(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
-    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 2);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea);
     if (result.isPresent()) {
       return new ShortSubtractCompare(offset, ea.getBytes(), result.get());
     }

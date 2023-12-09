@@ -845,19 +845,11 @@ public class SeqHelper {
    * field values. Otherwise returns an empty optional.
    *
    * @param ea The two operands
-   * @param size The size of an immediate value operand (e.g. 4-byte word)
    * @return given known chr_p fields, optional more descriptive description
    */
-  public static Optional<String> getChrFieldDescription(SEQ_RegCMD2 ea, int size) throws IOException {
+  public static Optional<String> getChrFieldDescription(SEQ_RegCMD2 ea) throws IOException {
     if (ea.getFirstOperand() instanceof ChrOperand chr && ea.getSecondOperand() instanceof ImmediateOperand immediate) {
       int value = immediate.getImmediateValue();
-      if (size == 2) {
-        value >>= 0x10;
-      } else if (size == 1) {
-        value >>= 0x18;
-      } else if (size > 4) {
-        throw new IOException("size not supported " + size);
-      }
       if (chr.get() == 0x1C) { // chr_id
         String chrName = GNT4Characters.INTERNAL_CHAR_ORDER.inverse().get(value);
         if (chrName == null) {
