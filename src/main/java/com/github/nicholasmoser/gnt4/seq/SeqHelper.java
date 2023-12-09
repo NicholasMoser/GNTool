@@ -855,7 +855,7 @@ public class SeqHelper {
         if (chrName == null) {
           throw new IOException("Unknown character for chr_id " + value);
         }
-        return Optional.of(String.format("%s, %s (0x%X)", chr, chrName, value));
+        return Optional.of(String.format("%s, %s", chr, chrName));
       } else if (chr.get() == 0x23C) { // act_id
         String action = Seq.getActionDescription(value);
         return Optional.of(String.format("%s, %s", chr, action));
@@ -865,5 +865,11 @@ public class SeqHelper {
       }
     }
     return Optional.empty();
+  }
+
+  public static OperandBytes fromChrFieldDescription(String description) {
+    //Seq.getButtonBitfield() TODO
+    byte[] bytes = new byte[0];
+    return new OperandBytes((byte) 0x3f, bytes);
   }
 }

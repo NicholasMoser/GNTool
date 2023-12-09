@@ -1,6 +1,5 @@
 package com.github.nicholasmoser.gnt4.seq;
 
-import com.github.nicholasmoser.gnt4.seq.SEQOperand.OperandBytes;
 import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
@@ -31,8 +30,8 @@ public class SEQ_RegCMD2 {
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
   private final List<Operand> operands;
+  private final int immediateWordSize;
   private int opcode;
-  private int immediateWordSize;
 
   private SEQ_RegCMD2(ByteStream bs, int immediateWordSize) {
     this.bs = bs;
@@ -91,7 +90,10 @@ public class SEQ_RegCMD2 {
       // Load affective address
       first = SEQOperand.parseEADescription(operands[0]);
     }
-    if (operands[1].contains("+")) {
+    boolean chrField = operands[0].startsWith("*chr_p->");
+    if (chrField) {
+      second = SeqHelper.fromChrFieldDescription(operands[1]);
+    } else if (operands[1].contains("+")) {
       // Load effective address sum with offset
       second =  SEQOperand.parseEASumPlusOffsetDescription(operands[1]);
     } else if (operands[1].contains("->")) {

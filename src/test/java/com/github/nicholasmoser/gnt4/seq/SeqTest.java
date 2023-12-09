@@ -1,8 +1,14 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.github.nicholasmoser.gnt4.GNT4Characters;
+import java.util.HashSet;
+import java.util.OptionalInt;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 public class SeqTest {
@@ -38,30 +44,72 @@ public class SeqTest {
   @Test
   public void testButtonMapping() {
     String expected = "Up";
-    Integer bits = Seq.getButtonBitfield(expected);
-    assertEquals(expected, Seq.getButtonDescriptions(bits));
+    OptionalInt bits = Seq.getButtonBitfield(expected);
+    assertThat(bits.isPresent()).isTrue();
+    assertEquals(expected, Seq.getButtonDescriptions(bits.getAsInt()));
 
     expected = "Forward; Back; Down";
     bits = Seq.getButtonBitfield(expected);
-    assertEquals(expected, Seq.getButtonDescriptions(bits));
+    assertThat(bits.isPresent()).isTrue();
+    assertEquals(expected, Seq.getButtonDescriptions(bits.getAsInt()));
 
     expected = "Facing_Left";
     bits = Seq.getButtonBitfield(expected);
-    assertEquals(expected, Seq.getButtonDescriptions(bits));
+    assertThat(bits.isPresent()).isTrue();
+    assertEquals(expected, Seq.getButtonDescriptions(bits.getAsInt()));
 
-    expected = "None";
-    bits = Seq.getButtonBitfield(expected);
-    assertEquals(expected, Seq.getButtonDescriptions(bits));
-
-    String unknownDescription = "asd";
-    bits = Seq.getButtonBitfield(unknownDescription);
-    assertEquals(0, bits);
+    bits = Seq.getButtonBitfield("asdasd");
+    assertThat(bits.isPresent()).isFalse();
+    assertNull(Seq.getButtonDescriptions(0));
+    assertNull(Seq.getButtonDescriptions(0x100000));
   }
 
   @Test
   public void testNoActionsWithSpaces() {
     for (String action : Seq.getActions()) {
       assertThat(action).doesNotContain(" ");
+    }
+    for (String action : Seq.getButtonDescriptions()) {
+      assertThat(action).doesNotContain(" ");
+    }
+    for (String action : GNT4Characters.CHARACTERS) {
+      assertThat(action).doesNotContain(" ");
+    }
+  }
+
+  @Test
+  public void testOperandSymbolsUnique() {
+    Set<String> found = new HashSet<>();
+    for (String symbol : Seq.getActions()) {
+      if (found.contains(symbol)) {
+        fail("Duplicates of symbol: " + symbol);
+      }
+      found.add(symbol);
+    }
+    for (String symbol : Seq.getButtonDescriptions()) {
+      if (found.contains(symbol)) {
+        fail("Duplicates of symbol: " + symbol);
+      }
+      found.add(symbol);
+    }
+    for (String symbol : GNT4Characters.CHARACTERS) {
+      if (found.contains(symbol)) {
+        fail("Duplicates of symbol: " + symbol);
+      }
+      found.add(symbol);
+    }
+  }
+
+  @Test
+  public void testOperandSymbolsNotContainSeparator() {
+    for (String action : Seq.getActions()) {
+      assertThat(action).doesNotContain(";");
+    }
+    for (String action : Seq.getButtonDescriptions()) {
+      assertThat(action).doesNotContain(";");
+    }
+    for (String action : GNT4Characters.CHARACTERS) {
+      assertThat(action).doesNotContain(";");
     }
   }
 }

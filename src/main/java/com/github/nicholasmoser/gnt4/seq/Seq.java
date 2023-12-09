@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.OptionalInt;
 import java.util.Set;
 
 public class Seq {
@@ -957,7 +958,7 @@ public class Seq {
     .put(0x18D, "unused_30") // points to chr_act
     .put(0x18E, "unused_31") // points to chr_act
     .put(0x18F, "unused_32") // points to chr_act
-    .put(0x190, "Y")
+    .put(0x190, "5Y")
     .put(0x191, "2Y")
     .put(0x192, "JY")
     .put(0x193, "Activated_X")
@@ -984,6 +985,13 @@ public class Seq {
 
   public static BiMap<Integer, String> BUTTON_DESCRIPTIONS;
 
+  public static Set<String> getButtonDescriptions() {
+    if (BUTTON_DESCRIPTIONS == null) {
+      BUTTON_DESCRIPTIONS = initButtonDescriptions();
+    }
+    return BUTTON_DESCRIPTIONS.values();
+  }
+
   public static String getButtonDescriptions(int buttonBitFields) {
     if (BUTTON_DESCRIPTIONS == null) {
       BUTTON_DESCRIPTIONS = initButtonDescriptions();
@@ -996,12 +1004,12 @@ public class Seq {
       }
     }
     if (buttons.isEmpty()) {
-      return "None";
+      return null;
     }
     return String.join("; ", buttons);
   }
 
-  public static int getButtonBitfield(String buttonDescriptions) {
+  public static OptionalInt getButtonBitfield(String buttonDescriptions) {
     if (BUTTON_DESCRIPTIONS == null) {
       BUTTON_DESCRIPTIONS = initButtonDescriptions();
     }
@@ -1013,7 +1021,7 @@ public class Seq {
         bitfield |= value;
       }
     }
-    return bitfield;
+    return bitfield != 0 ? OptionalInt.of(bitfield) : OptionalInt.empty();
   }
 
   private static BiMap<Integer, String> initButtonDescriptions() {

@@ -17,7 +17,7 @@ public class GNT4Characters {
   public static final String GAARA = "Gaara";
   public static final String HAKU = "Haku";
   public static final String HINATA = "Hinata";
-  public static final String HINATA_AWAKENED = "Hinata (Awakened)";
+  public static final String HINATA_AWAKENED = "Hinata_Awakened";
   public static final String INO = "Ino";
   public static final String IRUKA = "Iruka";
   public static final String ITACHI = "Itachi";
@@ -32,10 +32,10 @@ public class GNT4Characters {
   public static final String KIMIMARO = "Kimimaro";
   public static final String KISAME = "Kisame";
   public static final String LEE = "Lee";
-  public static final String MIGHT_GUY = "Might Guy";
+  public static final String MIGHT_GUY = "Might_Guy";
   public static final String MIZUKI = "Mizuki";
   public static final String NARUTO = "Naruto";
-  public static final String NARUTO_OTK = "Naruto (OTK)";
+  public static final String NARUTO_OTK = "Naruto_OTK";
   public static final String NEJI = "Neji";
   public static final String OBORO = "Oboro";
   public static final String OROCHIMARU = "Orochimaru";
@@ -43,11 +43,11 @@ public class GNT4Characters {
   public static final String SAKURA = "Sakura";
   public static final String SARUTOBI = "Sarutobi";
   public static final String SASUKE = "Sasuke";
-  public static final String SASUKE_CS2 = "Sasuke (CS2)";
+  public static final String SASUKE_CS2 = "Sasuke_CS2";
   public static final String SHIKAMARU = "Shikamaru";
   public static final String SHINO = "Shino";
   public static final String TAYUYA = "Tayuya";
-  public static final String TAYUYA_DOKI = "Tayuya (Doki Demon)";
+  public static final String TAYUYA_DOKI = "Tayuya_Doki_Demon)";
   public static final String TEMARI = "Temari";
   public static final String TENTEN = "Tenten";
   public static final String TSUNADE = "Tsunade";

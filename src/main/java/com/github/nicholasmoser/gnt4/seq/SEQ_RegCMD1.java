@@ -1,6 +1,5 @@
 package com.github.nicholasmoser.gnt4.seq;
 
-import com.github.nicholasmoser.gnt4.seq.SEQOperand.OperandBytes;
 import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
@@ -27,9 +26,9 @@ public class SEQ_RegCMD1 {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
+  private final int immediateWordSize;
   private Operand operand;
   private int opcode;
-  private int immediateWordSize;
 
   private SEQ_RegCMD1(ByteStream bs, int immediateWordSize) {
     this.bs = bs;
