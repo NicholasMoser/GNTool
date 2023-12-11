@@ -693,19 +693,20 @@ public class Seq {
     return description != null ? description : String.format("unknown_0x%X", actionId);
   }
 
-  public static int getActionId(String actionDescription) {
+  public static OptionalInt getActionId(String actionDescription) {
     if (ACTION_DESCRIPTIONS == null) {
       ACTION_DESCRIPTIONS = initActionDescriptions();
     }
     actionDescription = actionDescription.replace(" (unused)", "");
     if (actionDescription.startsWith("unknown_")) {
-      return Integer.decode(actionDescription.replace("unknown_", ""));
+      int value = Integer.decode(actionDescription.replace("unknown_", ""));
+      return OptionalInt.of(value);
     }
-    Integer actionId = ACTION_DESCRIPTIONS.inverse().get(actionDescription);
-    if (actionId == null) {
-      throw new IllegalArgumentException("Unable to find action for description: " + actionDescription);
+    Integer value = ACTION_DESCRIPTIONS.inverse().get(actionDescription);
+    if (value == null) {
+      return OptionalInt.empty();
     }
-    return actionId;
+    return OptionalInt.of(value);
   }
 
   public static Set<String> getActions() {

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 
 public class GNT4Characters {
 
@@ -340,14 +341,13 @@ public class GNT4Characters {
    *
    * @param chr The character.
    * @return The id for the provided character.
-   * @throws IOException If any I/O exception occurs.
    */
-  public static int getChrId(String chr) throws IOException {
-    Integer chrId = GNT4Characters.INTERNAL_CHAR_ORDER.get(chr);
-    if (chrId == null) {
-      throw new IOException("Unable to find chr id for character: " + chr);
+  public static OptionalInt getChrId(String chr) {
+    Integer id = INTERNAL_CHAR_ORDER.get(chr);
+    if (id == null) {
+      return OptionalInt.empty();
     }
-    return chrId;
+    return OptionalInt.of(id);
   }
 
   /**

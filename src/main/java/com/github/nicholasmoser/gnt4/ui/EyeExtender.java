@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * A class to write Gecko codes for allowing additional eye textures for costumes. The main logic
@@ -204,9 +205,12 @@ public class EyeExtender {
       throws IOException {
     String chr = entry.getKey();
     String txg = entry.getValue();
-    int chrId = GNT4Characters.getChrId(chr);
+    OptionalInt chrId = GNT4Characters.getChrId(chr);
+    if (chrId.isEmpty()) {
+      throw new IOException("Failed to get character id for character: " + chrId);
+    }
     int branchDistance = getBranchDistance(txg, bytes.length);
-    byte[] cmpwi = CompareWithImmediate.getBytes(5, chrId);
+    byte[] cmpwi = CompareWithImmediate.getBytes(5, chrId.getAsInt());
     byte[] beq = BranchEqual.getBytes(branchDistance);
     return Bytes.concat(cmpwi, beq, bytes);
   }

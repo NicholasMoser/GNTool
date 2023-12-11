@@ -96,6 +96,7 @@ import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
+import com.google.common.primitives.Bytes;
 import j2html.tags.ContainerTag;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -107,6 +108,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 
 public class SeqHelper {
@@ -851,7 +853,7 @@ public class SeqHelper {
     if (ea.getFirstOperand() instanceof ChrOperand chr && ea.getSecondOperand() instanceof ImmediateOperand immediate) {
       int value = immediate.getImmediateValue();
       if (chr.get() == 0x1C) { // chr_id
-        String chrName = GNT4Characters.INTERNAL_CHAR_ORDER.inverse().get(value);
+        String chrName = GNT4Characters.ID_TO_CHR.get(value);
         if (chrName == null) {
           throw new IOException("Unknown character for chr_id " + value);
         }
@@ -868,8 +870,26 @@ public class SeqHelper {
   }
 
   public static OperandBytes fromChrFieldDescription(String description) {
-    //Seq.getButtonBitfield() TODO
-    byte[] bytes = new byte[0];
+    OptionalInt id = Seq.getActionId(description);
+    boolean isShort = false;
+    if (id.isEmpty()) {
+      id = Seq.getButtonBitfield(description);
+    }
+    if (id.isEmpty()) {
+      id = GNT4Characters.getChrId(description);
+    }
+    if (id.isEmpty()) {
+      if (description.startsWith("short")) {
+        isShort = true;
+        description = description.replace("short", "");
+      }
+      id = OptionalInt.of(Long.decode(description).intValue());
+    }
+    if (isShort) {
+      byte[] bytes = Bytes.concat(ByteUtils.fromUint16(id.getAsInt()), new byte[2]);
+      return new OperandBytes((byte) 0x3f, bytes);
+    }
+    byte[] bytes =  ByteUtils.fromInt32(id.getAsInt());
     return new OperandBytes((byte) 0x3f, bytes);
   }
 }
