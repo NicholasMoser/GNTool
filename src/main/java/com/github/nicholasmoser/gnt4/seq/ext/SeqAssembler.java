@@ -801,6 +801,16 @@ public class SeqAssembler {
                     }
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
+                case "tcg":
+                    switch(opcode[1]) {
+                        case "mov":
+                            baos.write(0x3C);
+                            baos.write(0);
+                            baos.write(0);
+                            baos.write(0);
+                        default:
+                            throw new IllegalArgumentException("Opcode not yet supported: " + line);
+                    }
                 default:
                     throw new IllegalArgumentException("Unknown assembly: " + opcode[0]);
             }

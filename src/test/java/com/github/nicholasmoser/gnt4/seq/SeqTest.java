@@ -15,28 +15,33 @@ public class SeqTest {
   @Test
   public void testActionMapping() {
     String expected = "stand";
-    int id = Seq.getActionId(expected);
-    assertEquals(expected, Seq.getActionDescription(id));
+    OptionalInt id = Seq.getActionId(expected);
+    assertThat(id.isPresent()).isTrue();
+    assertEquals(expected, Seq.getActionDescription(id.getAsInt()));
 
     expected = "running";
     id = Seq.getActionId(expected);
-    assertEquals(expected, Seq.getActionDescription(id));
+    assertThat(id.isPresent()).isTrue();
+    assertEquals(expected, Seq.getActionDescription(id.getAsInt()));
 
     expected = "hit_medium";
     id = Seq.getActionId(expected);
-    assertEquals(expected, Seq.getActionDescription(id));
+    assertThat(id.isPresent()).isTrue();
+    assertEquals(expected, Seq.getActionDescription(id.getAsInt()));
 
     String unknownDescription = "unknown_0xFFF";
     int unknownId = 0xFFF;
     id = Seq.getActionId(unknownDescription);
-    assertEquals(unknownId, id);
+    assertThat(id.isPresent()).isTrue();
+    assertEquals(unknownId, id.getAsInt());
     String description = Seq.getActionDescription(unknownId);
     assertEquals(unknownDescription, description);
 
     String unusedDescription = "unknown_0xFF1 (unused)";
     int unusedId = 0xFF1;
     id = Seq.getActionId(unusedDescription);
-    assertEquals(unusedId, id);
+    assertThat(id.isPresent()).isTrue();
+    assertEquals(unusedId, id.getAsInt());
     description = Seq.getActionDescription(unusedId);
     assertEquals("unknown_0xFF1", description);
   }
