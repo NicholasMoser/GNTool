@@ -39,8 +39,6 @@ public class SeqAssemblerTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (Opcode opcode : opcodes.getKey()) {
             byte[] opcodeCodes = opcode.getBytes(0x1DA84, opcodes.getValue());
-            //System.out.println(opcode.toAssembly());
-            //System.out.println(ByteUtils.bytesToHexStringWords(opcodeCodes));
             baos.write(opcodeCodes);
         }
         byte [] bytes = baos.toByteArray();
