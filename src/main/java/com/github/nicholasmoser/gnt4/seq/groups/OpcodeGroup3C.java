@@ -1,6 +1,5 @@
 package com.github.nicholasmoser.gnt4.seq.groups;
 
-import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.TCG;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
@@ -55,7 +54,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgMov(offset, baos.toByteArray(), description);
   }
 
@@ -67,7 +66,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgAdd(offset, baos.toByteArray(), description);
   }
 
@@ -79,7 +78,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgSub(offset, baos.toByteArray(), description);
   }
 
@@ -91,7 +90,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgAnd(offset, baos.toByteArray(), description);
   }
 
@@ -103,7 +102,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgOr(offset, baos.toByteArray(), description);
   }
 
@@ -115,7 +114,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgMul(offset, baos.toByteArray(), description);
   }
 
@@ -127,7 +126,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgDiv(offset, baos.toByteArray(), description);
   }
 
@@ -139,7 +138,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgMod(offset, baos.toByteArray(), description);
   }
 
@@ -151,7 +150,7 @@ public class OpcodeGroup3C {
     int op2 = bs.readWord();
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
-    String description = String.format("%s, s_lpCTD->vars[%s]", TCG.read1(op1), TCG.read2(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgRand(offset, baos.toByteArray(), description);
   }
 }

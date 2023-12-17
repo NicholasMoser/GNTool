@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SeqKingTest {
@@ -661,6 +662,7 @@ public class SeqKingTest {
    * Try and find permutations of bytes of an opcode.
    */
   @Test
+  @Disabled("Enable only when you actually need to run this")
   public void findOpcodePermutations() throws Exception {
     byte group = 0x24;
     byte code = 0x17;
