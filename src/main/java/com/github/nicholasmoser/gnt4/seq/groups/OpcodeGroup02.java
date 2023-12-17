@@ -55,7 +55,6 @@ public class OpcodeGroup02 {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     StringBuilder info = new StringBuilder(ea.getDescription());
-    info.append(" with SEQ file from the first operand");
     return new SEQ_ReqLoadPrev(offset, ea.getBytes(), info.toString());
   }
 

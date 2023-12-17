@@ -331,16 +331,8 @@ public class SeqAssembler {
                             //TODO
                             break;
                         case "ReqLoadPrev":
-                            if (opcode.length > 2) {
-                                switch (opcode[2]) {
-                                    case "I":
-                                        //TODO
-                                        break;
-                                }
-                            } else {
-                                //TODO
-                                //ReqLoadPrev
-                            }
+                            baos.write(new byte[] {0x02, 0x05});
+                            baos.write(SEQ_RegCMD2.parseDescription(operands));
                             break;
                         case "CmdPAUSE":
                             baos.write(0x15);
