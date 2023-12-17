@@ -4,6 +4,7 @@ import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.Seq;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.TCG;
 import com.github.nicholasmoser.gnt4.seq.comment.Function;
 import com.github.nicholasmoser.gnt4.seq.comment.Functions;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
@@ -804,13 +805,55 @@ public class SeqAssembler {
                 case "tcg":
                     switch(opcode[1]) {
                         case "mov":
-                            baos.write(0x3C);
-                            baos.write(0);
-                            baos.write(0);
-                            baos.write(0);
+                            baos.write(new byte[] {0x3C, 0x00, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
+                        case "add":
+                            baos.write(new byte[] {0x3C, 0x01, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
+                        case "sub":
+                            baos.write(new byte[] {0x3C, 0x02, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
+                        case "and":
+                            baos.write(new byte[] {0x3C, 0x03, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
+                        case "or":
+                            baos.write(new byte[] {0x3C, 0x04, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
+                        case "mul":
+                            baos.write(new byte[] {0x3C, 0x05, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
+                        case "div":
+                            baos.write(new byte[] {0x3C, 0x06, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
+                        case "mod":
+                            baos.write(new byte[] {0x3C, 0x07, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
+                        case "rand":
+                            baos.write(new byte[] {0x3C, 0x0A, 0, 0});
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
+                            break;
                         default:
                             throw new IllegalArgumentException("Opcode not yet supported: " + line);
                     }
+                    currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown assembly: " + opcode[0]);
             }
