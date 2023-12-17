@@ -350,28 +350,27 @@ public class SeqAssembler {
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "TskSendMsg":
-                    //TODO
+                    baos.write(new byte[] {0x02, 0x06});
+                    baos.write(SEQ_RegCMD1.parseDescription(operands));
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "TskExecFunc":
-                    //TODO
+                    baos.write(new byte[] {0x02, 0x07});
+                    baos.write(SEQ_RegCMD1.parseDescription(operands));
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "movr":
-                    baos.write(3);
-                    baos.write(1);
+                    baos.write(new byte[] {0x03, 0x01});
                     baos.write(SEQ_RegCMD2.parseDescription(operands));
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "push":
-                    baos.write(3);
-                    baos.write(3);
+                    baos.write(new byte[] {0x03, 0x03});
                     baos.write(SEQ_RegCMD1.parseDescription(operands));
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), baos.toByteArray()[0], baos.toByteArray()[1]);
                     break;
                 case "pop":
-                    baos.write(3);
-                    baos.write(4);
+                    baos.write(new byte[] {0x03, 0x04});
                     baos.write(SEQ_RegCMD1.parseDescription(operands));
                     currentOpcode = SeqHelper.getSeqOpcode(new ByteStream(baos.toByteArray()), (byte) 3, (byte) 4);
                     break;
