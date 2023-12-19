@@ -24,6 +24,7 @@ public class OpcodeGroup02 {
       case 0x06 -> TskSendMsg(bs);
       case 0x07 -> TskExecFunc(bs);
       case 0x08 -> op_0208(bs);
+      case 0x0D -> UnknownOpcode.of(0x4, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
     };
   }
@@ -54,7 +55,6 @@ public class OpcodeGroup02 {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     StringBuilder info = new StringBuilder(ea.getDescription());
-    info.append(" with SEQ file from the first operand");
     return new SEQ_ReqLoadPrev(offset, ea.getBytes(), info.toString());
   }
 

@@ -3,7 +3,6 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
-import com.github.nicholasmoser.gnt4.seq.opcodes.IntSubtractCompare;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ShortAdd;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ShortAndCompare;
@@ -15,7 +14,6 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.ShortOr;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ShortRandom;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ShortSubtract;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ShortSubtractCompare;
-import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.IOException;
 import java.util.Optional;
@@ -41,14 +39,14 @@ public class OpcodeGroup06 {
 
   private static Opcode i16_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
     return new ShortMove(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i16_andc(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 2);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea);
     if (result.isPresent()) {
       return new ShortAndCompare(offset, ea.getBytes(), result.get());
     }
@@ -57,44 +55,44 @@ public class OpcodeGroup06 {
 
   private static Opcode i16_nimply(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
     return new ShortNimply(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i16_inc(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs, 2);
     return new ShortIncrement(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i16_dec(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs);
+    SEQ_RegCMD1 ea = SEQ_RegCMD1.get(bs, 2);
     return new ShortDecrement(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i16_add(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
     return new ShortAdd(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i16_sub(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
     return new ShortSubtract(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i16_or(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
     return new ShortOr(offset, ea.getBytes(), ea.getDescription());
   }
 
   private static Opcode i16_subc(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
-    Optional<String> result = SeqHelper.getChrFieldDescription(ea, 2);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
+    Optional<String> result = SeqHelper.getChrFieldDescription(ea);
     if (result.isPresent()) {
       return new ShortSubtractCompare(offset, ea.getBytes(), result.get());
     }
@@ -103,7 +101,7 @@ public class OpcodeGroup06 {
 
   private static Opcode i16_rand(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 2);
     return new ShortRandom(offset, ea.getBytes(), ea.getDescription());
   }
 }

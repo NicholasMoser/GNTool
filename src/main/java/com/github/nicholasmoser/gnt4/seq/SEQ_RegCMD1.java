@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
+import com.github.nicholasmoser.gnt4.seq.operands.OperandParser;
 import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -25,12 +26,14 @@ public class SEQ_RegCMD1 {
 
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
+  private final int immediateWordSize;
   private Operand operand;
   private int opcode;
 
-  private SEQ_RegCMD1(ByteStream bs) {
+  private SEQ_RegCMD1(ByteStream bs, int immediateWordSize) {
     this.bs = bs;
     this.bytes = new ByteArrayOutputStream();
+    this.immediateWordSize = immediateWordSize;
   }
 
   /**
@@ -42,9 +45,50 @@ public class SEQ_RegCMD1 {
    * @throws IOException If an I/O error occurs.
    */
   public static SEQ_RegCMD1 get(ByteStream bs) throws IOException {
-    SEQ_RegCMD1 operand = new SEQ_RegCMD1(bs);
+    SEQ_RegCMD1 operand = new SEQ_RegCMD1(bs, 4);
     operand.parse();
     return operand;
+  }
+
+  /**
+   * Parses the current opcode in a seq byte stream and returns an object containing the one
+   * instruction operand.
+   *
+   * @param bs The seq byte stream to read from.
+   * @param immediateWordSize The number of bytes for immediate words (e.g. 2 for shorts).
+   * @return The SEQ_RegCMD1 result.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static SEQ_RegCMD1 get(ByteStream bs, int immediateWordSize) throws IOException {
+    SEQ_RegCMD1 operand = new SEQ_RegCMD1(bs, immediateWordSize);
+    operand.parse();
+    return operand;
+  }
+
+  /**
+   * Get the operand bytes from an operand text description.
+   *
+   * @param description The description to parse.
+   * @return The operand bytes.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static byte[] parseDescription(String description) throws IOException {
+    OperandBytes operandBytes;
+    if (description.contains("+")) {
+      // Load effective address sum with offset
+      operandBytes = SEQOperand.parseEASumPlusOffsetDescription(description);
+    } else if (description.contains("->")) {
+      // Load effective address with offset
+      operandBytes = SEQOperand.parseEAPlusOffsetDescription(description);
+    } else {
+      // Load affective address
+      operandBytes = SEQOperand.parseEADescription(description);
+    }
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(0);
+    baos.write(operandBytes.flag());
+    baos.write(operandBytes.bytes());
+    return baos.toByteArray();
   }
 
   /**
@@ -114,14 +158,14 @@ public class SEQ_RegCMD1 {
         pushWord(bs.readWord());
         int word = bs.readWord();
         pushWord(word);
-        int bottomTwoBytes = word & 0xffff;
-        int topTwoBytes = word >> 0x10;
-        if (bottomTwoBytes < 0x18) {
-          operand.addInfo(String.format(" + *gpr%d", bottomTwoBytes));
-        } else {
-          operand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+        byte bottomByte = (byte) (word & 0xff);
+        short topTwoBytes = (short) (word >> 0x10);
+        String offset = OperandParser.GetOperand(bottomByte);
+        if (offset == null) {
+          throw new IOException("Unable to find operand for offset " + bottomByte);
         }
-        operand.addInfo(String.format(" + %04x", topTwoBytes));
+        operand.addInfo(String.format(" + *%s", offset));
+        operand.addInfo(String.format(" + 0x%04X", topTwoBytes));
       }
     } else {
       // Load effective address with offset
@@ -228,7 +272,7 @@ public class SEQ_RegCMD1 {
       word = bs.readWord();
       bs.reset();
     }
-    return new ImmediateOperand(offset, word);
+    return new ImmediateOperand(offset, word, immediateWordSize);
   }
 
   private Operand peekImmediate(boolean returnPc) throws IOException {
@@ -246,6 +290,6 @@ public class SEQ_RegCMD1 {
       word = bs.readWord();
       bs.reset();
     }
-    return new ImmediateOperand(offset, word);
+    return new ImmediateOperand(offset, word, immediateWordSize);
   }
 }

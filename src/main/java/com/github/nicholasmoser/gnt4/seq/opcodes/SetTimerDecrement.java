@@ -7,6 +7,9 @@ import j2html.tags.ContainerTag;
 
 public class SetTimerDecrement implements Opcode {
 
+  // When the decrement amount if set to 0, 0x100 is the default amount used instead
+  public final static String DEFAULT = "(0x100)";
+
   private final static String MNEMONIC = "set_timer_decrement";
   private final int offset;
   private final byte[] bytes;

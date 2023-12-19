@@ -9,6 +9,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.InvalidBytes;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
+import com.google.common.collect.Range;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -71,6 +72,7 @@ public class SeqKing {
   public static List<Opcode> getOpcodes(Path seqPath, String fileName, boolean verbose, boolean permissive) throws IOException {
     // Known offsets of binary data
     Map<Integer, Integer> binaryOffsetToSize = getBinaryOffsets(fileName);
+    List<Range<Integer>> eftRanges = getEftRanges(fileName);
     SeqType seqType = SeqHelper.getSeqType(fileName);
 
     // A set of the unique binaries that have been parsed, used to fail when multiple instances of
@@ -96,10 +98,10 @@ public class SeqKing {
 
       // Check if this is manually defined binary data. If so, skip it.
       int offset = bs.offset();
-      Integer size = binaryOffsetToSize.get(offset);
-      if (size != null) {
-        byte[] binaryData = new byte[size];
-        if (bs.read(binaryData) != size) {
+      Integer binSize = binaryOffsetToSize.get(offset);
+      if (binSize != null) {
+        byte[] binaryData = new byte[binSize];
+        if (bs.read(binaryData) != binSize) {
           throw new IOException("Failed to read binary data at offset " + bs.offset());
         }
         Opcode binaryOpcode = new BinaryData(offset, binaryData);
@@ -109,6 +111,29 @@ public class SeqKing {
         }
         if (bs.offset() == bytes.length) {
           break; // EOF
+        }
+        continue;
+      }
+      // Check if this isEJS seq code. If so, execute it.
+      boolean inEftSeq = eftRanges.stream().anyMatch(r -> r.contains(offset));
+      if (inEftSeq) {
+        // Parse the eft opcode
+        Opcode newOpcode;
+        int tempOffset = bs.offset();
+        try {
+          newOpcode = SeqHelper.getEftOpcode(bs, opcodeGroup, opcode);
+        } catch (Exception e) {
+          if (permissive) {
+            // Invalid opcode, mark it as invalid bytes and continue
+            bs.seek(tempOffset);
+            newOpcode = new InvalidBytes(tempOffset, bs.readNBytes(4));
+          } else {
+            throw e;
+          }
+        }
+        opcodes.add(newOpcode);
+        if (verbose) {
+          System.out.println(newOpcode);
         }
         continue;
       }
@@ -189,12 +214,20 @@ public class SeqKing {
       }
       if (bs.offset() == bytes.length) {
         if (verbose) {
-          System.out.println(String.format("%s", Functions.getFunctions(fileName)));
+          System.out.printf("%s%n", Functions.getFunctions(fileName));
         }
         break; // EOF
       }
     }
     return opcodes;
+  }
+
+  private static List<Range<Integer>> getEftRanges(String fileName) {
+    List<Range<Integer>> eftOffsetsToSize = new ArrayList<>();
+    switch(fileName) {
+      case Seqs.SAK_1000 -> eftOffsetsToSize.add(Range.closed(0x12D0, 0x1C7C));
+    }
+    return eftOffsetsToSize;
   }
 
   /**
@@ -242,6 +275,11 @@ public class SeqKing {
         binaryOffsetToSize.put(0x2C34, 0x200);
         binaryOffsetToSize.put(0x2EE8, 0x18);
         binaryOffsetToSize.put(0x2F08, 0x10);
+      }
+      case Seqs.SAK_1000 -> {
+        binaryOffsetToSize.put(0x460, 0x100);
+        binaryOffsetToSize.put(0xFB4, 0x16C);
+        binaryOffsetToSize.put(0x1C7C, 0x24);
       }
       case Seqs.PLAYER_00 -> binaryOffsetToSize.put(0x70, 0x10);
       case Seqs.CAMERA_01 -> binaryOffsetToSize.put(0x3E0, 0x10);

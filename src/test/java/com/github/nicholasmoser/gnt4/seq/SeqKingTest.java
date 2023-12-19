@@ -5,11 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.testing.Prereqs;
+import com.github.nicholasmoser.utils.ByteUtils;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SeqKingTest {
@@ -610,6 +615,16 @@ public class SeqKingTest {
     }
   }
 
+  @Test
+  public void parseSak1000() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.SAK_1000);
+    if (COMPARE_MODE) {
+      compare(seq);
+    } else {
+      generate(seq);
+    }
+  }
+
   private void compare(Path seq) throws Exception {
     Path outputPath = null;
     try {
@@ -641,6 +656,39 @@ public class SeqKingTest {
         Files.deleteIfExists(outputPath);
       }
     }
+  }
+
+  /**
+   * Try and find permutations of bytes of an opcode.
+   */
+  @Test
+  @Disabled("Enable only when you actually need to run this")
+  public void findOpcodePermutations() throws Exception {
+    byte group = 0x24;
+    byte code = 0x17;
+    Path uncompressed = Prereqs.getUncompressedGNT4();
+    List<Path> seqPaths = Files.walk(uncompressed)
+        .filter(path -> path.toString().endsWith(".seq"))
+        .collect(Collectors.toList());
+    Set<String> permutations = new HashSet<>();
+    for (Path path : seqPaths) {
+      System.out.println(path);
+      try {
+        List<Opcode> opcodes = SeqKing.getOpcodes(path, Seqs.getFileName(path).get(), false, true);
+        for (Opcode opcode : opcodes) {
+          byte[] bytes = opcode.getBytes();
+          if (bytes[0] == group && bytes[1] == code) {
+            permutations.add(ByteUtils.bytesToHexStringWords(bytes));
+          }
+        }
+      } catch (Exception e) {
+        System.out.println("Failed to process...");
+      }
+    }
+    System.out.println("\nPermutations:\n");
+    permutations.stream()
+        .sorted()
+        .forEachOrdered(System.out::println);
   }
 
   /**
