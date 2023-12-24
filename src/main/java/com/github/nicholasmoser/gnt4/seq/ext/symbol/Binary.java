@@ -20,7 +20,7 @@ public class Binary implements Symbol {
     }
 
     @Override
-    public int offset() {
+    public int dataOffset() {
         return Symbol.getNameBytes(name).length + 0x10;
     }
 

@@ -10,6 +10,10 @@ import j2html.tags.ContainerTag;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @deprecated Replaced with respective symbol opcodes
+ */
+@Deprecated
 public class SeqEditOpcode implements Opcode {
 
   private final static String MNEMONIC = "Seq Edit";

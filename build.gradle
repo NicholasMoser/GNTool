@@ -23,9 +23,9 @@ dependencies {
     implementation 'org.openjfx:javafx-base:18.0.2'
     implementation 'org.openjfx:javafx-fxml:18.0.2'
     implementation 'com.google.protobuf:protobuf-java:3.21.5'
-    implementation 'org.json:json:20220320'
+    implementation 'org.json:json:20231013'
     implementation 'com.j2html:j2html:1.6.0'
-    implementation 'org.xerial:sqlite-jdbc:3.39.2.1'
+    implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
     testImplementation(platform('org.junit:junit-bom:5.9.0'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     testImplementation 'net.java.dev.jna:jna:5.12.1'
@@ -33,7 +33,7 @@ dependencies {
 }
 
 group = 'com.github.nicholasmoser'
-version = '4.5.1-SNAPSHOT'
+version = '5.0.0-SNAPSHOT'
 description = 'GNTool'
 sourceCompatibility = '17'
 

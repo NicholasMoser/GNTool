@@ -5,13 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public interface Symbol {
-    enum Type {
-        FUNCTION(1),
-        ;
 
-        Type(int i) {
-        }
-    }
     /**
      * @return The name of this symbol.
      */
@@ -20,7 +14,7 @@ public interface Symbol {
     /**
      * @return The offset to the actual (non-header) data for this symbol.
      */
-    int offset();
+    int dataOffset();
 
     /**
      * @return The full length of this symbol in bytes.

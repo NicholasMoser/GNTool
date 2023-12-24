@@ -22,7 +22,7 @@ public class ExistingFunction implements Symbol {
     }
 
     @Override
-    public int offset() {
+    public int dataOffset() {
         return functionSeqOffset;
     }
 

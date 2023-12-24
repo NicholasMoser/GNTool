@@ -82,7 +82,14 @@ New Bytes with branch back:
 
 ### References
 
-[1] The binary format of a SEQ Extension section is as follows: begin with `"seq_ext\n"` (0x7365715F 6578740A). Then include one or more SEQ edits. Each edit begins with a name encoded in UTF-8 bytes and is terminated at a 4-byte alignment with at least one null byte. The name of the edit is followed by the 4-byte integer offset of where the edit occurs in the SEQ file. The offset is followed by the original opcode bytes of the SEQ file that were overridden with the branch to the new opcode bytes. These bytes are terminated by `"stop"`, (0x73746F70). After that is the new opcode bytes that will be branched to in the seq file. This will also be terminated by `"stop"`, (0x73746F70). The second stop terminator is the end of the SEQ edit. Once all edits are complete, the SEQ extension section is terminated with `"seq_end\n"` (0x7365715F 656E640A).
+[1] The binary format of a SEQ Extension section is as follows: begin with `"seq_ext\n"` (0x7365715F 6578740A).
+Then include one or more SEQ edits. Each edit begins with a name encoded in UTF-8 bytes and is terminated at
+a 4-byte alignment with at least one null byte. The name of the edit is followed by the 4-byte integer offset
+of where the edit occurs in the SEQ file. The offset is followed by the original opcode bytes of the SEQ file
+that were overridden with the branch to the new opcode bytes. These bytes are terminated by `"stop"`, (0x73746F70).
+After that is the new opcode bytes that will be branched to in the seq file. This will also be terminated by `"stop"`,
+(0x73746F70). The second stop terminator is the end of the SEQ edit. Once all edits are complete, the SEQ extension
+section is terminated with `"seq_end\n"` (0x7365715F 656E640A).
 
 An example of the binary can be seen here:
 

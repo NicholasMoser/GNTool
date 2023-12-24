@@ -22,7 +22,7 @@ public class ExistingBinary implements Symbol {
     }
 
     @Override
-    public int offset() {
+    public int dataOffset() {
         return binarySeqOffset;
     }
 

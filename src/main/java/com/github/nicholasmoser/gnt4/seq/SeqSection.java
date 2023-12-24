@@ -52,9 +52,9 @@ public class SeqSection {
    * @throws IOException If an I/O error occurs.
    */
   public static boolean isSeqExtension(ByteStream bs) throws IOException {
-    byte[] word = bs.peekWordBytes();
+    byte[] word = bs.peekBytes(7);
     String startOfTitle = new String(word, Charsets.US_ASCII);
-    return "seq_".equals(startOfTitle);
+    return "seq_ext".equals(startOfTitle);
   }
 
   /**
@@ -119,12 +119,24 @@ public class SeqSection {
 
 
   public static List<Opcode> handleSeqExtension(ByteStream bs) throws IOException {
-    int offset = bs.offset();
-    byte[] titleBytes = bs.readBytes(8);
+    byte[] titleBytes = bs.peekBytes(8);
     String title = new String(titleBytes, StandardCharsets.US_ASCII);
-    if (!"seq_ext\n".equals(title)) {
-      throw new IllegalStateException("expected seq_ext\\n but is actually: " + title);
+    if ("seq_ext\n".equals(title)) {
+      return parseSeqExtensionVersionOne(bs);
+    } else if ("seq_ext2".equals(title)) {
+      return parseSeqExtensionVersionTwo(bs);
     }
+    throw new IllegalStateException("Unknown seq_ext version: " + title);
+  }
+
+  private static List<Opcode> parseSeqExtensionVersionTwo(ByteStream bs) throws IOException {
+    throw new IllegalStateException("TODO implement");
+  }
+
+  private static List<Opcode> parseSeqExtensionVersionOne(ByteStream bs) throws IOException {
+    byte[] titleBytes = bs.readNBytes(8);
+    String title = new String(titleBytes, StandardCharsets.US_ASCII);
+    int offset = bs.offset();
     List<Opcode> opcodes = new ArrayList<>();
     opcodes.add(new SectionTitle(offset, titleBytes, title.strip()));
     byte[] seqEnd = "seq_end\n".getBytes(StandardCharsets.US_ASCII);
