@@ -31,6 +31,7 @@ public class OpcodeGroup2A {
       case 0x14 -> op_2A14(bs);
       case 0x15 -> op_2A15(bs);
       case 0x16 -> op_2A16(bs);
+      case 0x17 -> op_2A17(bs);
       case 0x19 -> op_2A19(bs);
       case 0x1A -> op_2A1A(bs);
       case 0x1B -> op_2A1B(bs);
@@ -388,6 +389,12 @@ public class OpcodeGroup2A {
   }
 
   private static Opcode op_2A16(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());
+  }
+
+  private static Opcode op_2A17(ByteStream bs) throws IOException {
     int offset = bs.offset();
     SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
     return new UnknownOpcode(offset, ea.getBytes(), ea.getDescription());

@@ -143,7 +143,8 @@ public class OpcodeGroup21 {
     if (secondOperand instanceof ImmediateOperand decrement) {
       int value = decrement.getImmediateValue();
       if (value == 0) {
-        info.append(" (default to 0x100)");
+        info.append(' ');
+        info.append(SetTimerDecrement.DEFAULT);
       }
     } else {
       throw new IllegalStateException("Second operand should always be an immediate value.");

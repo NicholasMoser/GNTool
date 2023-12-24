@@ -1,6 +1,16 @@
 package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.GNT4Characters;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup00;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup03;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup06;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup07;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup08;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup09;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup0A;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup0B;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup0C;
+import com.github.nicholasmoser.gnt4.seq.eft.groups.EftOpcodeGroup10;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup00;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup01;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup02;
@@ -68,7 +78,6 @@ import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup56;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup5B;
 import com.github.nicholasmoser.gnt4.seq.groups.OpcodeGroup61;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveAttack;
-import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveAttacks;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveString;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActiveStrings;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
@@ -87,6 +96,7 @@ import com.github.nicholasmoser.gnt4.seq.operands.ChrOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
+import com.google.common.primitives.Bytes;
 import j2html.tags.ContainerTag;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -98,6 +108,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 
 public class SeqHelper {
@@ -112,6 +123,24 @@ public class SeqHelper {
   private static final byte[] CHORD = "Chord".getBytes(StandardCharsets.UTF_8);
   // Kosheh Combo translation for Karasu
   private static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
+
+  public static Opcode getEftOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
+    return switch (opcodeGroup) {
+      case 0x00 -> EftOpcodeGroup00.parse(bs, opcode);
+      case 0x03 -> EftOpcodeGroup03.parse(bs, opcode);
+      case 0x06 -> EftOpcodeGroup06.parse(bs, opcode);
+      case 0x07 -> EftOpcodeGroup07.parse(bs, opcode);
+      case 0x08 -> EftOpcodeGroup08.parse(bs, opcode);
+      case 0x09 -> EftOpcodeGroup09.parse(bs, opcode);
+      case 0x0A -> EftOpcodeGroup0A.parse(bs, opcode);
+      case 0x0B -> EftOpcodeGroup0B.parse(bs, opcode);
+      case 0x0C -> EftOpcodeGroup0C.parse(bs, opcode);
+      case 0x10 -> EftOpcodeGroup10.parse(bs, opcode);
+      case (byte) 0xCC -> SeqHelper.getNullBytes(bs); // Modding specific no-op
+      default -> throw new IllegalStateException(
+          String.format("Unknown opcode group: %02X at offset 0x%X", opcodeGroup, bs.offset()));
+    };
+  }
 
   public static Opcode getSeqOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
     return switch (opcodeGroup) {
@@ -455,7 +484,7 @@ public class SeqHelper {
     if (bs.read(bytes) != 0x7B0) {
       throw new IllegalStateException("Failed to read 0x7B0 bytes");
     } else if (bytes[0x7AD] != 0x7E) {
-      throw new IllegalStateException("Third last byte should be 0x7E");
+      throw new IllegalStateException("Third last byte should be 0x7E at offset " + bs.offset());
     }
     return new BinaryData(offset, bytes);
   }
@@ -818,33 +847,49 @@ public class SeqHelper {
    * field values. Otherwise returns an empty optional.
    *
    * @param ea The two operands
-   * @param size The size of an immediate value operand (e.g. 4-byte word)
    * @return given known chr_p fields, optional more descriptive description
    */
-  public static Optional<String> getChrFieldDescription(SEQ_RegCMD2 ea, int size) throws IOException {
+  public static Optional<String> getChrFieldDescription(SEQ_RegCMD2 ea) throws IOException {
     if (ea.getFirstOperand() instanceof ChrOperand chr && ea.getSecondOperand() instanceof ImmediateOperand immediate) {
       int value = immediate.getImmediateValue();
-      if (size == 2) {
-        value >>= 0x10;
-      } else if (size == 1) {
-        value >>= 0x18;
-      } else if (size > 4) {
-        throw new IOException("size not supported " + size);
-      }
       if (chr.get() == 0x1C) { // chr_id
-        String chrName = GNT4Characters.INTERNAL_CHAR_ORDER.inverse().get(value);
+        String chrName = GNT4Characters.ID_TO_CHR.get(value);
         if (chrName == null) {
           throw new IOException("Unknown character for chr_id " + value);
         }
-        return Optional.of(String.format("%s, %s (0x%X)", chr, chrName, value));
+        return Optional.of(String.format("%s, %s", chr, chrName));
       } else if (chr.get() == 0x23C) { // act_id
         String action = Seq.getActionDescription(value);
-        return Optional.of(String.format("%s, %s (0x%X)", chr, action, value));
+        return Optional.of(String.format("%s, %s", chr, action));
       } else if (chr.get() == 0x3BE) { // current_buttons_held
         String buttons = Seq.getButtonDescriptions(value);
-        return Optional.of(String.format("%s, %s (0x%X)", chr, buttons, value));
+        return Optional.of(String.format("%s, %s", chr, buttons));
       }
     }
     return Optional.empty();
+  }
+
+  public static OperandBytes fromChrFieldDescription(String description) {
+    OptionalInt id = Seq.getActionId(description);
+    boolean isShort = false;
+    if (id.isEmpty()) {
+      id = Seq.getButtonBitfield(description);
+    }
+    if (id.isEmpty()) {
+      id = GNT4Characters.getChrId(description);
+    }
+    if (id.isEmpty()) {
+      if (description.startsWith("short")) {
+        isShort = true;
+        description = description.replace("short", "");
+      }
+      id = OptionalInt.of(Long.decode(description).intValue());
+    }
+    if (isShort) {
+      byte[] bytes = Bytes.concat(ByteUtils.fromUint16(id.getAsInt()), new byte[2]);
+      return new OperandBytes((byte) 0x3f, bytes);
+    }
+    byte[] bytes =  ByteUtils.fromInt32(id.getAsInt());
+    return new OperandBytes((byte) 0x3f, bytes);
   }
 }

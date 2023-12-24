@@ -29,12 +29,10 @@ public class ActionID implements Opcode {
     this.bytes = bytes;
     this.actionId = actionId;
     this.actionOffset = ByteUtils.toInt32(bytes);
-    if (type == Type.NORMAL) {
-      info = " " + Seq.getActionDescription(actionId);
-    } else if (type == Type.RESET) {
-      info = " (UNUSED - reset chr)";
-    } else {
-      info = " (UNUSED)";
+    info = " " + Seq.getActionDescription(actionId);
+    if (type == Type.RESET || type == Type.UNUSED) {
+      // not really worth differentiating these, making RESET and UNUSED the same helps readability
+      info += String.format(" (unused)", actionId);
     }
   }
 

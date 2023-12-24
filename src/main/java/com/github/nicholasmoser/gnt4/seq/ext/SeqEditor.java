@@ -2,9 +2,6 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTable;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTableLink;
-import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -465,31 +462,6 @@ public class SeqEditor {
   }
 
   /**
-   * Get the opcodes in human-readable text form from a given opcode byte array.
-   *
-   * @param bytes The opcode byte array.
-   * @return The human-readable text of the opcodes.
-   */
-  private String getOpcodesString(byte[] bytes) {
-    try {
-      ByteStream bs = new ByteStream(bytes);
-      StringBuilder builder = new StringBuilder();
-      while (bs.bytesAreLeft()) {
-        bs.mark();
-        byte opcodeGroup = (byte) bs.read();
-        byte opcode = (byte) bs.read();
-        bs.reset();
-        builder.append(SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode).toString());
-        builder.append('\n');
-      }
-      return builder.toString();
-    } catch (Exception e) {
-      LOGGER.log(Level.INFO, "Failed to process new bytes as opcodes", e);
-      return "Unable to process opcodes";
-    }
-  }
-
-  /**
    * Sets the disabled status of the fields.
    *
    * @param value If the fields are to be disabled.
@@ -637,37 +609,11 @@ public class SeqEditor {
     int count = 0;
     for (char c : text.toCharArray()) {
       switch (c) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-        case 'a':
-        case 'b':
-        case 'c':
-        case 'd':
-        case 'e':
-        case 'f':
-        case 'A':
-        case 'B':
-        case 'C':
-        case 'D':
-        case 'E':
-        case 'F':
-          count++;
-          break;
-        case ' ':
-        case '\r':
-        case '\n':
-        case '\t':
-          break; // do nothing
-        default:
-          throw new IllegalStateException(fieldName + " contain invalid character: " + c);
+        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F' ->
+            count++;
+        case ' ', '\r', '\n', '\t' -> {
+        } // do nothing
+        default -> throw new IllegalStateException(fieldName + " contain invalid character: " + c);
       }
     }
     if (count % 8 != 0) {
@@ -677,7 +623,7 @@ public class SeqEditor {
 
   /**
    * Read a hex String, ignoring whitespace, and return a byte array. Courtesy of Dave L. via
-   * https://stackoverflow.com/a/140861
+   * <a href="https://stackoverflow.com/a/140861">Stack Overflow</a>
    *
    * @param s The String to read.
    * @return The byte array.

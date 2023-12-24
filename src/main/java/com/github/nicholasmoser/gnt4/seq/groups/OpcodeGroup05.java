@@ -17,7 +17,7 @@ public class OpcodeGroup05 {
 
   private static Opcode i8_mov(ByteStream bs) throws IOException {
     int offset = bs.offset();
-    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs);
+    SEQ_RegCMD2 ea = SEQ_RegCMD2.get(bs, 1);
     return new ByteMov(offset, ea.getBytes(), ea.getDescription());
   }
 }

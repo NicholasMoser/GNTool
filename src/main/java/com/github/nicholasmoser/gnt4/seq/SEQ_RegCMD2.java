@@ -5,6 +5,7 @@ import com.github.nicholasmoser.gnt4.seq.operands.GPROperand;
 import com.github.nicholasmoser.gnt4.seq.operands.GlobalOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.ImmediateOperand;
 import com.github.nicholasmoser.gnt4.seq.operands.Operand;
+import com.github.nicholasmoser.gnt4.seq.operands.OperandParser;
 import com.github.nicholasmoser.gnt4.seq.operands.SeqOperand;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -29,12 +30,14 @@ public class SEQ_RegCMD2 {
   private final ByteStream bs;
   private final ByteArrayOutputStream bytes;
   private final List<Operand> operands;
+  private final int immediateWordSize;
   private int opcode;
 
-  private SEQ_RegCMD2(ByteStream bs) {
+  private SEQ_RegCMD2(ByteStream bs, int immediateWordSize) {
     this.bs = bs;
     this.bytes = new ByteArrayOutputStream();
     this.operands = new ArrayList<>(2);
+    this.immediateWordSize = immediateWordSize;
   }
 
   /**
@@ -46,9 +49,75 @@ public class SEQ_RegCMD2 {
    * @throws IOException If an I/O error occurs.
    */
   public static SEQ_RegCMD2 get(ByteStream bs) throws IOException {
-    SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs);
+    SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs, 4);
     operands.parse();
     return operands;
+  }
+
+  /**
+   * Parses the current opcode in a seq byte stream and returns an object containing the two
+   * instruction operands.
+   *
+   * @param bs The seq byte stream to read from.
+   * @param immediateWordSize The number of bytes for immediate words (e.g. 2 for shorts).
+   * @return The SEQ_RegCMD2 result.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static SEQ_RegCMD2 get(ByteStream bs, int immediateWordSize) throws IOException {
+    SEQ_RegCMD2 operands = new SEQ_RegCMD2(bs, immediateWordSize);
+    operands.parse();
+    return operands;
+  }
+
+  /**
+   * Get the operand bytes from an operand text description.
+   *
+   * @param description The description to parse.
+   * @return The operand bytes.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static byte[] parseDescription(String description) throws IOException {
+    String[] operands = description.split(",");
+    OperandBytes first;
+    OperandBytes second;
+    if (operands[0].contains("+")) {
+      // Load effective address sum with offset
+      first =  SEQOperand.parseEASumPlusOffsetDescription(operands[0]);
+    } else if (operands[0].contains("->")) {
+      // Load effective address with offset
+      first = SEQOperand.parseEAPlusOffsetDescription(operands[0]);
+    } else {
+      // Load affective address
+      first = SEQOperand.parseEADescription(operands[0]);
+    }
+    boolean chrField = operands[0].startsWith("*chr_p->");
+    if (chrField) {
+      second = SeqHelper.fromChrFieldDescription(operands[1]);
+    } else if (operands[1].contains("+")) {
+      // Load effective address sum with offset
+      second =  SEQOperand.parseEASumPlusOffsetDescription(operands[1]);
+    } else if (operands[1].contains("->")) {
+      // Load effective address with offset
+      second = SEQOperand.parseEAPlusOffsetDescription(operands[1]);
+    } else {
+      // Load affective address
+      second = SEQOperand.parseEADescription(operands[1]);
+    }
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(first.flag());
+    if (first.bytes().length > 0) {
+      // First operand has extra bytes so flag of second operand is pushed
+      baos.write(0);
+      baos.write(first.bytes());
+      baos.write(second.flag());
+      baos.write(new byte[3]);
+      baos.write(second.bytes());
+    } else {
+      // First operand and second operand flag together at third and fourth byte
+      baos.write(second.flag());
+      baos.write(second.bytes());
+    }
+    return baos.toByteArray();
   }
 
   private void parse() throws IOException {
@@ -127,11 +196,11 @@ public class SEQ_RegCMD2 {
         pushWord(word);
         int bottomTwoBytes = word & 0xffff;
         int topTwoBytes = word >> 0x10;
-        if (bottomTwoBytes < 0x18) {
-          secondOperand.addInfo(String.format(" + *gpr%d", bottomTwoBytes));
-        } else {
-          secondOperand.addInfo(String.format(" + *seq_p_sp->field_0x%02x", bottomTwoBytes * 4));
+        String offset = OperandParser.GetOperand((byte) bottomTwoBytes);
+        if (offset == null) {
+          throw new IOException("Unable to find operand for offset " + bottomTwoBytes);
         }
+        secondOperand.addInfo(String.format(" + *%s", offset));
         secondOperand.addInfo(String.format(" + %04x", topTwoBytes));
         operands.add(secondOperand);
       }
@@ -290,7 +359,7 @@ public class SEQ_RegCMD2 {
       word = bs.readWord();
       bs.reset();
     }
-    return new ImmediateOperand(offset, word);
+    return new ImmediateOperand(offset, word, immediateWordSize);
   }
 
   private Operand peekImmediate(boolean returnPc) throws IOException {
@@ -308,6 +377,6 @@ public class SEQ_RegCMD2 {
       word = bs.readWord();
       bs.reset();
     }
-    return new ImmediateOperand(offset, word);
+    return new ImmediateOperand(offset, word, immediateWordSize);
   }
 }

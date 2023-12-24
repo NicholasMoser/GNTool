@@ -4,11 +4,11 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import java.util.OptionalInt;
+import java.util.Set;
 
 public class Seq {
 
@@ -647,355 +647,351 @@ public class Seq {
   public static final Map<String, Integer> SF_FLAGS_GET = SF_FLAGS.inverse();
 
   public static final BiMap<Integer, String> CHR_MOD_FLAGS = new ImmutableBiMap.Builder<Integer, String>()
-          .put(0x00000001, "Attack Boost Lv1")
-          .put(0x00000002, "Attack Boost Lv2")
-          .put(0x00000004, "Disable Chakra Gain")
-          .put(0x00000008, "Auto-Recover Chakra")
-          .put(0x00000010, "Special Jutsu Boost")
-          .put(0x00000020, "Health Absorption")
-          .put(0x00000040, "Reverse Directions")
-          .put(0x00000080, "Health Boost Small")
-          .put(0x00000100, "Health Boost Medium")
-          .put(0x00000200, "Health Boost Large")
-          .put(0x00000400, "Auto-Throw Escape")
-          .put(0x00000800, "Auto-Ground Tech")
-          .put(0x00001000, "Super Armor")
-          .put(0x00002000, "Auto-Recover Health")
-          .put(0x00004000, "Invincibility for 10 Seconds")
-          .put(0x00008000, "Absolute Defense")
-          .put(0x00010000, "Halve Chakra Consumption")
-          .put(0x00020000, "Disable Ground Tech")
-          .put(0x00040000, "Disable Substitution")
-          .put(0x00080000, "Disable Sidestep")
-          .put(0x00100000, "Disable B Button")
-          .put(0x00200000, "Disable A Button")
-          .put(0x00400000, "Disable X Button")
-          .put(0x00800000, "Disable Y Button")
-          .put(0x01000000, "Disable Throw Escape")
-          .put(0x02000000, "Disable Chakra Use")
-          .put(0x04000000, "Disable Jump")
-          .put(0x08000000, "Disable Guard")
-          .put(0x10000000, "Disable Projectiles")
-          .put(0x20000000, "Health Drain")
-          .put(0x40000000, "Halve Attack Power")
-          .put(0x80000000, "Delete HP and Chakra Guard")
+          .put(0x00000001, "ATTACK_BOOST_LV1")
+          .put(0x00000002, "ATTACK_BOOST_LV2")
+          .put(0x00000004, "DISABLE_CHAKRA_GAIN")
+          .put(0x00000008, "AUTO_RECOVER_CHAKRA")
+          .put(0x00000010, "SPECIAL_JUTSU_BOOST")
+          .put(0x00000020, "HEALTH_ABSORPTION")
+          .put(0x00000040, "REVERSE_DIRECTIONS")
+          .put(0x00000080, "HEALTH_BOOST_SMALL")
+          .put(0x00000100, "HEALTH_BOOST_MEDIUM")
+          .put(0x00000200, "HEALTH_BOOST_LARGE")
+          .put(0x00000400, "AUTO_THROW_ESCAPE")
+          .put(0x00000800, "AUTO_GROUND_TECH")
+          .put(0x00001000, "SUPER_ARMOR")
+          .put(0x00002000, "AUTO_RECOVER_HEALTH")
+          .put(0x00004000, "INVINCIBILITY_FOR_10_SECONDS")
+          .put(0x00008000, "ABSOLUTE_DEFENSE")
+          .put(0x00010000, "HALVE_CHAKRA_CONSUMPTION")
+          .put(0x00020000, "DISABLE_GROUND_TECH")
+          .put(0x00040000, "DISABLE_SUBSTITUTION")
+          .put(0x00080000, "DISABLE_SIDESTEP")
+          .put(0x00100000, "DISABLE_B_BUTTON")
+          .put(0x00200000, "DISABLE_A_BUTTON")
+          .put(0x00400000, "DISABLE_X_BUTTON")
+          .put(0x00800000, "DISABLE_Y_BUTTON")
+          .put(0x01000000, "DISABLE_THROW_ESCAPE")
+          .put(0x02000000, "DISABLE_CHAKRA_USE")
+          .put(0x04000000, "DISABLE_JUMP")
+          .put(0x08000000, "DISABLE_GUARD")
+          .put(0x10000000, "DISABLE_PROJECTILES")
+          .put(0x20000000, "HEALTH_DRAIN")
+          .put(0x40000000, "HALVE_ATTACK_POWER")
+          .put(0x80000000, "DELETE_HP_AND_CHAKRA_GUARD")
           .build();
 
   public static final Map<String, Integer> CHR_MOD_FLAGS_GET = CHR_MOD_FLAGS.inverse();
 
-  public static Map<Integer, String> ACTION_DESCRIPTIONS;
+  public static BiMap<Integer, String> ACTION_DESCRIPTIONS;
 
   public static String getActionDescription(int actionId) {
     if (ACTION_DESCRIPTIONS == null) {
       ACTION_DESCRIPTIONS = initActionDescriptions();
     }
     String description = ACTION_DESCRIPTIONS.get(actionId);
-    return description != null ? description : "Unknown";
+    return description != null ? description : String.format("unknown_0x%X", actionId);
   }
 
-  private static Map<Integer, String> initActionDescriptions() {
-    Map<Integer, String> actionDescriptions = new HashMap<>();
-    actionDescriptions.put(0x001, "Stand");
-    actionDescriptions.put(0x002, "Walking forward");
-    actionDescriptions.put(0x003, "Walking backward");
-    actionDescriptions.put(0x004, "Start running");
-    actionDescriptions.put(0x005, "Running");
-    actionDescriptions.put(0x006, "End running");
-    actionDescriptions.put(0x007, "Back dash");
-    actionDescriptions.put(0x008, "Unknown");
-
-    actionDescriptions.put(0x013, "Start jumping");
-    actionDescriptions.put(0x014, "Jumping up");
-    actionDescriptions.put(0x015, "Jumping forward");
-    actionDescriptions.put(0x016, "Jumping backwards");
-    actionDescriptions.put(0x017, "Jumping up (Duplicate)");
-    actionDescriptions.put(0x018, "Jumping forward (Duplicate)");
-    actionDescriptions.put(0x019, "Jumping backwards (Duplicate)");
-    actionDescriptions.put(0x01A, "Weird jump (Duplicate)");
-    actionDescriptions.put(0x01B, "Weird jump");
-    actionDescriptions.put(0x01C, "Weird jump (Duplicate)");
-    actionDescriptions.put(0x01D, "End jumping");
-    actionDescriptions.put(0x01E, "R");
-    actionDescriptions.put(0x01F, "L");
-    actionDescriptions.put(0x020, "R (Dashing)");
-    actionDescriptions.put(0x021, "L (Dashing)");
-    actionDescriptions.put(0x022, "Unknown");
-    actionDescriptions.put(0x023, "Unknown");
-    actionDescriptions.put(0x024, "Unknown");
-    actionDescriptions.put(0x025, "Y-cancel");
-    actionDescriptions.put(0x026, "Hit out of air");
-    actionDescriptions.put(0x027, "Unknown");
-    actionDescriptions.put(0x028, "Intro animation (Action after zoom in)");
-    actionDescriptions.put(0x029, "Intro animation (Stand during zoom in)");
-    actionDescriptions.put(0x02A, "Win animation for round");
-    actionDescriptions.put(0x02B, "Win animation for battle (Duplicate)");
-    actionDescriptions.put(0x02C, "Win animation for battle");
-    actionDescriptions.put(0x02D, "Unknown");
-    actionDescriptions.put(0x02E, "Lose animation");
-    actionDescriptions.put(0x02F, "Unknown");
-    actionDescriptions.put(0x030, "Block soft hit (e.g. by Naruto 5B)");
-    actionDescriptions.put(0x031, "Block medium hit (e.g. by Naruto 6B)");
-    actionDescriptions.put(0x032, "Block low hit (e.g. by Naruto 2B)");
-    actionDescriptions.put(0x033, "Block in air");
-    actionDescriptions.put(0x034, "Block with lift (e.g. by Naruto 6A)");
-
-    actionDescriptions.put(0x036, "Unknown");
-    actionDescriptions.put(0x037, "Block hard hit and slide (e.g. by Naruto 4B)");
-    actionDescriptions.put(0x038, "Unknown");
-    actionDescriptions.put(0x039, "Hit");
-    actionDescriptions.put(0x03A, "Hit");
-    actionDescriptions.put(0x03B, "Hit");
-    actionDescriptions.put(0x03C, "Hit");
-    actionDescriptions.put(0x03D, "Hit");
-    actionDescriptions.put(0x03E, "Hit");
-    actionDescriptions.put(0x03F, "Hit");
-    actionDescriptions.put(0x040, "Hit high (e.g. by Naruto 5B)");
-    actionDescriptions.put(0x041, "Hit medium (e.g. by Naruto 5BB");
-    actionDescriptions.put(0x042, "Hit low (e.g. by Temari 2B)");
-    actionDescriptions.put(0x043, "Hit");
-    actionDescriptions.put(0x044, "Hit");
-    actionDescriptions.put(0x045, "Hit from behind (e.g. by Naruto 5B)");
-    actionDescriptions.put(0x046, "Landing on ground; hard knockdown (e.g. by Sasuke DB)");
-    actionDescriptions.put(0x047, "Hard knockdown animation");
-    actionDescriptions.put(0x048, "Sleep; hit with NEMU (e.g. Kabuto 2X)");
-    actionDescriptions.put(0x049, "Hard knockdown animation");
-    actionDescriptions.put(0x04A, "Land on ground; on chest (e.g. by Hinata 2B)");
-    actionDescriptions.put(0x04B, "Hit with special (lose all chakra)");
-    actionDescriptions.put(0x04C, "Drop into ground; hit with HIKI2 (e.g. by Shikamaru 2X)");
-    actionDescriptions.put(0x04D, "Suck into ground; hit with HIKI (e.g. by Jiraya 2A)");
-    actionDescriptions.put(0x04E, "Body trap (e.g. by Kidomaru 5A1C)");
-    actionDescriptions.put(0x04F, "Hit with stagger (e.g. by Naruto first charge of 5A");
-    actionDescriptions.put(0x050, "Hit hard (e.g. by Sasuke DB");
-    actionDescriptions.put(0x051, "Hit hard from behind (e.g. by Sasuke DB");
-    actionDescriptions.put(0x052, "Feet trap (e.g. by Kidomaru 2A)");
-    actionDescriptions.put(0x053, "Hit with stagger from behind (e.g. by OTK 5AA)");
-    actionDescriptions.put(0x054, "Hit towards ground (e.g. by Tayuya 8A");
-    actionDescriptions.put(0x055, "Hit into the air (e.g. by Sakura 2B sometimes)");
-    actionDescriptions.put(0x056, "Hit into the air (e.g. by Sakura 2B sometimes)");
-    actionDescriptions.put(0x057, "Hit towards ground from behind (e.g. by Tayuya 8A");
-    actionDescriptions.put(0x058, "Hit medium into the air (e.g. by Naruto 8B)");
-    actionDescriptions.put(0x059, "Hit into the air (e.g. by Temari 4B)");
-    actionDescriptions.put(0x05A, "Landing from hit Soft into the Air");
-    actionDescriptions.put(0x05B, "Hit soft into the air (e.g. by Naruto 6A)");
-    actionDescriptions.put(0x05C, "Collapse to one knee, head in hands (unused?)");
-    actionDescriptions.put(0x05D, "Hard knockdown");
-    actionDescriptions.put(0x05E, "Hit with furi (turns you around, from BR)");
-    actionDescriptions.put(0x05F, "Hit with furi (turns you around, from BR)");
-    actionDescriptions.put(0x060, "Hit; trip onto ground (e.g. Hinata 2B)");
-    actionDescriptions.put(0x061, "Hard knockdown");
-
-    actionDescriptions.put(0x064, "Unknown");
-    actionDescriptions.put(0x065, "Guard break");
-    actionDescriptions.put(0x066, "Landing on ground on back");
-    actionDescriptions.put(0x067, "Laying on ground on back");
-    actionDescriptions.put(0x068, "Laying on ground on chest");
-    actionDescriptions.put(0x069, "Getting hit on the ground (e.g. CS2 6A OTG)");
-    actionDescriptions.put(0x06A, "Hard knockdown");
-    actionDescriptions.put(0x06B, "Guard break");
-    actionDescriptions.put(0x06C, "Hard knockdown");
-    actionDescriptions.put(0x06D, "Getting hit");
-    actionDescriptions.put(0x06E, "Getting hit");
-    actionDescriptions.put(0x06F, "Hard knockdown");
-    actionDescriptions.put(0x070, "Hard knockdown");
-    actionDescriptions.put(0x071, "Stand up off ground");
-    actionDescriptions.put(0x072, "Roll forward");
-    actionDescriptions.put(0x073, "Roll forward");
-    actionDescriptions.put(0x074, "Roll backwards");
-    actionDescriptions.put(0x075, "Roll right");
-    actionDescriptions.put(0x076, "Roll left");
-    actionDescriptions.put(0x077, "Get up");
-    actionDescriptions.put(0x078, "Get up roll forward");
-    actionDescriptions.put(0x079, "Get up roll forward");
-    actionDescriptions.put(0x07A, "Get up roll backwards");
-    actionDescriptions.put(0x07B, "Get up roll right");
-    actionDescriptions.put(0x07C, "Get up roll left");
-    actionDescriptions.put(0x07D, "Throw break 1");
-    actionDescriptions.put(0x07E, "Throw break 2");
-    actionDescriptions.put(0x07F, "Throw break 3");
-    actionDescriptions.put(0x080, "Hit hard");
-    actionDescriptions.put(0x081, "Hit hard");
-    actionDescriptions.put(0x082, "Hit hard");
-    actionDescriptions.put(0x083, "Hit hard");
-    actionDescriptions.put(0x084, "Hard knockdown to the left");
-    actionDescriptions.put(0x085, "Hard knockdown to the right");
-    actionDescriptions.put(0x086, "Getting hit");
-    actionDescriptions.put(0x087, "Getting hit");
-    actionDescriptions.put(0x088, "Hard knockdown back");
-    actionDescriptions.put(0x089, "Hard knockdown forward");
-    actionDescriptions.put(0x08A, "Unknown");
-    actionDescriptions.put(0x08B, "Unknown");
-    actionDescriptions.put(0x08C, "Hit hard");
-    actionDescriptions.put(0x08D, "Tripping");
-    actionDescriptions.put(0x08E, "Hard knockdown bounce (e.g. by OTK jA");
-    actionDescriptions.put(0x08F, "Hard knockdown bounce (e.g. by last hit of Sasuke 4BBB");
-    actionDescriptions.put(0x090, "Hard hit downward (e.g. by Kabuto 8B)");
-    actionDescriptions.put(0x091, "Hit and stuck in air (Can be hit out)");
-    actionDescriptions.put(0x092, "Hard knockdown slow bounce");
-    actionDescriptions.put(0x093, "Hard knockdown slow bounce (e.g. by Kabuto 8B)");
-    actionDescriptions.put(0x094, "Unknown");
-    actionDescriptions.put(0x095, "Block low");
-    actionDescriptions.put(0x096, "Get up");
-    actionDescriptions.put(0x097, "Guard break low");
-    actionDescriptions.put(0x098, "Weird land");
-    actionDescriptions.put(0x099, "Weird land");
-    actionDescriptions.put(0x09A, "Weird land");
-    actionDescriptions.put(0x09B, "Weird land");
-    actionDescriptions.put(0x09C, "Weird land");
-    actionDescriptions.put(0x09D, "Weird land");
-    actionDescriptions.put(0x09E, "Weird land");
-    actionDescriptions.put(0x09F, "Weird land");
-    actionDescriptions.put(0x0A0, "5B");
-    actionDescriptions.put(0x0A1, "6B");
-    actionDescriptions.put(0x0A2, "4B");
-    actionDescriptions.put(0x0A3, "2B");
-    actionDescriptions.put(0x0A4, "DB (Duplicate)");
-    actionDescriptions.put(0x0A5, "DB");
-
-    actionDescriptions.put(0x0B0, "5A");
-    actionDescriptions.put(0x0B1, "6A");
-    actionDescriptions.put(0x0B2, "4A");
-    actionDescriptions.put(0x0B3, "2A");
-    actionDescriptions.put(0x0B4, "DA (Duplicate)");
-    actionDescriptions.put(0x0B5, "DA");
-
-    actionDescriptions.put(0x0BE, "Weird land");
-    actionDescriptions.put(0x0BF, "Stuck in air (Can be hit out)");
-    actionDescriptions.put(0x0C0, "RKnJ (Ground)");
-    actionDescriptions.put(0x0C1, "RKnJ (Air)");
-    actionDescriptions.put(0x0C2, "LKnJ");
-    actionDescriptions.put(0x0C3, "ZKnJ incoming");
-
-    actionDescriptions.put(0x0C6, "5Z outgoing");
-    actionDescriptions.put(0x0C7, "4Z incoming");
-    actionDescriptions.put(0x0C8, "5Z incoming");
-    actionDescriptions.put(0x0C9, "Become invisible (revert when hit)");
-    actionDescriptions.put(0x0CA, "Z switch");
-    actionDescriptions.put(0x0CB, "ZKnJ outgoing");
-    actionDescriptions.put(0x0CC, "Teleport behind opponent");
-
-    actionDescriptions.put(0x0CF, "4Z outgoing");
-
-    actionDescriptions.put(0x0E0, "JB");
-    actionDescriptions.put(0x0E1, "JA");
-    actionDescriptions.put(0x0E2, "8B");
-    actionDescriptions.put(0x0E3, "8A");
-    actionDescriptions.put(0x0E4, "Hit with smoke");
-
-    actionDescriptions.put(0x0FE, "Stuck in air (Can be hit out)");
-
-    actionDescriptions.put(0x10A, "Stuck in air (Can be hit out)");
-
-    actionDescriptions.put(0x116, "Stuck in air (Can be hit out)");
-
-    actionDescriptions.put(0x120, "Stuck in air (Can be hit out)");
-    actionDescriptions.put(0x121, "5X");
-    actionDescriptions.put(0x122, "2X");
-    actionDescriptions.put(0x123, "5X (Transformation)");
-    actionDescriptions.put(0x124, "Transform");
-    actionDescriptions.put(0x125, "2X (Animation)");
-    actionDescriptions.put(0x126, "Head movement?");
-    actionDescriptions.put(0x127, "Head movement?");
-    actionDescriptions.put(0x128, "Remove character from game");
-    actionDescriptions.put(0x129, "3-Man X #1");
-    actionDescriptions.put(0x12A, "3-Man X #2");
-    actionDescriptions.put(0x12B, "3-Man X #3");
-    actionDescriptions.put(0x12C, "3-Man X #4");
-    actionDescriptions.put(0x12D, "3-Man X #5");
-    actionDescriptions.put(0x12E, "3-Man X #6");
-    actionDescriptions.put(0x12F, "3-Man X #7");
-    actionDescriptions.put(0x130, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x131, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x132, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x133, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x134, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x135, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x136, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x137, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x138, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x139, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x13A, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x13B, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x13C, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x13D, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x13E, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x13F, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x140, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x141, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x142, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x143, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x144, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x145, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x146, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x147, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x148, "Combo Moves (character-specific)");
-    actionDescriptions.put(0x149, "Combo Moves (character-specific)");
-
-    actionDescriptions.put(0x170, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x171, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x172, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x173, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x174, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x175, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x176, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x177, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x178, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x179, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x17A, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x17B, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x17C, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x17D, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x17E, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x17F, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x180, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x181, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x182, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x183, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x184, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x185, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x186, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x187, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x188, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x189, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x18A, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x18B, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x18C, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x18D, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x18E, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x18F, "(UNUSED - points to chr_act)");
-    actionDescriptions.put(0x190, "Y");
-    actionDescriptions.put(0x191, "2Y");
-    actionDescriptions.put(0x192, "JY");
-    actionDescriptions.put(0x193, "Activated X");
-    actionDescriptions.put(0x194, "Unknown");
-    actionDescriptions.put(0x195, "4X");
-    actionDescriptions.put(0x196, "Activated 2X");
-    actionDescriptions.put(0x197, "Unknown");
-
-    actionDescriptions.put(0x1D0, "Activated 3-Man X #1");
-    actionDescriptions.put(0x1D1, "Activated 3-Man X #2");
-    actionDescriptions.put(0x1D2, "Activated 3-Man X #3");
-    actionDescriptions.put(0x1D3, "Activated 3-Man X #4");
-
-    actionDescriptions.put(0x1D5, "Activated 3-Man X #5");
-
-    actionDescriptions.put(0x1DF, "Activated 3-Man X #6");
-    actionDescriptions.put(0x1E0, "Y Capture State");
-    actionDescriptions.put(0x1E1, "2Y Capture State");
-    actionDescriptions.put(0x1E2, "JY Capture State");
-    actionDescriptions.put(0x1E3, "Hit by super (e.g. by Naruto 5X)");
-    actionDescriptions.put(0x1E4, "Hit by big throw (e.g. by Choji 5A)");
-    actionDescriptions.put(0x1E5, "Hit by underground throw (e.g. by Kakashi/Kabuto 2A)");
-    actionDescriptions.put(0x1E6, "Hit by super (e.g. by Naruto 2X)");
-    actionDescriptions.put(0x1E7, "Hit by big air grab (e.g. by OTK 2AA)");
-
-    actionDescriptions.put(0x223, "Hit by normal team super");
-
-    actionDescriptions.put(0x225, "Hit by special team super (e.g. team NarSasSak)");
-
-    return actionDescriptions;
+  public static OptionalInt getActionId(String actionDescription) {
+    if (ACTION_DESCRIPTIONS == null) {
+      ACTION_DESCRIPTIONS = initActionDescriptions();
+    }
+    actionDescription = actionDescription.replace(" (unused)", "");
+    if (actionDescription.startsWith("unknown_")) {
+      int value = Integer.decode(actionDescription.replace("unknown_", ""));
+      return OptionalInt.of(value);
+    }
+    Integer value = ACTION_DESCRIPTIONS.inverse().get(actionDescription);
+    if (value == null) {
+      return OptionalInt.empty();
+    }
+    return OptionalInt.of(value);
   }
 
-  public static Map<Integer, String> BUTTON_DESCRIPTIONS;
+  public static Set<String> getActions() {
+    if (ACTION_DESCRIPTIONS == null) {
+      ACTION_DESCRIPTIONS = initActionDescriptions();
+    }
+    return ACTION_DESCRIPTIONS.values();
+  }
+
+  private static BiMap<Integer, String> initActionDescriptions() {
+    return new ImmutableBiMap.Builder<Integer, String>()
+    .put(0x001, "stand")
+    .put(0x002, "walk_forward")
+    .put(0x003, "walk_backward")
+    .put(0x004, "running_start")
+    .put(0x005, "running")
+    .put(0x006, "running_end")
+    .put(0x007, "back_dash")
+    .put(0x013, "jumping_start")
+    .put(0x014, "jumping_up")
+    .put(0x015, "jumping_forward")
+    .put(0x016, "jumping_backward")
+    .put(0x017, "jumping_up_2") // duplicate?
+    .put(0x018, "jumping_forward_2") // duplicate?
+    .put(0x019, "jumping_backward_2") // duplicate?
+    .put(0x01A, "weird_jump_1")
+    .put(0x01B, "weird_jump_2")
+    .put(0x01C, "weird_jump_3")
+    .put(0x01D, "jumping_end")
+    .put(0x01E, "sidestep_right") // towards back of the screen
+    .put(0x01F, "sidestep_left") // towards the front of the screen
+    .put(0x020, "sidestep_right_dashing") // towards back of the screen
+    .put(0x021, "sidestep_left_dashing") // towards the front of the screen
+    .put(0x025, "y-cancel")
+    .put(0x026, "attacked_in_air")
+    .put(0x028, "intro_animation_1") // Action after zoom in
+    .put(0x029, "intro_animation_2") // Stand during zoom in
+    .put(0x02A, "round_win_animation")
+    .put(0x02B, "battle_win_animation_1")
+    .put(0x02C, "battle_win_animation_2")
+    .put(0x02E, "battle_lose_animation")
+    .put(0x030, "block_soft") // e.g. by Naruto 5B
+    .put(0x031, "block_medium") // e.g. by Naruto 6B
+    .put(0x032, "block_low") // e.g. by Naruto 2B
+    .put(0x033, "block_air")
+    .put(0x034, "block_with_lift") // e.g. by Naruto 6A
+    .put(0x037, "block_hard_slide") // e.g. by Naruto 4B
+    .put(0x039, "hit")
+    .put(0x03A, "hit_2")
+    .put(0x03B, "hit_3")
+    .put(0x03C, "hit_4")
+    .put(0x03D, "hit_5")
+    .put(0x03E, "hit_6")
+    .put(0x03F, "hit_7")
+    .put(0x040, "hit_high") // e.g. by Naruto 5B
+    .put(0x041, "hit_medium") // e.g. by Naruto 5BB
+    .put(0x042, "hit_low") // e.g. by Temari 2B
+    .put(0x043, "hit_8")
+    .put(0x044, "hit_9")
+    .put(0x045, "hit_behind") // hit from behind e.g. by Naruto 5B
+    .put(0x046, "hard_knockdown_land") // e.g. by Sasuke DB
+    .put(0x047, "hard_knockdown")
+    .put(0x048, "nemu") // Sleep, e.g. Kabuto 2X
+    .put(0x049, "hard_knockdown_2")
+    .put(0x04A, "land_on_ground_chest") // e.g. by Hinata 2B
+    .put(0x04B, "hit_with_special") // lose all chakra
+    .put(0x04C, "hiki2") // Drop into ground, e.g. by Shikamaru 2X
+    .put(0x04D, "hiki") // Suck into ground, e.g. by Jiraya 2A
+    .put(0x04E, "body_trap") // e.g. by Kidomaru 5A1C
+    .put(0x04F, "hit_stagger") // e.g. by Naruto first charge of 5A
+    .put(0x050, "hit_hard_front") // e.g. by Sasuke DB
+    .put(0x051, "hit_hard_behind") // e.g. by Sasuke DB
+    .put(0x052, "feet_trap") // e.g. by Kidomaru 2A
+    .put(0x053, "hit_stagger_behind") // e.g. by OTK 5AA
+    .put(0x054, "hit_towards_ground") // e.g. by Tayuya 8A
+    .put(0x055, "hit_into_air") // e.g. by Sakura 2B sometimes
+    .put(0x056, "hit_into_air_2") // e.g. by Sakura 2B sometimes
+    .put(0x057, "hit_towards_ground_from_behind") // e.g. by Tayuya 8A
+    .put(0x058, "hit_medium_into_air") // e.g. by Naruto 8B
+    .put(0x059, "hit_into_air_3") // e.g. by Temari 4B
+    .put(0x05A, "landing_from_soft_hit")
+    .put(0x05B, "hit_soft_into_air") // e.g. by Naruto 6A
+    .put(0x05C, "fall_to_knees_head_in_hands") // unused?
+    .put(0x05D, "hard_knockdown_3")
+    .put(0x05E, "furi") // turns you around, from BR
+    .put(0x05F, "furi_2") // turns you around, from BR
+    .put(0x060, "trip") // e.g. Hinata 2B
+    .put(0x061, "hard_knockdown_4")
+    .put(0x065, "guard_break")
+    .put(0x066, "landing_back")
+    .put(0x067, "laying_on_back")
+    .put(0x068, "laying_on_chest")
+    .put(0x069, "hit_on_ground") // e.g. CS2 6A OTG
+    .put(0x06A, "hard_knockdown_5")
+    .put(0x06B, "guard_break_2")
+    .put(0x06C, "hard_knockdown_6")
+    .put(0x06D, "hit_10")
+    .put(0x06E, "hit_11")
+    .put(0x06F, "hard_knockdown_7")
+    .put(0x070, "hard_knockdown_8")
+    .put(0x071, "stand_off_ground")
+    .put(0x072, "roll_forward")
+    .put(0x073, "roll_forward_2")
+    .put(0x074, "roll_backward")
+    .put(0x075, "roll_right")
+    .put(0x076, "roll_left")
+    .put(0x077, "get_up")
+    .put(0x078, "get_up_roll_forward")
+    .put(0x079, "get_up_roll_forward_2")
+    .put(0x07A, "get_up_roll_backward")
+    .put(0x07B, "get_up_roll_right")
+    .put(0x07C, "get_up_roll_left")
+    .put(0x07D, "throw_break")
+    .put(0x07E, "throw_break_2")
+    .put(0x07F, "throw_break_3")
+    .put(0x080, "hit_hard")
+    .put(0x081, "hit_hard_2")
+    .put(0x082, "hit_hard_3")
+    .put(0x083, "hit_hard_4")
+    .put(0x084, "hard_knockdown_left")
+    .put(0x085, "hard_knockdown_right")
+    .put(0x086, "hit_12")
+    .put(0x087, "hit_13")
+    .put(0x088, "hard_knockdown_back")
+    .put(0x089, "hard_knockdown_forward")
+    .put(0x08C, "hit_hard_5")
+    .put(0x08D, "tripping")
+    .put(0x08E, "hard_knockdown_bounce") // e.g. by OTK jA
+    .put(0x08F, "hard_knockdown_bounce_2") // e.g. by last hit of Sasuke 4BBB
+    .put(0x090, "hard_hit_downward") // e.g. by Kabuto 8B
+    .put(0x091, "stuck_in_air") // Can be hit out
+    .put(0x092, "hard_knockdown_slow_bounce")
+    .put(0x093, "hard_knockdown_slow_bounce_2") // e.g. by Kabuto 8B
+    .put(0x095, "block_low_2")
+    .put(0x096, "get_up_2")
+    .put(0x097, "guard_break_low")
+    .put(0x098, "weird_land")
+    .put(0x099, "weird_land_2")
+    .put(0x09A, "weird_land_3")
+    .put(0x09B, "weird_land_4")
+    .put(0x09C, "weird_land_5")
+    .put(0x09D, "weird_land_6")
+    .put(0x09E, "weird_land_7")
+    .put(0x09F, "weird_land_8")
+    .put(0x0A0, "5B")
+    .put(0x0A1, "6B")
+    .put(0x0A2, "4B")
+    .put(0x0A3, "2B")
+    .put(0x0A4, "DB") // Duplicate
+    .put(0x0A5, "DB_2") // Duplicate?
+    .put(0x0B0, "5A")
+    .put(0x0B1, "6A")
+    .put(0x0B2, "4A")
+    .put(0x0B3, "2A")
+    .put(0x0B4, "DA")
+    .put(0x0B5, "DA_2") // Duplicate?
+    .put(0x0BE, "weird_land_9")
+    .put(0x0BF, "stuck_in_air_2") // Can be hit out
+    .put(0x0C0, "RKnJ_ground")
+    .put(0x0C1, "RKnJ_air")
+    .put(0x0C2, "LKnJ")
+    .put(0x0C3, "ZKnJ_incoming")
+    .put(0x0C6, "5Z_outgoing")
+    .put(0x0C7, "4Z_incoming")
+    .put(0x0C8, "5Z_incoming")
+    .put(0x0C9, "invisible") // revert when hit
+    .put(0x0CA, "Z_switch")
+    .put(0x0CB, "ZKnJ_outgoing")
+    .put(0x0CC, "teleport_behind_opponent")
+    .put(0x0CF, "4Z_outgoing")
+    .put(0x0E0, "JB")
+    .put(0x0E1, "JA")
+    .put(0x0E2, "8B")
+    .put(0x0E3, "8A")
+    .put(0x0E4, "hit_with_smoke")
+    .put(0x0FE, "stuck_in_air_3") // Can be hit out
+    .put(0x10A, "stuck_in_air_4") // Can be hit out
+    .put(0x116, "stuck_in_air_5") // Can be hit out
+    .put(0x120, "stuck_in_air_6") // Can be hit out
+    .put(0x121, "5X")
+    .put(0x122, "2X")
+    .put(0x123, "5X_transformation")
+    .put(0x124, "transform")
+    .put(0x125, "2X_animation")
+    .put(0x126, "head_movement")
+    .put(0x127, "head_movement_2")
+    .put(0x128, "remove_character")
+    .put(0x129, "3_Man_X_1")
+    .put(0x12A, "3_Man_X_2")
+    .put(0x12B, "3_Man_X_3")
+    .put(0x12C, "3_Man_X_4")
+    .put(0x12D, "3_Man_X_5")
+    .put(0x12E, "3_Man_X_6")
+    .put(0x12F, "3_Man_X_7")
+    .put(0x130, "combo_move_1") // character-specific
+    .put(0x131, "combo_move_2") // character-specific
+    .put(0x132, "combo_move_3") // character-specific
+    .put(0x133, "combo_move_4") // character-specific
+    .put(0x134, "combo_move_5") // character-specific
+    .put(0x135, "combo_move_6") // character-specific
+    .put(0x136, "combo_move_7") // character-specific
+    .put(0x137, "combo_move_8") // character-specific
+    .put(0x138, "combo_move_9") // character-specific
+    .put(0x139, "combo_move_10") // character-specific
+    .put(0x13A, "combo_move_11") // character-specific
+    .put(0x13B, "combo_move_12") // character-specific
+    .put(0x13C, "combo_move_13") // character-specific
+    .put(0x13D, "combo_move_14") // character-specific
+    .put(0x13E, "combo_move_15") // character-specific
+    .put(0x13F, "combo_move_16") // character-specific
+    .put(0x140, "combo_move_17") // character-specific
+    .put(0x141, "combo_move_18") // character-specific
+    .put(0x142, "combo_move_19") // character-specific
+    .put(0x143, "combo_move_20") // character-specific
+    .put(0x144, "combo_move_21") // character-specific
+    .put(0x145, "combo_move_22") // character-specific
+    .put(0x146, "combo_move_23") // character-specific
+    .put(0x147, "combo_move_24") // character-specific
+    .put(0x148, "combo_move_25") // character-specific
+    .put(0x149, "combo_move_26") // character-specific
+    .put(0x170, "unused_1") // points to chr_act
+    .put(0x171, "unused_2") // points to chr_act
+    .put(0x172, "unused_3") // points to chr_act
+    .put(0x173, "unused_4") // points to chr_act
+    .put(0x174, "unused_5") // points to chr_act
+    .put(0x175, "unused_6") // points to chr_act
+    .put(0x176, "unused_7") // points to chr_act
+    .put(0x177, "unused_8") // points to chr_act
+    .put(0x178, "unused_9") // points to chr_act
+    .put(0x179, "unused_10") // points to chr_act
+    .put(0x17A, "unused_11") // points to chr_act
+    .put(0x17B, "unused_12") // points to chr_act
+    .put(0x17C, "unused_13") // points to chr_act
+    .put(0x17D, "unused_14") // points to chr_act
+    .put(0x17E, "unused_15") // points to chr_act
+    .put(0x17F, "unused_16") // points to chr_act
+    .put(0x180, "unused_17") // points to chr_act
+    .put(0x181, "unused_18") // points to chr_act
+    .put(0x182, "unused_19") // points to chr_act
+    .put(0x183, "unused_20") // points to chr_act
+    .put(0x184, "unused_21") // points to chr_act
+    .put(0x185, "unused_22") // points to chr_act
+    .put(0x186, "unused_23") // points to chr_act
+    .put(0x187, "unused_24") // points to chr_act
+    .put(0x188, "unused_25") // points to chr_act
+    .put(0x189, "unused_26") // points to chr_act
+    .put(0x18A, "unused_27") // points to chr_act
+    .put(0x18B, "unused_28") // points to chr_act
+    .put(0x18C, "unused_29") // points to chr_act
+    .put(0x18D, "unused_30") // points to chr_act
+    .put(0x18E, "unused_31") // points to chr_act
+    .put(0x18F, "unused_32") // points to chr_act
+    .put(0x190, "5Y")
+    .put(0x191, "2Y")
+    .put(0x192, "JY")
+    .put(0x193, "Activated_X")
+    .put(0x195, "4X")
+    .put(0x196, "Activated_2X")
+    .put(0x1D0, "activated_3_Man_X_1")
+    .put(0x1D1, "activated_3_Man_X_2")
+    .put(0x1D2, "activated_3_Man_X_3")
+    .put(0x1D3, "activated_3_Man_X_4")
+    .put(0x1D5, "activated_3_Man_X_5")
+    .put(0x1DF, "activated_3_Man_X_6")
+    .put(0x1E0, "Y_capture_state")
+    .put(0x1E1, "2Y_capture_state")
+    .put(0x1E2, "JY_capture_state")
+    .put(0x1E3, "hit_by_super") // e.g. by Naruto 5X
+    .put(0x1E4, "hit_by_big_throw") // e.g. by Choji 5A
+    .put(0x1E5, "hit_by_underground_throw") // e.g. by Kakashi/Kabuto 2A
+    .put(0x1E6, "hit_by_super_2") // e.g. by Naruto 2X
+    .put(0x1E7, "hit_by_big_air_grab") // e.g. by OTK 2AA
+    .put(0x223, "hit_by_normal_team_super")
+    .put(0x225, "hit_by_special_team_super") // e.g. team NarSasSak
+    .build();
+  }
+
+  public static BiMap<Integer, String> BUTTON_DESCRIPTIONS;
+
+  public static Set<String> getButtonDescriptions() {
+    if (BUTTON_DESCRIPTIONS == null) {
+      BUTTON_DESCRIPTIONS = initButtonDescriptions();
+    }
+    return BUTTON_DESCRIPTIONS.values();
+  }
 
   public static String getButtonDescriptions(int buttonBitFields) {
     if (BUTTON_DESCRIPTIONS == null) {
@@ -1008,23 +1004,41 @@ public class Seq {
         buttons.add(entry.getValue());
       }
     }
+    if (buttons.isEmpty()) {
+      return null;
+    }
     return String.join("; ", buttons);
   }
 
-  private static Map<Integer, String> initButtonDescriptions() {
-    Map<Integer, String> buttonDescriptions = new HashMap<>();
-    buttonDescriptions.put(0x0001, "Forward");
-    buttonDescriptions.put(0x0002, "Back");
-    buttonDescriptions.put(0x0004, "Up");
-    buttonDescriptions.put(0x0008, "Down");
-    buttonDescriptions.put(0x0010, "B");
-    buttonDescriptions.put(0x0020, "A");
-    buttonDescriptions.put(0x0100, "Facing Left"); // Otherwise, Facing Right
-    buttonDescriptions.put(0x0200, "Y");
-    buttonDescriptions.put(0x0800, "L");
-    buttonDescriptions.put(0x1000, "R");
-    buttonDescriptions.put(0x2000, "X");
-    buttonDescriptions.put(0x4000, "Z");
-    return buttonDescriptions;
+  public static OptionalInt getButtonBitfield(String buttonDescriptions) {
+    if (BUTTON_DESCRIPTIONS == null) {
+      BUTTON_DESCRIPTIONS = initButtonDescriptions();
+    }
+    String[] buttons = buttonDescriptions.replace(" ", "").split(";");
+    int bitfield = 0;
+    for (String button : buttons) {
+      Integer value = BUTTON_DESCRIPTIONS.inverse().get(button);
+      if (value != null) {
+        bitfield |= value;
+      }
+    }
+    return bitfield != 0 ? OptionalInt.of(bitfield) : OptionalInt.empty();
+  }
+
+  private static BiMap<Integer, String> initButtonDescriptions() {
+    return new ImmutableBiMap.Builder<Integer, String>()
+    .put(0x0001, "Forward")
+    .put(0x0002, "Back")
+    .put(0x0004, "Up")
+    .put(0x0008, "Down")
+    .put(0x0010, "B")
+    .put(0x0020, "A")
+    .put(0x0100, "Facing_Left") // Otherwise, Facing Right
+    .put(0x0200, "Y")
+    .put(0x0800, "L")
+    .put(0x1000, "R")
+    .put(0x2000, "X")
+    .put(0x4000, "Z")
+    .build();
   }
 }
