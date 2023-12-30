@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class Function implements Symbol {
     private static final Logger LOGGER = Logger.getLogger(Function.class.getName());
-
+    private static final int TYPE = 4;
     private final String name;
     private final List<Opcode> opcodes;
 
@@ -33,30 +33,24 @@ public class Function implements Symbol {
 
     @Override
     public int length() {
-        return Symbol.getNameBytes(name).length + 0x10 + opcodesToBytes().length;
-    }
-
-    public byte[] opcodesToBytes() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        for (Opcode opcode : opcodes) {
-            try {
-                baos.write(opcode.getBytes());
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Error getting opcode bytes", e);
-            }
+        int codeLength = Symbol.getNameBytes(name).length + 0x10 + opcodesByteLength();
+        int mod = codeLength % 16;
+        if (mod != 0) {
+            return codeLength + (16 - mod); // add padding
         }
-        return baos.toByteArray();
+        return codeLength;
     }
 
     @Override
     public byte[] bytes() {
         try {
-            byte[] opcodeBytes = opcodesToBytes();
+            byte[] opcodeBytes = opcodesToBytes(opcodes);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(Symbol.getNameBytes(name));
-            baos.write(ByteUtils.fromInt32(length()));
+            baos.write(ByteUtils.fromInt32(TYPE));
+            baos.write(ByteUtils.fromInt32(length(opcodeBytes)));
             baos.write(ByteUtils.fromInt32(opcodeBytes.length));
-            baos.write(new byte[0x8]); // 8 null bytes
+            baos.write(new byte[0x4]); // 4 null bytes
             baos.write(opcodeBytes);
             int mod = baos.size() % 16;
             if (mod != 0) {
@@ -66,5 +60,43 @@ public class Function implements Symbol {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Calculate length with pre-determined opcode bytes, to save processing them an additional
+     * time.
+     *
+     * @param opcodeBytes The opcode bytes.
+     * @return The length of this symbol.
+     */
+    private int length(byte[] opcodeBytes) {
+        int codeLength = Symbol.getNameBytes(name).length + 0x10 + opcodeBytes.length;
+        int mod = codeLength % 16;
+        if (mod != 0) {
+            return codeLength + (16 - mod); // add padding
+        }
+        return codeLength;
+    }
+
+    public int opcodesByteLength() {
+        return opcodesToBytes(opcodes).length;
+    }
+
+    /**
+     * Convert the given opcodes to bytes.
+     *
+     * @param opcodes The opcodes to convert.
+     * @return The bytes of the opcodes.
+     */
+    public byte[] opcodesToBytes(List<Opcode> opcodes) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        for (Opcode opcode : opcodes) {
+            try {
+                baos.write(opcode.getBytes());
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error getting opcode bytes", e);
+            }
+        }
+        return baos.toByteArray();
     }
 }

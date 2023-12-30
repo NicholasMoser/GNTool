@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class Binary implements Symbol {
+    private static final int TYPE = 1;
     private final String name;
     private final byte[] bytes;
 
@@ -26,7 +27,12 @@ public class Binary implements Symbol {
 
     @Override
     public int length() {
-        return Symbol.getNameBytes(name).length + 0x10 + bytes.length;
+        int codeLength = Symbol.getNameBytes(name).length + 0x10 + bytes.length;
+        int mod = codeLength % 16;
+        if (mod != 0) {
+            return codeLength + (16 - mod); // add padding
+        }
+        return codeLength;
     }
 
     @Override
@@ -34,9 +40,10 @@ public class Binary implements Symbol {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(Symbol.getNameBytes(name));
+            baos.write(ByteUtils.fromInt32(TYPE));
             baos.write(ByteUtils.fromInt32(length()));
             baos.write(ByteUtils.fromInt32(bytes.length));
-            baos.write(new byte[0x8]); // 8 null bytes
+            baos.write(new byte[0x4]); // 4 null bytes
             baos.write(bytes);
             int mod = baos.size() % 16;
             if (mod != 0) {
@@ -46,5 +53,13 @@ public class Binary implements Symbol {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int binaryLength() {
+        return bytes.length;
+    }
+
+    public byte[] binaryBytes() {
+        return bytes;
     }
 }

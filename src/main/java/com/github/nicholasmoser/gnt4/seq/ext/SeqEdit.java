@@ -20,7 +20,10 @@ import java.util.logging.Logger;
 
 /**
  * A single edit made to a seq file.
+ *
+ * @deprecated Replaced with {@link com.github.nicholasmoser.gnt4.seq.ext.symbol.InsertAsm}
  */
+@Deprecated
 public class SeqEdit {
 
   private static final Logger LOGGER = Logger.getLogger(SeqEdit.class.getName());

@@ -176,8 +176,8 @@ public class ByteStream extends ByteArrayInputStream {
    * @param pos The position in the byte array to seek to.
    */
   public void seek(int pos) {
-    if (pos >= count) {
-      throw new IllegalArgumentException("ByteStream new pos " + pos + " >= count " + count);
+    if (pos > count) {
+      throw new IllegalArgumentException("ByteStream new pos " + pos + " > count " + count);
     } else if (pos < 0) {
       throw new IllegalArgumentException("ByteStream new pos " + pos + " < 0");
     }

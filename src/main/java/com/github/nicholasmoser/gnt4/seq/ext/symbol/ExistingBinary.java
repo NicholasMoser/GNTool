@@ -6,14 +6,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ExistingBinary implements Symbol {
+    private static final int TYPE = 2;
     private final String name;
-    private final int binarySeqOffset;
-    private final byte[] binaryBytes;
+    private final int binaryOffset;
+    private final int binaryLength;
 
-    public ExistingBinary(String name, int binarySeqOffset, byte[] binaryBytes) {
+    public ExistingBinary(String name, int binaryOffset, int binaryLength) {
         this.name = name;
-        this.binarySeqOffset = binarySeqOffset;
-        this.binaryBytes = binaryBytes;
+        this.binaryOffset = binaryOffset;
+        this.binaryLength = binaryLength;
     }
 
     @Override
@@ -23,7 +24,7 @@ public class ExistingBinary implements Symbol {
 
     @Override
     public int dataOffset() {
-        return binarySeqOffset;
+        return binaryOffset;
     }
 
     @Override
@@ -36,13 +37,17 @@ public class ExistingBinary implements Symbol {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(Symbol.getNameBytes(name));
+            baos.write(ByteUtils.fromInt32(TYPE));
             baos.write(ByteUtils.fromInt32(length()));
-            baos.write(ByteUtils.fromInt32(binarySeqOffset));
-            baos.write(ByteUtils.fromInt32(binaryBytes.length));
-            baos.write(new byte[0x4]); // 4 null bytes
+            baos.write(ByteUtils.fromInt32(binaryOffset));
+            baos.write(ByteUtils.fromInt32(binaryLength));
             return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int binaryLength() {
+        return binaryLength;
     }
 }

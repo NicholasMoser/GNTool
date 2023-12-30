@@ -6,14 +6,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ExistingFunction implements Symbol {
+    private static final int TYPE = 3;
     private final String name;
-    private final int functionSeqOffset;
-    private final byte[] functionBytes;
+    private final int functionOffset;
+    private final int functionLength;
 
-    public ExistingFunction(String name, int functionSeqOffset, byte[] functionBytes) {
+    public ExistingFunction(String name, int functionOffset, int functionLength) {
         this.name = name;
-        this.functionSeqOffset = functionSeqOffset;
-        this.functionBytes = functionBytes;
+        this.functionOffset = functionOffset;
+        this.functionLength = functionLength;
     }
 
     @Override
@@ -23,7 +24,7 @@ public class ExistingFunction implements Symbol {
 
     @Override
     public int dataOffset() {
-        return functionSeqOffset;
+        return functionOffset;
     }
 
     @Override
@@ -36,13 +37,17 @@ public class ExistingFunction implements Symbol {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(Symbol.getNameBytes(name));
+            baos.write(ByteUtils.fromInt32(TYPE));
             baos.write(ByteUtils.fromInt32(length()));
-            baos.write(ByteUtils.fromInt32(functionSeqOffset));
-            baos.write(ByteUtils.fromInt32(functionBytes.length));
-            baos.write(new byte[0x4]); // 4 null bytes
+            baos.write(ByteUtils.fromInt32(functionOffset));
+            baos.write(ByteUtils.fromInt32(functionLength));
             return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int functionLength() {
+        return functionLength;
     }
 }

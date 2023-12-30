@@ -76,4 +76,8 @@ public class SeqEditOpcode implements Opcode {
         + "<br>New Byte Opcodes: ";
     return div(attrs(id)).withText(text).with(opcodes);
   }
+
+  public SeqEdit getSeqEdit() {
+    return edit;
+  }
 }

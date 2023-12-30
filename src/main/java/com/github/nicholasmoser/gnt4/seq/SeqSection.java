@@ -52,6 +52,9 @@ public class SeqSection {
    * @throws IOException If an I/O error occurs.
    */
   public static boolean isSeqExtension(ByteStream bs) throws IOException {
+    if (!bs.bytesAreLeft()) {
+      return false;
+    }
     byte[] word = bs.peekBytes(7);
     String startOfTitle = new String(word, Charsets.US_ASCII);
     return "seq_ext".equals(startOfTitle);
@@ -119,6 +122,9 @@ public class SeqSection {
 
 
   public static List<Opcode> handleSeqExtension(ByteStream bs) throws IOException {
+    if (!bs.bytesAreLeft()) {
+      return Collections.emptyList();
+    }
     byte[] titleBytes = bs.peekBytes(8);
     String title = new String(titleBytes, StandardCharsets.US_ASCII);
     if ("seq_ext\n".equals(title)) {
