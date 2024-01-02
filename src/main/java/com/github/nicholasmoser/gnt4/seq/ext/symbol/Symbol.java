@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq.ext.symbol;
 
+import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,19 +28,18 @@ public interface Symbol {
     byte[] bytes();
 
     /**
-     * Returns the 16-byte aligned, UTF-8 encoded bytes of the name of this seq edit.
-     * It is terminated with null bytes.
+     * Returns the UTF-8 encoded bytes of the name of this seq edit. It is terminated with a single
+     * null byte.
      *
      * @param name The name to get the bytes of.
-     * @return the 16-byte aligned, UTF-8 encoded bytes of the name of this seq edit.
+     * @return the UTF-8 encoded bytes of the name of this seq edit.
      */
     static byte[] getNameBytes(String name) {
         try {
             byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(nameBytes);
-            int nullBytes = 16 - (nameBytes.length % 16); // 16-byte aligned
-            baos.write(new byte[nullBytes]);
+            baos.write(0);
             return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);

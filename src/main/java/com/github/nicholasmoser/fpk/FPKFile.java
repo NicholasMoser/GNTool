@@ -1,6 +1,6 @@
 package com.github.nicholasmoser.fpk;
 
-import com.google.common.primitives.Bytes;
+import com.github.nicholasmoser.utils.ByteUtils;
 
 /**
  * A compressed data file contained inside of an FPK file. Each FPK file will have one or more of
@@ -19,12 +19,7 @@ public class FPKFile {
    * @param data The date of the file.
    */
   public FPKFile(FPKFileHeader header, byte[] data) {
-    int modDifference = data.length % 16;
-    if (modDifference != 0) {
-      this.data = Bytes.concat(data, new byte[16 - modDifference]);
-    } else {
-      this.data = data;
-    }
+    this.data = ByteUtils.align(data, 16);
     this.header = header;
   }
 

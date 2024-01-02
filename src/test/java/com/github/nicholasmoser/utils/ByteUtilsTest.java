@@ -1,12 +1,16 @@
 package com.github.nicholasmoser.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.primitives.Bytes;
+import java.io.ByteArrayOutputStream;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -822,41 +826,149 @@ public class ByteUtilsTest {
   }
 
   @Test
-  public void testByteAlign() throws Exception {
+  public void testByteAlignRandomAccessFile() throws Exception {
     String testFile = "src/main/resources/com/github/nicholasmoser/gnt4/vanilla_with_fpks.bin";
     try (RandomAccessFile raf = new RandomAccessFile(testFile, "r")) {
       // First test at position 0
       assertEquals(0, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 1);
+      ByteUtils.alignSkip(raf, 1);
       assertEquals(0, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 4);
+      ByteUtils.alignSkip(raf, 4);
       assertEquals(0, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 5);
+      ByteUtils.alignSkip(raf, 5);
       assertEquals(0, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 8);
+      ByteUtils.alignSkip(raf, 8);
       assertEquals(0, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 16);
+      ByteUtils.alignSkip(raf, 16);
       assertEquals(0, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 32);
+      ByteUtils.alignSkip(raf, 32);
       assertEquals(0, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 64);
+      ByteUtils.alignSkip(raf, 64);
       assertEquals(0, raf.getFilePointer());
 
       // Slowly move it and test various byte alignments
       raf.skipBytes(4);
       assertEquals(4, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 4);
+      ByteUtils.alignSkip(raf, 4);
       assertEquals(4, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 8);
+      ByteUtils.alignSkip(raf, 8);
       assertEquals(8, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 16);
+      ByteUtils.alignSkip(raf, 16);
       assertEquals(16, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 8);
+      ByteUtils.alignSkip(raf, 8);
       assertEquals(16, raf.getFilePointer());
       raf.skipBytes(15);
       assertEquals(31, raf.getFilePointer());
-      ByteUtils.byteAlign(raf, 16);
+      ByteUtils.alignSkip(raf, 16);
       assertEquals(32, raf.getFilePointer());
     }
+  }
+
+  @Test
+  public void testByteAlignByteStream() throws Exception {
+    String testFile = "src/main/resources/com/github/nicholasmoser/gnt4/vanilla_with_fpks.bin";
+    byte[] bytes = Files.readAllBytes(Paths.get(testFile));
+    ByteStream bs = new ByteStream(bytes);
+    // First test at position 0
+    assertEquals(0, bs.offset());
+    ByteUtils.alignSkip(bs, 1);
+    assertEquals(0, bs.offset());
+    ByteUtils.alignSkip(bs, 4);
+    assertEquals(0, bs.offset());
+    ByteUtils.alignSkip(bs, 5);
+    assertEquals(0, bs.offset());
+    ByteUtils.alignSkip(bs, 8);
+    assertEquals(0, bs.offset());
+    ByteUtils.alignSkip(bs, 16);
+    assertEquals(0, bs.offset());
+    ByteUtils.alignSkip(bs, 32);
+    assertEquals(0, bs.offset());
+    ByteUtils.alignSkip(bs, 64);
+    assertEquals(0, bs.offset());
+
+    // Slowly move it and test various byte alignments
+    bs.skipNBytes(4);
+    assertEquals(4, bs.offset());
+    ByteUtils.alignSkip(bs, 4);
+    assertEquals(4, bs.offset());
+    ByteUtils.alignSkip(bs, 8);
+    assertEquals(8, bs.offset());
+    ByteUtils.alignSkip(bs, 16);
+    assertEquals(16, bs.offset());
+    ByteUtils.alignSkip(bs, 8);
+    assertEquals(16, bs.offset());
+    bs.skipNBytes(15);
+    assertEquals(31, bs.offset());
+    ByteUtils.alignSkip(bs, 16);
+    assertEquals(32, bs.offset());
+  }
+
+  @Test
+  public void testByteAlignByteArrayOutputStream() throws Exception {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    assertEquals(0, baos.size());
+    baos.write(1);
+    ByteUtils.align(baos, 4);
+    assertEquals(4, baos.size());
+    ByteUtils.align(baos, 4);
+    assertEquals(4, baos.size());
+    ByteUtils.align(baos, 8);
+    assertEquals(8, baos.size());
+    ByteUtils.align(baos, 16);
+    assertEquals(16, baos.size());
+    ByteUtils.align(baos, 8);
+    assertEquals(16, baos.size());
+    ByteUtils.align(baos, 32);
+    assertEquals(32, baos.size());
+  }
+
+  @Test
+  public void testByteAlignBytes() {
+    assertThat(ByteUtils.align(new byte[0], 16)).isEqualTo(new byte[0]);
+    assertThat(ByteUtils.align(new byte[1], 16)).isEqualTo(new byte[16]);
+    assertThat(ByteUtils.align(new byte[2], 16)).isEqualTo(new byte[16]);
+    assertThat(ByteUtils.align(new byte[15], 16)).isEqualTo(new byte[16]);
+    assertThat(ByteUtils.align(new byte[16], 16)).isEqualTo(new byte[16]);
+    assertThat(ByteUtils.align(new byte[17], 16)).isEqualTo(new byte[32]);
+    assertThat(ByteUtils.align(new byte[18], 16)).isEqualTo(new byte[32]);
+    assertThat(ByteUtils.align(new byte[31], 16)).isEqualTo(new byte[32]);
+    assertThat(ByteUtils.align(new byte[32], 16)).isEqualTo(new byte[32]);
+    assertThat(ByteUtils.align(new byte[33], 16)).isEqualTo(new byte[48]);
+
+    assertThat(ByteUtils.align(new byte[0], 8)).isEqualTo(new byte[0]);
+    assertThat(ByteUtils.align(new byte[1], 8)).isEqualTo(new byte[8]);
+    assertThat(ByteUtils.align(new byte[7], 8)).isEqualTo(new byte[8]);
+    assertThat(ByteUtils.align(new byte[8], 8)).isEqualTo(new byte[8]);
+    assertThat(ByteUtils.align(new byte[9], 8)).isEqualTo(new byte[16]);
+    assertThat(ByteUtils.align(new byte[17], 8)).isEqualTo(new byte[24]);
+    assertThat(ByteUtils.align(new byte[18], 8)).isEqualTo(new byte[24]);
+    assertThat(ByteUtils.align(new byte[31], 8)).isEqualTo(new byte[32]);
+    assertThat(ByteUtils.align(new byte[32], 8)).isEqualTo(new byte[32]);
+    assertThat(ByteUtils.align(new byte[33], 8)).isEqualTo(new byte[40]);
+  }
+
+  @Test
+  public void testByteAlignInteger() {
+    assertThat(ByteUtils.align(0, 16)).isEqualTo(0);
+    assertThat(ByteUtils.align(1, 16)).isEqualTo(16);
+    assertThat(ByteUtils.align(2, 16)).isEqualTo(16);
+    assertThat(ByteUtils.align(15, 16)).isEqualTo(16);
+    assertThat(ByteUtils.align(16, 16)).isEqualTo(16);
+    assertThat(ByteUtils.align(17, 16)).isEqualTo(32);
+    assertThat(ByteUtils.align(18, 16)).isEqualTo(32);
+    assertThat(ByteUtils.align(31, 16)).isEqualTo(32);
+    assertThat(ByteUtils.align(32, 16)).isEqualTo(32);
+    assertThat(ByteUtils.align(33, 16)).isEqualTo(48);
+
+    assertThat(ByteUtils.align(0, 8)).isEqualTo(0);
+    assertThat(ByteUtils.align(1, 8)).isEqualTo(8);
+    assertThat(ByteUtils.align(7, 8)).isEqualTo(8);
+    assertThat(ByteUtils.align(8, 8)).isEqualTo(8);
+    assertThat(ByteUtils.align(9, 8)).isEqualTo(16);
+    assertThat(ByteUtils.align(17, 8)).isEqualTo(24);
+    assertThat(ByteUtils.align(18, 8)).isEqualTo(24);
+    assertThat(ByteUtils.align(31, 8)).isEqualTo(32);
+    assertThat(ByteUtils.align(32, 8)).isEqualTo(32);
+    assertThat(ByteUtils.align(33, 8)).isEqualTo(40);
   }
 }

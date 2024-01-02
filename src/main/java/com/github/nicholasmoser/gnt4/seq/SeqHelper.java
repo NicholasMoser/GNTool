@@ -88,6 +88,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Combo;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ExtraData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FileName;
+import com.github.nicholasmoser.gnt4.seq.opcodes.InvalidBytes;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Push;
@@ -214,6 +215,35 @@ public class SeqHelper {
       default -> throw new IllegalStateException(
           String.format("Unknown opcode group: %02X at offset 0x%X", opcodeGroup, bs.offset()));
     };
+  }
+
+  public static List<Opcode> getAllOpcodes(byte[] bytes) throws IOException {
+    List<Opcode> opcodes = new ArrayList<>();
+    ByteStream bs = new ByteStream(bytes);
+    while (bs.bytesAreLeft()) {
+      byte[] buff = bs.peekBytes(2);
+      opcodes.add(SeqHelper.getSeqOpcode(bs, buff[0], buff[1]));
+    }
+    return opcodes;
+  }
+
+  public static List<Opcode> getAllOpcodes(ByteStream bs) throws IOException {
+    List<Opcode> opcodes = new ArrayList<>();
+    while (bs.bytesAreLeft()) {
+      byte[] bytes = bs.peekBytes(2);
+      opcodes.add(SeqHelper.getSeqOpcode(bs, bytes[0], bytes[1]));
+    }
+    return opcodes;
+  }
+
+  public static List<Opcode> getOpcodes(ByteStream bs, int byteLength) throws IOException {
+    int start = bs.offset();
+    List<Opcode> opcodes = new ArrayList<>();
+    while (bs.offset() < start + byteLength) {
+      byte[] bytes = bs.peekBytes(2);
+      opcodes.add(SeqHelper.getSeqOpcode(bs, bytes[0], bytes[1]));
+    }
+    return opcodes;
   }
 
   /**

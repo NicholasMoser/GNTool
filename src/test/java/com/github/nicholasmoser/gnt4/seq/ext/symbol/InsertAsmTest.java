@@ -8,7 +8,10 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public class InsertAsmTest {
@@ -20,12 +23,14 @@ public class InsertAsmTest {
     oldOpcodes.add(new IntAdd(0x10, new byte[] {0x04, 0x07, 0x07, 0x3F, 0x00, 0x00, 0x00, 0x01}, "gpr7, 0x1"));
     List<Opcode> newOpcodes = new ArrayList<>();
     newOpcodes.add(new BranchLinkReturn(0x10));
-    InsertAsm insertAsm = new InsertAsm(name, offset, oldOpcodes, newOpcodes);
+    Map<String, Integer> innerLabels = new LinkedHashMap<>();
+    InsertAsm insertAsm = new InsertAsm(name, offset, newOpcodes, oldOpcodes, innerLabels);
     assertThat(insertAsm.name()).isEqualTo(name);
-    assertThat(insertAsm.dataOffset()).isEqualTo(0x20);
-    assertThat(insertAsm.length()).isEqualTo(0x40);
+    assertThat(insertAsm.dataOffset()).isEqualTo(0x30);
+    assertThat(insertAsm.length()).isEqualTo(0x50);
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
+    assertThat(insertAsm.innerLabels()).isEmpty();
   }
 
   @Test
@@ -36,12 +41,14 @@ public class InsertAsmTest {
     oldOpcodes.add(new IntAdd(0x10, new byte[] {0x04, 0x07, 0x07, 0x3F, 0x00, 0x00, 0x00, 0x01}, "gpr7, 0x1"));
     List<Opcode> newOpcodes = new ArrayList<>();
     newOpcodes.add(new BranchLinkReturn(0x10));
-    InsertAsm insertAsm = new InsertAsm(name, offset, oldOpcodes, newOpcodes);
+    Map<String, Integer> innerLabels = new LinkedHashMap<>();
+    InsertAsm insertAsm = new InsertAsm(name, offset, newOpcodes, oldOpcodes, innerLabels);
     assertThat(insertAsm.name()).isEqualTo(name);
-    assertThat(insertAsm.dataOffset()).isEqualTo(0x20);
-    assertThat(insertAsm.length()).isEqualTo(0x40);
+    assertThat(insertAsm.dataOffset()).isEqualTo(0x30);
+    assertThat(insertAsm.length()).isEqualTo(0x50);
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
+    assertThat(insertAsm.innerLabels()).isEmpty();
   }
 
   @Test
@@ -52,12 +59,14 @@ public class InsertAsmTest {
     oldOpcodes.add(new IntAdd(0x10, new byte[] {0x04, 0x07, 0x07, 0x3F, 0x00, 0x00, 0x00, 0x01}, "gpr7, 0x1"));
     List<Opcode> newOpcodes = new ArrayList<>();
     newOpcodes.add(new BranchLinkReturn(0x10));
-    InsertAsm insertAsm = new InsertAsm(name, offset, oldOpcodes, newOpcodes);
+    Map<String, Integer> innerLabels = new LinkedHashMap<>();
+    InsertAsm insertAsm = new InsertAsm(name, offset, newOpcodes, oldOpcodes, innerLabels);
     assertThat(insertAsm.name()).isEqualTo(name);
-    assertThat(insertAsm.dataOffset()).isEqualTo(0x30);
-    assertThat(insertAsm.length()).isEqualTo(0x50);
+    assertThat(insertAsm.dataOffset()).isEqualTo(0x40);
+    assertThat(insertAsm.length()).isEqualTo(0x60);
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
+    assertThat(insertAsm.innerLabels()).isEmpty();
   }
 
   @Test
@@ -71,11 +80,52 @@ public class InsertAsmTest {
     List<Opcode> newOpcodes = new ArrayList<>();
     newOpcodes.add(new IntAdd(0x10, new byte[] {0x04, 0x07, 0x07, 0x3F, 0x00, 0x00, 0x00, 0x02}, "gpr7, 0x2"));
     newOpcodes.add(new BranchLinkReturn(0x10));
-    InsertAsm insertAsm = new InsertAsm(name, offset, oldOpcodes, newOpcodes);
+    Map<String, Integer> innerLabels = new LinkedHashMap<>();
+    InsertAsm insertAsm = new InsertAsm(name, offset, newOpcodes, oldOpcodes, innerLabels);
     assertThat(insertAsm.name()).isEqualTo(name);
-    assertThat(insertAsm.dataOffset()).isEqualTo(0x20);
-    assertThat(insertAsm.length()).isEqualTo(0x50);
+    assertThat(insertAsm.dataOffset()).isEqualTo(0x30);
+    assertThat(insertAsm.length()).isEqualTo(0x60);
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
+    assertThat(insertAsm.innerLabels()).isEmpty();
+  }
+
+  @Test
+  public void testOldBytesAreNotValidOpcodes() {
+    String name = "Test 1";
+    int offset = 0x60;
+    byte[] oldBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+    List<Opcode> newOpcodes = new ArrayList<>();
+    newOpcodes.add(new BranchLinkReturn(0x10));
+    Map<String, Integer> innerLabels = new LinkedHashMap<>();
+    InsertAsm insertAsm = new InsertAsm(name, offset, newOpcodes, oldBytes, innerLabels);
+    assertThat(insertAsm.name()).isEqualTo(name);
+    assertThat(insertAsm.dataOffset()).isEqualTo(0x30);
+    assertThat(insertAsm.length()).isEqualTo(0x50);
+    assertThat(insertAsm.oldOpcodes()).isNull();
+    assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
+    assertThat(insertAsm.innerLabels()).isEmpty();
+  }
+
+  @Test
+  public void testInnerLabels() {
+    String name = "Test 1";
+    int offset = 0x60;
+    List<Opcode> oldOpcodes = new ArrayList<>();
+    oldOpcodes.add(new IntAdd(0x10, new byte[] {0x04, 0x07, 0x07, 0x3F, 0x00, 0x00, 0x00, 0x01}, "gpr7, 0x1"));
+    List<Opcode> newOpcodes = new ArrayList<>();
+    newOpcodes.add(new BranchLinkReturn(0x10));
+    Map<String, Integer> innerLabels = new LinkedHashMap<>();
+    innerLabels.put("ABCDEFGHIJK", 0x10);
+    innerLabels.put("ABCDEFGHIJKL", 0x100);
+    innerLabels.put("ABCDEFGHIJKLM", 0x4);
+    innerLabels.put("ABCDEFGHIJKLMNOPQRSTUVWXYZ!?.", 0x80000);
+    InsertAsm insertAsm = new InsertAsm(name, offset, newOpcodes, oldOpcodes, innerLabels);
+    assertThat(insertAsm.name()).isEqualTo(name);
+    assertThat(insertAsm.dataOffset()).isEqualTo(0x30);
+    assertThat(insertAsm.length()).isEqualTo(0xD0);
+    assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
+    assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
+    assertThat(insertAsm.innerLabels()).isEqualTo(innerLabels);
   }
 }

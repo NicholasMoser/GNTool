@@ -5,32 +5,37 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class InsertAsm implements Symbol {
+  public static final int TYPE = 5;
   private static final Logger LOGGER = Logger.getLogger(InsertAsm.class.getName());
-  private final int TYPE = 5;
   private final String name;
-  private final int offset;
+  private final int hijackOffset;
   private final byte[] oldBytes;
   private final List<Opcode> oldCodes;
   private final List<Opcode> newCodes;
+  private final Map<String, Integer> innerLabels;
 
-  public InsertAsm(String name, int offset, List<Opcode> oldCodes, List<Opcode> newCodes) {
+  public InsertAsm(String name, int hijackOffset, List<Opcode> newCodes, List<Opcode> oldCodes, Map<String, Integer> innerLabels) {
     this.name = name;
-    this.offset = offset;
+    this.hijackOffset = hijackOffset;
     this.oldCodes = oldCodes;
     this.newCodes = newCodes;
     this.oldBytes = opcodesToBytes(oldCodes);
+    this.innerLabels = innerLabels;
   }
 
-  public InsertAsm(String name, int offset, byte[] oldBytes, List<Opcode> newCodes) {
+  public InsertAsm(String name, int hijackOffset, List<Opcode> newCodes, byte[] oldBytes, Map<String, Integer> innerLabels) {
     this.name = name;
-    this.offset = offset;
+    this.hijackOffset = hijackOffset;
     this.oldCodes = null; // old bytes are not valid opcodes
     this.newCodes = newCodes;
     this.oldBytes = oldBytes;
+    this.innerLabels = innerLabels;
   }
 
   @Override
@@ -40,20 +45,24 @@ public class InsertAsm implements Symbol {
 
   @Override
   public int dataOffset() {
-    return Symbol.getNameBytes(name).length + 0x10;
+    int dataOffset = Symbol.getNameBytes(name).length;
+    dataOffset = ByteUtils.align(dataOffset, 16);
+    return dataOffset + 0x20;
   }
 
   @Override
   public int length() {
-    int codeLength = Symbol.getNameBytes(name).length + 0x10 + opcodesToBytes(newCodes).length;
-    int mod = codeLength % 16;
-    if (mod != 0) {
-      codeLength += (16 - mod); // add padding
-    }
+    int codeLength = Symbol.getNameBytes(name).length;
+    codeLength = ByteUtils.align(codeLength, 16);
+    codeLength += 0x20;
+    codeLength += opcodesToBytes(newCodes).length;
+    codeLength = ByteUtils.align(codeLength, 16);
     codeLength += oldBytes.length;
-    mod = codeLength % 16;
-    if (mod != 0) {
-      return codeLength + (16 - mod); // add padding
+    codeLength = ByteUtils.align(codeLength, 16);
+    for (String name : innerLabels.keySet()) {
+      codeLength += 0x4;
+      codeLength += Symbol.getNameBytes(name).length;
+      codeLength = ByteUtils.align(codeLength, 16);
     }
     return codeLength;
   }
@@ -64,19 +73,24 @@ public class InsertAsm implements Symbol {
       byte[] newBytes = opcodesToBytes(newCodes);
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       baos.write(Symbol.getNameBytes(name));
+      ByteUtils.align(baos, 16);
       baos.write(ByteUtils.fromInt32(TYPE));
       baos.write(ByteUtils.fromInt32(length(newBytes)));
+      baos.write(ByteUtils.fromInt32(hijackOffset));
       baos.write(ByteUtils.fromInt32(newBytes.length));
       baos.write(ByteUtils.fromInt32(oldBytes.length));
+      baos.write(ByteUtils.fromInt32(innerLabels.size()));
+      baos.write(new byte[8]); // 8 null bytes of padding
       baos.write(newBytes);
-      int mod = baos.size() % 16;
-      if (mod != 0) {
-        baos.write(new byte[16 - mod]);
-      }
+      ByteUtils.align(baos, 16);
       baos.write(oldBytes);
-      mod = baos.size() % 16;
-      if (mod != 0) {
-        baos.write(new byte[16 - mod]);
+      ByteUtils.align(baos, 16);
+      for (Entry<String, Integer> entry : innerLabels.entrySet()) {
+        String labelName = entry.getKey();
+        int labelOffset = entry.getValue();
+        baos.write(ByteUtils.fromInt32(labelOffset));
+        baos.write(Symbol.getNameBytes(labelName));
+        ByteUtils.align(baos, 16);
       }
       return baos.toByteArray();
     } catch (IOException e) {
@@ -92,6 +106,10 @@ public class InsertAsm implements Symbol {
     return newCodes;
   }
 
+  public Map<String, Integer> innerLabels() {
+    return innerLabels;
+  }
+
   /**
    * Calculate length with pre-determined opcode bytes, to save processing them an additional
    * time.
@@ -101,15 +119,9 @@ public class InsertAsm implements Symbol {
    */
   private int length(byte[] newBytes) {
     int codeLength = Symbol.getNameBytes(name).length + 0x10 + newBytes.length;
-    int mod = codeLength % 16;
-    if (mod != 0) {
-      codeLength += (16 - mod); // add padding
-    }
+    codeLength = ByteUtils.align(codeLength, 16);
     codeLength += oldBytes.length;
-    mod = codeLength % 16;
-    if (mod != 0) {
-      return codeLength + (16 - mod); // add padding
-    }
+    codeLength = ByteUtils.align(codeLength, 16);
     return codeLength;
   }
 

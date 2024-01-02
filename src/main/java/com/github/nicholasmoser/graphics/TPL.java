@@ -77,10 +77,7 @@ public class TPL {
    */
   private int getTPLHeaderSize() {
     int size = 12 + textures.size() * 8;
-    int mod = size % 16;
-    if (mod != 0) {
-      size += 16 - mod;
-    }
+    size = ByteUtils.align(size, 16);
     return size;
   }
 
@@ -98,10 +95,7 @@ public class TPL {
         .filter(t -> t.getPaletteHeaderOffset() != 0)
         .count();
     size += texturesWithPalette * 12;
-    int mod = size % 16;
-    if (mod != 0) {
-      size += 16 - mod;
-    }
+    size = ByteUtils.align(size, 16);
     return size;
   }
 
@@ -144,10 +138,7 @@ public class TPL {
       baos.write(ByteUtils.fromUint32(texture.getImageHeaderOffset()));
       baos.write(ByteUtils.fromUint32(texture.getPaletteHeaderOffset()));
     }
-    int mod = baos.size() % 16;
-    if (mod != 0) {
-      baos.write(new byte[16 - mod]);
-    }
+    ByteUtils.align(baos, 16);
     for (Texture texture : textures) {
       baos.write(ByteUtils.fromUint16(texture.getHeight()));
       baos.write(ByteUtils.fromUint16(texture.getWidth()));
@@ -163,10 +154,7 @@ public class TPL {
       baos.write(texture.getMaxLOD());
       baos.write(texture.getUnpacked());
     }
-    mod = baos.size() % 16;
-    if (mod != 0) {
-      baos.write(new byte[16 - mod]);
-    }
+    ByteUtils.align(baos, 16);
     for (Texture texture : textures) {
       baos.write(texture.getData());
     }

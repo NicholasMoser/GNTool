@@ -2,6 +2,7 @@ package com.github.nicholasmoser.utils;
 
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CountingInputStream;
+import com.google.common.primitives.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -517,16 +518,79 @@ public class ByteUtils {
   }
 
   /**
-   * Align a RandomAccessFile to a provided alignment byte-boundary.
+   * Align a RandomAccessFile to a provided alignment byte-boundary by skipping bytes.
    *
    * @param raf The RandomAccessFile to align.
    * @param alignment The number of bytes to align on.
    * @throws IOException If an I/O error occurs.
    */
-  public static void byteAlign(RandomAccessFile raf, int alignment) throws IOException {
+  public static void alignSkip(RandomAccessFile raf, int alignment) throws IOException {
     long offset = raf.getFilePointer();
-    if (offset % alignment != 0) {
-      raf.skipBytes((int) (alignment - (offset % alignment)));
+    int mod = (int) (offset % alignment);
+    if (mod != 0) {
+      int amt = alignment - mod;
+      if (raf.skipBytes(amt) != amt) {
+        throw new IOException("Failed to skip " + amt + " at offset " + raf.getFilePointer());
+      }
     }
+  }
+
+  /**
+   * Align a ByteStream to a provided alignment byte-boundary by skipping bytes.
+   *
+   * @param bs The ByteStream to align.
+   * @param alignment The number of bytes to align on.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static void alignSkip(ByteStream bs, int alignment) throws IOException {
+    long offset = bs.offset();
+    int mod = (int) (offset % alignment);
+    if (mod != 0) {
+      bs.skipNBytes(alignment - mod);
+    }
+  }
+
+  /**
+   * Byte align a ByteArrayOutputStream with null bytes.
+   *
+   * @param baos The ByteArrayOutputStream to align.
+   * @param alignment The number of bytes to align to.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static void align(ByteArrayOutputStream baos, int alignment) throws IOException {
+    int mod = baos.size() % alignment;
+    if (mod != 0) {
+      baos.write(new byte[alignment - mod]);
+    }
+  }
+
+  /**
+   * Byte align an integer.
+   *
+   * @param count The count to byte align.
+   * @param alignment The number of bytes to align to.
+   * @return The byte aligned count.
+   */
+  public static int align(int count, int alignment) {
+    int mod = count % alignment;
+    if (mod != 0) {
+      return count + (alignment - mod);
+    }
+    return count;
+  }
+
+  /**
+   * Byte align a byte array with null bytes.
+   *
+   * @param bytes The bytes to byte align.
+   * @param alignment The number of bytes to align to.
+   * @return The byte aligned bytes.
+   */
+  public static byte[] align(byte[] bytes, int alignment) {
+    int mod = bytes.length % alignment;
+    if (mod != 0) {
+      return Bytes.concat(bytes, new byte[alignment - mod]);
+    }
+    return bytes;
   }
 }

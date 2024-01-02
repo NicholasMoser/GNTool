@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ExistingBinary implements Symbol {
-    private static final int TYPE = 2;
+    public static final int TYPE = 2;
     private final String name;
     private final int binaryOffset;
     private final int binaryLength;
@@ -29,7 +29,9 @@ public class ExistingBinary implements Symbol {
 
     @Override
     public int length() {
-        return Symbol.getNameBytes(name).length + 0x10;
+        int length = Symbol.getNameBytes(name).length;
+        length = ByteUtils.align(length, 16);
+        return length + 0x10;
     }
 
     @Override
@@ -37,6 +39,7 @@ public class ExistingBinary implements Symbol {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(Symbol.getNameBytes(name));
+            ByteUtils.align(baos, 16);
             baos.write(ByteUtils.fromInt32(TYPE));
             baos.write(ByteUtils.fromInt32(length()));
             baos.write(ByteUtils.fromInt32(binaryOffset));

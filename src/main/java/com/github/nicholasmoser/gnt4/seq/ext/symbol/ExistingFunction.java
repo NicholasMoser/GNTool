@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ExistingFunction implements Symbol {
-    private static final int TYPE = 3;
+    public static final int TYPE = 3;
     private final String name;
     private final int functionOffset;
     private final int functionLength;
@@ -29,7 +29,9 @@ public class ExistingFunction implements Symbol {
 
     @Override
     public int length() {
-        return Symbol.getNameBytes(name).length + 0x10;
+        int length = Symbol.getNameBytes(name).length;
+        length = ByteUtils.align(length, 16);
+        return length + 0x10;
     }
 
     @Override
@@ -37,6 +39,7 @@ public class ExistingFunction implements Symbol {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(Symbol.getNameBytes(name));
+            ByteUtils.align(baos, 16);
             baos.write(ByteUtils.fromInt32(TYPE));
             baos.write(ByteUtils.fromInt32(length()));
             baos.write(ByteUtils.fromInt32(functionOffset));

@@ -4,7 +4,6 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A motion contains one or more {@link GNTAnimation} objects. It is the .mot file found in GNT
@@ -120,8 +118,8 @@ public class Motion {
     AnimationList animList = AnimationList.parseFrom(inputDirectory);
     List<Path> files = animList.getFileNames()
         .stream()
-        .map(name -> inputDirectory.resolve(name))
-        .collect(Collectors.toList());
+        .map(inputDirectory::resolve)
+        .toList();
     int totalAnimationIds = animList.getTotalAnimationIds();
     Set<GNTAnimation> animations = new HashSet<>();
     for (Path file : files) {
@@ -182,7 +180,7 @@ public class Motion {
       raf.write(new byte[4]); // file size (will be filled out last)
 
       // Header size + 4-byte offsets for each animation id, 16-byte aligned
-      int currentDataOffset = byteAlign(0x10 + (totalAnimationIds * 4));
+      int currentDataOffset = ByteUtils.align(0x10 + (totalAnimationIds * 4), 16);
       raf.seek(currentDataOffset);
       fileSize += currentDataOffset;
       // The animation offsets that will be reversed before written to the file
@@ -212,19 +210,6 @@ public class Motion {
       raf.seek(0xC);
       raf.write(ByteUtils.fromInt32(fileSize));
     }
-  }
-
-  /**
-   * 16-byte aligns the given number.
-   *
-   * @param number The number to 16-byte align.
-   * @return The number 16-byte aligned.
-   */
-  private static int byteAlign(int number) {
-    if (number % 16 != 0) {
-      return number + (16 - (number % 16));
-    }
-    return number;
   }
 
   @Override

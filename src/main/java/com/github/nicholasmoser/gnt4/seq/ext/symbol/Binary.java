@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class Binary implements Symbol {
-    private static final int TYPE = 1;
+    public static final int TYPE = 1;
     private final String name;
     private final byte[] bytes;
 
@@ -22,17 +22,18 @@ public class Binary implements Symbol {
 
     @Override
     public int dataOffset() {
-        return Symbol.getNameBytes(name).length + 0x10;
+        int dataOffset = Symbol.getNameBytes(name).length;
+        dataOffset = ByteUtils.align(dataOffset, 16);
+        return dataOffset + 0x10;
     }
 
     @Override
     public int length() {
-        int codeLength = Symbol.getNameBytes(name).length + 0x10 + bytes.length;
-        int mod = codeLength % 16;
-        if (mod != 0) {
-            return codeLength + (16 - mod); // add padding
-        }
-        return codeLength;
+        int length = Symbol.getNameBytes(name).length;
+        length = ByteUtils.align(length, 16);
+        length += 0x10;
+        length += bytes.length;
+        return ByteUtils.align(length, 16);
     }
 
     @Override
@@ -40,15 +41,13 @@ public class Binary implements Symbol {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(Symbol.getNameBytes(name));
+            ByteUtils.align(baos, 16);
             baos.write(ByteUtils.fromInt32(TYPE));
             baos.write(ByteUtils.fromInt32(length()));
             baos.write(ByteUtils.fromInt32(bytes.length));
-            baos.write(new byte[0x4]); // 4 null bytes
+            baos.write(new byte[0x4]); // 4 null bytes of padding
             baos.write(bytes);
-            int mod = baos.size() % 16;
-            if (mod != 0) {
-                baos.write(new byte[16 - mod]);
-            }
+            ByteUtils.align(baos, 16);
             return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);

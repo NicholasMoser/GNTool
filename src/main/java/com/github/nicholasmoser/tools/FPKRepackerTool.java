@@ -6,6 +6,7 @@ import com.github.nicholasmoser.fpk.FPKFileHeader;
 import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.PRSCompressor;
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.FPKUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.google.common.primitives.Bytes;
@@ -287,14 +288,7 @@ public class FPKRepackerTool {
           for (FPKFile file : newFPKs) {
             FPKFileHeader header = file.getHeader();
             header.setOffset(outputSize);
-            int compressedSize = header.getCompressedSize();
-            int modDifference = compressedSize % 16;
-            if (modDifference == 0) {
-              outputSize += compressedSize;
-            } else {
-              // Make sure the offset is divisible by 16
-              outputSize += compressedSize + (16 - modDifference);
-            }
+            outputSize += ByteUtils.align(header.getCompressedSize(), 16);
           }
 
           // FPK Header
