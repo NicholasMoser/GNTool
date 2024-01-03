@@ -2,10 +2,13 @@ package com.github.nicholasmoser.gnt4.seq.ext.symbol;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.nicholasmoser.gnt4.seq.ext.parser.SymbolParser;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLinkReturn;
 import com.github.nicholasmoser.gnt4.seq.opcodes.IntAdd;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 public class InsertAsmTest {
   @Test
-  public void testNormal() {
+  public void testNormal() throws Exception {
     String name = "Test 1";
     int offset = 0x60;
     List<Opcode> oldOpcodes = new ArrayList<>();
@@ -31,10 +34,25 @@ public class InsertAsmTest {
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
     assertThat(insertAsm.innerLabels()).isEmpty();
+
+    // Now parse the bytes and assert it is the same symbol
+    ByteStream bs = new ByteStream(insertAsm.bytes());
+    List<Symbol> symbols = SymbolParser.parse(bs, 1);
+    assertThat(symbols.size()).isEqualTo(1);
+    Symbol symbol = symbols.get(0);
+    assertThat(symbol).isOfAnyClassIn(InsertAsm.class);
+    InsertAsm actualInsertAsm = (InsertAsm) symbol;
+    assertThat(actualInsertAsm.length()).isEqualTo(insertAsm.length());
+    assertThat(actualInsertAsm.name()).isEqualTo(insertAsm.name());
+    assertThat(actualInsertAsm.bytes()).isEqualTo(insertAsm.bytes());
+    assertThat(actualInsertAsm.dataOffset()).isEqualTo(insertAsm.dataOffset());
+    assertThat(actualInsertAsm.newOpcodes().size()).isEqualTo(insertAsm.newOpcodes().size());
+    assertThat(actualInsertAsm.oldOpcodes().size()).isEqualTo(insertAsm.oldOpcodes().size());
+    assertThat(actualInsertAsm.innerLabels()).isEqualTo(insertAsm.innerLabels());
   }
 
   @Test
-  public void test15ByteName() {
+  public void test15ByteName() throws Exception {
     String name = "ABCDEFGHIJKLMNO";
     int offset = 0x60;
     List<Opcode> oldOpcodes = new ArrayList<>();
@@ -49,10 +67,25 @@ public class InsertAsmTest {
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
     assertThat(insertAsm.innerLabels()).isEmpty();
+
+    // Now parse the bytes and assert it is the same symbol
+    ByteStream bs = new ByteStream(insertAsm.bytes());
+    List<Symbol> symbols = SymbolParser.parse(bs, 1);
+    assertThat(symbols.size()).isEqualTo(1);
+    Symbol symbol = symbols.get(0);
+    assertThat(symbol).isOfAnyClassIn(InsertAsm.class);
+    InsertAsm actualInsertAsm = (InsertAsm) symbol;
+    assertThat(actualInsertAsm.length()).isEqualTo(insertAsm.length());
+    assertThat(actualInsertAsm.name()).isEqualTo(insertAsm.name());
+    assertThat(actualInsertAsm.bytes()).isEqualTo(insertAsm.bytes());
+    assertThat(actualInsertAsm.dataOffset()).isEqualTo(insertAsm.dataOffset());
+    assertThat(actualInsertAsm.newOpcodes().size()).isEqualTo(insertAsm.newOpcodes().size());
+    assertThat(actualInsertAsm.oldOpcodes().size()).isEqualTo(insertAsm.oldOpcodes().size());
+    assertThat(actualInsertAsm.innerLabels()).isEqualTo(insertAsm.innerLabels());
   }
 
   @Test
-  public void test16ByteName() {
+  public void test16ByteName() throws Exception {
     String name = "ABCDEFGHIJKLMNOP";
     int offset = 0x60;
     List<Opcode> oldOpcodes = new ArrayList<>();
@@ -67,10 +100,25 @@ public class InsertAsmTest {
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
     assertThat(insertAsm.innerLabels()).isEmpty();
+
+    // Now parse the bytes and assert it is the same symbol
+    ByteStream bs = new ByteStream(insertAsm.bytes());
+    List<Symbol> symbols = SymbolParser.parse(bs, 1);
+    assertThat(symbols.size()).isEqualTo(1);
+    Symbol symbol = symbols.get(0);
+    assertThat(symbol).isOfAnyClassIn(InsertAsm.class);
+    InsertAsm actualInsertAsm = (InsertAsm) symbol;
+    assertThat(actualInsertAsm.length()).isEqualTo(insertAsm.length());
+    assertThat(actualInsertAsm.name()).isEqualTo(insertAsm.name());
+    assertThat(actualInsertAsm.bytes()).isEqualTo(insertAsm.bytes());
+    assertThat(actualInsertAsm.dataOffset()).isEqualTo(insertAsm.dataOffset());
+    assertThat(actualInsertAsm.newOpcodes().size()).isEqualTo(insertAsm.newOpcodes().size());
+    assertThat(actualInsertAsm.oldOpcodes().size()).isEqualTo(insertAsm.oldOpcodes().size());
+    assertThat(actualInsertAsm.innerLabels()).isEqualTo(insertAsm.innerLabels());
   }
 
   @Test
-  public void testMultipleOpcodes() {
+  public void testMultipleOpcodes() throws Exception {
     String name = "Test 1";
     int offset = 0x60;
     List<Opcode> oldOpcodes = new ArrayList<>();
@@ -88,13 +136,28 @@ public class InsertAsmTest {
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
     assertThat(insertAsm.innerLabels()).isEmpty();
+
+    // Now parse the bytes and assert it is the same symbol
+    ByteStream bs = new ByteStream(insertAsm.bytes());
+    List<Symbol> symbols = SymbolParser.parse(bs, 1);
+    assertThat(symbols.size()).isEqualTo(1);
+    Symbol symbol = symbols.get(0);
+    assertThat(symbol).isOfAnyClassIn(InsertAsm.class);
+    InsertAsm actualInsertAsm = (InsertAsm) symbol;
+    assertThat(actualInsertAsm.length()).isEqualTo(insertAsm.length());
+    assertThat(actualInsertAsm.name()).isEqualTo(insertAsm.name());
+    assertThat(actualInsertAsm.bytes()).isEqualTo(insertAsm.bytes());
+    assertThat(actualInsertAsm.dataOffset()).isEqualTo(insertAsm.dataOffset());
+    assertThat(actualInsertAsm.newOpcodes().size()).isEqualTo(insertAsm.newOpcodes().size());
+    assertThat(actualInsertAsm.oldOpcodes().size()).isEqualTo(insertAsm.oldOpcodes().size());
+    assertThat(actualInsertAsm.innerLabels()).isEqualTo(insertAsm.innerLabels());
   }
 
   @Test
-  public void testOldBytesAreNotValidOpcodes() {
+  public void testOldBytesAreNotValidOpcodes() throws Exception {
     String name = "Test 1";
     int offset = 0x60;
-    byte[] oldBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+    byte[] oldBytes = new byte[] {(byte) 0xFF, 2, 3, 4, 5, 6, 7, 8 };
     List<Opcode> newOpcodes = new ArrayList<>();
     newOpcodes.add(new BranchLinkReturn(0x10));
     Map<String, Integer> innerLabels = new LinkedHashMap<>();
@@ -105,10 +168,25 @@ public class InsertAsmTest {
     assertThat(insertAsm.oldOpcodes()).isNull();
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
     assertThat(insertAsm.innerLabels()).isEmpty();
+
+    // Now parse the bytes and assert it is the same symbol
+    ByteStream bs = new ByteStream(insertAsm.bytes());
+    List<Symbol> symbols = SymbolParser.parse(bs, 1);
+    assertThat(symbols.size()).isEqualTo(1);
+    Symbol symbol = symbols.get(0);
+    assertThat(symbol).isOfAnyClassIn(InsertAsm.class);
+    InsertAsm actualInsertAsm = (InsertAsm) symbol;
+    assertThat(actualInsertAsm.length()).isEqualTo(insertAsm.length());
+    assertThat(actualInsertAsm.name()).isEqualTo(insertAsm.name());
+    assertThat(actualInsertAsm.bytes()).isEqualTo(insertAsm.bytes());
+    assertThat(actualInsertAsm.dataOffset()).isEqualTo(insertAsm.dataOffset());
+    assertThat(actualInsertAsm.newOpcodes().size()).isEqualTo(insertAsm.newOpcodes().size());
+    assertThat(actualInsertAsm.oldOpcodes()).isNull();
+    assertThat(actualInsertAsm.innerLabels()).isEqualTo(insertAsm.innerLabels());
   }
 
   @Test
-  public void testInnerLabels() {
+  public void testInnerLabels() throws Exception {
     String name = "Test 1";
     int offset = 0x60;
     List<Opcode> oldOpcodes = new ArrayList<>();
@@ -127,5 +205,20 @@ public class InsertAsmTest {
     assertThat(insertAsm.oldOpcodes()).isEqualTo(oldOpcodes);
     assertThat(insertAsm.newOpcodes()).isEqualTo(newOpcodes);
     assertThat(insertAsm.innerLabels()).isEqualTo(innerLabels);
+
+    // Now parse the bytes and assert it is the same symbol
+    ByteStream bs = new ByteStream(insertAsm.bytes());
+    List<Symbol> symbols = SymbolParser.parse(bs, 1);
+    assertThat(symbols.size()).isEqualTo(1);
+    Symbol symbol = symbols.get(0);
+    assertThat(symbol).isOfAnyClassIn(InsertAsm.class);
+    InsertAsm actualInsertAsm = (InsertAsm) symbol;
+    assertThat(actualInsertAsm.length()).isEqualTo(insertAsm.length());
+    assertThat(actualInsertAsm.name()).isEqualTo(insertAsm.name());
+    assertThat(actualInsertAsm.bytes()).isEqualTo(insertAsm.bytes());
+    assertThat(actualInsertAsm.dataOffset()).isEqualTo(insertAsm.dataOffset());
+    assertThat(actualInsertAsm.newOpcodes().size()).isEqualTo(insertAsm.newOpcodes().size());
+    assertThat(actualInsertAsm.oldOpcodes().size()).isEqualTo(insertAsm.oldOpcodes().size());
+    assertThat(actualInsertAsm.innerLabels()).isEqualTo(insertAsm.innerLabels());
   }
 }

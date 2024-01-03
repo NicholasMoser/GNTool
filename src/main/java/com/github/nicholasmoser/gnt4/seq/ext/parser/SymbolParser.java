@@ -64,7 +64,7 @@ public class SymbolParser {
           }
           ByteUtils.alignSkip(bs, 16);
           innerLabels = readInnerLabels(bs, innerLabelsCount);
-          List<Opcode> opcodes = SeqHelper.getOpcodes(bs, funcLength);
+          List<Opcode> opcodes = SeqHelper.getAllOpcodes(func);
           symbols.add(new Function(name, opcodes, innerLabels));
         }
         case InsertAsm.TYPE -> {
@@ -91,7 +91,7 @@ public class SymbolParser {
           try {
             List<Opcode> oldCodes = SeqHelper.getAllOpcodes(oldBytes);
             symbols.add(new InsertAsm(name, hijackOffset, newCodes, oldCodes, innerLabels));
-          } catch (IOException e) {
+          } catch (Exception e) {
             // Unable to parse old codes, handle case where they are broken bytes or binary data
             LOGGER.log(Level.SEVERE, "Unable to parse old codes", e);
             symbols.add(new InsertAsm(name, hijackOffset, newCodes, oldBytes, innerLabels));

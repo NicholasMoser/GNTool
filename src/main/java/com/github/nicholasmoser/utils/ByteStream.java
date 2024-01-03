@@ -184,7 +184,20 @@ public class ByteStream extends ByteArrayInputStream {
     this.pos = pos;
   }
 
+  /**
+   * @return If any bytes are left in the ByteStream
+   */
   public boolean bytesAreLeft() {
-    return pos < buf.length;
+    return bytesAreLeft(1);
+  }
+
+  /**
+   * Return if an amount of bytes are left in the ByteStream.
+   *
+   * @param count The amount of bytes.
+   * @return If an amount of bytes are left in the ByteStream.
+   */
+  public boolean bytesAreLeft(int count) {
+    return pos + count <= buf.length;
   }
 }

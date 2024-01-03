@@ -60,7 +60,7 @@ public class Function implements Symbol {
             baos.write(ByteUtils.fromInt32(TYPE));
             baos.write(ByteUtils.fromInt32(length(opcodeBytes)));
             baos.write(ByteUtils.fromInt32(opcodeBytes.length));
-            baos.write(innerLabels.size());
+            baos.write(ByteUtils.fromInt32(innerLabels.size()));
             baos.write(opcodeBytes);
             ByteUtils.align(baos, 16);
             for (Entry<String, Integer> entry : innerLabels.entrySet()) {

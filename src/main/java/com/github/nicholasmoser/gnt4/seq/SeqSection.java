@@ -52,7 +52,7 @@ public class SeqSection {
    * @throws IOException If an I/O error occurs.
    */
   public static boolean isSeqExtension(ByteStream bs) throws IOException {
-    if (!bs.bytesAreLeft()) {
+    if (!bs.bytesAreLeft(7)) {
       return false;
     }
     byte[] word = bs.peekBytes(7);

@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -219,5 +220,41 @@ public class ByteStreamTest {
     assertEquals(3, bs.offset());
     Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(-1));
     Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(-55555));
+  }
+
+  @Test
+  public void testBytesAreLeft() throws Exception {
+    ByteStream bs = new ByteStream(new byte[] {1, 2, 3, 4});
+    assertThat(bs.bytesAreLeft()).isTrue();
+    assertThat(bs.bytesAreLeft(1)).isTrue();
+    assertThat(bs.bytesAreLeft(2)).isTrue();
+    assertThat(bs.bytesAreLeft(3)).isTrue();
+    assertThat(bs.bytesAreLeft(4)).isTrue();
+    assertThat(bs.bytesAreLeft(5)).isFalse();
+    assertThat(bs.bytesAreLeft(6)).isFalse();
+    assertThat(bs.bytesAreLeft(8)).isFalse();
+    assertThat(bs.bytesAreLeft(16)).isFalse();
+
+    bs.seek(2); // halfway through bytes
+    assertThat(bs.bytesAreLeft()).isTrue();
+    assertThat(bs.bytesAreLeft(1)).isTrue();
+    assertThat(bs.bytesAreLeft(2)).isTrue();
+    assertThat(bs.bytesAreLeft(3)).isFalse();
+    assertThat(bs.bytesAreLeft(4)).isFalse();
+    assertThat(bs.bytesAreLeft(5)).isFalse();
+    assertThat(bs.bytesAreLeft(6)).isFalse();
+    assertThat(bs.bytesAreLeft(8)).isFalse();
+    assertThat(bs.bytesAreLeft(16)).isFalse();
+
+    bs.skipNBytes(2); // end of bytes
+    assertThat(bs.bytesAreLeft()).isFalse();
+    assertThat(bs.bytesAreLeft(1)).isFalse();
+    assertThat(bs.bytesAreLeft(2)).isFalse();
+    assertThat(bs.bytesAreLeft(3)).isFalse();
+    assertThat(bs.bytesAreLeft(4)).isFalse();
+    assertThat(bs.bytesAreLeft(5)).isFalse();
+    assertThat(bs.bytesAreLeft(6)).isFalse();
+    assertThat(bs.bytesAreLeft(8)).isFalse();
+    assertThat(bs.bytesAreLeft(16)).isFalse();
   }
 }
