@@ -94,9 +94,12 @@ public class SEQOperand {
     if (parts.length != 3) {
       throw new IOException("Missing three parts for EA sum plus offset: " + description);
     }
-    String first = parts[0].startsWith("*") ? parts[0].substring(1) : parts[0];
-    String second = parts[1].startsWith("*") ? parts[1].substring(1) : parts[1];
-    String third = parts[2].startsWith("*") ? parts[2].substring(1) : parts[2];
+    String first = parts[0].trim();
+    String second = parts[1].trim();
+    String third = parts[2].trim();
+    first = first.startsWith("*") ? first.substring(1) : first;
+    second = second.startsWith("*") ? second.substring(1) : second;
+    third = third.startsWith("*") ? third.substring(1) : third;
 
     // Handle first part
     Byte registerVal = OperandParser.getByte(first);

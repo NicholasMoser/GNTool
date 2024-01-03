@@ -78,44 +78,46 @@ public class SEQ_RegCMD2 {
    */
   public static byte[] parseDescription(String description) throws IOException {
     String[] operands = description.split(",");
-    OperandBytes first;
-    OperandBytes second;
-    if (operands[0].contains("+")) {
+    String first = operands[0].trim();
+    String second = operands[1].trim();
+    OperandBytes firstOperand;
+    OperandBytes secondOperand;
+    if (first.contains("+")) {
       // Load effective address sum with offset
-      first =  SEQOperand.parseEASumPlusOffsetDescription(operands[0]);
-    } else if (operands[0].contains("->")) {
+      firstOperand =  SEQOperand.parseEASumPlusOffsetDescription(first);
+    } else if (first.contains("->")) {
       // Load effective address with offset
-      first = SEQOperand.parseEAPlusOffsetDescription(operands[0]);
+      firstOperand = SEQOperand.parseEAPlusOffsetDescription(first);
     } else {
       // Load affective address
-      first = SEQOperand.parseEADescription(operands[0]);
+      firstOperand = SEQOperand.parseEADescription(first);
     }
-    boolean chrField = operands[0].startsWith("*chr_p->");
+    boolean chrField = first.startsWith("*chr_p->");
     if (chrField) {
-      second = SeqHelper.fromChrFieldDescription(operands[1]);
-    } else if (operands[1].contains("+")) {
+      secondOperand = SeqHelper.fromChrFieldDescription(second);
+    } else if (second.contains("+")) {
       // Load effective address sum with offset
-      second =  SEQOperand.parseEASumPlusOffsetDescription(operands[1]);
-    } else if (operands[1].contains("->")) {
+      secondOperand =  SEQOperand.parseEASumPlusOffsetDescription(second);
+    } else if (second.contains("->")) {
       // Load effective address with offset
-      second = SEQOperand.parseEAPlusOffsetDescription(operands[1]);
+      secondOperand = SEQOperand.parseEAPlusOffsetDescription(second);
     } else {
       // Load affective address
-      second = SEQOperand.parseEADescription(operands[1]);
+      secondOperand = SEQOperand.parseEADescription(second);
     }
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(first.flag());
-    if (first.bytes().length > 0) {
+    baos.write(firstOperand.flag());
+    if (firstOperand.bytes().length > 0) {
       // First operand has extra bytes so flag of second operand is pushed
       baos.write(0);
-      baos.write(first.bytes());
-      baos.write(second.flag());
+      baos.write(firstOperand.bytes());
+      baos.write(secondOperand.flag());
       baos.write(new byte[3]);
-      baos.write(second.bytes());
+      baos.write(secondOperand.bytes());
     } else {
       // First operand and second operand flag together at third and fourth byte
-      baos.write(second.flag());
-      baos.write(second.bytes());
+      baos.write(secondOperand.flag());
+      baos.write(secondOperand.bytes());
     }
     return baos.toByteArray();
   }
