@@ -9,6 +9,8 @@ import com.github.nicholasmoser.gnt4.seq.comment.Function;
 import com.github.nicholasmoser.gnt4.seq.comment.Functions;
 import com.github.nicholasmoser.gnt4.seq.dest.Destination;
 import com.github.nicholasmoser.gnt4.seq.dest.DestinationParser;
+import com.github.nicholasmoser.gnt4.seq.dest.LabelDestination;
+import com.github.nicholasmoser.gnt4.seq.dest.RelativeDestination;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchDecrementNotZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZero;
@@ -51,11 +53,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javafx.util.Pair;
 
 public class SeqAssembler {
 
     private static final Logger LOGGER = Logger.getLogger(SeqAssembler.class.getName());
+
+
+    public static Pair<List<Opcode>, Integer> assembleLines(String[] lines, Path seqPath) throws IOException {
+        return assembleLines(lines, seqPath, 0);
+    }
 
     /**
      *
@@ -65,20 +73,20 @@ public class SeqAssembler {
      * @param seqPath The path to the SEQ file that is edited
      * @return A pair containing the list of Opcodes representing the lines, and an integer representing the total size of the byte code in bytes
      */
-    public static Pair<List<Opcode>, Integer> assembleLines(String[] lines, Path seqPath) throws IOException {
+    public static Pair<List<Opcode>, Integer> assembleLines(String[] lines, Path seqPath, int startingOffset) throws IOException {
         LinkedList<Opcode> opcodes = new LinkedList<>();
-        int offset = 0;
-        Map<String, Integer> localLabelMap = new HashMap<>();
-        Map<String, Integer> globalLabelMap = new HashMap<>();
+        int offset = startingOffset;
+        Map<String, Integer> labelMap = new HashMap<>();
         Map<Integer, Function> globalFunctionMap = new HashMap<>();
         if (seqPath != null) {
             globalFunctionMap = Functions.getFunctions(seqPath.toString());
             for (Entry<Integer, Function> me : globalFunctionMap.entrySet()) {
-                globalLabelMap.put(me.getValue().name(), me.getKey());
+                labelMap.put(me.getValue().name(), me.getKey());
             }
         }
         // First pass, get opcodes
         for (String line : lines) {
+            // New byte array output stream for every line
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             String operation = line;
             // Strip comments
@@ -89,9 +97,10 @@ public class SeqAssembler {
             operation = operation.replaceAll("\\s+$", "");
             // Add label to label map
             if (operation.endsWith(":")) {
-                localLabelMap.put(operation.replace(":", "").replace(" ", ""), offset);
+                labelMap.put(operation.replace(":", "").replace(" ", ""), offset);
                 continue;
             }
+            // Split opcode and operands for parsing
             String[] opcode;
             Destination destination;
             String operands = "";
@@ -102,12 +111,6 @@ public class SeqAssembler {
                 opcode = operation.split("_");
             }
             String[] op = operands.split(",");
-            //String op1 = "";
-            //String op2 = "";
-            //if (op.length > 1) {
-            //    op1 = op[0];
-            //    op2 = op[1];
-            //}
             Opcode currentOpcode = new UnknownOpcode(offset, new byte[]{0, 0, 0, 0});
             switch (opcode[0].replace(" ", "")) {
                 case "":
@@ -792,12 +795,13 @@ public class SeqAssembler {
                 default:
                     throw new IllegalArgumentException("Unknown assembly: " + opcode[0]);
             }
+            // Add opcode and increment offset
             opcodes.add(currentOpcode);
             offset += currentOpcode.getBytes().length;
         }
         // Second pass, resolve branches
-        resolveBranches(opcodes);
-        return new Pair<>(opcodes,offset);
+        resolveBranches(opcodes, labelMap);
+        return new Pair<>(opcodes, offset);
     }
 
     /**
@@ -808,14 +812,31 @@ public class SeqAssembler {
      *
      * @param opcodes The opcodes to parse.
      */
-    private static void resolveBranches(LinkedList<Opcode> opcodes) {
+    private static void resolveBranches(LinkedList<Opcode> opcodes, Map<String, Integer> labelMap) {
         for (Opcode opcode : opcodes) {
             if (opcode instanceof BranchingOpcode branchingOpcode) {
-                // TODO
+                Destination dest = branchingOpcode.getDestination();
+                if (dest instanceof RelativeDestination relativeDest) {
+                    relativeDest.resolve(branchingOpcode.getOffset());
+                } else if (dest instanceof LabelDestination labelDest) {
+                    labelDest.resolve(labelMap);
+                }
             } else if (opcode instanceof BranchTable branchTable) {
-                // TODO
+                for (Destination dest : branchTable.getDestinations()) {
+                    if (dest instanceof RelativeDestination relativeDest) {
+                        relativeDest.resolve(branchTable.getOffset());
+                    } else if (dest instanceof LabelDestination labelDest) {
+                        labelDest.resolve(labelMap);
+                    }
+                }
             } else if (opcode instanceof BranchTableLink branchTableLink) {
-                // TODO
+                for (Destination dest : branchTableLink.getDestinations()) {
+                    if (dest instanceof RelativeDestination relativeDest) {
+                        relativeDest.resolve(branchTableLink.getOffset());
+                    } else if (dest instanceof LabelDestination labelDest) {
+                        labelDest.resolve(labelMap);
+                    }
+                }
             }
         }
     }
