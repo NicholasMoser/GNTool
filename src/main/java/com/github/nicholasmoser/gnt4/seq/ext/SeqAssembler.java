@@ -53,7 +53,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javafx.util.Pair;
 
 public class SeqAssembler {
@@ -79,7 +78,7 @@ public class SeqAssembler {
         Map<String, Integer> labelMap = new HashMap<>();
         Map<Integer, Function> globalFunctionMap = new HashMap<>();
         if (seqPath != null) {
-            globalFunctionMap = Functions.getFunctions(seqPath.toString());
+            globalFunctionMap = Functions.getFunctions(seqPath.toString().replace("\\", "/"));
             for (Entry<Integer, Function> me : globalFunctionMap.entrySet()) {
                 labelMap.put(me.getValue().name(), me.getKey());
             }
@@ -801,7 +800,8 @@ public class SeqAssembler {
         }
         // Second pass, resolve branches
         resolveBranches(opcodes, labelMap);
-        return new Pair<>(opcodes, offset);
+        int size = offset - startingOffset;
+        return new Pair<>(opcodes, size);
     }
 
     /**
