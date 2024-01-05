@@ -11,11 +11,7 @@ public interface Opcode {
 
   byte[] getBytes();
 
-  byte[] getBytes(int offset, int size);
-
   String toAssembly();
-
-  String toAssembly(int offset);
 
   ContainerTag toHTML();
 

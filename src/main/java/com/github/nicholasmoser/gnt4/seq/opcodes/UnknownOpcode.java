@@ -63,11 +63,6 @@ public class UnknownOpcode implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return getBytes();
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | op_%02X%02X %s %s", offset, bytes[0], bytes[1], info, formatRawBytes(bytes));
   }
@@ -80,11 +75,6 @@ public class UnknownOpcode implements Opcode {
       builder.append(String.format(", 0x%02X%02X%02X%02X", bytes[i], bytes[i+1], bytes[i+2], bytes[i+3]));
     }
     return builder.toString();
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override

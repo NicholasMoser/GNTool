@@ -28,11 +28,6 @@ public class FlagOperation implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return getBytes();
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | %s %s", offset, info, formatRawBytes(bytes));
   }
@@ -40,11 +35,6 @@ public class FlagOperation implements Opcode {
   @Override
   public String toAssembly() {
     return String.format("%s",info.replace("\"",""));
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override

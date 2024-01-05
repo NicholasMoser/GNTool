@@ -1,21 +1,10 @@
 package com.github.nicholasmoser.gnt4.seq.opcodes;
 
-import static j2html.TagCreator.a;
-import static j2html.TagCreator.attrs;
-import static j2html.TagCreator.div;
-
-import com.github.nicholasmoser.utils.ByteUtils;
-import com.google.common.primitives.Bytes;
-import j2html.tags.ContainerTag;
+import com.github.nicholasmoser.gnt4.seq.dest.Destination;
 
 public class BranchNotEqualToZero extends BranchingOpcode {
 
-  public BranchNotEqualToZero(int offset, int destination) {
+  public BranchNotEqualToZero(int offset, Destination destination) {
     super("bnez", new byte[] {0x01, 0x34, 0x00, 0x00}, offset, destination);
   }
-
-  public BranchNotEqualToZero(int offset, String destFuncName) {
-    super("bnez", new byte[] {0x01, 0x34, 0x00, 0x00}, offset, destFuncName);
-  }
-
 }

@@ -53,11 +53,6 @@ public class ActiveStrings implements Opcode{
     }
 
     @Override
-    public byte[] getBytes(int offset, int size) {
-        return bytes;
-    }
-
-    @Override
     public String toString() {
         return String.format("%05X | %s %s", offset, MNEMONIC, stringOffsets);
     }
@@ -65,11 +60,6 @@ public class ActiveStrings implements Opcode{
     @Override
     public String toAssembly() {
         return String.format("%s",MNEMONIC);
-    }
-
-    @Override
-    public String toAssembly(int offset) {
-        return toAssembly();
     }
 
     @Override

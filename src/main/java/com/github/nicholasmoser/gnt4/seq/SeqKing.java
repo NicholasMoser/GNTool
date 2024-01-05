@@ -200,18 +200,6 @@ public class SeqKing {
       if (verbose) {
         System.out.println(newOpcode);
       }
-      // This is a very hacky way of setting the function name on a branching opcode
-      if (newOpcode instanceof BranchingOpcode branchingOpcode) {
-        Map<Integer, Function> functions = Functions.getFunctions(fileName);
-        Function function = functions.get(branchingOpcode.getDestination());
-        if (function != null) {
-          branchingOpcode.setDestinationFunctionName(function.name());
-        } else if (branchingOpcode instanceof BranchingLinkingOpcode) {
-          String destinationFunctionName = String.format("fun_%X",branchingOpcode.getDestination());
-          branchingOpcode.setDestinationFunctionName(destinationFunctionName);
-          functions.put(branchingOpcode.getDestination(), new Function(destinationFunctionName,List.of("")));
-        }
-      }
       if (bs.offset() == bytes.length) {
         if (verbose) {
           System.out.printf("%s%n", Functions.getFunctions(fileName));

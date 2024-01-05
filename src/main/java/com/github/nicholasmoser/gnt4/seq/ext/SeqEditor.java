@@ -170,14 +170,14 @@ public class SeqEditor {
     }
     StringBuilder sb = new StringBuilder();
     for (Opcode op : oldCodes) {
-      sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes(seqEdit.getOffset(), oldBytes.length))));
+      sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes())));
     }
     List<Opcode> newCodes = seqEdit.getNewCodes();
     nameTextArea.setText(editName);
     offsetTextField.setText(String.format("0x%X", seqEdit.getOffset()));
     hijackedBytesLengthTextField.setText(String.format("0x%X", oldBytes.length));
     hijackedBytesTextArea.setText(sb.toString());
-    Pair<String,String> opcodesStrings = SeqUtil.getOpcodesStrings(newCodes, seqEdit.getSize());
+    Pair<String,String> opcodesStrings = SeqUtil.getOpcodesStrings(newCodes);
     newBytesTextArea.setText(opcodesStrings.getKey());
     opcodesTextArea.setText(opcodesStrings.getValue());
   }
@@ -499,7 +499,7 @@ public class SeqEditor {
         }
         StringBuilder sb = new StringBuilder();
         for (Opcode op : oldCodes) {
-          sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes(offset, hijackedBytesLength))));
+          sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes())));
         }
         hijackedBytesTextArea.setText(sb.toString());
       }

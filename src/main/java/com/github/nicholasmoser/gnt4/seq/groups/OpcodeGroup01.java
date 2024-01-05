@@ -2,6 +2,8 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.Seq;
+import com.github.nicholasmoser.gnt4.seq.dest.AbsoluteDestination;
+import com.github.nicholasmoser.gnt4.seq.dest.Destination;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZeroLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchLessThanEqualZeroLink;
@@ -85,7 +87,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new Branch(offset, destination);
   }
 
@@ -94,7 +96,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchEqualToZero(offset, destination);
   }
 
@@ -103,7 +105,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchNotEqualToZero(offset, destination);
   }
 
@@ -112,7 +114,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchGreaterThanZero(offset, destination);
   }
 
@@ -121,7 +123,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchGreaterThanOrEqualToZero(offset, destination, secondByte);
   }
 
@@ -130,7 +132,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchLessThanZero(offset, destination, secondByte);
   }
 
@@ -139,7 +141,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchLessThanOrEqualToZero(offset, destination);
   }
 
@@ -148,7 +150,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchDecrementNotZero(offset, destination);
   }
 
@@ -157,7 +159,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchLink(offset, destination);
   }
 
@@ -166,7 +168,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchEqualToZeroLink(offset, destination);
   }
 
@@ -175,7 +177,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchNotEqualZeroLink(offset, destination);
   }
 
@@ -184,7 +186,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchLessThanZeroLink(offset, destination);
   }
 
@@ -193,7 +195,7 @@ public class OpcodeGroup01 {
     if (bs.skip(4) != 4) {
       throw new IOException("Failed to parse bytes of opcode at " + offset);
     }
-    int destination = bs.readWord();
+    Destination destination = new AbsoluteDestination(bs.readWord());
     return new BranchLessThanEqualZeroLink(offset, destination);
   }
 
@@ -264,7 +266,7 @@ public class OpcodeGroup01 {
     int numOfBranches = ByteUtils.toInt32(numOfBranchesBytes);
     StringBuilder info = new StringBuilder(ea.getDescription());
     // Iterate over each branch table offset
-    List<Integer> offsets = new ArrayList<>();
+    List<Destination> destinations = new ArrayList<>();
     for (int i = 0; i < numOfBranches; i++) {
       byte[] branchOffsetBytes = bs.peekBytes(4);
       int branchOffset = ByteUtils.toInt32(branchOffsetBytes);
@@ -275,9 +277,9 @@ public class OpcodeGroup01 {
       }
       bs.skip(4); // Skip the 4 that were previously peeked
       baos.write(branchOffsetBytes);
-      offsets.add(branchOffset);
+      destinations.add(new AbsoluteDestination(branchOffset));
     }
-    return new BranchTable(offset, baos.toByteArray(), info.toString(), offsets);
+    return new BranchTable(offset, baos.toByteArray(), info.toString(), destinations);
   }
 
   private static Opcode branch_table_link(ByteStream bs) throws IOException {
@@ -291,7 +293,7 @@ public class OpcodeGroup01 {
     int numOfBranches = ByteUtils.toInt32(numOfBranchesBytes);
     StringBuilder info = new StringBuilder(ea.getDescription());
     // Iterate over each branch table offset
-    List<Integer> offsets = new ArrayList<>();
+    List<Destination> destinations = new ArrayList<>();
     for (int i = 0; i < numOfBranches; i++) {
       byte[] branchOffsetBytes = bs.peekBytes(4);
       int branchOffset = ByteUtils.toInt32(branchOffsetBytes);
@@ -302,8 +304,8 @@ public class OpcodeGroup01 {
       }
       bs.skip(4); // Skip the 4 that were previously peeked
       baos.write(branchOffsetBytes);
-      offsets.add(branchOffset);
+      destinations.add(new AbsoluteDestination(branchOffset));
     }
-    return new BranchTableLink(offset, baos.toByteArray(), info.toString(), offsets);
+    return new BranchTableLink(offset, baos.toByteArray(), info.toString(), destinations);
   }
 }

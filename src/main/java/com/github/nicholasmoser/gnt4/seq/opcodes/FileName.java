@@ -30,11 +30,6 @@ public class FileName implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return bytes;
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | %s \"%s\" ", offset, MNEMONIC, filename);
   }
@@ -42,11 +37,6 @@ public class FileName implements Opcode {
   @Override
   public String toAssembly() {
     return String.format("%s 0x%X //%s", MNEMONIC, offset, filename);
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override

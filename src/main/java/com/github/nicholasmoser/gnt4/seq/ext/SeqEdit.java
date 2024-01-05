@@ -87,31 +87,6 @@ public class SeqEdit {
     while (bs.bytesAreLeft()) {
       try {
         Opcode op = SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]);
-        if (op instanceof BranchingOpcode branchingOpcode) {
-          if (branchingOpcode.getDestination() - position >= 0 && branchingOpcode.getDestination() - position <= size) {
-            branchingOpcode.setDestination(branchingOpcode.getDestination() - position);
-          }
-        } else if (op instanceof BranchTable branchTable) {
-          List<Integer> newOffsets = new LinkedList<>();
-          for (Integer targetOffset : branchTable.getOffsets()) {
-            if (targetOffset - position >= 0 && targetOffset - position <= size) {
-              newOffsets.add(targetOffset - position);
-            } else {
-              newOffsets.add(targetOffset);
-            }
-          }
-          branchTable.setOffsets(newOffsets);
-        } else if (op instanceof BranchTableLink branchTableLink) {
-          List<Integer> newOffsets = new LinkedList<>();
-          for (Integer targetOffset : branchTableLink.getOffsets()) {
-            if (targetOffset - position >= 0 && targetOffset - position <= size) {
-              newOffsets.add(targetOffset - position);
-            } else {
-              newOffsets.add(targetOffset);
-            }
-          }
-          branchTableLink.setOffsets(newOffsets);
-        }
         this.newCodes.add(op);
       } catch (IOException e) {
         LOGGER.log(Level.SEVERE, "Unable to get seq opcode.", e);
@@ -155,7 +130,7 @@ public class SeqEdit {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     for (Opcode opcode : newCodes) {
       try {
-        baos.write(opcode.getBytes(offset, size));
+        baos.write(opcode.getBytes());
       } catch (Exception e) {
 
       }
@@ -249,32 +224,7 @@ public class SeqEdit {
       baos.write(oldBytes);
       baos.write(STOP);
       for (Opcode op : newCodes) {
-        if (op instanceof BranchingOpcode branchingOpcode) {
-          if (branchingOpcode.getDestination() - position >= 0 && branchingOpcode.getDestination() - position <= size) {
-            branchingOpcode.setDestination(branchingOpcode.getDestination() - position);
-          }
-        } else if (op instanceof BranchTable branchTable) {
-          List<Integer> newOffsets = new LinkedList<>();
-          for (Integer targetOffset : branchTable.getOffsets()) {
-            if (targetOffset - position >= 0 && targetOffset - position <= size) {
-              newOffsets.add(targetOffset - position);
-            } else {
-              newOffsets.add(targetOffset);
-            }
-          }
-          branchTable.setOffsets(newOffsets);
-        } else if (op instanceof BranchTableLink branchTableLink) {
-          List<Integer> newOffsets = new LinkedList<>();
-          for (Integer targetOffset : branchTableLink.getOffsets()) {
-            if (targetOffset - position >= 0 && targetOffset - position <= size) {
-              newOffsets.add(targetOffset - position);
-            } else {
-              newOffsets.add(targetOffset);
-            }
-          }
-          branchTableLink.setOffsets(newOffsets);
-        }
-        baos.write(op.getBytes(position, size));
+        baos.write(op.getBytes());
       }
       baos.write(branchBack);
       baos.write(STOP);
@@ -297,36 +247,7 @@ public class SeqEdit {
       baos.write(oldBytes);
       baos.write(STOP);
       for (Opcode op : newCodes) {
-        if (op instanceof BranchingOpcode branchingOpcode) {
-          if (branchingOpcode.getDestination() - oldPosition >= 0 && branchingOpcode.getDestination() - oldPosition <= size) {
-            branchingOpcode.setDestination(branchingOpcode.getDestination() - oldPosition);
-          }
-        } else if (op instanceof BranchTable branchTable) {
-          List<Integer> newOffsets = new LinkedList<>();
-          for (Integer targetOffset : branchTable.getOffsets()) {
-            if (targetOffset - oldPosition >= 0 && targetOffset - oldPosition <= size) {
-              newOffsets.add(targetOffset - oldPosition);
-            } else  if (targetOffset - position >= 0 && targetOffset - position <= size) {
-              newOffsets.add(targetOffset - position);
-            } else {
-              newOffsets.add(targetOffset);
-            }
-          }
-          branchTable.setOffsets(newOffsets);
-        } else if (op instanceof BranchTableLink branchTableLink) {
-          List<Integer> newOffsets = new LinkedList<>();
-          for (Integer targetOffset : branchTableLink.getOffsets()) {
-            if (targetOffset - oldPosition >= 0 && targetOffset - oldPosition <= size) {
-              newOffsets.add(targetOffset - oldPosition);
-            } else if (targetOffset - position >= 0 && targetOffset - position <= size) {
-              newOffsets.add(targetOffset - position);
-            } else {
-              newOffsets.add(targetOffset);
-            }
-          }
-          branchTableLink.setOffsets(newOffsets);
-        }
-        baos.write(op.getBytes(position, size));
+        baos.write(op.getBytes());
       }
       baos.write(branchBack);
       baos.write(STOP);
@@ -396,7 +317,7 @@ public class SeqEdit {
         + "New Bytes with branch back:\n"
         + "  0x" + ByteUtils.bytesToHexString(newBytesWithBranchBack) + '\n'
         + "Assembly:\n"
-        + SeqUtil.getOpcodesStrings(newCodes, newBytes.length).getValue();
+        + SeqUtil.getOpcodesStrings(newCodes).getValue();
   }
 
   @Override

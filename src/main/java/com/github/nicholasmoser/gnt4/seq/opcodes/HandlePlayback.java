@@ -29,11 +29,6 @@ public class HandlePlayback implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return getBytes();
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | %s {00010000}", offset, MNEMONIC);
   }
@@ -42,11 +37,6 @@ public class HandlePlayback implements Opcode {
   public String toAssembly() {
     String info = updatePC ? "(update pc)" : "(update cr)";
     return String.format("%s %s", MNEMONIC, info);
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override

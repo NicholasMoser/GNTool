@@ -26,11 +26,6 @@ public class GetPlaybackPercent implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return getBytes();
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | %s {26E90001}", offset, MNEMONIC);
   }
@@ -38,11 +33,6 @@ public class GetPlaybackPercent implements Opcode {
   @Override
   public String toAssembly() {
     return String.format("%s",MNEMONIC);
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override

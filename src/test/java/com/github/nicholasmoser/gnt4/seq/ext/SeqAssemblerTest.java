@@ -7,19 +7,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
-
-import com.github.nicholasmoser.utils.ByteUtils;
-import java.util.Arrays;
-import javafx.util.Pair;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import javafx.util.Pair;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class SeqAssemblerTest {
 
@@ -38,7 +35,7 @@ public class SeqAssemblerTest {
         Pair<List <Opcode>, Integer> opcodes = SeqAssembler.assembleLines(assembly.split("\n"), null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (Opcode opcode : opcodes.getKey()) {
-            byte[] opcodeCodes = opcode.getBytes(0x1DA84, opcodes.getValue());
+            byte[] opcodeCodes = opcode.getBytes();
             baos.write(opcodeCodes);
         }
         byte [] bytes = baos.toByteArray();
@@ -51,7 +48,7 @@ public class SeqAssemblerTest {
         Pair<List <Opcode>, Integer> opcodes = SeqAssembler.assembleLines(assembly.split("\n"), null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (Opcode opcode : opcodes.getKey()) {
-            baos.write(opcode.getBytes(0x0, opcodes.getValue()));
+            baos.write(opcode.getBytes());
         }
         List<Opcode> assembledOpcodes = new LinkedList<>();
         byte [] bytes = baos.toByteArray();
@@ -59,7 +56,7 @@ public class SeqAssemblerTest {
         while (bs.bytesAreLeft()) {
             assembledOpcodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
         }
-        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes, bytes.length);
+        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes);
         assertEquals(assembly, reassembled.getValue());
     }
 
@@ -69,7 +66,7 @@ public class SeqAssemblerTest {
         Pair<List <Opcode>, Integer> opcodes = SeqAssembler.assembleLines(assembly.split("\n"), null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (Opcode opcode : opcodes.getKey()) {
-            baos.write(opcode.getBytes(0x41D4, opcodes.getValue()));
+            baos.write(opcode.getBytes());
         }
         byte [] bytes = baos.toByteArray();
         byte [] reference = Files.readAllBytes(Path.of("src/test/resources/gnt4/seq/ext/naruto0x41D4.seq"));
@@ -86,7 +83,7 @@ public class SeqAssemblerTest {
         while (bs.bytesAreLeft()) {
             assembledOpcodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
         }
-        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes, assembled.length);
+        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes);
         assertEquals(reference, reassembled.getValue());
     }
 
@@ -97,7 +94,7 @@ public class SeqAssemblerTest {
         Pair<List <Opcode>, Integer> opcodes = SeqAssembler.assembleLines(assembly.split("\n"), null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (Opcode opcode : opcodes.getKey()) {
-            baos.write(opcode.getBytes(0x41D4, opcodes.getValue()));
+            baos.write(opcode.getBytes());
         }
         byte [] bytes = baos.toByteArray();
         byte [] reference = Files.readAllBytes(Path.of("src/test/resources/gnt4/seq/ext/recording.seq"));
@@ -113,7 +110,7 @@ public class SeqAssemblerTest {
         while (bs.bytesAreLeft()) {
             assembledOpcodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
         }
-        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes, assembled.length);
+        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes);
         assertEquals(reference, reassembled.getValue());
     }
 }

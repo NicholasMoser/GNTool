@@ -1,6 +1,5 @@
 package com.github.nicholasmoser.gnt4.seq.opcodes;
 
-
 import com.github.nicholasmoser.utils.ByteStream;
 import j2html.tags.ContainerTag;
 
@@ -136,19 +135,8 @@ public class ActiveString implements Opcode {
     }
 
     @Override
-    public byte[] getBytes(int offset, int size) {
-        return bytes;
-    }
-
-
-    @Override
     public String toAssembly() {
         return String.format("%s",MNEMONIC);
-    }
-
-    @Override
-    public String toAssembly(int offset) {
-        return toAssembly();
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.TCG;
 import com.github.nicholasmoser.gnt4.seq.comment.Function;
 import com.github.nicholasmoser.gnt4.seq.comment.Functions;
+import com.github.nicholasmoser.gnt4.seq.dest.Destination;
+import com.github.nicholasmoser.gnt4.seq.dest.DestinationParser;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Branch;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchDecrementNotZero;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchEqualToZero;
@@ -66,7 +68,7 @@ public class SeqAssembler {
     public static Pair<List<Opcode>, Integer> assembleLines(String[] lines, Path seqPath) throws IOException {
         LinkedList<Opcode> opcodes = new LinkedList<>();
         int offset = 0;
-        Map<String, Integer> labelMap = new HashMap<>();
+        Map<String, Integer> localLabelMap = new HashMap<>();
         Map<String, Integer> globalLabelMap = new HashMap<>();
         Map<Integer, Function> globalFunctionMap = new HashMap<>();
         if (seqPath != null) {
@@ -75,6 +77,7 @@ public class SeqAssembler {
                 globalLabelMap.put(me.getValue().name(), me.getKey());
             }
         }
+        // First pass, get opcodes
         for (String line : lines) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             String operation = line;
@@ -86,10 +89,11 @@ public class SeqAssembler {
             operation = operation.replaceAll("\\s+$", "");
             // Add label to label map
             if (operation.endsWith(":")) {
-                labelMap.put(operation.replace(":", "").replace(" ", ""), offset);
+                localLabelMap.put(operation.replace(":", "").replace(" ", ""), offset);
                 continue;
             }
             String[] opcode;
+            Destination destination;
             String operands = "";
             try {
                 opcode = operation.substring(0, operation.indexOf(" ")).split("_");
@@ -118,109 +122,64 @@ public class SeqAssembler {
                     };
                     break;
                 case "b":
-                    try {
-                        currentOpcode = new Branch(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new Branch(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new Branch(offset, destination);
                     break;
                 case "beqz":
-                    try {
-                        currentOpcode = new BranchEqualToZero(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchEqualToZero(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchEqualToZero(offset, destination);
                     break;
                 case "bnez":
-                    try {
-                        currentOpcode = new BranchNotEqualToZero(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchNotEqualToZero(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchNotEqualToZero(offset, destination);
                     break;
                 case "bgtz":
-                    try {
-                        currentOpcode = new BranchGreaterThanZero(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchGreaterThanZero(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchGreaterThanZero(offset, destination);
                     break;
                 case "bgez":
-                    try {
-                        currentOpcode = new BranchGreaterThanOrEqualToZero(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchGreaterThanOrEqualToZero(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchGreaterThanOrEqualToZero(offset, destination);
                     break;
                 case "bltz":
-                    try {
-                        currentOpcode = new BranchLessThanZero(offset, Integer.decode(operands), (byte) 0x37);
-                    } catch (Exception e) {
-                        currentOpcode = new BranchLessThanZero(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchLessThanZero(offset, destination);
                     break;
                 case "blez":
-                    try {
-                        currentOpcode = new BranchLessThanOrEqualToZero(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchLessThanOrEqualToZero(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchLessThanOrEqualToZero(offset, destination);
                     break;
                 case "bdnz":
-                    try {
-                        currentOpcode = new BranchDecrementNotZero(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchDecrementNotZero(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchDecrementNotZero(offset, destination);
                     break;
                 case "bl":
-                    try {
-                        currentOpcode = new BranchLink(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchLink(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchLink(offset, destination);
                     break;
                 case "beqzal":
-                    try {
-                        currentOpcode = new BranchEqualToZeroLink(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchEqualToZeroLink(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchEqualToZeroLink(offset, destination);
                     break;
                 case "bnezal":
-                    try {
-                        currentOpcode = new BranchNotEqualZeroLink(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchNotEqualZeroLink(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchNotEqualZeroLink(offset, destination);
                     break;
                 case "bgtzal":
-                    try {
-                        currentOpcode = new BranchingOpcode("bgtzal", new byte[]{0x01, 0x3F, 0x00, 0x00}, offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchingOpcode("bgtzal", new byte[]{0x01, 0x3F, 0x00, 0x00}, offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchingOpcode("bgtzal", new byte[]{0x01, 0x3F, 0x00, 0x00}, offset, destination);
                     break;
                 case "bgezal":
-                    try {
-                        currentOpcode = new BranchingOpcode("bgezal", new byte[]{0x01, 0x40, 0x00, 0x00}, offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchingOpcode("bgezal", new byte[]{0x01, 0x40, 0x00, 0x00}, offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchingOpcode("bgezal", new byte[]{0x01, 0x40, 0x00, 0x00}, offset, destination);
                     break;
                 case "bltzal":
-                    try {
-                        currentOpcode = new BranchLessThanZeroLink(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchLessThanZeroLink(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchLessThanZeroLink(offset, destination);
                     break;
                 case "blezal":
-                    try {
-                        currentOpcode = new BranchLessThanEqualZeroLink(offset, Integer.decode(operands));
-                    } catch (Exception e) {
-                        currentOpcode = new BranchLessThanEqualZeroLink(offset, operands);
-                    }
+                    destination = DestinationParser.get(operands);
+                    currentOpcode = new BranchLessThanEqualZeroLink(offset, destination);
                     break;
                 case "blr":
                     currentOpcode = new BranchLinkReturn(offset);
@@ -249,23 +208,16 @@ public class SeqAssembler {
                             if (opcode.length == 2) {
                                 baos.write(new byte[]{0x01, 0x50});
                                 baos.write(SEQ_RegCMD1.parseDescription(operands));
+                                // fix here ^
                                 baos.write(ByteUtils.fromInt32(op.length - 1));
-                                List<Integer> offsets = new LinkedList<>();
-                                List<String> branches = new LinkedList<>();
+                                List<Destination> destinations = new LinkedList<>();
                                 for (int j = 1; j < op.length; j++) {
-                                    try {
-                                        int off = Integer.decode(op[j]);
-                                        offsets.add(off);
-                                        baos.write(ByteUtils.fromInt32(off));
-                                    } catch (Exception e) {
-                                        baos.write(ByteUtils.fromInt32(0));
-                                        branches.add(op[j]);
-                                    }
+                                    destination = DestinationParser.get(op[j]);
+                                    baos.write(destination.bytes());
+                                    destinations.add(destination);
                                 }
-                                if (!offsets.isEmpty()) {
-                                    currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], offsets);
-                                } else if (!branches.isEmpty()) {
-                                    currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], offsets, branches);
+                                if (!destinations.isEmpty()) {
+                                    currentOpcode = new BranchTable(offset, baos.toByteArray(), op[0], destinations);
                                 } else {
                                     LOGGER.log(Level.SEVERE, String.format("Neither offsets nor label names given for branch table at offset %d%n", offset));
                                     continue;
@@ -274,22 +226,14 @@ public class SeqAssembler {
                                 baos.write(new byte[]{0x01, 0x51});
                                 baos.write(SEQ_RegCMD1.parseDescription(operands));
                                 baos.write(ByteUtils.fromInt32(op.length - 1));
-                                List<Integer> offsets = new LinkedList<>();
-                                List<String> branches = new LinkedList<>();
+                                List<Destination> destinations = new LinkedList<>();
                                 for (int j = 1; j < op.length; j++) {
-                                    try {
-                                        int off = Integer.decode(op[j]);
-                                        offsets.add(off);
-                                        baos.write(ByteUtils.fromInt32(off));
-                                    } catch (Exception e) {
-                                        baos.write(ByteUtils.fromInt32(0));
-                                        branches.add(op[j]);
-                                    }
+                                    destination = DestinationParser.get(op[j]);
+                                    baos.write(destination.bytes());
+                                    destinations.add(destination);
                                 }
-                                if (!offsets.isEmpty()) {
-                                    currentOpcode = new BranchTableLink(offset, baos.toByteArray(), op[0], offsets);
-                                } else if (!branches.isEmpty()) {
-                                    currentOpcode = new BranchTableLink(offset, baos.toByteArray(), op[0], offsets, branches);
+                                if (!destinations.isEmpty()) {
+                                    currentOpcode = new BranchTableLink(offset, baos.toByteArray(), op[0], destinations);
                                 } else {
                                     System.err.printf("Neither offsets nor label names given for branch table link at offset %d%n", offset);
                                     continue;
@@ -851,56 +795,29 @@ public class SeqAssembler {
             opcodes.add(currentOpcode);
             offset += currentOpcode.getBytes().length;
         }
+        // Second pass, resolve branches
+        resolveBranches(opcodes);
+        return new Pair<>(opcodes,offset);
+    }
+
+    /**
+     * Resolve branches for branching opcodes. This is the second pass of the assembler. We must
+     * do this in the second pass so that all the opcodes and labels are known, so that we know
+     * where branches will actually resolve to. This means modifying the branching opcodes
+     * directly instead of creating new branching opcode objects.
+     *
+     * @param opcodes The opcodes to parse.
+     */
+    private static void resolveBranches(LinkedList<Opcode> opcodes) {
         for (Opcode opcode : opcodes) {
             if (opcode instanceof BranchingOpcode branchingOpcode) {
-                Integer destination = labelMap.get(branchingOpcode.getDestinationFunctionName());
-                if (destination != null) {
-                    ((BranchingOpcode) opcode).setDestination(destination);
-                } else {
-                    destination = globalLabelMap.get(branchingOpcode.getDestinationFunctionName());
-                    if (destination != null) {
-                        branchingOpcode.setDestination(destination);
-                    }
-                }
-                Function label = globalFunctionMap.get(branchingOpcode.getDestination());
-                if (label != null) {
-                    branchingOpcode.setDestinationFunctionName(label.name());
-                }
+                // TODO
             } else if (opcode instanceof BranchTable branchTable) {
-                if (!branchTable.getBranches().isEmpty()) {
-                    List<Integer> offsets = new LinkedList<>();
-                    for (String label : branchTable.getBranches()) {
-                        Integer destination = labelMap.get(label);
-                        if (destination != null) {
-                            offsets.add(destination);
-                        } else {
-                            destination = globalLabelMap.get(label);
-                            if (destination != null) {
-                                offsets.add(destination);
-                            }
-                        }
-                    }
-                    branchTable.setOffsets(offsets);
-                }
+                // TODO
             } else if (opcode instanceof BranchTableLink branchTableLink) {
-                if (!branchTableLink.getBranches().isEmpty()) {
-                    List<Integer> offsets = new LinkedList<>();
-                    for (String label : branchTableLink.getBranches()) {
-                        Integer destination = labelMap.get(label);
-                        if (destination != null) {
-                            offsets.add(destination);
-                        } else {
-                            destination = globalLabelMap.get(label);
-                            if (destination != null) {
-                                offsets.add(destination);
-                            }
-                        }
-                    }
-                    branchTableLink.setOffsets(offsets);
-                }
+                // TODO
             }
         }
-        return new Pair(opcodes,offset);
     }
 
     static private int getFlags(String group, String operands) {
