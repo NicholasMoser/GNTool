@@ -59,10 +59,11 @@ public BranchingOpcode(String mnemonic, byte[] bytes, int offset, Destination de
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
-    String dest = destination.toString();
+    String destName = destination.toString();
+    String destOffset = String.format("#%X", destination.offset());
     return div(attrs(id))
             .withText(String.format("%05X | %s ", offset, mnemonic))
-            .with(a(dest).withHref(dest))
+            .with(a(destName).withHref(destOffset))
             .withText(" ")
             .with(formatRawBytesHTML(getBytes()));
   }
