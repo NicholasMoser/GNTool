@@ -124,6 +124,8 @@ public class SeqHelper {
   private static final byte[] CHORD = "Chord".getBytes(StandardCharsets.UTF_8);
   // Kosheh Combo translation for Karasu
   private static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
+  // SCON4 Combo translation
+  private static final byte[] SEQ = "Seq 0".getBytes(StandardCharsets.UTF_8);
 
   public static Opcode getEftOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
     return switch (opcodeGroup) {
@@ -694,24 +696,12 @@ public class SeqHelper {
    * @throws IOException If an I/O error occurs.
    */
   public static boolean isComboList(ByteStream bs) throws IOException {
-    // Skip null bytes until at non-null bytes
-    bs.mark();
-    int word;
-    do {
-      if (bs.offset() >= bs.length()) {
-        bs.reset();
-        return false; // EOF
-      }
-      word = bs.readWord();
-    } while (word == 0);
-    // Read the next 5 bytes
-    if (bs.offset() + 5 > bs.length()) {
-      bs.reset();
+    if (!bs.bytesAreLeft(9)) {
       return false; // EOF
     }
-    byte[] bytes = bs.readBytes(5);
-    bs.reset();
-    return isCombo(bytes);
+    byte[] bytes = bs.peekBytes(9);
+    // The first four bytes is the number of combos and the next 5 bytes should be a combo name
+    return isCombo(Arrays.copyOfRange(bytes, 4, 9));
   }
 
   /**
@@ -725,7 +715,7 @@ public class SeqHelper {
   public static boolean isCombo(byte[] bytes) {
     return Arrays.equals(bytes, COMBO) || Arrays.equals(bytes, CHORD) ||
         Arrays.equals(bytes, ROUTINE) || Arrays.equals(bytes, COMBO_JAPANESE) ||
-        Arrays.equals(bytes, REPEATED_HITS);
+        Arrays.equals(bytes, REPEATED_HITS) || Arrays.equals(bytes, SEQ);
   }
 
   /**
@@ -736,19 +726,18 @@ public class SeqHelper {
    * @throws IOException If an I/O error occurs.
    */
   public static Opcode readComboList(ByteStream bs) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     int word;
     do {
       word = bs.readWord();
-      baos.write(ByteUtils.fromInt32(word));
     } while (word == 0);
+    int startOffset = bs.offset() - 4;
     int numberOfCombos = word;
     List<Combo> combos = new ArrayList<>(numberOfCombos);
     byte[] end = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
-    byte[] bytes = bs.readBytes(4);
     int offset = bs.offset();
+    byte[] bytes = bs.readNBytes(4);
     boolean parsingName = true;
-    int comboNum = 1;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     while (!Arrays.equals(end, bytes)) {
       baos.write(bytes);
       if (bytes[3] == 0) {
@@ -756,19 +745,18 @@ public class SeqHelper {
           parsingName = false;
         } else {
           String combo = getComboText(baos.toByteArray());
-          String info = String.format("Combo %d %s ", comboNum++, combo);
           if (bs.peekWord() == -1) {
             baos.write(end);
           }
-          combos.add(new Combo(offset, baos.toByteArray(), info));
+          combos.add(new Combo(offset, baos.toByteArray(), combo));
           baos = new ByteArrayOutputStream();
           offset = bs.offset();
           parsingName = true;
         }
       }
-      bytes = bs.readBytes(4);
+      bytes = bs.readNBytes(4);
     }
-    return new ComboList(combos);
+    return new ComboList(startOffset, combos);
   }
 
   /**

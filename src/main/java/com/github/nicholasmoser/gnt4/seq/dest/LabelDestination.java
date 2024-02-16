@@ -12,10 +12,27 @@ public class LabelDestination implements Destination {
   private boolean isResolved;
   private int offset;
 
+  /**
+   * Create an unresolved label destination.
+   *
+   * @param label The label destination.
+   */
   public LabelDestination(String label) {
     this.label = label;
     this.offset = 0xFFFFFFFF;
     this.isResolved = false;
+  }
+
+  /**
+   * Create a new already-resolved label destination.
+   *
+   * @param label The label destination.
+   * @param offset The destination offset.
+   */
+  public LabelDestination(String label, int offset) {
+    this.label = label;
+    this.offset = offset;
+    this.isResolved = true;
   }
 
   @Override

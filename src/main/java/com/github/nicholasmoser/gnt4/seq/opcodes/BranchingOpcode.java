@@ -15,7 +15,7 @@ public class BranchingOpcode implements Opcode {
   private final String mnemonic;
   private final byte[] bytes;
   private final int offset;
-  private final Destination destination;
+  private Destination destination;
 
 public BranchingOpcode(String mnemonic, byte[] bytes, int offset, Destination destination) {
     this.mnemonic = mnemonic;
@@ -32,8 +32,8 @@ public BranchingOpcode(String mnemonic, byte[] bytes, int offset, Destination de
     return destination;
   }
 
-  public void resolveDestination(int position, Map<String, Integer> labels) {
-    // TODO
+  public void setDestination(Destination destination) {
+    this.destination = destination;
   }
 
   @Override
@@ -48,7 +48,7 @@ public BranchingOpcode(String mnemonic, byte[] bytes, int offset, Destination de
 
   @Override
   public String toString() {
-    return String.format("%05X | %s %s {%s %08X}", offset, mnemonic, destination, ByteUtils.bytesToHexString(bytes), destination.bytes());
+    return String.format("%05X | %s %s {%s %s}", offset, mnemonic, destination, ByteUtils.bytesToHexString(bytes), ByteUtils.bytesToHexString(destination.bytes()));
   }
 
   @Override

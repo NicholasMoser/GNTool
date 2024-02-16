@@ -7,7 +7,7 @@ import j2html.tags.ContainerTag;
 
 public class Combo implements Opcode {
 
-  private final static String MNEMONIC = "combo_list";
+  private final static String MNEMONIC = "combo";
   private final int offset;
   private final byte[] bytes;
   private final String info;
@@ -30,7 +30,7 @@ public class Combo implements Opcode {
 
   @Override
   public String toString() {
-    return String.format("%05X | %s: %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
+    return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
   }
 
   @Override
@@ -42,7 +42,7 @@ public class Combo implements Opcode {
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
     return div(attrs(id))
-        .withText(String.format("%05X | %s: %s ", offset, MNEMONIC, info))
+        .withText(String.format("%05X | %s %s ", offset, MNEMONIC, info))
         .with(formatRawBytesHTML(bytes));
   }
 }
