@@ -2,6 +2,8 @@ package com.github.nicholasmoser.gnt4.seq;
 
 import com.github.nicholasmoser.gnt4.seq.comment.Function;
 import com.github.nicholasmoser.gnt4.seq.comment.Functions;
+import com.github.nicholasmoser.gnt4.seq.dest.Destination;
+import com.github.nicholasmoser.gnt4.seq.dest.FunctionDestination;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingLinkingOpcode;
@@ -16,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -202,14 +205,19 @@ public class SeqKing {
       }
       // This is a very hacky way of setting the function name on a branching opcode
       if (newOpcode instanceof BranchingOpcode branchingOpcode) {
+        Destination destination = branchingOpcode.getDestination();
+        int destinationOffset = destination.offset();
         Map<Integer, Function> functions = Functions.getFunctions(fileName);
-        Function function = functions.get(branchingOpcode.getDestination());
+        Function function = functions.get(destinationOffset);
         if (function != null) {
-          branchingOpcode.setDestinationFunctionName(function.name());
+          // Known function
+          branchingOpcode.setDestination(new FunctionDestination(destinationOffset, function.name()));
         } else if (branchingOpcode instanceof BranchingLinkingOpcode) {
-          String destinationFunctionName = String.format("fun_%X",branchingOpcode.getDestination());
-          branchingOpcode.setDestinationFunctionName(destinationFunctionName);
-          functions.put(branchingOpcode.getDestination(), new Function(destinationFunctionName,List.of("")));
+          // Unknown function
+          String destinationFunctionName = String.format("fun_%X", destinationOffset);
+          branchingOpcode.setDestination(new FunctionDestination(destinationOffset, destinationFunctionName));
+          functions.put(destinationOffset, new Function(destinationFunctionName,
+              Collections.emptyList()));
         }
       }
       if (bs.offset() == bytes.length) {
@@ -311,8 +319,13 @@ public class SeqKing {
         binaryOffsetToSize.put(0x12150, 0x70); // array of offsets
         binaryOffsetToSize.put(0x121C0, 0x17A0);
         binaryOffsetToSize.put(0x1C040, 0xF0); // array of offsets?
-        binaryOffsetToSize.put(0x1C130, 0x162E0);
-        binaryOffsetToSize.put(0x32410, 0x8C0); // array of offsets?
+        binaryOffsetToSize.put(0x1C130, 0x30);
+        binaryOffsetToSize.put(0x1C160, 0x20);
+        binaryOffsetToSize.put(0x1C180, 0x40);
+        binaryOffsetToSize.put(0x1C1C0, 0x2940);
+        binaryOffsetToSize.put(0x1EB00, 0x13910); // String table
+        binaryOffsetToSize.put(0x32410, 0x10);
+        binaryOffsetToSize.put(0x32420, 0x8B0); // String table offsets
       }
       case Seqs.STG_001_0000 -> {
         binaryOffsetToSize.put(0x4C0, 0x220);

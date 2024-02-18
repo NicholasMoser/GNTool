@@ -189,14 +189,7 @@ public class FPKPacker {
     for (FPKFile file : fpkChildren) {
       FPKFileHeader header = file.getHeader();
       header.setOffset(outputSize);
-      int compressedSize = header.getCompressedSize();
-      int modDifference = compressedSize % 16;
-      if (modDifference == 0) {
-        outputSize += compressedSize;
-      } else {
-        // Make sure the offset is divisible by 16
-        outputSize += compressedSize + (16 - modDifference);
-      }
+      outputSize += ByteUtils.align(header.getCompressedSize(), 16);
     }
 
     // FPK Header

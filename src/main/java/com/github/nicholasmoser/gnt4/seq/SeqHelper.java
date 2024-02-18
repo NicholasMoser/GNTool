@@ -88,6 +88,7 @@ import com.github.nicholasmoser.gnt4.seq.opcodes.Combo;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ComboList;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ExtraData;
 import com.github.nicholasmoser.gnt4.seq.opcodes.FileName;
+import com.github.nicholasmoser.gnt4.seq.opcodes.InvalidBytes;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Pop;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Push;
@@ -123,6 +124,8 @@ public class SeqHelper {
   private static final byte[] CHORD = "Chord".getBytes(StandardCharsets.UTF_8);
   // Kosheh Combo translation for Karasu
   private static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
+  // SCON4 Combo translation
+  private static final byte[] SEQ = "Seq 0".getBytes(StandardCharsets.UTF_8);
 
   public static Opcode getEftOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
     return switch (opcodeGroup) {
@@ -214,6 +217,58 @@ public class SeqHelper {
       default -> throw new IllegalStateException(
           String.format("Unknown opcode group: %02X at offset 0x%X", opcodeGroup, bs.offset()));
     };
+  }
+
+  /**
+   * Parse all opcodes from the given SEQ bytes.
+   *
+   * @param bytes The bytes to parse.
+   * @return The SEQ opcodes.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static List<Opcode> getAllOpcodes(byte[] bytes) throws IOException {
+    List<Opcode> opcodes = new ArrayList<>();
+    ByteStream bs = new ByteStream(bytes);
+    while (bs.bytesAreLeft()) {
+      byte[] buff = bs.peekBytes(2);
+      opcodes.add(SeqHelper.getSeqOpcode(bs, buff[0], buff[1]));
+    }
+    return opcodes;
+  }
+
+  /**
+   * Parse all opcodes from the given byte stream.
+   *
+   * @param bs The byte stream to parse.
+   * @return The SEQ opcodes.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static List<Opcode> getAllOpcodes(ByteStream bs) throws IOException {
+    List<Opcode> opcodes = new ArrayList<>();
+    while (bs.bytesAreLeft()) {
+      byte[] bytes = bs.peekBytes(2);
+      opcodes.add(SeqHelper.getSeqOpcode(bs, bytes[0], bytes[1]));
+    }
+    return opcodes;
+  }
+
+
+  /**
+   * Parse opcodes from a byte stream up to a certain number of bytes.
+   *
+   * @param bs The byte stream to parse.
+   * @param byteLength The number of bytes to read from the byte stream.
+   * @return The SEQ opcodes.
+   * @throws IOException If any I/O exception occurs.
+   */
+  public static List<Opcode> getOpcodes(ByteStream bs, int byteLength) throws IOException {
+    int start = bs.offset();
+    List<Opcode> opcodes = new ArrayList<>();
+    while (bs.offset() < start + byteLength) {
+      byte[] bytes = bs.peekBytes(2);
+      opcodes.add(SeqHelper.getSeqOpcode(bs, bytes[0], bytes[1]));
+    }
+    return opcodes;
   }
 
   /**
@@ -664,24 +719,12 @@ public class SeqHelper {
    * @throws IOException If an I/O error occurs.
    */
   public static boolean isComboList(ByteStream bs) throws IOException {
-    // Skip null bytes until at non-null bytes
-    bs.mark();
-    int word;
-    do {
-      if (bs.offset() >= bs.length()) {
-        bs.reset();
-        return false; // EOF
-      }
-      word = bs.readWord();
-    } while (word == 0);
-    // Read the next 5 bytes
-    if (bs.offset() + 5 > bs.length()) {
-      bs.reset();
+    if (!bs.bytesAreLeft(9)) {
       return false; // EOF
     }
-    byte[] bytes = bs.readBytes(5);
-    bs.reset();
-    return isCombo(bytes);
+    byte[] bytes = bs.peekBytes(9);
+    // The first four bytes is the number of combos and the next 5 bytes should be a combo name
+    return isCombo(Arrays.copyOfRange(bytes, 4, 9));
   }
 
   /**
@@ -695,7 +738,7 @@ public class SeqHelper {
   public static boolean isCombo(byte[] bytes) {
     return Arrays.equals(bytes, COMBO) || Arrays.equals(bytes, CHORD) ||
         Arrays.equals(bytes, ROUTINE) || Arrays.equals(bytes, COMBO_JAPANESE) ||
-        Arrays.equals(bytes, REPEATED_HITS);
+        Arrays.equals(bytes, REPEATED_HITS) || Arrays.equals(bytes, SEQ);
   }
 
   /**
@@ -706,19 +749,18 @@ public class SeqHelper {
    * @throws IOException If an I/O error occurs.
    */
   public static Opcode readComboList(ByteStream bs) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     int word;
     do {
       word = bs.readWord();
-      baos.write(ByteUtils.fromInt32(word));
     } while (word == 0);
+    int startOffset = bs.offset() - 4;
     int numberOfCombos = word;
     List<Combo> combos = new ArrayList<>(numberOfCombos);
     byte[] end = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
-    byte[] bytes = bs.readBytes(4);
     int offset = bs.offset();
+    byte[] bytes = bs.readNBytes(4);
     boolean parsingName = true;
-    int comboNum = 1;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     while (!Arrays.equals(end, bytes)) {
       baos.write(bytes);
       if (bytes[3] == 0) {
@@ -726,19 +768,18 @@ public class SeqHelper {
           parsingName = false;
         } else {
           String combo = getComboText(baos.toByteArray());
-          String info = String.format("Combo %d %s ", comboNum++, combo);
           if (bs.peekWord() == -1) {
             baos.write(end);
           }
-          combos.add(new Combo(offset, baos.toByteArray(), info));
+          combos.add(new Combo(offset, baos.toByteArray(), combo));
           baos = new ByteArrayOutputStream();
           offset = bs.offset();
           parsingName = true;
         }
       }
-      bytes = bs.readBytes(4);
+      bytes = bs.readNBytes(4);
     }
-    return new ComboList(combos);
+    return new ComboList(startOffset, combos);
   }
 
   /**

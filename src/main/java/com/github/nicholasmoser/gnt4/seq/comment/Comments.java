@@ -307,7 +307,28 @@ public class Comments {
     allComments.put(Seqs.GAME_00, game00Comments);
 
     Multimap<Integer, String> titleComments = ArrayListMultimap.create();
-    game00Comments.put(0x717C, "// Branch based on month background theme");
+    titleComments.put(0x717C, "// Branch based on month background theme");
+    titleComments.put(0x16DB4, "// Load submenu index");
+    titleComments.put(0x16DD0, "// Set submenu index");
+    titleComments.put(0x16DE8, "// Increment submenu index");
+    titleComments.put(0x16E00, "// Loop until at end if index (s_lpCTD->vars[0x24]) is at the end (s_lpCTD->vars[0x22])");
+    titleComments.put(0x1C130, "// Index of which menu option to display in each slot.");
+    titleComments.put(0x1C130, "// Set at runtime.");
+    titleComments.put(0x1C130, "// 1 = Single Player");
+    titleComments.put(0x1C130, "// 2 = Battle Mode");
+    titleComments.put(0x1C130, "// 3 = Story Mode");
+    titleComments.put(0x1C130, "// 4 = Practice");
+    titleComments.put(0x1C130, "// 5 = Watch Mode");
+    titleComments.put(0x1C130, "// 6 = Extra");
+    titleComments.put(0x1C130, "// 7 = Options");
+    titleComments.put(0x1C130, "// 8 = Missions");
+    titleComments.put(0x1C160, "// Index of which sub-menu option to display in each slot");
+    titleComments.put(0x1C160, "// How many submenus each main menu entry has, stored by main menu entry index");
+    titleComments.put(0x1C1C0, "// The first 8 values here are the starting index for each submenu");
+    titleComments.put(0x1C1C0, "// of each main menu entry. So for example, Battle Mode is main menu");
+    titleComments.put(0x1C1C0, "// index 2, which will read 00000009 from this list. So the submenu");
+    titleComments.put(0x1C1C0, "// indices of Battle Mode will start at 0x9 and go to 0xD");
+    titleComments.put(0x1C1C0, "// (1 before the next index). They are increments at 0x16DE8");
     allComments.put(Seqs.M_TITLE, titleComments);
 
     // m_vs.seq 0x3838 Reads the character costume ID

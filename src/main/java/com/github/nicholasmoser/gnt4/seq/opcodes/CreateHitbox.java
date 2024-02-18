@@ -36,11 +36,6 @@ public class CreateHitbox implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return getBytes();
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(getBytes()));
   }
@@ -48,11 +43,6 @@ public class CreateHitbox implements Opcode {
   @Override
   public String toAssembly() {
     return String.format("%s 0x%04X, 0x%04X", MNEMONIC, boneId, size);
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override

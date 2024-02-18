@@ -25,11 +25,6 @@ public class BranchLinkReturn implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return getBytes();
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | %s {01450000}", offset, MNEMONIC);
   }
@@ -37,11 +32,6 @@ public class BranchLinkReturn implements Opcode {
   @Override
   public String toAssembly() {
     return String.format("%s",MNEMONIC);
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override

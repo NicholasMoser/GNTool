@@ -130,7 +130,7 @@ public class SeqKingHtml {
     for (Opcode opcode : opcodes) {
       if (currentOpcode instanceof BranchLinkReturn && opcode instanceof BranchLink bl) {
         // It's a new function if there is a branch and link to the first instruction after a blr
-        if (offset == bl.getDestination()) {
+        if (offset == bl.getDestination().offset()) {
           return true;
         }
       } else if (opcode instanceof ActionID actionId) {

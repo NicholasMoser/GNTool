@@ -176,15 +176,28 @@ public class ByteStream extends ByteArrayInputStream {
    * @param pos The position in the byte array to seek to.
    */
   public void seek(int pos) {
-    if (pos >= count) {
-      throw new IllegalArgumentException("ByteStream new pos " + pos + " >= count " + count);
+    if (pos > count) {
+      throw new IllegalArgumentException("ByteStream new pos " + pos + " > count " + count);
     } else if (pos < 0) {
       throw new IllegalArgumentException("ByteStream new pos " + pos + " < 0");
     }
     this.pos = pos;
   }
 
+  /**
+   * @return If any bytes are left in the ByteStream
+   */
   public boolean bytesAreLeft() {
-    return pos < buf.length;
+    return bytesAreLeft(1);
+  }
+
+  /**
+   * Return if an amount of bytes are left in the ByteStream.
+   *
+   * @param count The amount of bytes.
+   * @return If an amount of bytes are left in the ByteStream.
+   */
+  public boolean bytesAreLeft(int count) {
+    return pos + count <= buf.length;
   }
 }

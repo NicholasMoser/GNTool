@@ -132,7 +132,7 @@ public class BoneAnimation {
     skipWordPadding(raf);
     int timeValuesOffset = ByteUtils.readInt32(raf);
     int coordinatesOffset = ByteUtils.readInt32(raf);
-    ByteUtils.byteAlign(raf, 16);
+    ByteUtils.alignSkip(raf, 16);
 
     // Save the spot of the next bone animation header
     long nextKeyFrameHeaderOffset = raf.getFilePointer();

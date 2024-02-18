@@ -82,18 +82,8 @@ public class ActiveAttack implements Comparable<ActiveAttack>, Opcode {
     }
 
     @Override
-    public byte[] getBytes(int offset, int size) {
-        return bytes;
-    }
-
-    @Override
     public String toAssembly() {
         return String.format("%s, %s", MNEMONIC, formatRawBytes(bytes));
-    }
-
-    @Override
-    public String toAssembly(int offset) {
-        return toAssembly();
     }
 
     @Override

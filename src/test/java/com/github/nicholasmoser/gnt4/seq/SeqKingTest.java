@@ -734,7 +734,7 @@ public class SeqKingTest {
       List<Opcode> opcodes = SeqKing.getOpcodes(seq, fileName.get(), VERBOSE, PERMISSIVE);
       for (Opcode opcode : opcodes) {
         if (opcode instanceof BranchingOpcode bo) {
-          int dest = bo.getDestination();
+          int dest = bo.getDestination().offset();
           boolean match = opcodes.stream().anyMatch(o -> o.getOffset() == dest);
           if (!match) {
             System.out.printf("###### NO MATCH FOR BRANCH AT OFFSET 0x%X OF %s\n", opcode.getOffset(), fileName.get());

@@ -10,6 +10,10 @@ import j2html.tags.ContainerTag;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @deprecated Replaced with respective symbol opcodes
+ */
+@Deprecated
 public class SeqEditOpcode implements Opcode {
 
   private final static String MNEMONIC = "Seq Edit";
@@ -32,11 +36,6 @@ public class SeqEditOpcode implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return getBytes();
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | %s: %s %s", offset, MNEMONIC, edit.getName(), formatRawBytes(getBytes()));
   }
@@ -44,11 +43,6 @@ public class SeqEditOpcode implements Opcode {
   @Override
   public String toAssembly() {
     return String.format("%s %s",MNEMONIC,edit.getName());
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override
@@ -71,5 +65,9 @@ public class SeqEditOpcode implements Opcode {
         + formatRawBytes(edit.getNewBytesWithBranchBack())
         + "<br>New Byte Opcodes: ";
     return div(attrs(id)).withText(text).with(opcodes);
+  }
+
+  public SeqEdit getSeqEdit() {
+    return edit;
   }
 }

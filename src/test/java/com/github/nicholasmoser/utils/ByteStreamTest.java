@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,8 +16,6 @@ public class ByteStreamTest {
 
   /**
    * Tests a ByteStream with a null byte array.
-   *
-   * @throws Exception If any Exception occurs.
    */
   @Test
   public void testNull() {
@@ -44,8 +43,6 @@ public class ByteStreamTest {
 
   /**
    * Tests a ByteStream with a one byte array.
-   *
-   * @throws Exception If any Exception occurs.
    */
   @Test
   public void testOneByteArray() {
@@ -157,13 +154,13 @@ public class ByteStreamTest {
     byte[] bytes = new byte[]{0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04};
     ByteStream bs = new ByteStream(bytes);
     assertEquals(0, bs.offset());
-    assertArrayEquals(new byte[]{0x11, 0x22, 0x33, 0x44}, bs.readBytes(4));
+    assertArrayEquals(new byte[]{0x11, 0x22, 0x33, 0x44}, bs.readNBytes(4));
     assertEquals(4, bs.offset());
-    assertArrayEquals(new byte[]{0x01, 0x02}, bs.readBytes(2));
+    assertArrayEquals(new byte[]{0x01, 0x02}, bs.readNBytes(2));
     assertEquals(6, bs.offset());
-    assertArrayEquals(new byte[]{0x03}, bs.readBytes(1));
+    assertArrayEquals(new byte[]{0x03}, bs.readNBytes(1));
     assertEquals(7, bs.offset());
-    assertArrayEquals(new byte[]{}, bs.readBytes(0));
+    assertArrayEquals(new byte[]{}, bs.readNBytes(0));
     assertEquals(7, bs.offset());
   }
 
@@ -177,7 +174,7 @@ public class ByteStreamTest {
     byte[] bytes = new byte[]{0x11, 0x22, 0x33, 0x44, 0x01, 0x02, 0x03, 0x04};
     ByteStream bs = new ByteStream(bytes);
     assertEquals(8, bs.length());
-    bs.readBytes(4);
+    bs.readNBytes(4);
     assertEquals(8, bs.length());
     bs = new ByteStream(new byte[0]);
     assertEquals(0, bs.length());
@@ -209,7 +206,9 @@ public class ByteStreamTest {
     assertEquals(6, bs.offset());
     bs.seek(7);
     assertEquals(7, bs.offset());
-    Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(8));
+    bs.seek(8);
+    assertEquals(8, bs.offset());
+    Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(9));
     Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(44444));
     bs.seek(4);
     assertEquals(4, bs.offset());
@@ -219,5 +218,41 @@ public class ByteStreamTest {
     assertEquals(3, bs.offset());
     Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(-1));
     Assertions.assertThrows(IllegalArgumentException.class, () -> bs.seek(-55555));
+  }
+
+  @Test
+  public void testBytesAreLeft() throws Exception {
+    ByteStream bs = new ByteStream(new byte[] {1, 2, 3, 4});
+    assertThat(bs.bytesAreLeft()).isTrue();
+    assertThat(bs.bytesAreLeft(1)).isTrue();
+    assertThat(bs.bytesAreLeft(2)).isTrue();
+    assertThat(bs.bytesAreLeft(3)).isTrue();
+    assertThat(bs.bytesAreLeft(4)).isTrue();
+    assertThat(bs.bytesAreLeft(5)).isFalse();
+    assertThat(bs.bytesAreLeft(6)).isFalse();
+    assertThat(bs.bytesAreLeft(8)).isFalse();
+    assertThat(bs.bytesAreLeft(16)).isFalse();
+
+    bs.seek(2); // halfway through bytes
+    assertThat(bs.bytesAreLeft()).isTrue();
+    assertThat(bs.bytesAreLeft(1)).isTrue();
+    assertThat(bs.bytesAreLeft(2)).isTrue();
+    assertThat(bs.bytesAreLeft(3)).isFalse();
+    assertThat(bs.bytesAreLeft(4)).isFalse();
+    assertThat(bs.bytesAreLeft(5)).isFalse();
+    assertThat(bs.bytesAreLeft(6)).isFalse();
+    assertThat(bs.bytesAreLeft(8)).isFalse();
+    assertThat(bs.bytesAreLeft(16)).isFalse();
+
+    bs.skipNBytes(2); // end of bytes
+    assertThat(bs.bytesAreLeft()).isFalse();
+    assertThat(bs.bytesAreLeft(1)).isFalse();
+    assertThat(bs.bytesAreLeft(2)).isFalse();
+    assertThat(bs.bytesAreLeft(3)).isFalse();
+    assertThat(bs.bytesAreLeft(4)).isFalse();
+    assertThat(bs.bytesAreLeft(5)).isFalse();
+    assertThat(bs.bytesAreLeft(6)).isFalse();
+    assertThat(bs.bytesAreLeft(8)).isFalse();
+    assertThat(bs.bytesAreLeft(16)).isFalse();
   }
 }

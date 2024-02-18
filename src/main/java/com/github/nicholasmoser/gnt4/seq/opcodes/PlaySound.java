@@ -29,11 +29,6 @@ public class PlaySound implements Opcode {
   }
 
   @Override
-  public byte[] getBytes(int offset, int size) {
-    return getBytes();
-  }
-
-  @Override
   public String toString() {
     return String.format("%05X | %s %s %s", offset, MNEMONIC, info, formatRawBytes(bytes));
   }
@@ -59,11 +54,6 @@ public class PlaySound implements Opcode {
     builder.append(String.format("%s %s", MNEMONIC, type));
     builder.append(String.format(", 0x%02X%02X, 0x%02X%02X", bytes[4], bytes[5], bytes[6], bytes[7]));
     return builder.toString();
-  }
-
-  @Override
-  public String toAssembly(int offset) {
-    return toAssembly();
   }
 
   @Override
