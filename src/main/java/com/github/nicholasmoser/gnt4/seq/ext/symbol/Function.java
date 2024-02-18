@@ -10,6 +10,9 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A function that can be called and will be returned from in the SEQ file.
+ */
 public class Function implements Symbol {
     public static final int TYPE = 4;
     private static final Logger LOGGER = Logger.getLogger(Function.class.getName());

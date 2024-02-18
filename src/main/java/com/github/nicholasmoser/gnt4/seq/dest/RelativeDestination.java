@@ -2,6 +2,10 @@ package com.github.nicholasmoser.gnt4.seq.dest;
 
 import com.github.nicholasmoser.utils.ByteUtils;
 
+/**
+ * A destination relative to the current offset. Needs to be resolved to handle if the current
+ * offset changes.
+ */
 public class RelativeDestination implements Destination {
   private final int relativeOffset;
   private boolean isResolved;

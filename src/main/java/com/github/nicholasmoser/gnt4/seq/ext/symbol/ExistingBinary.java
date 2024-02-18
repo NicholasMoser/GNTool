@@ -5,6 +5,9 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Binary data that already exists in the SEQ file, that is, bytes that can be referenced.
+ */
 public class ExistingBinary implements Symbol {
     public static final int TYPE = 2;
     private final String name;

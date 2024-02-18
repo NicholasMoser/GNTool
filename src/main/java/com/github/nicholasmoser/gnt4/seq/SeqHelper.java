@@ -219,6 +219,13 @@ public class SeqHelper {
     };
   }
 
+  /**
+   * Parse all opcodes from the given SEQ bytes.
+   *
+   * @param bytes The bytes to parse.
+   * @return The SEQ opcodes.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static List<Opcode> getAllOpcodes(byte[] bytes) throws IOException {
     List<Opcode> opcodes = new ArrayList<>();
     ByteStream bs = new ByteStream(bytes);
@@ -229,6 +236,13 @@ public class SeqHelper {
     return opcodes;
   }
 
+  /**
+   * Parse all opcodes from the given byte stream.
+   *
+   * @param bs The byte stream to parse.
+   * @return The SEQ opcodes.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static List<Opcode> getAllOpcodes(ByteStream bs) throws IOException {
     List<Opcode> opcodes = new ArrayList<>();
     while (bs.bytesAreLeft()) {
@@ -238,6 +252,15 @@ public class SeqHelper {
     return opcodes;
   }
 
+
+  /**
+   * Parse opcodes from a byte stream up to a certain number of bytes.
+   *
+   * @param bs The byte stream to parse.
+   * @param byteLength The number of bytes to read from the byte stream.
+   * @return The SEQ opcodes.
+   * @throws IOException If any I/O exception occurs.
+   */
   public static List<Opcode> getOpcodes(ByteStream bs, int byteLength) throws IOException {
     int start = bs.offset();
     List<Opcode> opcodes = new ArrayList<>();

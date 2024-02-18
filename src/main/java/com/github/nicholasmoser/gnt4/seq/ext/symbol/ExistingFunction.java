@@ -5,6 +5,9 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * A function that already exists in the SEQ file.
+ */
 public class ExistingFunction implements Symbol {
     public static final int TYPE = 3;
     private final String name;

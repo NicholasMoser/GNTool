@@ -24,6 +24,14 @@ import java.util.logging.Logger;
 public class SymbolParser {
   private static final Logger LOGGER = Logger.getLogger(SymbolParser.class.getName());
 
+  /**
+   * Parse a known number of symbols from a byte stream.
+   *
+   * @param bs The byte stream to read from.
+   * @param count The number of symbols to read.
+   * @return The symbols.
+   * @throws IOException If any I/O issues occur
+   */
   public static List<Symbol> parse(ByteStream bs, int count) throws IOException {
     List<Symbol> symbols = new ArrayList<>();
     for (int i = 0; i < count; i++) {

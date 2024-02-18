@@ -1,6 +1,13 @@
 package com.github.nicholasmoser.gnt4.seq.dest;
 
 public class DestinationParser {
+
+  /**
+   * Parse a destination string and return a destination type.
+   *
+   * @param destination The destination string to parse.
+   * @return The destination.
+   */
   public static Destination get(String destination) {
     if (destination.startsWith("+") || destination.startsWith("-")) {
       Long longValue = Long.decode(destination);

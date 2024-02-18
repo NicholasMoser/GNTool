@@ -10,6 +10,9 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Code in the SEQ file that is branched to and branched back from in the original SEQ code.
+ */
 public class InsertAsm implements Symbol {
   public static final int TYPE = 5;
   private static final Logger LOGGER = Logger.getLogger(InsertAsm.class.getName());

@@ -6,6 +6,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 
+/**
+ * A class to represent a symbol map of labels to offsets.
+ */
 public class SymbolMap {
   private final BiMap<String, Integer> nameToOffset;
   private final BiMap<Integer, String> offsetToName;

@@ -1,10 +1,12 @@
 package com.github.nicholasmoser.gnt4.seq.ext.symbol;
 
-import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * A group of bytes associated with each other than can be referenced in assembly by name.
+ */
 public interface Symbol {
 
     /**

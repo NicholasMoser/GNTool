@@ -5,6 +5,9 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Binary data, that is, bytes that can be referenced.
+ */
 public class Binary implements Symbol {
     public static final int TYPE = 1;
     private final String name;
