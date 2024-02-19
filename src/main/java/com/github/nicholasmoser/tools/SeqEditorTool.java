@@ -51,6 +51,7 @@ public class SeqEditorTool {
     Stage stage = new Stage();
     GUIUtils.setIcons(stage);
     seqEditor.init(seqPath, stage);
+    stage.setFullScreen(true);
     stage.setScene(scene);
     stage.setTitle("SEQ Editor: " + seqPath.getFileName());
     stage.centerOnScreen();
