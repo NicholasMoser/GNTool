@@ -70,10 +70,6 @@
                      </accelerator></MenuItem>
             <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
-            <MenuItem mnemonicParsing="false" onAction="#apply" text="Apply">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
                   <MenuItem mnemonicParsing="false" onAction="#exportEdit" text="Export">
                     <accelerator>
                       <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
@@ -106,15 +102,7 @@
                   <ListView fx:id="editList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#selectEdit" prefWidth="300.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <VBox prefWidth="810.0">
-               <children>
-                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#apply" prefHeight="40.0" prefWidth="383.0" text="Apply" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </VBox.margin>
-                  </Button>
-               </children>
-            </VBox>
+            <VBox prefWidth="810.0" />
             <VBox prefWidth="810.0">
                <children>
                   <Label alignment="CENTER" minWidth="45.0" prefHeight="27.0" prefWidth="45.0" style="&#10;" text="Bytes" textAlignment="CENTER" wrapText="false">
