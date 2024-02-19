@@ -42,7 +42,6 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -50,7 +49,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.nicholasmoser.gnt4.seq.ext.SeqEditor">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.nicholasmoser.gnt4.seq.ext.SeqEditor">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -100,87 +99,37 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.333, 0.666" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.2, 0.6" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
       <items>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox prefWidth="300.0">
                <children>
-                  <ListView fx:id="editList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#selectEdit" prefHeight="765.0" prefWidth="396.0" VBox.vgrow="ALWAYS" />
+                  <ListView fx:id="editList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#selectEdit" prefWidth="300.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox prefWidth="810.0">
                <children>
-            <Label alignment="CENTER" style="&#10;" text="Name" textAlignment="CENTER" wrapText="false">
-                     <font>
-                <Font size="18.0" fx:id="x1" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextArea fx:id="nameTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="68.0" prefWidth="383.0" VBox.vgrow="ALWAYS">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin></TextArea>
-                  <Label alignment="CENTER" style="&#10;" text="Offset" textAlignment="CENTER" wrapText="false">
-                     <font>
-                        <Font size="18.0" fx:id="x12" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="offsetTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin></TextField>
-                  <Label alignment="CENTER" style="&#10;" text="Hijacked Bytes Length" textAlignment="CENTER" wrapText="false">
-                     <font>
-                        <Font size="18.0" fx:id="x1211" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <TextField fx:id="hijackedBytesLengthTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin></TextField>
-            <Label alignment="CENTER" style="&#10;" text="Hijacked Bytes" textAlignment="CENTER" wrapText="false">
-              <font>
-                <Font size="18.0" fx:id="x121" />
-              </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-            </Label>
-                  <TextArea fx:id="hijackedBytesTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="78.0" prefWidth="383.0" wrapText="true" VBox.vgrow="ALWAYS">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin></TextArea>
-            <Label alignment="CENTER" style="&#10;" text="New Bytes" textAlignment="CENTER" wrapText="false">
-              <font>
-                <Font size="18.0" fx:id="x122" />
-              </font>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-            </Label>
-                  <TextArea fx:id="newBytesTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="290.0" prefWidth="383.0" wrapText="true" VBox.vgrow="ALWAYS">
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin></TextArea>
                   <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#apply" prefHeight="40.0" prefWidth="383.0" text="Apply" VBox.vgrow="NEVER">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </VBox.margin></Button>
-                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#reset" prefHeight="41.0" prefWidth="383.0" text="Reset Changes" VBox.vgrow="NEVER">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" />
-                     </VBox.margin></Button>
+                     </VBox.margin>
+                  </Button>
                </children>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox prefWidth="810.0">
                <children>
+                  <Label alignment="CENTER" minWidth="45.0" prefHeight="27.0" prefWidth="45.0" style="&#10;" text="Bytes" textAlignment="CENTER" wrapText="false">
+                     <font>
+                        <Font size="18.0" fx:id="x111" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TextArea fx:id="bytes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="942.0" prefWidth="73.0">
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </VBox.margin>
+                  </TextArea>
                   <Label alignment="CENTER" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Opcodes" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x11" />
@@ -189,14 +138,21 @@
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
                   </Label>
-                  <TextArea fx:id="opcodesTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="737.0" prefWidth="387.0" VBox.vgrow="ALWAYS">
+                  <TextArea fx:id="opcodes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="942.0" prefWidth="73.0" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </VBox.margin></TextArea>
+                     </VBox.margin>
+                  </TextArea>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#disassemble" prefHeight="41.0" prefWidth="383.0" text="Disassemble">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" />
+                     </VBox.margin>
+                  </Button>
                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#assemble" prefHeight="41.0" prefWidth="383.0" text="Assemble" VBox.vgrow="NEVER">
                        <VBox.margin>
                            <Insets bottom="5.0" left="5.0" right="5.0" />
-                       </VBox.margin></Button>
+                       </VBox.margin>
+                  </Button>
                </children>
             </VBox>
       </items>

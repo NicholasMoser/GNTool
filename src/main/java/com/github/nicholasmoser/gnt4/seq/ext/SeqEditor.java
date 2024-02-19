@@ -2,13 +2,12 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.ext.parser.AssemblyParser;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.utils.GUIUtils;
-import com.github.nicholasmoser.utils.Ranges;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,7 +23,6 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
@@ -45,14 +43,9 @@ public class SeqEditor {
   private Map<String, SeqEdit> editsByName;
   private Mode mode;
   private SeqEdit selectedEdit;
-
   public ListView<String> editList;
-  public TextArea nameTextArea;
-  public TextField offsetTextField;
-  public TextField hijackedBytesLengthTextField;
-  public TextArea hijackedBytesTextArea;
-  public TextArea newBytesTextArea;
-  public TextArea opcodesTextArea;
+  public TextArea bytes;
+  public TextArea opcodes;
   public Label leftStatus;
   public Label rightStatus;
 
@@ -80,11 +73,6 @@ public class SeqEditor {
     this.leftStatus.setText(seqPath.toAbsolutePath().toString());
     this.editsByName = new HashMap<>();
     updateSeqEditsFromPath();
-    setDisableFields(true);
-    offsetTextField.textProperty()
-        .addListener((observable, oldValue, newValue) -> tryToUpdateHijackedBytes());
-    hijackedBytesLengthTextField.textProperty()
-        .addListener((observable, oldValue, newValue) -> tryToUpdateHijackedBytes());
   }
 
   public void refresh() {
@@ -103,12 +91,8 @@ public class SeqEditor {
   public void clear() {
     this.mode = Mode.NONE_SELECTED;
     this.rightStatus.setText(mode.toString());
-    nameTextArea.setText("");
-    offsetTextField.setText("");
-    hijackedBytesLengthTextField.setText("");
-    hijackedBytesTextArea.setText("");
-    newBytesTextArea.setText("");
-    opcodesTextArea.setText("");
+    bytes.setText("");
+    opcodes.setText("");
   }
 
   /**
@@ -122,7 +106,6 @@ public class SeqEditor {
         return;
       }
     }
-    setDisableFields(false);
     clear();
     this.mode = Mode.CREATE;
     this.rightStatus.setText(mode.toString());
@@ -153,7 +136,6 @@ public class SeqEditor {
    * @param seqEdit The seq edit to open.
    */
   private void openEdit(SeqEdit seqEdit) {
-    setDisableFields(false);
     this.mode = Mode.EDIT;
     this.rightStatus.setText(mode.toString());
     this.selectedEdit = seqEdit;
@@ -173,13 +155,6 @@ public class SeqEditor {
       sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes())));
     }
     List<Opcode> newCodes = seqEdit.getNewCodes();
-    nameTextArea.setText(editName);
-    offsetTextField.setText(String.format("0x%X", seqEdit.getOffset()));
-    hijackedBytesLengthTextField.setText(String.format("0x%X", oldBytes.length));
-    hijackedBytesTextArea.setText(sb.toString());
-    Pair<String,String> opcodesStrings = SeqUtil.getOpcodesStrings(newCodes);
-    newBytesTextArea.setText(opcodesStrings.getKey());
-    opcodesTextArea.setText(opcodesStrings.getValue());
   }
 
   /**
@@ -216,7 +191,6 @@ public class SeqEditor {
       if (mode == Mode.EDIT && seqEdit.equals(selectedEdit)) {
         // Edit currently being edited was deleted, clear the fields
         clear();
-        setDisableFields(true);
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Delete Edit", e);
@@ -279,22 +253,50 @@ public class SeqEditor {
   }
 
   /**
+   * Disassemble the bytes to opcodes
+   */
+  public void disassemble() {
+    try {
+      String bytesFieldText = AssemblyParser.parseBytesField(bytes.getText());
+      byte[] bytes = ByteUtils.hexTextToBytes(bytesFieldText);
+      ByteStream bs = new ByteStream(bytes);
+      StringBuilder opcodeFields = new StringBuilder();
+      while (bs.bytesAreLeft()) {
+        bs.mark();
+        byte opcodeGroup = (byte) bs.read();
+        byte opcode = (byte) bs.read();
+        bs.reset();
+        String asm = SeqHelper.getSeqOpcode(bs, opcodeGroup, opcode).toAssembly();
+        opcodeFields.append(asm);
+        opcodeFields.append('\n');
+      }
+      opcodes.setText(opcodeFields.toString());
+      leftStatus.setText("");
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Unable to disassemble lines.", e);
+      String message = e.getMessage() != null ? e.getMessage() : e.getClass().toString();
+      leftStatus.setText(message);
+    }
+  }
+
+  /**
    * Assemble the opcodes to bytes
    */
   public void assemble() {
-    String[] lines = opcodesTextArea.getText().split("\n");
-    Pair<List<Opcode>, Integer> opcodes = null;
     try {
-      opcodes = SeqAssembler.assembleLines(lines, this.seqPath);
-    } catch (IOException e) {
+      String[] lines = AssemblyParser.parseOpcodesField(opcodes.getText());
+      Pair<List<Opcode>, Integer> opcodes = SeqAssembler.assembleLines(lines, seqPath);
+      StringBuilder sb = new StringBuilder();
+      for (Opcode op : opcodes.getKey()) {
+        sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes())));
+      }
+      bytes.setText(sb.toString());
+      leftStatus.setText("");
+    } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Unable to assemble lines.", e);
+      String message = e.getMessage() != null ? e.getMessage() : e.getClass().toString();
+      leftStatus.setText(message);
     }
-
-    StringBuilder sb = new StringBuilder();
-    for (Opcode op : opcodes.getKey()) {
-      sb.append(String.format("%s\n",ByteUtils.bytesToHexStringWords(op.getBytes())));
-    }
-    newBytesTextArea.setText(sb.toString());
   }
 
   /**
@@ -363,19 +365,6 @@ public class SeqEditor {
    */
   private void applyNewEdit() {
     try {
-      String name = nameTextArea.getText();
-      int offset = readNumber(offsetTextField.getText());
-      int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
-      byte[] newBytes = readHex(newBytesTextArea.getText());
-      SeqEdit seqEdit = SeqEditBuilder.getBuilder()
-          .name(name)
-          .startOffset(offset)
-          .endOffset(offset + hijackedBytesLength)
-          .newBytes(newBytes)
-          .seqPath(seqPath)
-          .create();
-      // Add the new edit
-      SeqExt.addEdit(seqEdit, seqPath);
       refresh();
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Create New Edit", e);
@@ -390,28 +379,7 @@ public class SeqEditor {
    */
   private void applyExistingEdit() {
     try {
-      int position = selectedEdit.getPosition();
-      // Remove the existing edit
-      SeqExt.removeEdit(selectedEdit, seqPath);
-      editsByName.remove(selectedEdit.getName());
-      editList.getItems().remove(selectedEdit.getName());
-      // Create the new edit
-      String name = nameTextArea.getText();
-      int offset = readNumber(offsetTextField.getText());
-      int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
-      byte[] newBytes = readHex(newBytesTextArea.getText());
-      SeqEdit seqEdit = SeqEditBuilder.getBuilder()
-          .name(name)
-          .startOffset(offset)
-          .endOffset(offset + hijackedBytesLength)
-          .newBytes(newBytes)
-          .seqPath(seqPath)
-          .position(position)
-          .create();
-      // Add the new edit
-      SeqExt.addEdit(seqEdit, seqPath);
       refresh();
-      selectedEdit = seqEdit;
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to Modify Edit", e);
       Message.error("Failed to Modify Edit", e.getMessage());
@@ -462,50 +430,10 @@ public class SeqEditor {
   }
 
   /**
-   * Sets the disabled status of the fields.
-   *
-   * @param value If the fields are to be disabled.
-   */
-  private void setDisableFields(boolean value) {
-    nameTextArea.setDisable(value);
-    offsetTextField.setDisable(value);
-    hijackedBytesLengthTextField.setDisable(value);
-    hijackedBytesTextArea.setDisable(value);
-    newBytesTextArea.setDisable(value);
-    opcodesTextArea.setDisable(value);
-  }
-
-  /**
    * Tries to update the hijacked bytes display using the offset and hijacked bytes length.
    */
   private void tryToUpdateHijackedBytes() {
-    try {
-      int offset = readNumber(offsetTextField.getText());
-      int hijackedBytesLength = readNumber(hijackedBytesLengthTextField.getText());
-      try (RandomAccessFile raf = new RandomAccessFile(seqPath.toFile(), "r")) {
-        byte[] bytes = new byte[hijackedBytesLength];
-        raf.seek(offset);
-        if (raf.read(bytes) != hijackedBytesLength) {
-          throw new IOException("Failed to read " + hijackedBytesLength + " bytes.");
-        }
-        List<Opcode> oldCodes = new LinkedList<>();
-        ByteStream bs = new ByteStream(bytes);
-        while (bs.bytesAreLeft()) {
-          try {
-            oldCodes.add(SeqHelper.getSeqOpcode(bs, bs.peekBytes(2)[0], bs.peekBytes(2)[1]));
-          } catch (IOException e) {
-            break;
-          }
-        }
-        StringBuilder sb = new StringBuilder();
-        for (Opcode op : oldCodes) {
-          sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes())));
-        }
-        hijackedBytesTextArea.setText(sb.toString());
-      }
-    } catch (Exception e) {
-      hijackedBytesTextArea.setText(e.getMessage());
-    }
+
   }
 
   /**
@@ -531,69 +459,6 @@ public class SeqEditor {
    * @return If the edit fields are valid.
    */
   private boolean verifyEditValid() {
-    try {
-      // Name is filled out
-      if (nameTextArea.getText() == null || nameTextArea.getText().isBlank()) {
-        throw new IllegalStateException("Name is blank or empty.");
-      }
-      // Offset is filled out
-      String offsetText = offsetTextField.getText();
-      if (offsetText == null || offsetText.isBlank()) {
-        throw new IllegalStateException("Offset is blank or empty");
-      }
-      // Offset is a number and a multiple of 4
-      int offset = readNumber(offsetText);
-      if (offset % 4 != 0) {
-        throw new IllegalStateException("Offset must be multiple of 4.");
-      }
-      // Hijacked bytes length is filled out
-      String hijackedBytesLengthText = hijackedBytesLengthTextField.getText();
-      if (hijackedBytesLengthText == null || hijackedBytesLengthText.isBlank()) {
-        throw new IllegalStateException("Hijacked bytes length is blank or empty");
-      }
-      // Hijacked bytes length is a number, a multiple of 4, and not 0
-      int hijackedBytesLength = readNumber(hijackedBytesLengthText);
-      if (hijackedBytesLength % 4 != 0) {
-        throw new IllegalStateException("Hijacked bytes length must be multiple of 4.");
-      } else if (hijackedBytesLength == 0) {
-        throw new IllegalStateException("Hijacked bytes length must not be zero.");
-      }
-      // Hijacked bytes is filled out
-      String hijackedBytesText = hijackedBytesTextArea.getText();
-      if (hijackedBytesText == null || hijackedBytesText.isBlank()) {
-        throw new IllegalStateException("Hijacked bytes field is blank or empty");
-      }
-      // Hijacked bytes is only hex and whitespace
-      verifyIsHex(hijackedBytesText, "Hijacked bytes");
-      // New bytes is filled out
-      String newBytesText = newBytesTextArea.getText();
-      if (newBytesText == null || newBytesText.isBlank()) {
-        throw new IllegalStateException("New bytes field is blank or empty");
-      }
-      // New bytes is only hex and whitespace
-      verifyIsHex(newBytesText, "New bytes");
-      // Verify that the new code does not conflict with existing codes
-      for (SeqEdit existingEdit : editsByName.values()) {
-        if (mode == Mode.EDIT && existingEdit == selectedEdit) {
-          continue; // Skip the existing edit we are editing
-        }
-        if (nameTextArea.getText().equals(existingEdit.getName())) {
-          throw new IllegalStateException("Edit name already exists: " + existingEdit.getName());
-        }
-        int existingStart = existingEdit.getOffset();
-        int existingEnd = existingStart + existingEdit.getOldBytes().length;
-        int newStart = offset;
-        int newEnd = offset + hijackedBytesLength;
-        if (Ranges.haveOverlap(existingStart, existingEnd, newStart, newEnd)) {
-          throw new IllegalStateException(
-              "New edit location conflicts with existing edit: " + existingEdit.getName());
-        }
-      }
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Edit Invalid", e);
-      Message.error("Edit Invalid", e.getMessage());
-      return false;
-    }
     return true;
   }
 
