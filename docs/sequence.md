@@ -71,9 +71,8 @@ Version 2 SEQ extensions start with a 0x10 byte header:
 | Offset | Type   | Description           |
 |--------|--------|-----------------------|
 | 0x0    | byte[] | The String "seq_ext2" |
-| 0x4    | u32    | The number of symbols |
-| 0xc    | u32    | Version (currently 0) |
-| 0x10   | u32    | Flags (currently 0)   |
+| 0x8    | u32    | The number of symbols |
+| 0xc    | u32    | Flags                 |
 
 Each symbol will follow the header. There are different symbol types of different lengths,
 each 16-byte aligned.

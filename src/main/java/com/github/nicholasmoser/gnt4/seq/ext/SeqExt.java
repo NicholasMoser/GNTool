@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.ext.parser.SymbolParser;
 import com.github.nicholasmoser.gnt4.seq.ext.symbol.InsertAsm;
 import com.github.nicholasmoser.gnt4.seq.ext.symbol.Symbol;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
@@ -44,7 +45,7 @@ public class SeqExt {
       return new ArrayList<>();
     }
     if (version.get() == Version.TWO) {
-      int start = getSeqExt2Offset(seqBytes);
+      return parseVersionTwo(seqBytes);
     } else if (version.get() == Version.ONE) {
       // Passively convert old seq edits to new symbols
       List<SeqEdit> edits = getEdits(seqBytes);
@@ -58,7 +59,23 @@ public class SeqExt {
     } else {
       return Collections.emptyList();
     }
-    return null;
+  }
+
+  /**
+   * Parse version 2 of the Seq Extension and return the symbols.
+   *
+   * @param seqBytes The bytes to parse.
+   * @return The symbols.
+   * @throws IOException If any I/O exception occurs.
+   */
+  private static List<Symbol> parseVersionTwo(byte[] seqBytes) throws IOException {
+    int start = getSeqExt2Offset(seqBytes);
+    ByteStream bs = new ByteStream(seqBytes);
+    bs.seek(start);
+    bs.skip(8); // Skip "seq_ext2"
+    int numOfSymbols = bs.readWord();
+    bs.skip(4); // Skip currently unused flags
+    return SymbolParser.parse(bs, numOfSymbols);
   }
 
   public static Optional<Version> getVersion(byte[] seqBytes) throws IOException {
