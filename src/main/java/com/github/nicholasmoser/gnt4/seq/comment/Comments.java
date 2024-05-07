@@ -118,6 +118,7 @@ public class Comments {
 
     comments = getChrBaseComments();
     comments.put(0x31FC4, "// String info, 42E00000 is the range of throws used at 0x8006007c in the code");
+    comments.put(0x223E0, "// Charge time for Kakashi 5X (100 frames in vanilla)");
     allComments.put(Seqs.KAK_0000, comments);
 
     comments = getChrBaseComments();
