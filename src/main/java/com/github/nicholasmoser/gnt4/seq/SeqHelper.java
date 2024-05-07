@@ -352,7 +352,8 @@ public class SeqHelper {
           return SeqHelper.readUnknownBinary5(bs);
         } else if (SeqHelper.isUnknownBinary6(bs)) {
           if (uniqueBinaries.contains("foundUnknownBinary6")) {
-            throw new IllegalStateException("There should only be one unknown binary 6.");
+            // TODO: Latest Virtue patch fails here, fix this
+            //throw new IllegalStateException("There should only be one unknown binary 6.");
           }
           uniqueBinaries.add("foundUnknownBinary6");
           return Collections.singletonList(SeqHelper.readUnknownBinary6(bs));

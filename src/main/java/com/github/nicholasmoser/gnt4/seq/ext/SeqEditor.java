@@ -3,6 +3,7 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
 import com.github.nicholasmoser.gnt4.seq.ext.parser.AssemblyParser;
+import com.github.nicholasmoser.gnt4.seq.ext.symbol.Symbol;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -31,8 +32,9 @@ import javafx.util.Pair;
 
 /**
  * A class to represent the GUI for the seq editor tool. This allows the user to modify a seq file
- * without having to manually edit the hex of the file. The edits are accomplished by branching from
- * the user-provided offset to the end of the seq file where new code is added.
+ * without having to manually edit the hex of the file. Each edit is a symbol. Symbols can be
+ * new code or binary, references to existing code or binary, or something else entirely.
+ * Symbols are referenced by name and can be branched to for code execution or as a data structure.
  */
 public class SeqEditor {
 
@@ -40,10 +42,10 @@ public class SeqEditor {
   private static final String SEQ_EDITOR_INFO_URL = "https://github.com/NicholasMoser/GNTool/blob/master/docs/sequence.md#modify-seq";
   private Path seqPath;
   private Stage stage;
-  private Map<String, SeqEdit> editsByName;
+  private Map<String, Symbol> symbolsByName;
   private Mode mode;
-  private SeqEdit selectedEdit;
-  public ListView<String> editList;
+  private Symbol selectedSymbol;
+  public ListView<String> symbolList;
   public TextArea bytes;
   public TextArea opcodes;
   public Label leftStatus;
@@ -71,13 +73,13 @@ public class SeqEditor {
     this.mode = Mode.NONE_SELECTED;
     this.rightStatus.setText(mode.toString());
     this.leftStatus.setText(seqPath.toAbsolutePath().toString());
-    this.editsByName = new HashMap<>();
-    updateSeqEditsFromPath();
+    this.symbolsByName = new HashMap<>();
+    updateSymbolsFromPath();
   }
 
   public void refresh() {
     try {
-      updateSeqEditsFromPath();
+      updateSymbolsFromPath();
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "Failed to Refresh", e);
       Message.error("Failed to Refresh", e.getMessage());
@@ -118,7 +120,7 @@ public class SeqEditor {
   public void openEdit() {
     Optional<String> selectedEdit = getSelectedEdit();
     if (selectedEdit.isPresent()) {
-      SeqEdit seqEdit = editsByName.get(selectedEdit.get());
+      SeqEdit seqEdit = null; //symbolsByName.get(selectedEdit.get());
       if (seqEdit == null) {
         Message.error("Cannot Find Edit",
             "Cannot find edit with name: " + selectedEdit.get());
@@ -138,7 +140,7 @@ public class SeqEditor {
   private void openEdit(SeqEdit seqEdit) {
     this.mode = Mode.EDIT;
     this.rightStatus.setText(mode.toString());
-    this.selectedEdit = seqEdit;
+    this.selectedSymbol = null;// seqEdit;
     String editName = seqEdit.getName();
     byte[] oldBytes = seqEdit.getOldBytes();
     List<Opcode> oldCodes = new LinkedList<>();
@@ -163,7 +165,7 @@ public class SeqEditor {
   public void deleteEdit() {
     Optional<String> selectedEdit = getSelectedEdit();
     if (selectedEdit.isPresent()) {
-      SeqEdit seqEdit = editsByName.get(selectedEdit.get());
+      SeqEdit seqEdit = null;//symbolsByName.get(selectedEdit.get());
       if (seqEdit == null) {
         Message.error("Cannot Find Edit",
             "Cannot find edit with name: " + selectedEdit.get());
@@ -188,7 +190,7 @@ public class SeqEditor {
     try {
       SeqExt.removeEdit(seqEdit, seqPath);
       refresh();
-      if (mode == Mode.EDIT && seqEdit.equals(selectedEdit)) {
+      if (mode == Mode.EDIT && seqEdit.equals(selectedSymbol)) {
         // Edit currently being edited was deleted, clear the fields
         clear();
       }
@@ -225,7 +227,7 @@ public class SeqEditor {
   public void exportEdit() {
     Optional<String> selectedEdit = getSelectedEdit();
     if (selectedEdit.isPresent()) {
-      SeqEdit seqEdit = editsByName.get(selectedEdit.get());
+      SeqEdit seqEdit = null;//symbolsByName.get(selectedEdit.get());
       if (seqEdit == null) {
         Message.error("Cannot Find Edit",
             "Cannot find edit with name: " + selectedEdit.get());
@@ -309,11 +311,11 @@ public class SeqEditor {
       if (confirm) {
         clear();
       }
-    } else if (selectedEdit != null && mode == Mode.EDIT) {
+    } else if (selectedSymbol != null && mode == Mode.EDIT) {
       boolean confirm = Message.warnConfirmation("Confirm Reset",
           "You will lose your current changes!");
       if (confirm) {
-        openEdit(selectedEdit);
+        openEdit(null); //selectedSymbol
       }
     } else {
       Message.error("No Edit Opened", "Cannot undo, no edit is opened.");
@@ -391,14 +393,14 @@ public class SeqEditor {
    *
    * @throws IOException If an I/O error occurs
    */
-  private void updateSeqEditsFromPath() throws IOException {
-    editsByName.clear();
-    editList.getItems().clear();
+  private void updateSymbolsFromPath() throws IOException {
+    symbolsByName.clear();
+    symbolList.getItems().clear();
     List<SeqEdit> seqEdits = SeqExt.getEdits(seqPath);
     for (SeqEdit seqEdit : seqEdits) {
       String editName = seqEdit.getName();
-      editsByName.put(editName, seqEdit);
-      editList.getItems().add(editName);
+      symbolsByName.put(editName, null); //seqEdit
+      symbolList.getItems().add(editName);
     }
   }
 
@@ -422,11 +424,11 @@ public class SeqEditor {
    * @return An optional selected edit from the list of existing edits.
    */
   private Optional<String> getSelectedEdit() {
-    int index = editList.getSelectionModel().getSelectedIndex();
+    int index = symbolList.getSelectionModel().getSelectedIndex();
     if (index < 0) {
       return Optional.empty();
     }
-    return Optional.of(editList.getItems().get(index));
+    return Optional.of(symbolList.getItems().get(index));
   }
 
   /**

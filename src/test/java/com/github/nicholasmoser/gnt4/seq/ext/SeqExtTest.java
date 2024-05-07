@@ -1,9 +1,12 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.github.nicholasmoser.utils.ByteUtils.hexTextToBytes;
 
 import com.github.nicholasmoser.gnt4.chr.KabutoScalingFix;
 import com.github.nicholasmoser.gnt4.chr.KisamePhantomSwordFix;
@@ -274,5 +277,76 @@ public class SeqExtTest {
     } finally {
       Files.deleteIfExists(testSeq);
     }
+  }
+
+  @Test
+  void testHasSeqExtEnd() {
+    byte[] bytes = hexTextToBytes("7365715F656E640A");
+    assertTrue(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("007365715F656E640A");
+    assertTrue(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("000000007365715F656E640A");
+    assertTrue(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("7365715F656E640A00");
+    assertTrue(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("7365715F656E640A00000000");
+    assertTrue(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("12345678000000007365715F656E640A0000000012345678");
+    assertTrue(SeqExt.hasSeqExtEnd(bytes));
+
+    bytes = hexTextToBytes("7360715F656E640A");
+    assertFalse(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("007360715F656E640A");
+    assertFalse(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("000000007360715F656E640A");
+    assertFalse(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("7360715F656E640A00");
+    assertFalse(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("7360715F656E640A00000000");
+    assertFalse(SeqExt.hasSeqExtEnd(bytes));
+    bytes = hexTextToBytes("12345678000000007360715F656E640A0000000012345678");
+    assertFalse(SeqExt.hasSeqExtEnd(bytes));
+  }
+
+  @Test
+  void testGetSeqExtOffset() throws IOException {
+    byte[] bytes = hexTextToBytes("7365715F6578740A00000000");
+    assertThat(SeqExt.getSeqExtOffset(bytes)).isEqualTo(0);
+    bytes = hexTextToBytes("007365715F6578740A00000000");
+    assertThat(SeqExt.getSeqExtOffset(bytes)).isEqualTo(1);
+    bytes = hexTextToBytes("000000007365715F6578740A00000000");
+    assertThat(SeqExt.getSeqExtOffset(bytes)).isEqualTo(4);
+
+    bytes = hexTextToBytes("7365715F6578740A");
+    assertThat(SeqExt.getSeqExtOffset(bytes)).isEqualTo(0);
+    bytes = hexTextToBytes("007365715F6578740A");
+    assertThat(SeqExt.getSeqExtOffset(bytes)).isEqualTo(1);
+    bytes = hexTextToBytes("000000007365715F6578740A");
+    assertThat(SeqExt.getSeqExtOffset(bytes)).isEqualTo(4);
+
+    bytes = hexTextToBytes("000000007360715F6578740A");
+    byte[] finalBytes = bytes;
+    assertThrows(IOException.class, () -> SeqExt.getSeqExtOffset(finalBytes));
+  }
+
+  @Test
+  void testGetSeqExt2Offset() throws IOException {
+    byte[] bytes = hexTextToBytes("7365715F6578743200000000");
+    assertThat(SeqExt.getSeqExt2Offset(bytes)).isEqualTo(0);
+    bytes = hexTextToBytes("007365715F6578743200000000");
+    assertThat(SeqExt.getSeqExt2Offset(bytes)).isEqualTo(1);
+    bytes = hexTextToBytes("000000007365715F6578743200000000");
+    assertThat(SeqExt.getSeqExt2Offset(bytes)).isEqualTo(4);
+
+    bytes = hexTextToBytes("7365715F65787432");
+    assertThat(SeqExt.getSeqExt2Offset(bytes)).isEqualTo(0);
+    bytes = hexTextToBytes("007365715F65787432");
+    assertThat(SeqExt.getSeqExt2Offset(bytes)).isEqualTo(1);
+    bytes = hexTextToBytes("000000007365715F65787432");
+    assertThat(SeqExt.getSeqExt2Offset(bytes)).isEqualTo(4);
+
+    bytes = hexTextToBytes("000000007360715F65787432");
+    byte[] finalBytes = bytes;
+    assertThrows(IOException.class, () -> SeqExt.getSeqExt2Offset(finalBytes));
   }
 }

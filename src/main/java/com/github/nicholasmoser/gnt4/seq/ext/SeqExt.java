@@ -1,6 +1,9 @@
 package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.ext.symbol.InsertAsm;
+import com.github.nicholasmoser.gnt4.seq.ext.symbol.Symbol;
+import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
@@ -11,23 +14,85 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class SeqExt {
 
-  // seq_ext\n
+  public enum Version {
+    ONE,
+    TWO
+  }
+
+  // seq_ext\n (version 1)
   public static final byte[] SEQ_EXT = {0x73, 0x65, 0x71, 0x5F, 0x65, 0x78, 0x74, 0x0A};
+
+  // seq_ext2 (version 2)
+  public static final byte[] SEQ_EXT2 = {0x73, 0x65, 0x71, 0x5F, 0x65, 0x78, 0x74, 0x32};
 
   // seq_end\n
   public static final byte[] SEQ_END = {0x73, 0x65, 0x71, 0x5F, 0x65, 0x6E, 0x64, 0x0A};
+
+  public static List<Symbol> getSymbols(Path seqPath) throws IOException {
+    return getSymbols(Files.readAllBytes(seqPath));
+  }
+
+  public static List<Symbol> getSymbols(byte[] seqBytes) throws IOException {
+    Optional<Version> version = getVersion(seqBytes);
+    if (version.isEmpty()) {
+      return new ArrayList<>();
+    }
+    if (version.get() == Version.TWO) {
+      int start = getSeqExt2Offset(seqBytes);
+    } else if (version.get() == Version.ONE) {
+      // Passively convert old seq edits to new symbols
+      List<SeqEdit> edits = getEdits(seqBytes);
+      List<Symbol> symbols = new ArrayList<>(edits.size());
+      for (SeqEdit edit : edits) {
+        InsertAsm insertAsm = new InsertAsm(edit.getName(), edit.getOffset(), edit.getNewCodes(),
+            edit.getOldBytes(), Collections.emptyMap());
+        symbols.add(insertAsm);
+      }
+      return symbols;
+    } else {
+      return Collections.emptyList();
+    }
+    return null;
+  }
+
+  public static Optional<Version> getVersion(byte[] seqBytes) throws IOException {
+    if (!hasSeqExtEnd(seqBytes)) {
+      return Optional.empty();
+    }
+    try (ByteStream bs = new ByteStream(seqBytes)) {
+      // Start at the beginning of seq_end\n
+      bs.seek(bs.length() - 8);
+      int offset = bs.offset();
+      // While there are more bytes, go backwards 4 bytes and see if it matches a known version
+      while (offset > 0) {
+        offset = offset - 4;
+        bs.seek(offset);
+        byte[] bytes = bs.readNBytes(8);
+        if (Arrays.equals(bytes, SEQ_EXT)) {
+          return Optional.of(Version.ONE);
+        } else if (Arrays.equals(bytes, SEQ_EXT2)) {
+          return Optional.of(Version.TWO);
+        }
+      }
+      return Optional.empty();
+    }
+  }
 
   /**
    * Get the list of seq edits from a seq file.
    *
    * @param seqPath The path to the seq file.
    * @return The list of seq edits.
-   * @throws IOException
+   * @throws IOException If any I/O exception occurs.
+   * @deprecated Edits have been replaced with symbols
    */
+  @Deprecated
   public static List<SeqEdit> getEdits(Path seqPath) throws IOException {
     return getEdits(Files.readAllBytes(seqPath));
   }
@@ -37,8 +102,10 @@ public class SeqExt {
    *
    * @param seqBytes The seq file bytes.
    * @return The list of seq edits.
-   * @throws IOException
+   * @throws IOException If any I/O exception occurs.
+   * @deprecated Edits have been replaced with symbols
    */
+  @Deprecated
   public static List<SeqEdit> getEdits(byte[] seqBytes) throws IOException {
     if (!hasSeqExtEnd(seqBytes)) {
       return new ArrayList<>();
@@ -69,8 +136,10 @@ public class SeqExt {
    *
    * @param edit    The edit to add.
    * @param seqPath The seq file path.
-   * @throws IOException
+   * @throws IOException If any I/O exception occurs.
+   * @deprecated Edits have been replaced with symbols
    */
+  @Deprecated
   public static void addEdit(SeqEdit edit, Path seqPath) throws IOException {
     byte[] bytes = Files.readAllBytes(seqPath);
     Files.write(seqPath, addEdit(edit, bytes));
@@ -82,8 +151,10 @@ public class SeqExt {
    * @param edit     The edit to add.
    * @param seqBytes The seq file bytes.
    * @return The new seq bytes with the seq edit added.
-   * @throws IOException
+   * @throws IOException If any I/O exception occurs.
+   * @deprecated Edits have been replaced with symbols
    */
+  @Deprecated
   public static byte[] addEdit(SeqEdit edit, byte[] seqBytes) throws IOException {
     List<SeqEdit> edits = getEdits(seqBytes);
     byte[] originalSeqBytes = getOriginalBytesWithoutEdits(seqBytes, edits);
@@ -96,8 +167,10 @@ public class SeqExt {
    *
    * @param edit    The edit to remove.
    * @param seqPath The seq file path.
-   * @throws IOException
+   * @throws IOException If any I/O exception occurs.
+   * @deprecated Edits have been replaced with symbols
    */
+  @Deprecated
   public static void removeEdit(SeqEdit edit, Path seqPath) throws IOException {
     byte[] bytes = Files.readAllBytes(seqPath);
     Files.write(seqPath, removeEdit(edit, bytes));
@@ -109,8 +182,10 @@ public class SeqExt {
    * @param edit     The edit to remove.
    * @param seqBytes The seq file bytes.
    * @return The new seq bytes with the seq edit added.
-   * @throws IOException
+   * @throws IOException If any I/O exception occurs.
+   * @deprecated Edits have been replaced with symbols
    */
+  @Deprecated
   public static byte[] removeEdit(SeqEdit edit, byte[] seqBytes) throws IOException {
     List<SeqEdit> edits = getEdits(seqBytes);
     byte[] originalSeqBytes = getOriginalBytesWithoutEdits(seqBytes, edits);
@@ -191,16 +266,18 @@ public class SeqExt {
    *
    * @param seqBytes The seq bytes to read from.
    * @return If the seq bytes end with seq_end\n
-   * @throws IOException If an I/O error occurs.
    */
-  private static boolean hasSeqExtEnd(byte[] seqBytes) throws IOException {
+  public static boolean hasSeqExtEnd(byte[] seqBytes) {
+    // First check the end of the byte array
     if (seqBytes.length < 8) {
       return false;
     }
-    try (ByteStream bs = new ByteStream(seqBytes)) {
-      bs.seek(bs.length() - 8);
-      return Arrays.equals(SEQ_END, bs.readBytes(8));
+    byte[] lastBytes = Arrays.copyOfRange(seqBytes, seqBytes.length - 8, seqBytes.length);
+    if (Arrays.equals(SEQ_END, lastBytes)) {
+      return true;
     }
+    // Then check the whole byte array
+    return Bytes.indexOf(seqBytes, SEQ_END) != -1;
   }
 
   /**
@@ -211,21 +288,28 @@ public class SeqExt {
    * @return The start of the seq_ext\n header.
    * @throws IOException If an I/O error occurs.
    */
-  private static int getSeqExtOffset(byte[] seqBytes) throws IOException {
-    try (ByteStream bs = new ByteStream(seqBytes)) {
-      // Start at the beginning of seq_end\n
-      bs.seek(bs.length() - 8);
-      int offset = bs.offset();
-      // While there are more bytes, go backwards 4 bytes and see if it matches seq_ext\n
-      while (offset > 0) {
-        offset = offset - 4;
-        bs.seek(offset);
-        if (Arrays.equals(bs.readBytes(8), SEQ_EXT)) {
-          return offset;
-        }
-      }
+  public static int getSeqExtOffset(byte[] seqBytes) throws IOException {
+    int index = Bytes.indexOf(seqBytes, SEQ_EXT);
+    if (index == -1) {
       throw new IOException("Unable to find seq_ext\n in seq bytes.");
     }
+    return index;
+  }
+
+  /**
+   * Returns the start of the seq_ext2 header in the seq bytes. Reads from the end of the bytes
+   * backwards to the start to find it.
+   *
+   * @param seqBytes The seq bytes to read from.
+   * @return The start of the seq_ext2 header.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static int getSeqExt2Offset(byte[] seqBytes) throws IOException {
+    int index = Bytes.indexOf(seqBytes, SEQ_EXT2);
+    if (index == -1) {
+      throw new IOException("Unable to find seq_ext2 in seq bytes.");
+    }
+    return index;
   }
 
   /**

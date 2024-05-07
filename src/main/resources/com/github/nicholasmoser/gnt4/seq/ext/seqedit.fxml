@@ -99,7 +99,7 @@
       <items>
             <VBox prefWidth="300.0">
                <children>
-                  <ListView fx:id="editList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#selectEdit" prefWidth="300.0" VBox.vgrow="ALWAYS" />
+                  <ListView fx:id="symbolList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#selectEdit" prefWidth="300.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox prefWidth="810.0" />
