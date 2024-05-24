@@ -193,7 +193,7 @@ public class FPKPacker {
     }
 
     // FPK Header
-    byte[] fpkBytes = FPKUtils.createFPKHeader(fpkChildren.size(), outputSize, bigEndian);
+    byte[] fpkBytes = FPKUtils.createFPKHeader(null, fpkChildren.size(), outputSize, bigEndian);
     // File headers
     for (FPKFile file : fpkChildren) {
       fpkBytes = Bytes.concat(fpkBytes, file.getHeader().getBytes());
