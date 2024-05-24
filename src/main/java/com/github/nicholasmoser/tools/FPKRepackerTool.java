@@ -26,6 +26,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -119,6 +120,11 @@ public class FPKRepackerTool {
       buttonPane.add(browse, 2, i);
     }
 
+    // Integrity check checkbox
+    CheckBox addIntegrityCheck = new CheckBox("Add Integrity Check Bytes");
+    addIntegrityCheck.setFont(new Font(20));
+    addIntegrityCheck.setSelected(false);
+
     // Repack button and accompanying logic
     Button repackButton = new Button("Repack FPK");
     repackButton.setOnAction(e -> {
@@ -147,7 +153,8 @@ public class FPKRepackerTool {
       if (outputFPK.isEmpty()) {
         return;
       }
-      repackFPK(fpkHeaders, filePaths, outputFPK.get(), longPaths, bigEndian);
+      boolean shouldAddIntegrityCheck = addIntegrityCheck.isSelected();
+      repackFPK(fpkHeaders, filePaths, outputFPK.get(), longPaths, bigEndian, shouldAddIntegrityCheck);
     });
 
     // Save template button and accompanying logic
@@ -222,9 +229,10 @@ public class FPKRepackerTool {
     repackButton.setFont(new Font(24));
     saveTemplate.setFont(new Font(24));
     loadTemplate.setFont(new Font(24));
-    buttonPane.add(repackButton, 0, numHeaders);
-    buttonPane.add(saveTemplate, 1, numHeaders);
-    buttonPane.add(loadTemplate, 2, numHeaders);
+    buttonPane.add(addIntegrityCheck, 0, numHeaders);
+    buttonPane.add(repackButton, 0, numHeaders + 1);
+    buttonPane.add(saveTemplate, 1, numHeaders + 1);
+    buttonPane.add(loadTemplate, 2, numHeaders + 1);
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setPrefSize(800, 600);
     buttonPane.setVgap(10);
@@ -243,13 +251,15 @@ public class FPKRepackerTool {
    * Given a list of existing FPK headers and new files, repacks the files to a target output FPK.
    * Each index of the two provided lists must correlate with the same FPK entry.
    *
-   * @param fpkHeaders The list of existing FPK headers.
-   * @param filePaths  The list of new file paths for the FPK.
-   * @param longPaths If the FPK inner file paths are 32-bytes (instead of 16-bytes).
-   * @param bigEndian If the FPK is big-endian (instead of little-endian).
+   * @param fpkHeaders              The list of existing FPK headers.
+   * @param filePaths               The list of new file paths for the FPK.
+   * @param longPaths               If the FPK inner file paths are 32-bytes (instead of 16-bytes).
+   * @param bigEndian               If the FPK is big-endian (instead of little-endian).
+   * @param shouldAddIntegrityCheck If the integrity check bytes should be added to the start of the
+   *                                FPK.
    */
   private static void repackFPK(List<FPKFileHeader> fpkHeaders, List<String> filePaths,
-      Path outputFPK, boolean longPaths, boolean bigEndian) {
+      Path outputFPK, boolean longPaths, boolean bigEndian, boolean shouldAddIntegrityCheck) {
     Task<Void> task = new Task<>() {
       @Override
       public Void call() {
@@ -291,16 +301,20 @@ public class FPKRepackerTool {
             outputSize += ByteUtils.align(header.getCompressedSize(), 16);
           }
 
+          // Get File Data
+          byte[] fileData = new byte[0];
+          for (FPKFile file : newFPKs) {
+            fileData = Bytes.concat(fileData, file.getData());
+          }
           // FPK Header
-          byte[] fpkBytes = FPKUtils.createFPKHeader(newFPKs.size(), outputSize, bigEndian);
+          byte[] integrityBytes = shouldAddIntegrityCheck ? FPKUtils.getIntegrityBytes(fileData) : null;
+          byte[] fpkBytes = FPKUtils.createFPKHeader(integrityBytes, newFPKs.size(), outputSize, bigEndian);
           // File headers
           for (FPKFile file : newFPKs) {
             fpkBytes = Bytes.concat(fpkBytes, file.getHeader().getBytes());
           }
-          // File Data
-          for (FPKFile file : newFPKs) {
-            fpkBytes = Bytes.concat(fpkBytes, file.getData());
-          }
+          // Write File Data
+          fpkBytes = Bytes.concat(fpkBytes, fileData);
           Files.write(outputFPK, fpkBytes);
         } catch (IOException ex) {
           LOGGER.log(Level.SEVERE, "Error", ex);
