@@ -147,13 +147,30 @@ public class FPKUtils {
    * @param bigEndian     If the FPK is big-endian (instead of little-endian).
    * @return The FPK header.
    */
-  public static byte[] createFPKHeader(int numberOfFiles, int outputSize, boolean bigEndian) {
-    byte[] first = bigEndian ? ByteUtils.fromUint32(0) : ByteUtils.fromUint32LE(0);
+  public static byte[] createFPKHeader(byte[] integrityBytes, int numberOfFiles, int outputSize, boolean bigEndian) {
+    if (integrityBytes == null) {
+      integrityBytes = new byte[4];
+    }
     byte[] second =
         bigEndian ? ByteUtils.fromUint32(numberOfFiles) : ByteUtils.fromUint32LE(numberOfFiles);
     byte[] third = bigEndian ? ByteUtils.fromUint32(16) : ByteUtils.fromUint32LE(16);
     byte[] fourth =
         bigEndian ? ByteUtils.fromUint32(outputSize) : ByteUtils.fromUint32LE(outputSize);
-    return Bytes.concat(first, second, third, fourth);
+    return Bytes.concat(integrityBytes, second, third, fourth);
+  }
+
+  /**
+   * Parses compressed bytes of an FPK file and returns the integrity bytes.
+   *
+   * @param compressedBytes The compressed bytes after the FPK headers.
+   * @return The integrity bytes.
+   */
+  public static byte[] getIntegrityBytes(byte[] compressedBytes) {
+    int total = 0;
+    ByteStream bs = new ByteStream(compressedBytes);
+    while(bs.bytesAreLeft()) {
+      total += bs.read();
+    }
+    return ByteUtils.fromInt32(total & 0xFFFF);
   }
 }
