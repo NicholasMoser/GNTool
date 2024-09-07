@@ -55,27 +55,27 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#newEdit" text="New Edit">
+            <MenuItem mnemonicParsing="false" onAction="#newSymbol" text="New Edit">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#openEdit" text="Open Edit">
+                  <MenuItem mnemonicParsing="false" onAction="#openSymbol" text="Open Edit">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#deleteEdit" text="Delete Edit">
+                  <MenuItem mnemonicParsing="false" onAction="#deleteSymbol" text="Delete Edit">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
             <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem accelerator="F5" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
-                  <MenuItem mnemonicParsing="false" onAction="#exportEdit" text="Export">
+                  <MenuItem mnemonicParsing="false" onAction="#exportSymbol" text="Export">
                     <accelerator>
                       <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                     </accelerator>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#importEdit" text="Import">
+                  <MenuItem mnemonicParsing="false" onAction="#importSymbol" text="Import">
                     <accelerator>
                       <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                     </accelerator>

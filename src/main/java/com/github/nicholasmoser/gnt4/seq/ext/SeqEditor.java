@@ -11,7 +11,6 @@ import com.github.nicholasmoser.utils.GUIUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +55,6 @@ public class SeqEditor {
    */
   public enum Mode {
     NONE_SELECTED,
-    CREATE,
     EDIT
   }
 
@@ -88,7 +86,7 @@ public class SeqEditor {
   }
 
   /**
-   * Clear the editable seq edit fields.
+   * Clear the editable symbol fields.
    */
   public void clear() {
     this.mode = Mode.NONE_SELECTED;
@@ -98,10 +96,10 @@ public class SeqEditor {
   }
 
   /**
-   * Attempt to open a new seq edit to be created. This may switch to {@link Mode#CREATE}.
+   * Attempt to open a new symbol to be created.
    */
-  public void newEdit() {
-    if (mode == Mode.CREATE || mode == Mode.EDIT) {
+  public void newSymbol() {
+    if (mode == Mode.EDIT) {
       boolean confirm = Message.warnConfirmation("Confirm Reset",
           "You will lose your current changes!");
       if (!confirm) {
@@ -109,71 +107,55 @@ public class SeqEditor {
       }
     }
     clear();
-    this.mode = Mode.CREATE;
-    this.rightStatus.setText(mode.toString());
-  }
-
-  /**
-   * Attempt to retrieve the currently selected edit and open it. This may switch to {@link
-   * Mode#EDIT}.
-   */
-  public void openEdit() {
-    Optional<String> selectedEdit = getSelectedEdit();
-    if (selectedEdit.isPresent()) {
-      SeqEdit seqEdit = null; //symbolsByName.get(selectedEdit.get());
-      if (seqEdit == null) {
-        Message.error("Cannot Find Edit",
-            "Cannot find edit with name: " + selectedEdit.get());
-      } else {
-        openEdit(seqEdit);
-      }
-    } else {
-      Message.error("No Edit Selected", "Cannot open the edit because no edit is selected.");
-    }
-  }
-
-  /**
-   * Open the given seq edit. This will switch to {@link Mode#EDIT}.
-   *
-   * @param seqEdit The seq edit to open.
-   */
-  private void openEdit(SeqEdit seqEdit) {
     this.mode = Mode.EDIT;
     this.rightStatus.setText(mode.toString());
-    this.selectedSymbol = null;// seqEdit;
-    String editName = seqEdit.getName();
-    byte[] oldBytes = seqEdit.getOldBytes();
-    List<Opcode> oldCodes = new LinkedList<>();
-    ByteStream bs = new ByteStream(oldBytes);
-    while (bs.bytesAreLeft()) {
-      try {
-        oldCodes.add(SeqHelper.getSeqOpcode(bs, bs.peekBytes(2)[0], bs.peekBytes(2)[1]));
-      } catch (IOException e) {
-        break;
+  }
+
+  /**
+   * Attempt to retrieve the currently selected symbol and open it.
+   */
+  public void openSymbol() {
+    Optional<String> selectedSymbol = getSelectedSymbol();
+    if (selectedSymbol.isPresent()) {
+      Symbol seqEdit = symbolsByName.get(selectedSymbol.get());
+      if (seqEdit == null) {
+        Message.error("Cannot Find Symbol",
+            "Cannot find symbol with name: " + selectedSymbol.get());
+      } else {
+        openSymbol(seqEdit);
       }
+    } else {
+      Message.error("No Symbol Selected", "Cannot open the symbol because no symbol is selected.");
     }
-    StringBuilder sb = new StringBuilder();
-    for (Opcode op : oldCodes) {
-      sb.append(String.format("%s\n", ByteUtils.bytesToHexStringWords(op.getBytes())));
-    }
-    List<Opcode> newCodes = seqEdit.getNewCodes();
+  }
+
+  /**
+   * Open the given symbol. This will switch to {@link Mode#EDIT}.
+   *
+   * @param symbol The symbol to open.
+   */
+  private void openSymbol(Symbol symbol) {
+    this.mode = Mode.EDIT;
+    this.rightStatus.setText(mode.toString());
+    this.selectedSymbol = symbol;
+    String editName = symbol.name();
   }
 
   /**
    * Attempt to delete the currently selected edit.
    */
-  public void deleteEdit() {
-    Optional<String> selectedEdit = getSelectedEdit();
-    if (selectedEdit.isPresent()) {
-      SeqEdit seqEdit = null;//symbolsByName.get(selectedEdit.get());
-      if (seqEdit == null) {
-        Message.error("Cannot Find Edit",
-            "Cannot find edit with name: " + selectedEdit.get());
+  public void deleteSymbol() {
+    Optional<String> selectedSymbol = getSelectedSymbol();
+    if (selectedSymbol.isPresent()) {
+      Symbol symbol = symbolsByName.get(selectedSymbol.get());
+      if (symbol == null) {
+        Message.error("Cannot Find Symbol",
+            "Cannot find symbol with name: " + selectedSymbol.get());
       } else {
-        String msg = String.format("Are you sure you wish to delete edit \"%s\"?",
-            seqEdit.getName());
+        String msg = String.format("Are you sure you wish to delete symbol \"%s\"?",
+            symbol.name());
         if (Message.warnConfirmation("Confirm Deletion", msg)) {
-          deleteEdit(seqEdit);
+          deleteSymbol(symbol);
         }
       }
     } else {
@@ -182,21 +164,21 @@ public class SeqEditor {
   }
 
   /**
-   * Delete the given seq edit.
+   * Delete the given symbol.
    *
-   * @param seqEdit The seq edit to delete.
+   * @param symbol The symbol to delete.
    */
-  private void deleteEdit(SeqEdit seqEdit) {
+  private void deleteSymbol(Symbol symbol) {
     try {
-      SeqExt.removeEdit(seqEdit, seqPath);
+      // TODO
       refresh();
-      if (mode == Mode.EDIT && seqEdit.equals(selectedSymbol)) {
-        // Edit currently being edited was deleted, clear the fields
+      if (mode == Mode.EDIT && symbol.equals(selectedSymbol)) {
+        // Symbol currently being edited was deleted, clear the fields
         clear();
       }
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Delete Edit", e);
-      Message.error("Failed to Delete Edit", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Failed to Delete Symbol", e);
+      Message.error("Failed to Delete Symbol", e.getMessage());
     }
   }
 
@@ -208,48 +190,46 @@ public class SeqEditor {
   }
 
   /**
-   * Apply the changes of the seq edit.
+   * Apply the changes of the symbol.
    */
   public void apply() {
-    if (mode == Mode.CREATE) {
+    if (mode == Mode.EDIT) {
       if (verifyEditValid()) {
-        applyNewEdit();
-      }
-    } else if (mode == Mode.EDIT) {
-      if (verifyEditValid()) {
-        applyExistingEdit();
+        // TODO
       }
     } else {
-      Message.error("No Edit Opened", "Cannot apply, no edit is opened.");
+      Message.error("No Symbol Opened", "Cannot apply, no symbol is opened.");
     }
   }
 
-  public void exportEdit() {
-    Optional<String> selectedEdit = getSelectedEdit();
-    if (selectedEdit.isPresent()) {
-      SeqEdit seqEdit = null;//symbolsByName.get(selectedEdit.get());
-      if (seqEdit == null) {
-        Message.error("Cannot Find Edit",
-            "Cannot find edit with name: " + selectedEdit.get());
+  public void exportSymbol() {
+    Optional<String> selectedSymbol = getSelectedSymbol();
+    if (selectedSymbol.isPresent()) {
+      Symbol symbol = symbolsByName.get(selectedSymbol.get());
+      if (symbol == null) {
+        Message.error("Cannot Find Symbol",
+            "Cannot find symbol with name: " + selectedSymbol.get());
       } else {
         try {
-          SeqEditPatcher.askExportToFile(seqEdit, seqPath, seqPath.getParent());
+          // TODO
+          //SeqEditPatcher.askExportToFile(symbol, seqPath, seqPath.getParent());
         } catch (Exception e) {
-          LOGGER.log(Level.SEVERE, "Failed to Export Edit", e);
-          Message.error("Failed to Export Edit", e.getMessage());
+          LOGGER.log(Level.SEVERE, "Failed to Export Symbol", e);
+          Message.error("Failed to Export Symbol", e.getMessage());
         }
       }
     } else {
-      Message.error("No Edit Selected", "Cannot export the edit because no edit is selected.");
+      Message.error("No Symbol Selected", "Cannot export the symbol because no symbol is selected.");
     }
   }
 
-  public void importEdit() {
+  public void importSymbol() {
     try {
-      SeqEditPatcher.askImportFromFile(seqPath.getParent(), seqPath);
+      // TODO
+      //SeqEditPatcher.askImportFromFile(seqPath.getParent(), seqPath);
     } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Import Edit", e);
-      Message.error("Failed to Import Edit", e.getMessage());
+      LOGGER.log(Level.SEVERE, "Failed to Import Symbol", e);
+      Message.error("Failed to Import Symbol", e.getMessage());
     }
     refresh();
   }
@@ -305,17 +285,11 @@ public class SeqEditor {
    * Reset the fields for the seq edit.
    */
   public void reset() {
-    if (mode == Mode.CREATE) {
+    if (selectedSymbol != null && mode == Mode.EDIT) {
       boolean confirm = Message.warnConfirmation("Confirm Reset",
           "You will lose your current changes!");
       if (confirm) {
-        clear();
-      }
-    } else if (selectedSymbol != null && mode == Mode.EDIT) {
-      boolean confirm = Message.warnConfirmation("Confirm Reset",
-          "You will lose your current changes!");
-      if (confirm) {
-        openEdit(null); //selectedSymbol
+        openSymbol(selectedSymbol); //selectedSymbol
       }
     } else {
       Message.error("No Edit Opened", "Cannot undo, no edit is opened.");
@@ -329,7 +303,7 @@ public class SeqEditor {
    * @param mouseEvent The mouse event.
    */
   public void selectEdit(MouseEvent mouseEvent) {
-    Optional<String> selectedEdit = getSelectedEdit();
+    Optional<String> selectedEdit = getSelectedSymbol();
     EventTarget target = mouseEvent.getTarget();
     if (selectedEdit.isPresent()) {
       if (targetingSelectedListItem(target, selectedEdit.get())) {
@@ -337,20 +311,20 @@ public class SeqEditor {
         if (mouseEvent.getButton() == MouseButton.SECONDARY) {
           ContextMenu contextMenu = new ContextMenu();
           MenuItem openEdit = new MenuItem("Open Edit");
-          openEdit.setOnAction(event -> openEdit());
+          openEdit.setOnAction(event -> openSymbol());
           contextMenu.getItems().add(openEdit);
           MenuItem deleteEdit = new MenuItem("Delete Edit");
-          deleteEdit.setOnAction(event -> deleteEdit());
+          deleteEdit.setOnAction(event -> deleteSymbol());
           contextMenu.getItems().add(deleteEdit);
           MenuItem exportEdit = new MenuItem("Export Edit");
-          exportEdit.setOnAction(event -> exportEdit());
+          exportEdit.setOnAction(event -> exportSymbol());
           contextMenu.getItems().add(exportEdit);
           contextMenu.show(stage, mouseEvent.getScreenX(), mouseEvent.getScreenY());
         }
         // Handle double left click
         else if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
           if (mouseEvent.getClickCount() == 2) {
-            openEdit();
+            openSymbol();
           }
         }
       }
@@ -362,96 +336,46 @@ public class SeqEditor {
   }
 
   /**
-   * Adds a new edit to the seq file. The new edit will be appended to the end of the edit list.
-   * This method assumes that {@link #verifyEditValid()} has already been called and returned true.
-   */
-  private void applyNewEdit() {
-    try {
-      refresh();
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Create New Edit", e);
-      Message.error("Failed to Create New Edit", e.getMessage());
-    }
-  }
-
-  /**
-   * Replaces the old instance of the current edit with the new information filled out by the user.
-   * The new edit will be appended to the end of the edit list. This method assumes that {@link
-   * #verifyEditValid()} has already been called and returned true.
-   */
-  private void applyExistingEdit() {
-    try {
-      refresh();
-    } catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to Modify Edit", e);
-      Message.error("Failed to Modify Edit", e.getMessage());
-    }
-  }
-
-  /**
-   * Read the seq edits from the seq path and update the list of seq edits.
+   * Read the symbols from the seq path and update the list of symbols.
    *
    * @throws IOException If an I/O error occurs
    */
   private void updateSymbolsFromPath() throws IOException {
     symbolsByName.clear();
     symbolList.getItems().clear();
-    List<SeqEdit> seqEdits = SeqExt.getEdits(seqPath);
-    for (SeqEdit seqEdit : seqEdits) {
-      String editName = seqEdit.getName();
-      symbolsByName.put(editName, null); //seqEdit
+    List<Symbol> symbols = SeqExt.getSymbols(seqPath);
+    for (Symbol symbol : symbols) {
+      String editName = symbol.name();
+      symbolsByName.put(editName, symbol);
       symbolList.getItems().add(editName);
     }
   }
 
   /**
-   * Checks if the event target is targeting the given edit name.
+   * Checks if the event target is targeting the given symbol name.
    *
    * @param target   The event target.
-   * @param editName The name of the edit.
+   * @param symbolName The name of the symbol.
    * @return If the event target is targeting the given edit name.
    */
-  private boolean targetingSelectedListItem(EventTarget target, String editName) {
+  private boolean targetingSelectedListItem(EventTarget target, String symbolName) {
     if (target instanceof Labeled labeled) {
-      return editName.equals(labeled.getText());
+      return symbolName.equals(labeled.getText());
     } else if (target instanceof Text text) {
-      return editName.equals(text.getText());
+      return symbolName.equals(text.getText());
     }
     return false;
   }
 
   /**
-   * @return An optional selected edit from the list of existing edits.
+   * @return An optional selected symbol from the list of existing symbols.
    */
-  private Optional<String> getSelectedEdit() {
+  private Optional<String> getSelectedSymbol() {
     int index = symbolList.getSelectionModel().getSelectedIndex();
     if (index < 0) {
       return Optional.empty();
     }
     return Optional.of(symbolList.getItems().get(index));
-  }
-
-  /**
-   * Tries to update the hijacked bytes display using the offset and hijacked bytes length.
-   */
-  private void tryToUpdateHijackedBytes() {
-
-  }
-
-  /**
-   * Reads a decimal or hex number from a String. By default, decimal will be used. If the number
-   * String starts with 0x then hex will be used. This method will throw an IllegalStateException is
-   * the number is not valid.
-   *
-   * @param number The number String to read.
-   * @return The number as an int.
-   */
-  private int readNumber(String number) throws IllegalStateException {
-    try {
-      return Integer.decode(number);
-    } catch (NumberFormatException e) {
-      throw new IllegalStateException("Not a valid number: " + number, e);
-    }
   }
 
   /**
@@ -462,52 +386,5 @@ public class SeqEditor {
    */
   private boolean verifyEditValid() {
     return true;
-  }
-
-  /**
-   * Verifies that the text with the given field name is only hex or whitespace. Also verifies that
-   * the total amount of hex results in 4-byte words. Throws an IllegalStateException when it is
-   * not.
-   *
-   * @param text      The text to verify is hex or whitespace.
-   * @param fieldName The name of the field to use in the case of an Exception being thrown.
-   */
-  private void verifyIsHex(String text, String fieldName) {
-    int count = 0;
-    for (char c : text.toCharArray()) {
-      switch (c) {
-        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F' ->
-            count++;
-        case ' ', '\r', '\n', '\t' -> {
-        } // do nothing
-        default -> throw new IllegalStateException(fieldName + " contain invalid character: " + c);
-      }
-    }
-    if (count % 8 != 0) {
-      throw new IllegalStateException(fieldName + " must only have four-byte words");
-    }
-  }
-
-  /**
-   * Read a hex String, ignoring whitespace, and return a byte array. Courtesy of Dave L. via
-   * <a href="https://stackoverflow.com/a/140861">Stack Overflow</a>
-   *
-   * @param s The String to read.
-   * @return The byte array.
-   */
-  public byte[] readHex(String s) {
-    // Remove whitespace
-    s = s.replace(" ", "");
-    s = s.replace("\r", "");
-    s = s.replace("\n", "");
-    s = s.replace("\t", "");
-    // Original code from stack overflow
-    int len = s.length();
-    byte[] data = new byte[len / 2];
-    for (int i = 0; i < len; i += 2) {
-      data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-          + Character.digit(s.charAt(i + 1), 16));
-    }
-    return data;
   }
 }
