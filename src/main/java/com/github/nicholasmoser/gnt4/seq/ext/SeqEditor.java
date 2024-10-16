@@ -2,6 +2,7 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.ext.controller.SymbolController;
 import com.github.nicholasmoser.gnt4.seq.ext.parser.AssemblyParser;
 import com.github.nicholasmoser.gnt4.seq.ext.symbol.Symbol;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
@@ -17,6 +18,8 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventTarget;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
@@ -25,6 +28,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -49,6 +53,9 @@ public class SeqEditor {
   public TextArea opcodes;
   public Label leftStatus;
   public Label rightStatus;
+  public VBox symbolEditor;
+
+  public SymbolController symbolController;
 
   /**
    * The current mode that the seq editor application is in.
@@ -139,6 +146,15 @@ public class SeqEditor {
     this.rightStatus.setText(mode.toString());
     this.selectedSymbol = symbol;
     String editName = symbol.name();
+
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("insertasm.fxml"));
+      Parent parent = loader.load();
+      this.symbolController = loader.getController();
+      symbolEditor.getChildren().add(parent);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
@@ -289,7 +305,7 @@ public class SeqEditor {
       boolean confirm = Message.warnConfirmation("Confirm Reset",
           "You will lose your current changes!");
       if (confirm) {
-        openSymbol(selectedSymbol); //selectedSymbol
+        openSymbol(selectedSymbol);
       }
     } else {
       Message.error("No Edit Opened", "Cannot undo, no edit is opened.");

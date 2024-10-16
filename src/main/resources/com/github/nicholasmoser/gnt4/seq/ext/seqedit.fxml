@@ -102,7 +102,7 @@
                   <ListView fx:id="symbolList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#selectEdit" prefWidth="300.0" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <VBox prefWidth="810.0" />
+            <VBox fx:id="symbolEditor" prefWidth="810.0" />
             <VBox prefWidth="810.0">
                <children>
                   <Label alignment="CENTER" minWidth="45.0" prefHeight="27.0" prefWidth="45.0" style="&#10;" text="Bytes" textAlignment="CENTER" wrapText="false">
