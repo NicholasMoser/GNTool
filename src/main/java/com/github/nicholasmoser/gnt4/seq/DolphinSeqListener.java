@@ -70,6 +70,7 @@ public class DolphinSeqListener {
   private Stage stage;
   private Path gnt4Files;
   private String lastSearch = "";
+  private boolean isListenerRunning = false;
 
   public void quit() {
     killListener();
@@ -246,7 +247,8 @@ public class DolphinSeqListener {
       initMessageProducer();
       initMessageConsumer(bufferSizeValue);
       leftStatus.setText("Connected");
-    } else {
+      isListenerRunning = true;
+    } else if (!isListenerRunning) {
       leftStatus.setText("Failed to Connect to Dolphin");
       Message.error("Failed to Connect to Dolphin", "Please restart GNTool.");
     }
@@ -256,6 +258,7 @@ public class DolphinSeqListener {
     try {
       if (producer != null && !producer.isInterrupted()) {
         producer.interrupt();
+        isListenerRunning = false;
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to stop Dolphin message producer", e);
