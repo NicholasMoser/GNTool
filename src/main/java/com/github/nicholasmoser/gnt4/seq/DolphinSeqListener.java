@@ -5,10 +5,12 @@ import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.GNT4FileNames;
 import com.github.nicholasmoser.utils.Browser;
+import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.utils.MarkableString;
 import com.github.nicholasmoser.utils.Sockets;
 import com.google.common.collect.Queues;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -408,7 +410,8 @@ public class DolphinSeqListener {
 
     public ProducerThread(DatagramSocket socket) {
       this.socket = socket;
-      this.buf = new byte[256];
+      this.buf = new byte[65535];
+      Thread.currentThread().setName("SEQ UDP Packer Receiver");
     }
 
     @Override
@@ -417,8 +420,16 @@ public class DolphinSeqListener {
         while (true) {
           DatagramPacket packet = new DatagramPacket(buf, buf.length);
           socket.receive(packet);
-          String text = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-          queue.add(text);
+          int length = packet.getLength();
+          ByteStream stream = new ByteStream(packet.getData());
+          while (stream.offset() < length) {
+            int offset = stream.readWord();
+            int opcode = stream.readWord();
+            int pc = stream.readWord();
+            String fileName = stream.readCString();
+            String text = String.format("%08x %08x %08x %s", offset, opcode, pc, fileName);
+            queue.add(text);
+          }
         }
       } catch (Exception e) {
         LOGGER.log(Level.INFO,
