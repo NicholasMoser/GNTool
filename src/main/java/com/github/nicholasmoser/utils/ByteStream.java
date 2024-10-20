@@ -1,9 +1,11 @@
 package com.github.nicholasmoser.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A ByteArrayInputStream enhanced with a few extra features. These include:
@@ -128,6 +130,22 @@ public class ByteStream extends ByteArrayInputStream {
       throw new IOException("Failed to read word at offset " + pos);
     }
     return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN).getFloat();
+  }
+
+  /**
+   * Read the next null-terminated String and return it.
+   *
+   * @return The next null-terminated String.
+   * @throws IOException If an I/O error occurs.
+   */
+  public String readCString() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    int curr = read();
+    while (curr != 0 && curr != -1) {
+      baos.write(curr);
+      curr = read();
+    }
+    return baos.toString(StandardCharsets.UTF_8);
   }
 
   /**

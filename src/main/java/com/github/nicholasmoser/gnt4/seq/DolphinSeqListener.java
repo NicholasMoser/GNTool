@@ -5,10 +5,12 @@ import com.github.nicholasmoser.GNTool;
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.GNT4FileNames;
 import com.github.nicholasmoser.utils.Browser;
+import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.GUIUtils;
 import com.github.nicholasmoser.utils.MarkableString;
 import com.github.nicholasmoser.utils.Sockets;
 import com.google.common.collect.Queues;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -68,6 +70,7 @@ public class DolphinSeqListener {
   private Stage stage;
   private Path gnt4Files;
   private String lastSearch = "";
+  private boolean isListenerRunning = false;
 
   public void quit() {
     killListener();
@@ -244,7 +247,8 @@ public class DolphinSeqListener {
       initMessageProducer();
       initMessageConsumer(bufferSizeValue);
       leftStatus.setText("Connected");
-    } else {
+      isListenerRunning = true;
+    } else if (!isListenerRunning) {
       leftStatus.setText("Failed to Connect to Dolphin");
       Message.error("Failed to Connect to Dolphin", "Please restart GNTool.");
     }
@@ -254,6 +258,7 @@ public class DolphinSeqListener {
     try {
       if (producer != null && !producer.isInterrupted()) {
         producer.interrupt();
+        isListenerRunning = false;
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to stop Dolphin message producer", e);
@@ -408,7 +413,8 @@ public class DolphinSeqListener {
 
     public ProducerThread(DatagramSocket socket) {
       this.socket = socket;
-      this.buf = new byte[256];
+      this.buf = new byte[65535];
+      Thread.currentThread().setName("SEQ UDP Packer Receiver");
     }
 
     @Override
@@ -417,14 +423,38 @@ public class DolphinSeqListener {
         while (true) {
           DatagramPacket packet = new DatagramPacket(buf, buf.length);
           socket.receive(packet);
-          String text = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-          queue.add(text);
+          // If the first byte returned is the 0 character, then we know it's a legacy packet
+          if (packet.getData()[0] != 0x30) {
+            int length = packet.getLength();
+            ByteStream stream = new ByteStream(packet.getData());
+            while (stream.offset() < length) {
+              int offset = stream.readWord();
+              int opcode = stream.readWord();
+              int pc = stream.readWord();
+              String fileName = stream.readCString();
+              String text = String.format("%08x %08x %08x %s", offset, opcode, pc, fileName);
+              queue.add(text);
+            }
+          } else {
+            queue.add(readLegacyPacket(packet));
+          }
         }
       } catch (Exception e) {
         LOGGER.log(Level.INFO,
             "Producer thread threw an exception, this is expected in most cases due to interrupts",
             e);
       }
+    }
+
+    /**
+     * Reads legacy packets from the lua implementation of SEQ listener messages. These messages
+     * are entirely UTF-8 bytes and are converted to Strings as-is.
+     *
+     * @param packet The legacy packet to read.
+     * @return The String the packet represents.
+     */
+    private String readLegacyPacket(DatagramPacket packet) {
+      return new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
     }
 
     @Override
