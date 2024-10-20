@@ -423,15 +423,20 @@ public class DolphinSeqListener {
         while (true) {
           DatagramPacket packet = new DatagramPacket(buf, buf.length);
           socket.receive(packet);
-          int length = packet.getLength();
-          ByteStream stream = new ByteStream(packet.getData());
-          while (stream.offset() < length) {
-            int offset = stream.readWord();
-            int opcode = stream.readWord();
-            int pc = stream.readWord();
-            String fileName = stream.readCString();
-            String text = String.format("%08x %08x %08x %s", offset, opcode, pc, fileName);
-            queue.add(text);
+          // If the first byte returned is the 0 character, then we know it's a legacy packet
+          if (packet.getData()[0] != 0x30) {
+            int length = packet.getLength();
+            ByteStream stream = new ByteStream(packet.getData());
+            while (stream.offset() < length) {
+              int offset = stream.readWord();
+              int opcode = stream.readWord();
+              int pc = stream.readWord();
+              String fileName = stream.readCString();
+              String text = String.format("%08x %08x %08x %s", offset, opcode, pc, fileName);
+              queue.add(text);
+            }
+          } else {
+            queue.add(readLegacyPacket(packet));
           }
         }
       } catch (Exception e) {
@@ -439,6 +444,17 @@ public class DolphinSeqListener {
             "Producer thread threw an exception, this is expected in most cases due to interrupts",
             e);
       }
+    }
+
+    /**
+     * Reads legacy packets from the lua implementation of SEQ listener messages. These messages
+     * are entirely UTF-8 bytes and are converted to Strings as-is.
+     *
+     * @param packet The legacy packet to read.
+     * @return The String the packet represents.
+     */
+    private String readLegacyPacket(DatagramPacket packet) {
+      return new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
     }
 
     @Override
