@@ -330,4 +330,27 @@ public class SeqAssemblerTest {
         Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes);
         assertEquals(reference, reassembled.getValue());
     }
+
+    @Test
+    void testSeqDisassemblyTCG() throws IOException {
+        String expectedAsm = Files.readString(Path.of("src/test/resources/gnt4/seq/ext/tcg.seqa"));
+        byte [] expectedBytes = Files.readAllBytes(Path.of("src/test/resources/gnt4/seq/ext/tcg.seq"));
+        List<Opcode> assembledOpcodes = new LinkedList<>();
+        ByteStream bs = new ByteStream(expectedBytes);
+        while (bs.bytesAreLeft()) {
+            assembledOpcodes.add(SeqHelper.getSeqOpcode(bs,bs.peekBytes(2)[0],bs.peekBytes(2)[1]));
+        }
+        Pair<String, String> reassembled = SeqUtil.getOpcodesStrings(assembledOpcodes);
+        String actualAsm = reassembled.getValue();
+        assertEquals(expectedAsm, actualAsm);
+
+
+        Pair<List <Opcode>, Integer> opcodes = SeqAssembler.assembleLines(actualAsm.split("\n"), null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        for (Opcode opcode : opcodes.getKey()) {
+            baos.write(opcode.getBytes());
+        }
+        byte [] bytes = baos.toByteArray();
+        assertArrayEquals(expectedBytes, bytes);
+    }
 }

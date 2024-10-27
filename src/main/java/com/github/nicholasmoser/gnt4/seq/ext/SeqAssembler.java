@@ -786,6 +786,60 @@ public class SeqAssembler {
                             baos.write(ByteUtils.fromInt32(TCG.writeValue(op[0])));
                             baos.write(ByteUtils.fromInt32(TCG.writePointer(op[1])));
                             break;
+                        case "beq":
+                            baos.write(new byte[] {0x3B, 0x01, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
+                        case "bne":
+                            baos.write(new byte[] {0x3B, 0x02, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
+                        case "blt":
+                            baos.write(new byte[] {0x3B, 0x03, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
+                        case "ble":
+                            baos.write(new byte[] {0x3B, 0x04, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
+                        case "bgt":
+                            baos.write(new byte[] {0x3B, 0x05, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
+                        case "bge":
+                            baos.write(new byte[] {0x3B, 0x06, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
+                        case "bandnz":
+                            baos.write(new byte[] {0x3B, 0x07, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
+                        case "bandz":
+                            baos.write(new byte[] {0x3B, 0x08, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
+                        case "bmeq":
+                            baos.write(new byte[] {0x3B, 0x09, 0, 0});
+                            baos.write(ByteUtils.fromInt32(Integer.decode(op[0])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[1])));
+                            baos.write(ByteUtils.fromInt32(TCG.writeValue(op[2])));
+                            break;
                         default:
                             throw new IllegalArgumentException("Opcode not yet supported: " + line);
                     }
