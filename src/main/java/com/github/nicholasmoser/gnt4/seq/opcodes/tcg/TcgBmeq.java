@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.gnt4.seq.opcodes.tcg;
 
+import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 
@@ -12,11 +13,13 @@ public class TcgBmeq implements Opcode {
   private final int offset;
   private final byte[] bytes;
   private final String info;
+  private final int destination;
 
-  public TcgBmeq(int offset, byte[] bytes, String info) {
+  public TcgBmeq(int offset, byte[] bytes, String info, int destination) {
     this.offset = offset;
     this.bytes = bytes;
     this.info = info;
+    this.destination = destination;
   }
 
   @Override
@@ -42,8 +45,12 @@ public class TcgBmeq implements Opcode {
   @Override
   public ContainerTag toHTML() {
     String id = String.format("#%X", offset);
+    String destName = String.format("0x%X", destination);
+    String destOffset = String.format("#%X", destination);
     return div(attrs(id))
-        .withText(String.format("%05X | %s %s ", offset, MNEMONIC, info))
+        .withText(String.format("%05X | %s ", offset, MNEMONIC))
+        .with(a(destName).withHref(destOffset))
+        .withText(String.format(" %s ", info))
         .with(formatRawBytesHTML(bytes));
   }
 }

@@ -44,8 +44,8 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBeq(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBeq(offset, baos.toByteArray(), description, op1);
   }
 
   private static Opcode tcg_bne(ByteStream bs) throws IOException {
@@ -58,8 +58,8 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBne(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBne(offset, baos.toByteArray(), description, op1);
   }
 
 
@@ -73,8 +73,8 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBlt(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBlt(offset, baos.toByteArray(), description, op1);
   }
 
   private static Opcode tcg_ble(ByteStream bs) throws IOException {
@@ -87,8 +87,8 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBle(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBle(offset, baos.toByteArray(), description, op1);
   }
 
   private static Opcode tcg_bgt(ByteStream bs) throws IOException {
@@ -101,8 +101,8 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBgt(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBgt(offset, baos.toByteArray(), description, op1);
   }
 
   private static Opcode tcg_bge(ByteStream bs) throws IOException {
@@ -115,8 +115,8 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBge(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBge(offset, baos.toByteArray(), description, op1);
   }
 
   private static Opcode tcg_bandnz(ByteStream bs) throws IOException {
@@ -129,8 +129,8 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBandnz(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBandnz(offset, baos.toByteArray(), description, op1);
   }
 
   private static Opcode tcg_bandz(ByteStream bs) throws IOException {
@@ -143,8 +143,8 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBandz(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBandz(offset, baos.toByteArray(), description, op1);
   }
 
   private static Opcode tcg_bmeq(ByteStream bs) throws IOException {
@@ -157,7 +157,7 @@ public class OpcodeGroup3B {
     baos.write(ByteUtils.fromInt32(op1));
     baos.write(ByteUtils.fromInt32(op2));
     baos.write(ByteUtils.fromInt32(op3));
-    String description = String.format("0x%x, %s, %s", op1, TCG.readValue(op2), TCG.readValue(op3));
-    return new TcgBmeq(offset, baos.toByteArray(), description);
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readValue(op3));
+    return new TcgBmeq(offset, baos.toByteArray(), description, op1);
   }
 }
