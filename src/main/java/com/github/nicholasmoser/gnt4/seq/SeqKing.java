@@ -6,10 +6,13 @@ import com.github.nicholasmoser.gnt4.seq.dest.Destination;
 import com.github.nicholasmoser.gnt4.seq.dest.FunctionDestination;
 import com.github.nicholasmoser.gnt4.seq.opcodes.ActionID;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BinaryData;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTable;
+import com.github.nicholasmoser.gnt4.seq.opcodes.BranchTableLink;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingLinkingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.BranchingOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.InvalidBytes;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgBranchingOpcode;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.google.common.collect.Range;
 import java.io.IOException;
@@ -203,23 +206,7 @@ public class SeqKing {
       if (verbose) {
         System.out.println(newOpcode);
       }
-      // This is a very hacky way of setting the function name on a branching opcode
-      if (newOpcode instanceof BranchingOpcode branchingOpcode) {
-        Destination destination = branchingOpcode.getDestination();
-        int destinationOffset = destination.offset();
-        Map<Integer, Function> functions = Functions.getFunctions(fileName);
-        Function function = functions.get(destinationOffset);
-        if (function != null) {
-          // Known function
-          branchingOpcode.setDestination(new FunctionDestination(destinationOffset, function.name()));
-        } else if (branchingOpcode instanceof BranchingLinkingOpcode) {
-          // Unknown function
-          String destinationFunctionName = String.format("fun_%X", destinationOffset);
-          branchingOpcode.setDestination(new FunctionDestination(destinationOffset, destinationFunctionName));
-          functions.put(destinationOffset, new Function(destinationFunctionName,
-              Collections.emptyList()));
-        }
-      }
+      setFunctionNames(newOpcode, fileName);
       if (bs.offset() == bytes.length) {
         if (verbose) {
           System.out.printf("%s%n", Functions.getFunctions(fileName));
@@ -228,6 +215,77 @@ public class SeqKing {
       }
     }
     return opcodes;
+  }
+
+  /**
+   * Modify opcode destinations to add the destination function mame if it is known. I would prefer
+   * that opcodes be immutable, but I couldn't think of a better way to add the function name in
+   * outside of doing a second pass and updating each opcode like so.
+   *
+   * @param opcode The opcode to update.
+   * @param fileName The name of the file this opcode is in.
+   */
+  private static void setFunctionNames(Opcode opcode, String fileName) {
+    if (opcode instanceof BranchingOpcode branchingOpcode) {
+      Destination destination = branchingOpcode.getDestination();
+      int destinationOffset = destination.offset();
+      Map<Integer, Function> functions = Functions.getFunctions(fileName);
+      Function function = functions.get(destinationOffset);
+      if (function != null) {
+        // Known function
+        branchingOpcode.setDestination(new FunctionDestination(destinationOffset, function.name()));
+      } else if (branchingOpcode instanceof BranchingLinkingOpcode) {
+        // Unknown function
+        String destinationFunctionName = String.format("fun_%X", destinationOffset);
+        branchingOpcode.setDestination(new FunctionDestination(destinationOffset, destinationFunctionName));
+        functions.put(destinationOffset, new Function(destinationFunctionName,
+            Collections.emptyList()));
+      }
+    } else if (opcode instanceof BranchTable branchTable) {
+      List<Destination> oldDestinations = branchTable.getDestinations();
+      List<Destination> newDestinations = new ArrayList<>(oldDestinations.size());
+      for (Destination oldDestination : oldDestinations) {
+        int destinationOffset = oldDestination.offset();
+        Map<Integer, Function> functions = Functions.getFunctions(fileName);
+        Function function = functions.get(destinationOffset);
+        if (function != null) {
+          // Known function
+          newDestinations.add(new FunctionDestination(destinationOffset, function.name()));
+        } else {
+          // Unknown code block, add original destination
+          newDestinations.add(oldDestination);
+        }
+      }
+      branchTable.setDestinations(newDestinations);
+    } else if (opcode instanceof BranchTableLink branchTable) {
+      List<Destination> oldDestinations = branchTable.getDestinations();
+      List<Destination> newDestinations = new ArrayList<>(oldDestinations.size());
+      for (Destination oldDestination : oldDestinations) {
+        int destinationOffset = oldDestination.offset();
+        Map<Integer, Function> functions = Functions.getFunctions(fileName);
+        Function function = functions.get(destinationOffset);
+        if (function != null) {
+          // Known function
+          newDestinations.add(new FunctionDestination(destinationOffset, function.name()));
+        } else {
+          // Unknown function
+          String destinationFunctionName = String.format("fun_%X", destinationOffset);
+          newDestinations.add(new FunctionDestination(destinationOffset, destinationFunctionName));
+          functions.put(destinationOffset, new Function(destinationFunctionName,
+              Collections.emptyList()));
+        }
+      }
+      branchTable.setDestinations(newDestinations);
+    } else if (opcode instanceof TcgBranchingOpcode branchingOpcode) {
+      Destination destination = branchingOpcode.getDestination();
+      int destinationOffset = destination.offset();
+      Map<Integer, Function> functions = Functions.getFunctions(fileName);
+      Function function = functions.get(destinationOffset);
+      if (function != null) {
+        // Known function
+        branchingOpcode.setDestination(new FunctionDestination(destinationOffset, function.name()));
+      }
+    }
   }
 
   private static List<Range<Integer>> getEftRanges(String fileName) {

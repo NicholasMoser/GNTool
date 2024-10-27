@@ -16,8 +16,8 @@ public class BranchTable implements Opcode {
 
   private final static String MNEMONIC = "branch_table";
   private final int offset;
-  private byte[] bytes;
   private final String info;
+  private byte[] bytes;
   private List<Destination> destinations;
 
   public BranchTable(int offset, byte[] bytes, String info, List<Destination> destinations) {
@@ -29,6 +29,10 @@ public class BranchTable implements Opcode {
 
   public List<Destination> getDestinations() {
     return destinations;
+  }
+
+  public void setDestinations(List<Destination> destinations) {
+    this.destinations = destinations;
   }
 
   @Override
@@ -61,8 +65,10 @@ public class BranchTable implements Opcode {
     DivTag div =  div(attrs(id))
         .withText(String.format("%05X | %s %s (%d branches):", offset, MNEMONIC, info, destinations.size()));
     for (Destination destination : destinations) {
+      String destName = destination.toString();
+      String destOffset = String.format("#%X", destination.offset());
       div.withText(" ");
-      div.with(a(destination.toString()).withHref(destination.toString()));
+      div.with(a(destName).withHref(destOffset));
     }
     div.withText(" ");
     return div.with(formatRawBytesHTML(getBytes()));

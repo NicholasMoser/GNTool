@@ -15,9 +15,9 @@ public class BranchTableLink implements Opcode {
   private static final Logger LOGGER = Logger.getLogger(Opcode.class.getName());
   private final static String MNEMONIC = "branch_table_link";
   private final int offset;
-  private byte[] bytes;
   private final String info;
-  private final List<Destination> destinations;
+  private byte[] bytes;
+  private List<Destination> destinations;
 
   public BranchTableLink(int offset, byte[] bytes, String info, List<Destination> destinations) {
     this.offset = offset;
@@ -28,6 +28,10 @@ public class BranchTableLink implements Opcode {
 
   public List<Destination> getDestinations() {
     return destinations;
+  }
+
+  public void setDestinations(List<Destination> destinations) {
+    this.destinations = destinations;
   }
 
   @Override
@@ -60,8 +64,10 @@ public class BranchTableLink implements Opcode {
     DivTag div =  div(attrs(id))
         .withText(String.format("%05X | %s %s (%d branches):", offset, MNEMONIC, info, destinations.size()));
     for (Destination destination : destinations) {
+      String destName = destination.toString();
+      String destOffset = String.format("#%X", destination.offset());
       div.withText(" ");
-      div.with(a(destination.toString()).withHref(destination.toString()));
+      div.with(a(destName).withHref(destOffset));
     }
     div.withText(" ");
     return div.with(formatRawBytesHTML(getBytes()));

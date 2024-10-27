@@ -209,6 +209,35 @@ public class Functions {
         List.of("// Change costume if duplicate costume is selected", "7FFFFF25: Opponent costume offset", "7FFFFF24: This costume offset")));
     allFunctions.put(Seqs.CHARSEL, functions);
 
+    functions = new HashMap<>();
+    functions.put(0x71B8, new Function("handle_jan_theme", Collections.emptyList()));
+    functions.put(0x7720, new Function("handle_feb_theme", Collections.emptyList()));
+    functions.put(0xA0AC, new Function("handle_mar_theme", Collections.emptyList()));
+    functions.put(0xA970, new Function("handle_apr_theme", Collections.emptyList()));
+    functions.put(0xAC3C, new Function("handle_may_theme", Collections.emptyList()));
+    functions.put(0xAF98, new Function("handle_jun_theme", Collections.emptyList()));
+    functions.put(0xBAD4, new Function("handle_jul_theme", Collections.emptyList()));
+    functions.put(0xBBB0, new Function("handle_aug_theme", Collections.emptyList()));
+    functions.put(0xDC2C, new Function("handle_sep_theme", Collections.emptyList()));
+    functions.put(0xE1A0, new Function("handle_oct_theme", Collections.emptyList()));
+    functions.put(0xE46C, new Function("handle_nov_theme", Collections.emptyList()));
+    functions.put(0xEB88, new Function("handle_dec_theme", Collections.emptyList()));
+    functions.put(0x16D8C, new Function("display_submenus",
+        List.of("// Called when opening submenus",
+            "// s_lpCTD->vars[0x21] holds the index of the menu selected, e.g.",
+            "// 0 - Three Man Cell",
+            "// 1 - Single Player",
+            "// 2 - Battle Mode",
+            "// 3 - Story Mode",
+            "// 4 - Practice",
+            "// 5 - Watch Mode",
+            "// 6 - Extra",
+            "// 7 - Options",
+            "// 8 - Missions")));
+    functions.put(0x16E14, new Function("display_extra_submenu",
+        List.of("// Called when opening the Extra submenus, likely to check what is unlocked")));
+    allFunctions.put(Seqs.M_TITLE, functions);
+
     return allFunctions;
   }
 
