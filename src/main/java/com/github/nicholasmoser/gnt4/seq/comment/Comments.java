@@ -330,6 +330,9 @@ public class Comments {
     titleComments.put(0x1C1C0, "// index 2, which will read 00000009 from this list. So the submenu");
     titleComments.put(0x1C1C0, "// indices of Battle Mode will start at 0x9 and go to 0xD");
     titleComments.put(0x1C1C0, "// (1 before the next index). They are increments at 0x16DE8");
+    titleComments.put(0x1EB00, "// Vanilla string table");
+    titleComments.put(0x32420, "// String table offsets");
+    titleComments.put(0x32CE8, "// SCON4 string table");
     allComments.put(Seqs.M_TITLE, titleComments);
 
     // m_vs.seq 0x3838 Reads the character costume ID

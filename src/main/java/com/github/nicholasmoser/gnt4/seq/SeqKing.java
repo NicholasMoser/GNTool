@@ -325,7 +325,9 @@ public class SeqKing {
         binaryOffsetToSize.put(0x1C1C0, 0x2940);
         binaryOffsetToSize.put(0x1EB00, 0x13910); // String table
         binaryOffsetToSize.put(0x32410, 0x10);
-        binaryOffsetToSize.put(0x32420, 0x8B0); // String table offsets
+        binaryOffsetToSize.put(0x32420, 0x60); // String table offsets
+        binaryOffsetToSize.put(0x32480, 0x850);
+        binaryOffsetToSize.put(0x32CE8, 0x165B8); // SCON4 string table
       }
       case Seqs.STG_001_0000 -> {
         binaryOffsetToSize.put(0x4C0, 0x220);

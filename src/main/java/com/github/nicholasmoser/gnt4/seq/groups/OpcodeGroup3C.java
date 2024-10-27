@@ -4,13 +4,18 @@ import com.github.nicholasmoser.gnt4.seq.TCG;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgAdd;
+import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgAddWithMax;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgAnd;
+import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgCMovZ;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgDiv;
+import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgLdw;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgMod;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgMov;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgMul;
+import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgNimply;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgOr;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgRand;
+import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgStw;
 import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgSub;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
@@ -31,15 +36,15 @@ public class OpcodeGroup3C {
       case 0x08 -> UnknownOpcode.of(0x10, bs);
       case 0x09 -> UnknownOpcode.of(0x10, bs);
       case 0x0a -> tcg_rand(bs);
-      case 0x0b -> UnknownOpcode.of(0xc, bs);
+      case 0x0b -> tcg_nimply(bs);
       case 0x0c -> UnknownOpcode.of(0x14, bs);
-      case 0x0d -> UnknownOpcode.of(0x14, bs);
+      case 0x0d -> tcg_addwm(bs);
       case 0x11 -> UnknownOpcode.of(0x10, bs);
-      case 0x12 -> UnknownOpcode.of(0x10, bs);
+      case 0x12 -> tcg_cmovz(bs);
       case 0x14 -> UnknownOpcode.of(0x10, bs);
       case 0x15 -> UnknownOpcode.of(0x10, bs);
-      case 0x16 -> UnknownOpcode.of(0x10, bs);
-      case 0x17 -> UnknownOpcode.of(0x10, bs);
+      case 0x16 -> tcg_ldw(bs);
+      case 0x17 -> tcg_stw(bs);
       case 0x18 -> UnknownOpcode.of(0x14, bs);
       case 0x19 -> UnknownOpcode.of(0x10, bs);
       default -> throw new IOException(String.format("Unimplemented: %02X", opcodeByte));
@@ -152,5 +157,73 @@ public class OpcodeGroup3C {
     baos.write(ByteUtils.fromInt32(op2));
     String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
     return new TcgRand(offset, baos.toByteArray(), description);
+  }
+
+  private static Opcode tcg_nimply(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bs.readNBytes(4));
+    int op1 = bs.readWord();
+    int op2 = bs.readWord();
+    baos.write(ByteUtils.fromInt32(op1));
+    baos.write(ByteUtils.fromInt32(op2));
+    String description = String.format("%s, %s", TCG.readValue(op1), TCG.readPointer(op2));
+    return new TcgNimply(offset, baos.toByteArray(), description);
+  }
+
+  private static Opcode tcg_addwm(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bs.readNBytes(4));
+    int op1 = bs.readWord();
+    int op2 = bs.readWord();
+    int op3 = bs.readWord();
+    int op4 = bs.readWord();
+    baos.write(ByteUtils.fromInt32(op1));
+    baos.write(ByteUtils.fromInt32(op2));
+    baos.write(ByteUtils.fromInt32(op3));
+    baos.write(ByteUtils.fromInt32(op4));
+    String description = String.format("%s, %s, %s, %s", TCG.readValue(op1), TCG.readPointer(op2), TCG.readValue(op3), TCG.readValue(op4));
+    return new TcgAddWithMax(offset, baos.toByteArray(), description);
+  }
+
+  private static Opcode tcg_cmovz(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bs.readNBytes(4));
+    int op1 = bs.readWord();
+    int op2 = bs.readWord();
+    baos.write(ByteUtils.fromInt32(op1));
+    baos.write(ByteUtils.fromInt32(op2));
+    String description = String.format("%s, %s", TCG.readPointer(op1), TCG.readValue(op2));
+    return new TcgCMovZ(offset, baos.toByteArray(), description);
+  }
+
+  private static Opcode tcg_ldw(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bs.readNBytes(4));
+    int op1 = bs.readWord();
+    int op2 = bs.readWord();
+    int op3 = bs.readWord();
+    baos.write(ByteUtils.fromInt32(op1));
+    baos.write(ByteUtils.fromInt32(op2));
+    baos.write(ByteUtils.fromInt32(op3));
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readPointer(op3));
+    return new TcgLdw(offset, baos.toByteArray(), description, op1);
+  }
+
+  private static Opcode tcg_stw(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bs.readNBytes(4));
+    int op1 = bs.readWord();
+    int op2 = bs.readWord();
+    int op3 = bs.readWord();
+    baos.write(ByteUtils.fromInt32(op1));
+    baos.write(ByteUtils.fromInt32(op2));
+    baos.write(ByteUtils.fromInt32(op3));
+    String description = String.format("%s, %s", TCG.readValue(op2), TCG.readPointer(op3));
+    return new TcgStw(offset, baos.toByteArray(), description, op1);
   }
 }
