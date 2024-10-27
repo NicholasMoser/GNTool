@@ -328,7 +328,7 @@ public class Comments {
     titleComments.put(0x1C160, "// Index of which sub-menu option to display in each slot");
     titleComments.put(0x1C160, "// How many submenus each main menu entry has, stored by main menu entry index");
     titleComments.put(0x1C180, "// Total number of submenu entries per menu entry, e.g. 4 for Three Man Cell");
-    titleComments.put(0x1C180, "// Modified at runtime, likely to add unlocked submenu entries");
+    titleComments.put(0x1C180, "// Modified at runtime to add extra unlocked submenu entries, such as 2P Survival");
     titleComments.put(0x1C1C0, "// The first 8 values here are the starting index for each submenu");
     titleComments.put(0x1C1C0, "// of each main menu entry. So for example, Battle Mode is main menu");
     titleComments.put(0x1C1C0, "// index 2, which will read 00000009 from this list. So the submenu");
