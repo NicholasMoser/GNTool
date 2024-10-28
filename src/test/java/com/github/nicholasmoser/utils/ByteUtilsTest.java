@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.common.primitives.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
@@ -970,5 +971,27 @@ public class ByteUtilsTest {
     assertThat(ByteUtils.align(31, 8)).isEqualTo(32);
     assertThat(ByteUtils.align(32, 8)).isEqualTo(32);
     assertThat(ByteUtils.align(33, 8)).isEqualTo(40);
+  }
+
+  @Test
+  public void testReadCString() throws Exception {
+    byte[] oneString = "hello\0".getBytes(StandardCharsets.UTF_8);
+    byte[] threeStrings = "hello\0hi\0okay?\0".getBytes(StandardCharsets.UTF_8);
+
+    ByteStream bs = new ByteStream(oneString);
+    assertThat(bs.offset()).isEqualTo(0);
+    assertThat(bs.readCString()).isEqualTo("hello");
+    assertThat(bs.offset()).isEqualTo(6);
+    assertThat(bs.readCString()).isEqualTo("");
+    assertThat(bs.offset()).isEqualTo(6);
+
+    bs = new ByteStream(threeStrings);
+    assertThat(bs.offset()).isEqualTo(0);
+    assertThat(bs.readCString()).isEqualTo("hello");
+    assertThat(bs.offset()).isEqualTo(6);
+    assertThat(bs.readCString()).isEqualTo("hi");
+    assertThat(bs.offset()).isEqualTo(9);
+    assertThat(bs.readCString()).isEqualTo("okay?");
+    assertThat(bs.offset()).isEqualTo(15);
   }
 }
