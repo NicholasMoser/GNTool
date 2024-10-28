@@ -236,6 +236,13 @@ public class Functions {
             "// 8 - Missions")));
     functions.put(0x16E14, new Function("display_extra_submenu",
         List.of("// Called when opening the Extra submenus, likely to check what is unlocked")));
+    functions.put(0x15488, new Function("exit_m_title_css", List.of("// This exit occurs when entering a menu option that loads the CSS")));
+    functions.put(0x15600, new Function("exit_m_title_story", List.of("// This exit occurs when entering story mode")));
+    functions.put(0x15714, new Function("exit_m_title_unknown1", List.of("// I can't figure out when this exit occurs")));
+    functions.put(0x15858, new Function("exit_m_title_unknown2", List.of("// I can't figure out when this exit occurs")));
+    functions.put(0x15A0C, new Function("exit_m_title_extras", List.of("// This exit occurs when entering any option from Extras")));
+    functions.put(0x19050, new Function("exit_m_title_mission", List.of("// This exit occurs when entering a Mission")));
+    functions.put(0x1B6B4, new Function("exit_m_title_demo", List.of("// This exit occurs when the title goes to a demo battle")));
     allFunctions.put(Seqs.M_TITLE, functions);
 
     return allFunctions;

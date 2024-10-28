@@ -3,8 +3,12 @@ package com.github.nicholasmoser.gnt4.seq.groups;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD1;
 import com.github.nicholasmoser.gnt4.seq.SEQ_RegCMD2;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.TCG;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.gnt4.seq.opcodes.UnknownOpcode;
+import com.github.nicholasmoser.gnt4.seq.opcodes.gfx.DeleteTexture;
+import com.github.nicholasmoser.gnt4.seq.opcodes.gfx.LoadTexture;
+import com.github.nicholasmoser.gnt4.seq.opcodes.tcg.TcgCMovZ;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 import com.google.common.primitives.Bytes;
@@ -18,7 +22,7 @@ public class OpcodeGroup36 {
       case 0x01 -> UnknownOpcode.of(0x4, bs);
       case 0x04 -> UnknownOpcode.of(0x4, bs);
       case 0x05 -> loadTexture(bs);
-      case 0x06 -> UnknownOpcode.of(0x8, bs);
+      case 0x06 -> deleteTexture(bs);
       case 0x07 -> op_3607(bs);
       case 0x08 -> op_3608(bs);
       case 0x0A -> seqInit(bs);
@@ -31,17 +35,24 @@ public class OpcodeGroup36 {
   private static Opcode loadTexture(ByteStream bs) throws IOException {
     int offset = bs.offset();
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(bs.readBytes(4));
-    byte[] firstWord = bs.readBytes(4);
-    baos.write(firstWord);
-    StringBuilder info = new StringBuilder(String.format("Use index 0x%x", ByteUtils.toInt32(firstWord)));
+    baos.write(bs.readNBytes(4));
+    int op1 = bs.readWord();
+    baos.write(ByteUtils.fromInt32(op1));
     byte[] textBytes = SeqHelper.readString(bs);
     baos.write(textBytes);
     String fileName = SeqHelper.getString(textBytes);
-    info.append(" for texture file \"");
-    info.append(fileName);
-    info.append('"');
-    return new UnknownOpcode(offset, baos.toByteArray(), info.toString());
+    String info = String.format("0x%x, %s", op1, fileName);
+    return new LoadTexture(offset, baos.toByteArray(), info);
+  }
+
+  private static Opcode deleteTexture(ByteStream bs) throws IOException {
+    int offset = bs.offset();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(bs.readNBytes(4));
+    int op1 = bs.readWord();
+    baos.write(ByteUtils.fromInt32(op1));
+    String info = String.format("0x%x", op1);
+    return new DeleteTexture(offset, baos.toByteArray(), info);
   }
 
   public static Opcode op_3607(ByteStream bs) throws IOException {
