@@ -101,8 +101,16 @@ public class InsertAsm implements Symbol {
     }
   }
 
+  public int hijackOffset() {
+    return hijackOffset;
+  }
+
   public List<Opcode> oldOpcodes() {
     return oldCodes;
+  }
+
+  public byte[] oldBytes() {
+    return oldBytes;
   }
 
   public List<Opcode> newOpcodes() {

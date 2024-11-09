@@ -49,7 +49,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TextArea VBox.vgrow="ALWAYS">
+      <TextArea fx:id="name" VBox.vgrow="ALWAYS">
          <VBox.margin>
             <Insets left="5.0" right="5.0" />
          </VBox.margin>
@@ -62,7 +62,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TextField>
+      <TextField fx:id="offset">
          <VBox.margin>
             <Insets left="5.0" right="5.0" />
          </VBox.margin>
@@ -75,7 +75,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TextField>
+      <TextField fx:id="hijackedBytesLength">
          <VBox.margin>
             <Insets left="5.0" right="5.0" />
          </VBox.margin>
@@ -88,7 +88,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TextArea VBox.vgrow="ALWAYS">
+      <TextArea fx:id="hijackedBytes" VBox.vgrow="ALWAYS">
          <VBox.margin>
             <Insets left="5.0" right="5.0" />
          </VBox.margin>
@@ -101,9 +101,9 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TextArea VBox.vgrow="ALWAYS">
+      <TextArea fx:id="newBytes" VBox.vgrow="ALWAYS">
          <VBox.margin>
-            <Insets left="5.0" right="5.0" />
+            <Insets bottom="5.0" left="5.0" right="5.0" />
          </VBox.margin>
       </TextArea>
    </children>

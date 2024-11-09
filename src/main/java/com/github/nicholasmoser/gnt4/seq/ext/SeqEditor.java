@@ -2,8 +2,10 @@ package com.github.nicholasmoser.gnt4.seq.ext;
 
 import com.github.nicholasmoser.Message;
 import com.github.nicholasmoser.gnt4.seq.SeqHelper;
+import com.github.nicholasmoser.gnt4.seq.ext.controller.InsertAsmController;
 import com.github.nicholasmoser.gnt4.seq.ext.controller.SymbolController;
 import com.github.nicholasmoser.gnt4.seq.ext.parser.AssemblyParser;
+import com.github.nicholasmoser.gnt4.seq.ext.symbol.InsertAsm;
 import com.github.nicholasmoser.gnt4.seq.ext.symbol.Symbol;
 import com.github.nicholasmoser.gnt4.seq.opcodes.Opcode;
 import com.github.nicholasmoser.utils.ByteStream;
@@ -145,15 +147,32 @@ public class SeqEditor {
     this.mode = Mode.EDIT;
     this.rightStatus.setText(mode.toString());
     this.selectedSymbol = symbol;
-    String editName = symbol.name();
+    if (symbol instanceof InsertAsm insertAsm) {
+      openInsertAsm(insertAsm);
+    }
+  }
 
+  private void openInsertAsm(InsertAsm insertAsm) {
     try {
+      String editName = insertAsm.name();
       FXMLLoader loader = new FXMLLoader(getClass().getResource("insertasm.fxml"));
       Parent parent = loader.load();
       this.symbolController = loader.getController();
       symbolEditor.getChildren().add(parent);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      InsertAsmController iac = (InsertAsmController) symbolController;
+      iac.setName(editName);
+      if (insertAsm.oldOpcodes() != null) {
+        iac.setHijackedBytes(insertAsm.oldOpcodes());
+      } else {
+        iac.setHijackedBytes(insertAsm.oldBytes());
+      }
+      iac.setOffset(insertAsm.hijackOffset());
+      Pair<String,String> opcodesStrings = SeqUtil.getOpcodesStrings(insertAsm.newOpcodes());
+      iac.setNewBytes(opcodesStrings.getKey());
+      opcodes.setText(opcodesStrings.getValue());
+    } catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to Open Insert Asm Symbol", e);
+      Message.error("Failed to Open Insert Asm Symbol", e.getMessage());
     }
   }
 
@@ -255,6 +274,9 @@ public class SeqEditor {
    */
   public void disassemble() {
     try {
+      if (bytes.getText().isBlank()) {
+        return;
+      }
       String bytesFieldText = AssemblyParser.parseBytesField(bytes.getText());
       byte[] bytes = ByteUtils.hexTextToBytes(bytesFieldText);
       ByteStream bs = new ByteStream(bytes);
@@ -282,6 +304,9 @@ public class SeqEditor {
    */
   public void assemble() {
     try {
+      if (opcodes.getText().isBlank()) {
+        return;
+      }
       String[] lines = AssemblyParser.parseOpcodesField(opcodes.getText());
       Pair<List<Opcode>, Integer> opcodes = SeqAssembler.assembleLines(lines, seqPath);
       StringBuilder sb = new StringBuilder();
