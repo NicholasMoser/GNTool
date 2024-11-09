@@ -210,6 +210,7 @@ public class Functions {
     allFunctions.put(Seqs.CHARSEL, functions);
 
     functions = new HashMap<>();
+    functions.put(0x3c8, new Function("handle_game_options", List.of("// Called every frame while editing Game Options", "// Reads controller inputs and makes changes respectively")));
     functions.put(0x71B8, new Function("handle_jan_theme", Collections.emptyList()));
     functions.put(0x7720, new Function("handle_feb_theme", Collections.emptyList()));
     functions.put(0xA0AC, new Function("handle_mar_theme", Collections.emptyList()));
