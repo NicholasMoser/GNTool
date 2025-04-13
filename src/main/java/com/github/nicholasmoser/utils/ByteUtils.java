@@ -593,4 +593,11 @@ public class ByteUtils {
     }
     return bytes;
   }
+
+  public static void align(ByteStream bytes, int alignment) throws IOException {
+    int mod = bytes.offset() % alignment;
+    if (mod != 0) {
+      bytes.skipNBytes(alignment - mod);
+    }
+  }
 }
