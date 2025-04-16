@@ -1,8 +1,10 @@
 package com.github.nicholasmoser.gnt4.seq;
 
-import javafx.event.ActionEvent;
+import com.github.nicholasmoser.gnt4.seq.util.ComboList;
 import javafx.scene.control.TextArea;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -20,9 +22,10 @@ public class StringEditor {
         }
     }
 
-    public void init(Path seqPath, String text, int currentLength) {
+    public void init(Path seqPath) throws IOException {
         this.seqPath = seqPath;
-        this.currentLength = currentLength;
-        strings.setText(text);
+        byte[] bytes = Files.readAllBytes(seqPath);
+        this.currentLength = ComboList.readCombosLength(bytes);
+        strings.setText(ComboList.readCombos(bytes));
     }
 }
