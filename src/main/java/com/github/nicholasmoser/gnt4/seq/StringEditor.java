@@ -26,6 +26,6 @@ public class StringEditor {
         this.seqPath = seqPath;
         byte[] bytes = Files.readAllBytes(seqPath);
         this.currentLength = ComboList.readCombosLength(bytes);
-        strings.setText(ComboList.readCombos(bytes));
+        strings.setText(ComboList.comboBytesToString(bytes));
     }
 }

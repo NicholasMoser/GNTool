@@ -6,10 +6,12 @@ import com.github.nicholasmoser.utils.ByteUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class ComboList {
-    public static final String TABLE_TWO = "----------------------TABLE TWO----------------------";
+    public static final String NEXT_TABLE = "----------------------NEXT COMBO TABLE----------------------";
     private static final Logger LOGGER = Logger.getLogger(ComboList.class.getName());
 
     // TODO: Transformation characters in vanilla have the two string tables separated by 0xFFFFFFFF
@@ -20,14 +22,61 @@ public class ComboList {
     // TODO: Warn user to update any pointers in cases where the character has multiple transformations. The pointers are
     // likely referenced in seq code right before the string table.
 
+    public static void writeCombos(String combos, byte[] bytes, boolean force) throws IOException {
+
+    }
+
     /**
-     * Reads the list of combos at the given offset.
+     * Convert the combo table String to bytes.
+     *
+     * @param combos The combo tables as a String.
+     * @return The bytes of the combo tables.
+     * @throws IOException If the combos cannot be read.
+     */
+    public static byte[] comboStringToBytes(String combos, int startingOffset) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        List<Integer> countPerTable = countCombosInEachTable(combos);
+        int tableIndex = 0;
+        int firstTableSize = countPerTable.get(tableIndex);
+        // Write table size
+        baos.write(ByteUtils.fromInt32(firstTableSize));
+        for (String line : combos.lines().toList()) {
+            line = line.strip();
+            if (line.isBlank()) {
+                continue;
+            }
+            if (NEXT_TABLE.equals(line)) {
+                baos.write(new byte[] {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
+                // We need to align the bytes to 0x10, but the table may not have started at a 0x10 alignment, so
+                // we need to adjust the math to account for this.
+                int adjustment = startingOffset % 0x10;
+                int mod = (baos.size() + adjustment) % 0x10;
+                if (mod != 0) {
+                    baos.write(new byte[0x10 - mod]);
+                }
+                // Move to next table
+                tableIndex++;
+                // Write table size
+                int tableSize = countPerTable.get(tableIndex);
+                baos.write(ByteUtils.fromInt32(tableSize));
+            } else {
+                baos.write(line.getBytes("shift-jis"));
+                baos.write(0); // At least one null terminator is required
+                ByteUtils.align(baos, 0x4);
+            }
+        }
+        baos.write(new byte[] {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
+        return baos.toByteArray();
+    }
+
+    /**
+     * Convert the bytes of a combo table to a String.
      *
      * @param bytes The bytes to read from.
      * @return The combos in text form newline separated, e.g. name\ncombo\n
      * @throws IOException If the combos cannot be read.
      */
-    public static String readCombos(byte[] bytes) throws IOException {
+    public static String comboBytesToString(byte[] bytes) throws IOException {
         int startOffset = readStartOffset(bytes);
         StringBuilder sb = new StringBuilder();
         ByteStream bs = new ByteStream(bytes);
@@ -54,13 +103,41 @@ public class ComboList {
         byte[] next = bs.peekBytes(5);
         if (SeqHelper.isCombo(next)) {
             sb.append('\n');
-            sb.append(TABLE_TWO);
+            sb.append(NEXT_TABLE);
             while(bs.peekWord() != 0xFFFFFFFF && bs.peekWord() != 0xBBBBBBBB && bs.peekWord() != 0xCCCCCCCC) {
                 readCombo(sb, bs);
             }
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Counts the number of combos in each combo table.
+     *
+     * @param combos The combo tables to parse.
+     * @return A list of combo count where each index of the list is a new combo table.
+     */
+    public static List<Integer> countCombosInEachTable(String combos) throws IOException {
+        List<Integer> countPerTable = new ArrayList<>();
+        int count = 0;
+        for (String line : combos.lines().toList()) {
+            line = line.strip();
+            if (NEXT_TABLE.equals(line)) {
+                if (count % 2 == 1) {
+                    throw new IOException("Each combos should be two lines each, unexpected number of lines found");
+                }
+                countPerTable.add(count / 2); // Divide by 2 because each combo is two lines
+                count = 0;
+            } else {
+                count++;
+            }
+        }
+        if (count % 2 == 1) {
+            throw new IOException("Each combos should be two lines each, unexpected number of lines found");
+        }
+        countPerTable.add(count / 2); // Divide by 2 because each combo is two lines
+        return countPerTable;
     }
 
     /**
