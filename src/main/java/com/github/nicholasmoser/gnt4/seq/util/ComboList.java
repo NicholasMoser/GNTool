@@ -7,6 +7,7 @@ import com.github.nicholasmoser.utils.ByteUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -14,26 +15,51 @@ public class ComboList {
     public static final String NEXT_TABLE = "----------------------NEXT COMBO TABLE----------------------";
     private static final Logger LOGGER = Logger.getLogger(ComboList.class.getName());
 
-    // TODO: Transformation characters in vanilla have the two string tables separated by 0xFFFFFFFF
-    // Naruto and Sasuke
-
-    // TODO: Check for 0xCC after the table to see if a clean expansion can be done
-
     // TODO: Warn user to update any pointers in cases where the character has multiple transformations. The pointers are
     // likely referenced in seq code right before the string table.
 
-    public static void writeCombos(String combos, byte[] bytes, boolean force) throws IOException {
-
+    public static byte[] writeCombos(String combos, byte[] bytes, boolean force) throws IOException {
+        int startOffset = readStartOffset(bytes);
+        int oldLength = readCombosLength(bytes);
+        byte[] newBytes = comboStringToBytes(combos, startOffset);
+        if (!force && newBytes.length > oldLength) {
+            // Count how many unused bytes we have to see if we can safely overwrite existing bytes
+            int bytesNeeded = newBytes.length - oldLength;
+            int unused = countUnusedBytes(bytes, startOffset + oldLength);
+            if (unused < bytesNeeded) {
+                String msg = String.format("Not enough space to write new combo list. Old combo list is 0x%X bytes, " +
+                        "new combo list is 0x%X bytes. There are 0x%X unused bytes after the old combo list, " +
+                        "but you need 0x%X bytes. It's recommended that you manually move the combo table. " +
+                        "Do you wish to instead force the new combo table to be inserted anyways? It may overwrite " +
+                        "code that is still in used.",
+                        oldLength, newBytes.length, unused, bytesNeeded);
+                throw new NoCodeSpaceException(msg);
+            }
+        }
+        if (startOffset + newBytes.length > bytes.length) {
+            // More space is needed at the end of the byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(bytes);
+            baos.write(new byte[startOffset + newBytes.length - bytes.length]);
+            byte[] returnBytes = baos.toByteArray();
+            System.arraycopy(newBytes, 0, returnBytes, startOffset, newBytes.length);
+            return returnBytes;
+        }
+        // Copy the combo bytes over as-is
+        byte[] returnBytes = Arrays.copyOf(bytes, bytes.length);
+        System.arraycopy(newBytes, 0, returnBytes, startOffset, newBytes.length);
+        return returnBytes;
     }
 
     /**
      * Convert the combo table String to bytes.
      *
-     * @param combos The combo tables as a String.
+     * @param combos      The combo tables as a String.
+     * @param startOffset The starting offset of the combo table.
      * @return The bytes of the combo tables.
      * @throws IOException If the combos cannot be read.
      */
-    public static byte[] comboStringToBytes(String combos, int startingOffset) throws IOException {
+    public static byte[] comboStringToBytes(String combos, int startOffset) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         List<Integer> countPerTable = countCombosInEachTable(combos);
         int tableIndex = 0;
@@ -46,10 +72,10 @@ public class ComboList {
                 continue;
             }
             if (NEXT_TABLE.equals(line)) {
-                baos.write(new byte[] {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
+                baos.write(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
                 // We need to align the bytes to 0x10, but the table may not have started at a 0x10 alignment, so
                 // we need to adjust the math to account for this.
-                int adjustment = startingOffset % 0x10;
+                int adjustment = startOffset % 0x10;
                 int mod = (baos.size() + adjustment) % 0x10;
                 if (mod != 0) {
                     baos.write(new byte[0x10 - mod]);
@@ -65,7 +91,7 @@ public class ComboList {
                 ByteUtils.align(baos, 0x4);
             }
         }
-        baos.write(new byte[] {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
+        baos.write(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF});
         return baos.toByteArray();
     }
 
@@ -86,7 +112,7 @@ public class ComboList {
 
         // Read combo table
         int count = 0;
-        while(bs.peekWord() != 0xFFFFFFFF && bs.peekWord() != 0xBBBBBBBB && bs.peekWord() != 0xCCCCCCCC) {
+        while (bs.peekWord() != 0xFFFFFFFF && bs.peekWord() != 0xBBBBBBBB && bs.peekWord() != 0xCCCCCCCC) {
             readCombo(sb, bs);
             count++;
         }
@@ -96,6 +122,9 @@ public class ComboList {
 
         // Check for and read second combo table (Naruto, Sasuke, Kakashi, and Sakon transformation tables)
         bs.skipWord(); // Skip 0xFFFFFFFF
+        if (!bs.bytesAreLeft()) {
+            return sb.toString();
+        }
         while (bs.peekWord() == 0) {
             bs.skipWord(); // Skip null padding
         }
@@ -104,7 +133,7 @@ public class ComboList {
         if (SeqHelper.isCombo(next)) {
             sb.append('\n');
             sb.append(NEXT_TABLE);
-            while(bs.peekWord() != 0xFFFFFFFF && bs.peekWord() != 0xBBBBBBBB && bs.peekWord() != 0xCCCCCCCC) {
+            while (bs.peekWord() != 0xFFFFFFFF && bs.peekWord() != 0xBBBBBBBB && bs.peekWord() != 0xCCCCCCCC) {
                 readCombo(sb, bs);
             }
         }
@@ -165,6 +194,9 @@ public class ComboList {
         }
 
         // Check for and read second combo table (Naruto, Sasuke, Kakashi, and Sakon transformation tables)
+        if (!bs.bytesAreLeft()) {
+            return endOffset - startOffset;
+        }
         while (bs.peekWord() == 0) {
             bs.skipWord(); // Skip null padding
         }
@@ -223,6 +255,35 @@ public class ComboList {
     }
 
     /**
+     * Count the number of unused bytes at the given offset;
+     *
+     * @param bytes  The bytes to read.
+     * @param offset The offset to start at.
+     * @return The number of unused bytes.
+     */
+    public static int countUnusedBytes(byte[] bytes, int offset) throws IOException {
+        ByteStream bs = new ByteStream(bytes);
+        bs.seek(offset);
+        int count = 0;
+        boolean counting = true;
+        while (counting && bs.bytesAreLeft(4)) {
+            int word = bs.readWord();
+            switch (word) {
+                case 0x00000000:
+                case 0xBBBBBBBB:
+                case 0xCCCCCCCC:
+                case 0xFFFFFFFF:
+                    count += 4;
+                    break;
+                default:
+                    counting = false;
+                    break;
+            }
+        }
+        return count;
+    }
+
+    /**
      * Read a single combo into the string builder.
      *
      * @param sb The string builder to insert the combo text into.
@@ -253,7 +314,7 @@ public class ComboList {
     private static String readAlignedCString(ByteStream bs) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int curr = bs.read();
-        while (curr != 0  && curr != 0xFF) {
+        while (curr != 0 && curr != 0xFF) {
             if (curr == -1) {
                 throw new IOException("Unexpected end of file when reading combo");
             }
@@ -267,7 +328,7 @@ public class ComboList {
     /**
      * Find the first offset of a sequence in data.
      *
-     * @param data The data to search.
+     * @param data     The data to search.
      * @param sequence The sequence to search for.
      * @return The first offset or -1 if not found.
      */

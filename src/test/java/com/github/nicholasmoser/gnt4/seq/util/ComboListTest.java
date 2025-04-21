@@ -8,12 +8,547 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ComboListTest {
+    @Test
+    public void testWriteAddComboTableTwo() throws Exception {
+        String original = """
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBBA
+                連弾３
+                00BAAAA
+                連弾４
+                00BAABBBBB
+                連弾５
+                00BAABBBBA
+                連弾６
+                00BABB
+                連弾７
+                00BABA
+                連弾８
+                006BB
+                連弾９
+                006BA
+                連弾１０
+                002BAAA
+                連弾１１
+                002BABBBBB
+                連弾１２
+                002BABBBBA
+                連弾１３
+                00DAAAA
+                連弾１４
+                00DAABBBBB
+                連弾１５
+                00DAABBBBA
+                連弾１６
+                00DABB
+                連弾１７
+                00DABA
+                ----------------------NEXT COMBO TABLE----------------------
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBA
+                連弾３
+                00BBBA
+                連弾４
+                00BAAAA
+                連弾５
+                00BABB
+                連弾６
+                00BAABBBB
+                連弾７
+                00BAABA
+                連弾８
+                00BAABBA
+                連弾９
+                00AAAA
+                連弾１０
+                00AABBBB
+                連弾１１
+                00AABBA
+                連弾１２
+                00AABA
+                連弾１３
+                00ABB
+                連弾１４
+                006BBBBBB
+                連弾１５
+                006BBBBA
+                連弾１６
+                006BBBA
+                連弾１７
+                006BAA
+                連弾１８
+                002BBBBBB
+                連弾１９
+                002BBBBA
+                連弾２０
+                002BBBA
+                連弾２１
+                002BAA
+                連弾２２
+                008BBBB
+                連弾２３
+                008BBA
+                連弾２４
+                006AAA
+                連弾２５
+                006ABBBB
+                連弾２６
+                006ABBA
+                連弾２７
+                006ABA
+                連弾２８
+                008AA
+                """.strip();
+        String modified = """
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBBA
+                連弾３
+                00BAAAA
+                連弾４
+                00BAABBBBB
+                連弾５
+                00BAABBBBA
+                連弾６
+                00BABB
+                連弾７
+                00BABA
+                連弾８
+                006BB
+                連弾９
+                006BA
+                連弾１０
+                002BAAA
+                連弾１１
+                002BABBBBB
+                連弾１２
+                002BABBBBA
+                連弾１３
+                00DAAAA
+                連弾１４
+                00DAABBBBB
+                連弾１５
+                00DAABBBBA
+                連弾１６
+                00DABB
+                連弾１７
+                00DABA
+                ----------------------NEXT COMBO TABLE----------------------
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBA
+                連弾３
+                00BBBA
+                連弾４
+                00BAAAA
+                連弾５
+                00BABB
+                連弾６
+                00BAABBBB
+                連弾７
+                00BAABA
+                連弾８
+                00BAABBA
+                連弾９
+                00AAAA
+                連弾１０
+                00AABBBB
+                連弾１１
+                00AABBA
+                連弾１２
+                00AABA
+                連弾１３
+                00ABB
+                連弾１４
+                006BBBBBB
+                連弾１５
+                006BBBBA
+                連弾１６
+                006BBBA
+                連弾１７
+                006BAA
+                連弾１８
+                002BBBBBB
+                連弾１９
+                002BBBBA
+                連弾２０
+                002BBBA
+                連弾２１
+                002BAA
+                連弾２２
+                008BBBB
+                連弾２３
+                008BBA
+                連弾２４
+                006AAA
+                連弾２５
+                006ABBBB
+                連弾２６
+                006ABBA
+                連弾２７
+                006ABA
+                連弾２８
+                008AA
+                連弾２９
+                008AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                """.strip();
+        byte[] expectedBytes = ComboList.comboStringToBytes(original, 0);
+        byte[] actualBytes = Arrays.copyOf(expectedBytes, expectedBytes.length);
+        byte[] output = ComboList.writeCombos(modified, actualBytes, true);
+        String actual = ComboList.comboBytesToString(output);
+        assertThat(modified).isEqualTo(actual);
+
+        // It should throw an error if not forcing, since the new codes are larger
+        assertThrows(NoCodeSpaceException.class, () -> ComboList.writeCombos(modified, actualBytes, false));
+    }
+
+    @Test
+    public void testWriteAddComboTableOne() throws Exception {
+        String original = """
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBBA
+                連弾３
+                00BBBBA
+                連弾４
+                00BBBA
+                連弾５
+                006BBB
+                連弾６
+                006BBAG
+                連弾７
+                006BA
+                連弾８
+                004BB
+                連弾９
+                004BAG
+                連弾１０
+                002BBBBB
+                連弾１１
+                002BBBBA
+                連弾１２
+                002BBBA
+                連弾１３
+                002BBA
+                連弾１４
+                002BAAA
+                連弾１５
+                008BA
+                連弾１６
+                006AAA
+                連弾１７
+                00DBB
+                連弾１８
+                00DBA
+                連弾１９
+                00HB
+                連弾２０
+                00HA
+                """.strip();
+        String modified = """
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBBA
+                連弾３
+                00BBBBA
+                連弾４
+                00BBBA
+                連弾５
+                006BBB
+                連弾６
+                006BBAG
+                連弾７
+                006BA
+                連弾８
+                004BB
+                連弾９
+                004BAG
+                連弾１０
+                002BBBBB
+                連弾１１
+                002BBBBA
+                連弾１２
+                002BBBA
+                連弾１３
+                002BBA
+                連弾１４
+                002BAAA
+                連弾１５
+                008BA
+                連弾１６
+                006AAA
+                連弾１７
+                00DBB
+                連弾１８
+                00DBA
+                連弾１９
+                00HB
+                連弾２０
+                00HA
+                連弾２１
+                00HAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                """.strip();
+        byte[] expectedBytes = ComboList.comboStringToBytes(original, 0);
+        byte[] actualBytes = Arrays.copyOf(expectedBytes, expectedBytes.length);
+        byte[] output = ComboList.writeCombos(modified, actualBytes, true);
+        String actual = ComboList.comboBytesToString(output);
+        assertThat(modified).isEqualTo(actual);
+
+        // It should throw an error if not forcing, since the new codes are larger
+        assertThrows(NoCodeSpaceException.class, () -> ComboList.writeCombos(modified, actualBytes, false));
+    }
+
+    @Test
+    public void testWriteRemoveComboTableOne() throws Exception {
+        String original = """
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBBA
+                連弾３
+                00BBBBA
+                連弾４
+                00BBBA
+                連弾５
+                006BBB
+                連弾６
+                006BBAG
+                連弾７
+                006BA
+                連弾８
+                004BB
+                連弾９
+                004BAG
+                連弾１０
+                002BBBBB
+                連弾１１
+                002BBBBA
+                連弾１２
+                002BBBA
+                連弾１３
+                002BBA
+                連弾１４
+                002BAAA
+                連弾１５
+                008BA
+                連弾１６
+                006AAA
+                連弾１７
+                00DBB
+                連弾１８
+                00DBA
+                連弾１９
+                00HB
+                連弾２０
+                00HA
+                """.strip();
+        String modified = """
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBBA
+                連弾３
+                00BBBBA
+                連弾２０
+                00HA
+                """.strip();
+        byte[] expectedBytes = ComboList.comboStringToBytes(original, 0);
+        byte[] actualBytes = Arrays.copyOf(expectedBytes, expectedBytes.length);
+        byte[] output = ComboList.writeCombos(modified, actualBytes, false);
+        String actual = ComboList.comboBytesToString(output);
+        assertThat(modified).isEqualTo(actual);
+    }
+
+    @Test
+    public void testWriteSameCombosOneTable() throws Exception {
+        String expected = """
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBBA
+                連弾３
+                00BBBBA
+                連弾４
+                00BBBA
+                連弾５
+                006BBB
+                連弾６
+                006BBAG
+                連弾７
+                006BA
+                連弾８
+                004BB
+                連弾９
+                004BAG
+                連弾１０
+                002BBBBB
+                連弾１１
+                002BBBBA
+                連弾１２
+                002BBBA
+                連弾１３
+                002BBA
+                連弾１４
+                002BAAA
+                連弾１５
+                008BA
+                連弾１６
+                006AAA
+                連弾１７
+                00DBB
+                連弾１８
+                00DBA
+                連弾１９
+                00HB
+                連弾２０
+                00HA
+                """.strip();
+        byte[] expectedBytes = ComboList.comboStringToBytes(expected, 0);
+        byte[] actualBytes = Arrays.copyOf(expectedBytes, expectedBytes.length);
+        String combos = ComboList.comboBytesToString(expectedBytes);
+        byte[] output = ComboList.writeCombos(combos, actualBytes, false);
+        String actual = ComboList.comboBytesToString(output);
+        assertThat(expected).isEqualTo(actual);
+    }
+
+    @Test
+    public void testWriteSameCombosTwoTables() throws Exception {
+        String expected = """
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBBA
+                連弾３
+                00BAAAA
+                連弾４
+                00BAABBBBB
+                連弾５
+                00BAABBBBA
+                連弾６
+                00BABB
+                連弾７
+                00BABA
+                連弾８
+                006BB
+                連弾９
+                006BA
+                連弾１０
+                002BAAA
+                連弾１１
+                002BABBBBB
+                連弾１２
+                002BABBBBA
+                連弾１３
+                00DAAAA
+                連弾１４
+                00DAABBBBB
+                連弾１５
+                00DAABBBBA
+                連弾１６
+                00DABB
+                連弾１７
+                00DABA
+                ----------------------NEXT COMBO TABLE----------------------
+                連弾１
+                00BBBBBB
+                連弾２
+                00BBBBA
+                連弾３
+                00BBBA
+                連弾４
+                00BAAAA
+                連弾５
+                00BABB
+                連弾６
+                00BAABBBB
+                連弾７
+                00BAABA
+                連弾８
+                00BAABBA
+                連弾９
+                00AAAA
+                連弾１０
+                00AABBBB
+                連弾１１
+                00AABBA
+                連弾１２
+                00AABA
+                連弾１３
+                00ABB
+                連弾１４
+                006BBBBBB
+                連弾１５
+                006BBBBA
+                連弾１６
+                006BBBA
+                連弾１７
+                006BAA
+                連弾１８
+                002BBBBBB
+                連弾１９
+                002BBBBA
+                連弾２０
+                002BBBA
+                連弾２１
+                002BAA
+                連弾２２
+                008BBBB
+                連弾２３
+                008BBA
+                連弾２４
+                006AAA
+                連弾２５
+                006ABBBB
+                連弾２６
+                006ABBA
+                連弾２７
+                006ABA
+                連弾２８
+                008AA
+                """.strip();
+        byte[] expectedBytes = ComboList.comboStringToBytes(expected, 0xC);
+        byte[] actualBytes = Arrays.copyOf(expectedBytes, expectedBytes.length);
+        String combos = ComboList.comboBytesToString(expectedBytes);
+        byte[] output = ComboList.writeCombos(combos, actualBytes, false);
+        String actual = ComboList.comboBytesToString(output);
+        assertThat(expected).isEqualTo(actual);
+    }
+
+    @Test
+    public void testCountUnusedBytes() throws Exception {
+        byte[] bytes = ByteUtils.hexStringToBytes("0000000011111111");
+        assertThat(ComboList.countUnusedBytes(bytes, 0)).isEqualTo(4);
+        bytes = ByteUtils.hexStringToBytes("000000000000000011111111");
+        assertThat(ComboList.countUnusedBytes(bytes, 4)).isEqualTo(4);
+        bytes = ByteUtils.hexStringToBytes("12345678123456780000000010000000");
+        assertThat(ComboList.countUnusedBytes(bytes, 8)).isEqualTo(4);
+        bytes = ByteUtils.hexStringToBytes("BBBBBBBBCCCCCCCC00000000");
+        assertThat(ComboList.countUnusedBytes(bytes, 0)).isEqualTo(0xC);
+        bytes = ByteUtils.hexStringToBytes("00000000CCCCCCCCBBBBBBBB");
+        assertThat(ComboList.countUnusedBytes(bytes, 0)).isEqualTo(0xC);
+        bytes = ByteUtils.hexStringToBytes("CCCCCCCC00000000BBBBBBBB");
+        assertThat(ComboList.countUnusedBytes(bytes, 0)).isEqualTo(0xC);
+        bytes = ByteUtils.hexStringToBytes("CCCCCCCCFFFFFFFFFFFFFFFF");
+        assertThat(ComboList.countUnusedBytes(bytes, 0)).isEqualTo(0xC);
+        bytes = ByteUtils.hexStringToBytes("CCCCCCCCFFFFFFFFFFFFFFFF33333333");
+        assertThat(ComboList.countUnusedBytes(bytes, 0)).isEqualTo(0xC);
+    }
+
     @Test
     public void testAnkoComboStringToBytes() throws Exception {
         String input = """
