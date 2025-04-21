@@ -48,6 +48,13 @@ public class ComboList {
         // Copy the combo bytes over as-is
         byte[] returnBytes = Arrays.copyOf(bytes, bytes.length);
         System.arraycopy(newBytes, 0, returnBytes, startOffset, newBytes.length);
+        // Write null bytes over leftover combo table
+        int bytesLeft = oldLength - newBytes.length;
+        int endOfNewCode = startOffset + newBytes.length;
+        int endOfOldCode = startOffset + oldLength;
+        for (int i = endOfNewCode; i < endOfOldCode; i++) {
+            returnBytes[i] = (byte) 0xCC;
+        }
         return returnBytes;
     }
 

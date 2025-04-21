@@ -45,7 +45,7 @@ public class ComboEditor {
         }
         // Second attempt, user has confirmed to force write
         try {
-            byte[] newBytes = ComboList.writeCombos(text, bytes, false);
+            byte[] newBytes = ComboList.writeCombos(text, bytes, true);
             Files.write(seqPath, newBytes);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Failed to write bytes to file" + seqPath, e);
