@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class StringEditor {
+public class ComboEditor {
     public Path seqPath;
     public int currentLength;
     public TextArea strings;
