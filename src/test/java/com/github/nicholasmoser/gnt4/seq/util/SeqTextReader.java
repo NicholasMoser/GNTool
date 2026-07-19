@@ -1,5 +1,7 @@
 package com.github.nicholasmoser.gnt4.seq.util;
 
+import com.github.nicholasmoser.gnt4.seq.Seqs;
+import com.github.nicholasmoser.testing.Prereqs;
 import com.github.nicholasmoser.utils.ByteStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -11,9 +13,8 @@ import org.junit.jupiter.api.Test;
 
 public class SeqTextReader {
   @Test
-  public void test() throws Exception {
-    //Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_TITLE);
-    Path seq = Paths.get("G:\\GNT\\1.7.x\\uncompressed\\files\\maki\\m_title.seq");
+  public void testReadTitleText() throws Exception {
+    Path seq = Prereqs.getUncompressedGNT4().resolve(Seqs.M_TITLE);
     byte[] bytes = Files.readAllBytes(seq);
     ByteStream bs = new ByteStream(bytes);
     bs.seek(0x32410);

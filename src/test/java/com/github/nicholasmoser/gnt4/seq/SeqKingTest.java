@@ -23,7 +23,7 @@ public class SeqKingTest {
   private static final boolean COMPARE_MODE = false;
   private static final boolean VERBOSE = false;
   private static final boolean PERMISSIVE = false;
-  private static final boolean DELETE_FILE = false;
+  private static final boolean DELETE_FILE = true;
 
   @Test
   public void parseTitle() throws Exception {

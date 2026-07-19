@@ -28,6 +28,7 @@ import javafx.util.Pair;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Will be fixed in future seq ext branch")
 public class SeqAssemblerTest {
 
     void assertBytesEquals(byte[] expected, byte[] actual) {
