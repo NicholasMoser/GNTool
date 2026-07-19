@@ -115,17 +115,17 @@ import java.util.Set;
 public class SeqHelper {
 
   // Vanilla Combo translation for Oboro: コンボその
-  private static final byte[] COMBO_JAPANESE = new byte[]{(byte) 0x83, 0x52, (byte) 0x83, (byte) 0x93, (byte) 0x83};
+  public static final byte[] COMBO_JAPANESE = new byte[]{(byte) 0x83, 0x52, (byte) 0x83, (byte) 0x93, (byte) 0x83};
   // Vanilla Combo text for all other characters: 連打
-  private static final byte[] REPEATED_HITS = new byte[]{(byte) 0x98, 0x41, (byte) 0x92, 0x65, (byte) 0x82};
+  public static final byte[] REPEATED_HITS = new byte[]{(byte) 0x98, 0x41, (byte) 0x92, 0x65, (byte) 0x82};
   // Kosheh Combo translation for most characters
-  private static final byte[] COMBO = "Combo".getBytes(StandardCharsets.UTF_8);
+  public static final byte[] COMBO = "Combo".getBytes(StandardCharsets.UTF_8);
   // Kosheh Combo translation for Tayuyu doki demon
-  private static final byte[] CHORD = "Chord".getBytes(StandardCharsets.UTF_8);
+  public static final byte[] CHORD = "Chord".getBytes(StandardCharsets.UTF_8);
   // Kosheh Combo translation for Karasu
-  private static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
+  public static final byte[] ROUTINE = "Routi".getBytes(StandardCharsets.UTF_8);
   // SCON4 Combo translation
-  private static final byte[] SEQ = "Seq 0".getBytes(StandardCharsets.UTF_8);
+  public static final byte[] SEQ = "Seq 0".getBytes(StandardCharsets.UTF_8);
 
   public static Opcode getEftOpcode(ByteStream bs, byte opcodeGroup, byte opcode) throws IOException {
     return switch (opcodeGroup) {

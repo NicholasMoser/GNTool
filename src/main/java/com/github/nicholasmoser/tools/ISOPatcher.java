@@ -20,7 +20,7 @@ import javafx.stage.Stage;
  */
 public class ISOPatcher {
 
-  private static final Logger LOGGER = Logger.getLogger(ISOExtractorTool.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(ISOPatcher.class.getName());
 
   /**
    * Patches a GameCube ISO.

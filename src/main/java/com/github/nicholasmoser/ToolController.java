@@ -1,19 +1,7 @@
 package com.github.nicholasmoser;
 
-import com.github.nicholasmoser.tools.DolphinSeqListenerTool;
-import com.github.nicholasmoser.tools.FPKRepackerTool;
-import com.github.nicholasmoser.tools.FPKUnpackerTool;
-import com.github.nicholasmoser.tools.GNTAEditorTool;
-import com.github.nicholasmoser.tools.ISOCompareTool;
-import com.github.nicholasmoser.tools.ISOExtractorTool;
-import com.github.nicholasmoser.tools.ISOPatcher;
-import com.github.nicholasmoser.tools.MOTRepackerTool;
-import com.github.nicholasmoser.tools.MOTUnpackerTool;
-import com.github.nicholasmoser.tools.SeqDisassemblerTool;
-import com.github.nicholasmoser.tools.SeqEditorTool;
-import com.github.nicholasmoser.tools.SeqTesterTool;
-import com.github.nicholasmoser.tools.TXG2TPLTool;
-import com.github.nicholasmoser.tools.WorkspaceDiffTool;
+import com.github.nicholasmoser.tools.*;
+
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,6 +33,7 @@ public class ToolController {
   private static final String SEQ_DISASSEMBLER_HTML = "SEQ Disassembler (HTML)";
   private static final String SEQ_DISASSEMBLER_TXT = "SEQ Disassembler (TXT)";
   private static final String SEQ_EDITOR = "SEQ Editor";
+  private static final String COMBO_EDITOR = "Combo Editor";
   private static final String SEQ_TESTER = "SEQ Tester";
   private static final String MOT_UNPACKER = "MOT Unpacker";
   private static final String MOT_REPACKER = "MOT Repacker";
@@ -73,6 +62,7 @@ public class ToolController {
     items.add(SEQ_DISASSEMBLER_HTML);
     items.add(SEQ_DISASSEMBLER_TXT);
     items.add(SEQ_EDITOR);
+    items.add(COMBO_EDITOR);
     items.add(SEQ_TESTER);
     items.add(MOT_UNPACKER);
     items.add(MOT_REPACKER);
@@ -117,6 +107,7 @@ public class ToolController {
         case SEQ_DISASSEMBLER_HTML -> SeqDisassemblerTool.disassembleToHTML();
         case SEQ_DISASSEMBLER_TXT -> SeqDisassemblerTool.disassembleToTXT();
         case SEQ_EDITOR -> SeqEditorTool.open();
+        case COMBO_EDITOR -> ComboEditorTool.open();
         case SEQ_TESTER -> SeqTesterTool.open();
         case MOT_UNPACKER -> MOTUnpackerTool.run();
         case MOT_REPACKER -> MOTRepackerTool.run();
