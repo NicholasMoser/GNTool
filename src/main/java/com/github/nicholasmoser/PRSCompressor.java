@@ -115,8 +115,9 @@ public class PRSCompressor {
       return false;
     }
 
-    // 256 bytes is the maximum match length unless there are fewer bytes left than that
-    int maxMatchLength = 256;
+    // 256 bytes is the maximum match length unless there are fewer bytes left than that.
+    // The loop below uses this value as an exclusive sentinel, so add one.
+    int maxMatchLength = Math.min(input.length - inputIndex, 256) + 1;
     int bytesLeft = input.length - inputIndex;
     if (bytesLeft < maxMatchLength) {
       maxMatchLength = bytesLeft + 1;
@@ -129,7 +130,7 @@ public class PRSCompressor {
     // Don't exceed scan area of 8192 bytes
     // Do not scan beyond start of input bytes
     // Limit to 256 bytes match length
-    while (((currentIndex - scanIndex) < 8192) && (scanIndex >= 0)
+    while (((currentIndex - scanIndex) <= 8192) && (scanIndex >= 0)
         && (matchLength < maxMatchLength)) {
       while (memcmp(currentIndex, scanIndex, matchLength) && (matchLength < maxMatchLength)) {
         savedIndex = scanIndex;
@@ -141,7 +142,7 @@ public class PRSCompressor {
     matchLength--;
     currentCompressionLength = matchLength;
     pos = currentIndex - savedIndex;
-    if ((matchLength == 2) && (pos > 255)) {
+    if ((matchLength == 2) && (pos > 256)) {
       return false;
     }
 
@@ -238,7 +239,7 @@ public class PRSCompressor {
    * Write compressed bytes to the output byte array.
    */
   private void writeCompressedBytes() {
-    if (pos > 255 || currentCompressionLength > 5) {
+    if (pos > 256 || currentCompressionLength > 5) {
       writeBytesLongCompression(currentCompressionLength, pos);
     } else {
       writeBytesShortCompression(currentCompressionLength, pos);
