@@ -132,9 +132,12 @@ public class PRSCompressor {
     // Limit to 256 bytes match length
     while (((currentIndex - scanIndex) <= 8192) && (scanIndex >= 0)
         && (matchLength < maxMatchLength)) {
-      while (memcmp(currentIndex, scanIndex, matchLength) && (matchLength < maxMatchLength)) {
+      if (memcmp(currentIndex, scanIndex, matchLength)) {
+      do {
         savedIndex = scanIndex;
         matchLength++;
+      } while (matchLength < maxMatchLength
+              && input[currentIndex + matchLength - 1] == input[scanIndex + matchLength - 1]);
       }
       scanIndex--;
     }
@@ -159,13 +162,9 @@ public class PRSCompressor {
    * @return Whether the bytes are the same.
    */
   private boolean memcmp(int index1, int index2, int size) {
-    // ArrayIndexOutOfBoundsException safe version of memcpy
-    if (index1 + size > input.length) {
-      byte[] range1 = Arrays.copyOfRange(input, index1, index1 + size);
-      byte[] range2 = Arrays.copyOfRange(input, index2, index2 + size);
-      return Arrays.equals(range1, range2);
+    if (input[index1] != input[index2]) {
+      return false;
     }
-    // Fast version of memcpy
     for (int i = 0; i < size; i++) {
       if (input[index1 + i] != input[index2 + i]) {
         return false;

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -29,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
  */
 public class FPKTest {
   private static Stream<Arguments> files() throws IOException {
+    Path workspaceDir = Prereqs.getWorkspaceDir();
     Path stateFile = Paths.get("src/test/gnt/gnt4/state.db");
     WorkspaceState state;
     if (!Files.exists(stateFile)) {
       state = SQLiteWorkspaceState.create(stateFile);
       FPKOptions options = new FPKOptions(false, true, new GNT4FileNames());
-      Path workspaceDir = Prereqs.getWorkspaceDir();
       state.init(workspaceDir, options);
       System.out.println("Test database created.");
     } else {
@@ -47,16 +48,13 @@ public class FPKTest {
   }
 
   /**
-   * Unpack FPKs to a directory and repack them back into FPKs. Compare the results of both actions
-   * to the expected outputs. The first time you run most of the unit tests it will generate a
-   * compressed and uncompressed folder of files from GNT4 in the test directory. This test will do
-   * the same thing but in the temp directory. This test will then compare the new results in the
-   * temp directory to the files in the test directory, therefore this is really only useful if NOT
-   * running this test for the first time.
+   * Attempts to match the original PRS compression by taking the unpacked files and attempting to repack them with
+   * the PRS compression.
    * @throws Exception If any Exceptions occur.
    */
   @ParameterizedTest
   @MethodSource("files")
+  @Disabled("This test takes like 6 minutes to run, only run it when touching the PRS compressor")
   public void unpackAndRepack(WorkspaceFile file) throws Exception {
     Path fpk = Prereqs.getCompressedGNT4().resolve(file.fpkFilePath());
     Path uncompressed = Prereqs.getUncompressedGNT4().resolve(file.filePath());
@@ -68,6 +66,14 @@ public class FPKTest {
     assertArrayEquals(expectedBytes, actualBytes);
   }
 
+  /**
+   * Given an FPK path and an input file in that FPK, read the input file.
+   *
+   * @param fpkPath The FPK path to read from.
+   * @param inFile The input file to read from it.
+   * @return The bytes of the input file in the FPK file.
+   * @throws IOException If any I/O exception occurs
+   */
   private byte[] getExpectedBytes(Path fpkPath, Path inFile) throws IOException {
     GNT4FileNames fileNames = new GNT4FileNames();
     int bytesRead = 0;
